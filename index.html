@@ -168,23 +168,22 @@ img,canvas,svg,video{ display:block; max-width:100%; }
 .wordmark b{ font-family:var(--display); font-weight:500; font-size:1.18rem; letter-spacing:.01em; }
 .wordmark span{ font-family:var(--mono); font-size:.62rem; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-soft); margin-top:.45rem; }
 
-/* enquire tab — fixed blob that hangs from the top edge, outside the header's
-   mix-blend-mode so the lime green stays true against any background */
+/* enquire tab — clean rectangular tab hanging from the top edge, outside the
+   header's mix-blend-mode so the lime green stays true against any background */
 .enquire-link{
   position:fixed; top:0; right:var(--gutter); z-index:21;
   display:inline-flex; align-items:center; justify-content:center;
   padding:clamp(1rem,2.4vw,1.6rem) 1.6rem clamp(2.8rem,5.5vw,3.6rem);
   background:var(--lime);
-  /* flat top (attached to header edge), organic rounded bottom */
-  border-radius:0 0 45% 55% / 0 0 44px 50px;
+  border-radius:0 0 8px 8px;
   color:#fff;
   font-family:var(--mono); font-size:.74rem; letter-spacing:.18em; text-transform:uppercase;
-  transition:transform .35s var(--ease), filter .3s var(--ease);
+  transition:transform .25s var(--ease), filter .25s var(--ease);
   transform-origin:top center;
 }
 .enquire-link:hover{
-  transform:scale(1.06) rotate(.6deg);
-  filter:brightness(1.12);
+  transform:translateY(3px);
+  filter:brightness(1.1);
 }
 .enquire-link::after{ display:none; }
 
@@ -302,13 +301,13 @@ img,canvas,svg,video{ display:block; max-width:100%; }
 }
 .cta span{ position:relative; z-index:1; }
 .cta::before{
-  content:""; position:absolute; inset:0; z-index:0; background:var(--terracotta);
+  content:""; position:absolute; inset:0; z-index:0; background:var(--lime);
   transform:scale(0); transform-origin:center; border-radius:50%;
   transition:transform .55s var(--ease);
 }
 .cta:hover{ color:var(--paper); }
 .cta:hover::before{ transform:scale(2.4); }
-.cta .dot{ width:7px; height:7px; border-radius:50%; background:var(--terracotta); transition:background .4s; }
+.cta .dot{ width:7px; height:7px; border-radius:50%; background:var(--lime); transition:background .4s; }
 .cta:hover .dot{ background:var(--paper); }
 
 .scroll-cue{
@@ -405,7 +404,7 @@ img,canvas,svg,video{ display:block; max-width:100%; }
 .piece figure{ margin:0; position:relative; }
 .piece .frame{
   position:relative; overflow:hidden; background:var(--paper-deep);
-  border-radius:2px; filter:url(#wcWobble);
+  border-radius:2px;
 }
 .piece .frame img{ width:100%; height:100%; object-fit:cover; display:block; }
 .piece figcaption{ display:flex; justify-content:space-between; gap:1rem; margin-top:1rem; align-items:baseline; }
@@ -433,7 +432,7 @@ img,canvas,svg,video{ display:block; max-width:100%; }
 .film{ position:relative; }
 .film .stage{
   position:relative; overflow:hidden; border-radius:3px; background:var(--ink);
-  aspect-ratio:9/16; filter:url(#wcWobble);
+  aspect-ratio:9/16;
 }
 .film video{ width:100%; height:100%; object-fit:cover; }
 .film figcaption{ margin-top:.9rem; font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); }
@@ -453,7 +452,7 @@ img,canvas,svg,video{ display:block; max-width:100%; }
 .painter-portrait{ margin:0; width:min(100%, 420px); position:relative; }
 .painter-portrait .frame{
   position:relative; overflow:hidden; aspect-ratio:3/4;
-  background:var(--paper-deep); border-radius:2px; filter:url(#wcWobble);
+  background:var(--paper-deep); border-radius:2px;
 }
 .painter-portrait .frame img{ width:100%; height:100%; object-fit:cover; display:block; }
 /* a soft pigment bloom sits behind the portrait, off to one corner */
@@ -506,8 +505,8 @@ img,canvas,svg,video{ display:block; max-width:100%; }
   background:transparent; color:var(--ink); cursor:pointer; transition:background .4s var(--ease), color .4s var(--ease);
 }
 .btn:hover{ background:var(--ink); color:var(--paper); }
-.btn--primary{ background:var(--terracotta); border-color:var(--terracotta); color:var(--paper); }
-.btn--primary:hover{ background:var(--rust); border-color:var(--rust); }
+.btn--primary{ background:var(--lime); border-color:var(--lime); color:var(--paper); }
+.btn--primary:hover{ background:#91A33E; border-color:#91A33E; }
 
 .pkg-note{ margin-top:var(--sp-4); max-width:60ch; color:var(--ink-soft); }
 
@@ -795,6 +794,31 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 .pigment-trail{ position:fixed; inset:0; z-index:8; pointer-events:none; mix-blend-mode:multiply; }
 
 /* ===========================================================================
+   SIDE NAVIGATION  ·  dot + label, right rail, desktop only
+   =========================================================================== */
+.side-nav{
+  position:fixed; right:1.4rem; top:50%; transform:translateY(-50%);
+  z-index:19; display:flex; flex-direction:column; gap:.55rem; align-items:flex-end;
+  pointer-events:none;
+}
+@media (max-width:1120px){ .side-nav{ display:none; } }
+.side-nav a{
+  display:flex; align-items:center; gap:.5rem; pointer-events:all;
+  color:var(--ink-soft); opacity:.35; transition:opacity .3s var(--ease);
+}
+.side-nav a:hover, .side-nav a.active{ opacity:1; }
+.side-nav .snl{
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.12em; text-transform:uppercase;
+  white-space:nowrap; opacity:0; transition:opacity .2s var(--ease);
+}
+.side-nav a:hover .snl, .side-nav a.active .snl{ opacity:1; }
+.side-nav .snd{
+  width:5px; height:5px; border-radius:50%; background:currentColor; flex:0 0 auto;
+  transition:width .25s var(--ease), border-radius .25s var(--ease), background .25s var(--ease);
+}
+.side-nav a.active .snd{ width:14px; border-radius:3px; background:var(--lime); }
+
+/* ===========================================================================
    REDUCED MOTION
    =========================================================================== */
 @media (prefers-reduced-motion:reduce){
@@ -830,7 +854,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   </filter>
   <filter id="wcWobble" x="-6%" y="-6%" width="112%" height="112%">
     <feTurbulence type="fractalNoise" baseFrequency="0.012 0.016" numOctaves="2" seed="11" result="n"/>
-    <feDisplacementMap in="SourceGraphic" in2="n" scale="10" xChannelSelector="R" yChannelSelector="G"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G"/>
   </filter>
 </svg>
 
@@ -842,9 +866,6 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 
 <div class="grain" aria-hidden="true"><svg width="100%" height="100%"><rect width="100%" height="100%" filter="url(#grainFilter)"/></svg></div>
 
-<!-- pigment trail that eases after the cursor (desktop, painted in JS) -->
-<canvas class="pigment-trail" aria-hidden="true"></canvas>
-
 <!-- reading progress: a thin pigment seam along the top -->
 <div class="read-line" aria-hidden="true"></div>
 
@@ -855,6 +876,19 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   </a>
 </header>
 <a class="enquire-link" href="#enquiry">Enquire</a>
+
+<nav class="side-nav" aria-label="Page sections">
+  <a href="#why" data-nav="why"><span class="snl">Why</span><span class="snd"></span></a>
+  <a href="#night" data-nav="night"><span class="snl">On the night</span><span class="snd"></span></a>
+  <a href="#process" data-nav="process"><span class="snl">How it works</span><span class="snd"></span></a>
+  <a href="#work" data-nav="work"><span class="snl">The work</span><span class="snd"></span></a>
+  <a href="#studio" data-nav="studio"><span class="snl">In motion</span><span class="snd"></span></a>
+  <a href="#painter" data-nav="painter"><span class="snl">The painter</span><span class="snd"></span></a>
+  <a href="#offerings" data-nav="offerings"><span class="snl">Packages</span><span class="snd"></span></a>
+  <a href="#beyond" data-nav="beyond"><span class="snl">Beyond weddings</span><span class="snd"></span></a>
+  <a href="#faq" data-nav="faq"><span class="snl">Questions</span><span class="snd"></span></a>
+  <a href="#enquiry" data-nav="enquiry"><span class="snl">Enquire</span><span class="snd"></span></a>
+</nav>
 
 <main id="top">
 
@@ -878,17 +912,6 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
                alt="" width="589" height="717" decoding="async" fetchpriority="high" />
         </picture>
       </div>
-    </div>
-
-    <!-- petals of pigment drifting up on landing, in the painting's palette -->
-    <div class="hero-motes" aria-hidden="true">
-      <span style="left:8%;  width:46px; height:46px; border-radius:50%;            background:radial-gradient(circle at 40% 40%, var(--magenta), transparent 70%); animation-delay:0s;   animation-duration:16s;"></span>
-      <span style="left:20%; width:30px; height:30px; border-radius:38% 62% 55% 45%; background:radial-gradient(circle at 50% 50%, var(--orange), transparent 72%);  animation-delay:-6s;  animation-duration:18s;"></span>
-      <span style="left:34%; width:22px; height:22px; border-radius:50%;            background:radial-gradient(circle at 50% 50%, var(--teal), transparent 72%);    animation-delay:-11s; animation-duration:14s;"></span>
-      <span style="left:48%; width:38px; height:38px; border-radius:60% 40% 50% 50%; background:radial-gradient(circle at 45% 45%, var(--gold), transparent 72%);    animation-delay:-3s;  animation-duration:20s;"></span>
-      <span style="left:63%; width:26px; height:26px; border-radius:50%;            background:radial-gradient(circle at 50% 50%, var(--blush), transparent 72%);   animation-delay:-9s;  animation-duration:17s;"></span>
-      <span style="left:76%; width:34px; height:34px; border-radius:45% 55% 60% 40%; background:radial-gradient(circle at 50% 50%, var(--orange), transparent 70%);  animation-delay:-14s; animation-duration:19s;"></span>
-      <span style="left:88%; width:20px; height:20px; border-radius:50%;            background:radial-gradient(circle at 50% 50%, var(--magenta), transparent 72%); animation-delay:-2s;  animation-duration:15s;"></span>
     </div>
 
     <div class="hero-copy">
@@ -1094,7 +1117,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     <div class="wrap">
       <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Packages</span>
       <h2 class="h2 reveal" data-morph data-wght="320">One base package, <em>shaped around your day.</em></h2>
-      <p class="pkg-intro reveal" data-delay="1">I start from one live package and build on it with you. Everything is painted at your wedding on 300gsm cotton-rag paper, with a couple portrait painted on the night and left with you, and high-resolution scans of every piece. I quote guest coverage honestly: a chosen, happy subset of the room, not every single guest.</p>
+      <p class="pkg-intro reveal" data-delay="1">Everything is painted at your wedding on 300gsm cotton-rag paper, with a couple portrait painted on the night and left with you, and high-resolution scans of every piece.</p>
 
       <div class="pkgs reveal" data-delay="1">
         <article class="pkg pkg--base">
@@ -1118,7 +1141,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
       <!-- INCLUDED AS STANDARD -->
       <div class="included reveal">
         <h3>Included as standard</h3>
-        <p class="sub">Everything below comes with the base package. Nothing to source or set up at your end beyond a table and a chair.</p>
+        <p class="sub">Everything below comes with the base package. You provide one table (around 100 × 60 cm, at seated height, with a front-facing chair able to tuck underneath) and a chair for me. Everything else I bring.</p>
         <ul class="incl-grid">
           <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#7E8B62"/></svg>All drawing and painting materials</li>
           <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#7E8B62"/></svg>Custom-designed A5 templates</li>
@@ -1144,12 +1167,12 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
         <div class="addon">
           <h4>Family portrait, A3</h4>
           <p>The two of you with your immediate family, painted larger on A3 from photographs you provide after the day.</p>
-          <span class="tag price">$600</span>
+          <span class="tag price">$500</span>
         </div>
         <div class="addon">
           <h4>Bridal party, A3</h4>
           <p>A group portrait of the bridal party on A3, commemorating the people closest to you on the day.</p>
-          <span class="tag price">$600</span>
+          <span class="tag price">$500</span>
         </div>
         <div class="addon">
           <h4>Spot illustrations</h4>
@@ -1176,16 +1199,12 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
           <p>Regional Victoria and destination weddings beyond metropolitan Melbourne, gladly discussed.</p>
           <span class="tag">On enquiry</span>
         </div>
-      </div>
-
-      <figure class="addon-feature reveal">
-        <div class="af-img frame"><picture><source srcset="assets/art-bouquet.webp" type="image/webp" /><img src="assets/art-bouquet.jpg" alt="Watercolour illustration of a bridal bouquet in full bloom, with rust ribbon, orange roses and forget-me-not blue on cotton-rag paper" loading="lazy" width="1600" height="1200" /></picture></div>
-        <figcaption class="af-body">
+        <div class="addon">
           <h4>Wedding bouquet illustration</h4>
-          <p>A painting of your bouquet in full bloom, worked up from your photographs after the day. A quiet floral keepsake of the flowers you carried, holding its colour long after the real ones have faded.</p>
-          <span class="tag price">$400</span>
-        </figcaption>
-      </figure>
+          <p>Your bouquet in full bloom, painted from photographs after the day. A floral keepsake on A3 cotton-rag paper; A2 available on request.</p>
+          <span class="tag price"><small>A3 from</small>$550 <small style="margin-left:.5rem">· A2 on enquiry</small></span>
+        </div>
+      </div>
 
       <p class="licence-note reveal"><b>A note on style.</b> My work is an interpretation, not a literal likeness, and my style keeps evolving, so no two pieces are exact replicas. Booking assumes you are happy with that creative freedom. A 50% deposit holds your date, with the balance due two weeks before the day.</p>
     </div>
@@ -1807,10 +1826,26 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     })();
   }
 
+  /* ---- side navigation: dots track the active section ---- */
+  function runSideNav(){
+    const links = Array.from(document.querySelectorAll('.side-nav a'));
+    if(!links.length) return;
+    const sections = links.map(a => ({ link: a, el: document.querySelector(a.getAttribute('href')) })).filter(s => s.el);
+    function update(){
+      const threshold = window.scrollY + window.innerHeight * 0.4;
+      let current = sections[0];
+      sections.forEach(s => { if(s.el.offsetTop <= threshold) current = s; });
+      links.forEach(a => a.classList.remove('active'));
+      if(current) current.link.classList.add('active');
+    }
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  }
+
   /* ---- boot ---- */
   function boot(){
     runHeroGL(); runReveals(); runFaq(); runVideos(); runInstagram(); runForm(); runMotion();
-    runWordReveal(); runChrome(); runVelocity(); runMagnetic(); runCursorTrail();
+    runChrome(); runMagnetic(); runSideNav();
   }
   if(document.readyState!=="loading") boot();
   else document.addEventListener("DOMContentLoaded", boot);
