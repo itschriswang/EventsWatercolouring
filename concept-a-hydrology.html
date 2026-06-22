@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- ============================================================
+     CONCEPT A  ·  HYDROLOGY
+     Christopher Wang  ·  Live wedding watercolour, Sydney
+     Proof of concept. Hero + intro + work marquee + packages + footer.
+
+     Governing idea: the page is wet paper. A live pigment field
+     blooms and decays behind a disciplined single column. The
+     cursor drags a pigment trail; scrolling injects washes.
+     All heavy motion is disabled under prefers-reduced-motion.
+     ============================================================ -->
+
+<title>Christopher Wang · Live Wedding Watercolour · Sydney</title>
+<meta name="description" content="Christopher Wang paints weddings live in watercolour across Sydney: guest keepsakes on the day and a framed couple portrait. Studio commissions from photographs." />
+
+<!-- Basic on-page SEO -->
+<meta property="og:title" content="Christopher Wang · Live Wedding Watercolour" />
+<meta property="og:description" content="Wedding watercolour portraits painted live in the room, in Sydney." />
+<meta property="og:type" content="website" />
+
+<!-- Type: Fraunces (characterful high-contrast serif) + Hanken Grotesk (warm body) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Hanken+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ----------------------------------------------------------------
+   TOKENS
+   Warm filmic palette on a paper base. Never pure black, no cool grey.
+---------------------------------------------------------------- */
+:root{
+  --paper:#F4EFE6;          /* warm bone base            */
+  --paper-deep:#ECE4D6;     /* slightly settled paper    */
+  --ink:#2A2724;            /* soft charcoal, never black */
+  --ink-soft:#6A625A;       /* muted ink for captions    */
+  --terracotta:#C0664A;     /* wash accent               */
+  --sage:#7E8B6F;           /* wash accent               */
+  --dusty:#6E8497;          /* wash accent, used sparingly*/
+  --ochre:#C79A4E;          /* wash accent               */
+
+  --maxw:1180px;
+  --gutter:clamp(20px,5vw,64px);
+
+  --serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --sans:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{ -webkit-text-size-adjust:100% }
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-weight:400;
+  line-height:1.65;
+  font-size:clamp(16px,1.05vw + 12px,18px);
+  letter-spacing:.005em;
+  overflow-x:hidden;
+}
+
+/* Paper grain + faint film grain, painted with one SVG turbulence each.
+   Both sit above the canvas but below content, very low opacity. */
+.grain{position:fixed;inset:0;pointer-events:none;z-index:2;mix-blend-mode:multiply}
+.grain--paper{opacity:.10}
+.grain--film{opacity:.05;mix-blend-mode:overlay}
+
+/* The live pigment canvas fills the viewport and sits furthest back.
+   A gentle blur keeps every pigment edge wet rather than hard. */
+#pigment{
+  position:fixed;inset:0;z-index:0;width:100%;height:100%;
+  filter:blur(7px) saturate(108%);
+  pointer-events:none;
+}
+
+/* Content sits above the wet field */
+.shell{position:relative;z-index:3}
+
+/* ---------- type ---------- */
+h1,h2,h3{font-family:var(--serif);font-weight:400;line-height:1.02;margin:0;letter-spacing:-.01em}
+.display{
+  font-size:clamp(3.1rem,12vw,9.5rem);
+  font-optical-sizing:auto;
+  font-weight:340;
+}
+.display em{font-style:italic;font-weight:380}
+.eyebrow{
+  font-family:var(--sans);font-size:.72rem;font-weight:600;
+  letter-spacing:.34em;text-transform:uppercase;color:var(--ink-soft);
+}
+p{margin:0 0 1.1em}
+a{color:inherit}
+
+/* ---------- header ---------- */
+.masthead{
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px var(--gutter);
+  mix-blend-mode:multiply;
+}
+.wordmark{
+  font-family:var(--serif);font-size:1.15rem;letter-spacing:.02em;
+  text-decoration:none;font-weight:420;
+}
+.wordmark span{font-style:italic}
+.enquire-link{
+  font-family:var(--sans);font-size:.78rem;font-weight:600;
+  letter-spacing:.18em;text-transform:uppercase;text-decoration:none;
+  padding:.55em 1.1em;border:1px solid var(--ink);border-radius:100px;
+  transition:background .4s var(--ease),color .4s var(--ease);
+}
+.enquire-link:hover{background:var(--ink);color:var(--paper)}
+
+/* ---------- hero ---------- */
+.hero{
+  min-height:100svh;display:grid;align-content:center;
+  padding:8rem var(--gutter) 4rem;
+  max-width:var(--maxw);margin-inline:auto;
+}
+.hero__kicker{margin-bottom:1.6rem}
+.hero h1{max-width:14ch;margin-bottom:1.6rem}
+.hero__lead{max-width:34ch;font-size:1.18rem;color:var(--ink);opacity:.9}
+
+/* Hero portrait that "paints in" through an animated wet mask.
+   Placeholder block, clearly labelled, ready to swap for a real scan. */
+.hero__portrait{
+  position:relative;margin-top:3rem;max-width:520px;aspect-ratio:4/5;
+  border-radius:2px;overflow:hidden;
+  /* Wet mask: a soft irregular reveal driven on load */
+  -webkit-mask:radial-gradient(140% 120% at 30% 20%,#000 0,#000 var(--wash,0%),transparent calc(var(--wash,0%) + 18%));
+          mask:radial-gradient(140% 120% at 30% 20%,#000 0,#000 var(--wash,0%),transparent calc(var(--wash,0%) + 18%));
+}
+.placeholder{
+  position:absolute;inset:0;display:grid;place-content:center;text-align:center;
+  background:
+    linear-gradient(135deg,rgba(192,102,74,.20),rgba(110,132,151,.20) 60%,rgba(126,139,111,.22)),
+    var(--paper-deep);
+  color:var(--ink-soft);
+}
+.placeholder b{display:block;font-family:var(--sans);font-weight:600;font-size:.7rem;letter-spacing:.26em;text-transform:uppercase}
+.placeholder small{font-size:.78rem;max-width:24ch;margin-top:.5rem;line-height:1.4}
+
+/* scroll cue */
+.cue{margin-top:3.4rem;font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-soft)}
+.cue::before{content:"";display:inline-block;width:46px;height:1px;background:var(--ink-soft);vertical-align:middle;margin-right:.8em}
+
+/* ---------- generic section ---------- */
+.section{max-width:var(--maxw);margin-inline:auto;padding:clamp(5rem,12vh,9rem) var(--gutter)}
+.reveal{opacity:0;transform:translateY(26px);filter:blur(6px);transition:opacity 1s var(--ease),transform 1s var(--ease),filter 1s var(--ease)}
+.reveal.in{opacity:1;transform:none;filter:none}
+
+/* intro */
+.intro{display:grid;gap:2rem}
+.intro__big{font-family:var(--serif);font-size:clamp(1.7rem,4.4vw,3rem);line-height:1.16;max-width:22ch;font-weight:330}
+.intro__big em{font-style:italic;color:var(--terracotta)}
+.intro__body{max-width:46ch;color:var(--ink-soft)}
+@media(min-width:820px){
+  .intro{grid-template-columns:1.3fr 1fr;align-items:end;gap:4rem}
+}
+
+/* work marquee: a horizontal drift that reacts to scroll velocity */
+.work{padding-block:clamp(4rem,9vh,7rem)}
+.work__head{max-width:var(--maxw);margin:0 auto 2.4rem;padding-inline:var(--gutter);display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap}
+.work__head h2{font-size:clamp(1.8rem,5vw,3.2rem)}
+.marquee{overflow:hidden;width:100%;-webkit-mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.marquee__track{display:flex;gap:clamp(16px,2.4vw,34px);width:max-content;will-change:transform}
+.plate{flex:0 0 auto;width:clamp(220px,30vw,340px)}
+.plate__img{aspect-ratio:4/5;border-radius:2px;overflow:hidden;position:relative}
+.plate figcaption{margin-top:.7rem;font-size:.82rem;color:var(--ink-soft);max-width:30ch}
+.plate figcaption b{display:block;color:var(--ink);font-weight:600;font-size:.78rem;letter-spacing:.04em}
+
+/* packages, rendered as soft washes rather than hard cards */
+.packages{display:grid;gap:1px;background:rgba(106,98,90,.22);border:1px solid rgba(106,98,90,.22);border-radius:3px;overflow:hidden}
+.pack{background:var(--paper);padding:clamp(1.6rem,4vw,2.6rem);position:relative}
+.pack--feature{background:linear-gradient(180deg,rgba(199,154,78,.12),var(--paper))}
+.pack__row{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap}
+.pack h3{font-size:clamp(1.5rem,3.6vw,2.1rem)}
+.pack__price{font-family:var(--serif);font-style:italic;font-size:1.3rem;white-space:nowrap}
+.pack__tag{font-size:.66rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--terracotta);border:1px solid currentColor;border-radius:100px;padding:.3em .8em;margin-left:.6rem}
+.pack ul{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;gap:.5rem;color:var(--ink-soft);font-size:.95rem}
+.pack li{padding-left:1.4em;position:relative}
+.pack li::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--sage),rgba(126,139,111,.4))}
+@media(min-width:760px){.packages{grid-template-columns:repeat(3,1fr)}}
+.included{margin-top:1.6rem;color:var(--ink-soft);font-size:.9rem;max-width:60ch}
+
+.section__lead{max-width:34ch;color:var(--ink-soft);margin-top:.8rem}
+
+/* CTA band */
+.cta-band{text-align:center;padding-block:clamp(5rem,12vh,9rem)}
+.cta-band h2{font-size:clamp(2.2rem,7vw,5rem);margin-bottom:1.4rem}
+.cta-band em{font-style:italic;color:var(--terracotta)}
+.btn{
+  display:inline-block;font-family:var(--sans);font-weight:600;font-size:.84rem;
+  letter-spacing:.16em;text-transform:uppercase;text-decoration:none;
+  padding:1em 2.2em;border-radius:100px;background:var(--ink);color:var(--paper);
+  transition:transform .4s var(--ease),box-shadow .4s var(--ease);
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px -12px rgba(42,39,36,.6)}
+.btn:focus-visible{outline:3px solid var(--terracotta);outline-offset:3px}
+
+/* footer */
+footer{border-top:1px solid rgba(106,98,90,.22);margin-top:3rem}
+.foot{max-width:var(--maxw);margin-inline:auto;padding:3rem var(--gutter);display:grid;gap:1.6rem}
+.foot__top{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap}
+.foot__word{font-family:var(--serif);font-size:1.4rem}
+.foot__links{display:flex;gap:1.4rem;flex-wrap:wrap;font-size:.86rem}
+.foot__links a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .3s,color .3s}
+.foot__links a:hover{color:var(--ink);border-color:var(--ink)}
+.foot small{color:var(--ink-soft);font-size:.78rem}
+
+/* focus visibility everywhere */
+a:focus-visible,button:focus-visible{outline:3px solid var(--terracotta);outline-offset:3px;border-radius:2px}
+
+/* ----------------------------------------------------------------
+   REDUCED MOTION: settle everything, hide the live canvas,
+   show final states. No trail, no drift, no blur transitions.
+---------------------------------------------------------------- */
+@media (prefers-reduced-motion:reduce){
+  #pigment{display:none}
+  .hero__portrait{--wash:100% !important}
+  .reveal{opacity:1 !important;transform:none !important;filter:none !important;transition:none}
+  .marquee__track{animation:none !important}
+  *{scroll-behavior:auto !important}
+}
+</style>
+</head>
+<body>
+
+<!-- Hidden SVG filters: paper grain, film grain, and a wet wobble.
+     Reused by the .grain layers via CSS background and by edges. -->
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+  <filter id="paperGrain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter>
+  <filter id="filmGrain"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter>
+</svg>
+
+<!-- Grain overlays. SVG turbulence rendered to a div via filter. -->
+<div class="grain grain--paper" style="filter:url(#paperGrain)"></div>
+<div class="grain grain--film" style="filter:url(#filmGrain)"></div>
+
+<!-- Live pigment field -->
+<canvas id="pigment" aria-hidden="true"></canvas>
+
+<div class="shell">
+
+  <header class="masthead">
+    <a class="wordmark" href="#top">Christopher <span>Wang</span></a>
+    <a class="enquire-link" href="#enquire">Enquire</a>
+  </header>
+
+  <main id="top">
+
+    <!-- HERO -->
+    <section class="hero" aria-label="Introduction">
+      <p class="eyebrow hero__kicker">Live wedding watercolour · Sydney</p>
+      <h1 class="display">Painted <em>while</em> it happens</h1>
+      <p class="hero__lead">I set up in the room and paint your wedding as it unfolds. Guests leave with a small portrait in hand, and you keep a framed piece that holds the feeling of the night.</p>
+
+      <!-- HERO PORTRAIT · paints in on load through the wet mask -->
+      <figure class="hero__portrait" id="heroPortrait">
+        <div class="placeholder" role="img" aria-label="Placeholder for the hero wedding portrait">
+          <span>
+            <b>Placeholder image</b>
+            <small>Swap for the hero couple portrait, watercolour on cotton rag, ideally 4 by 5.</small>
+          </span>
+        </div>
+      </figure>
+
+      <p class="cue">Scroll to see the work</p>
+    </section>
+
+    <!-- INTRO -->
+    <section class="section" aria-label="About Christopher">
+      <div class="intro reveal">
+        <p class="intro__big">I trained as an architect before I came back to painting. I bring that same eye to a wedding, <em>composition first, restraint always</em>, and a warmth that holds the whole room.</p>
+        <div>
+          <p class="intro__body">Watercolour rewards speed and nerve, which suits a live day. I work quickly and quietly at the edge of the celebration, reading faces and light, and the painting becomes part of the evening rather than a service tucked away in a corner.</p>
+          <p class="intro__body">Everything is made by hand on archival cotton-rag paper. Each guest piece is sleeved to take home, and you receive high-resolution scans of every finished work.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- THE WORK · drifting marquee that reacts to scroll velocity -->
+    <section class="work" aria-label="Selected work">
+      <div class="work__head reveal">
+        <h2>The work</h2>
+        <p class="section__lead">Live pieces from the day and studio commissions from photographs. Replace with final portfolio scans and captions.</p>
+      </div>
+      <div class="marquee" id="marquee">
+        <div class="marquee__track" id="marqueeTrack">
+          <!-- Plates are duplicated in script for a seamless loop.
+               Each .plate is a clearly marked image placeholder. -->
+        </div>
+      </div>
+    </section>
+
+    <!-- PACKAGES -->
+    <section class="section" id="packages" aria-label="Packages">
+      <div class="reveal">
+        <p class="eyebrow">Ways to book</p>
+        <h2 style="font-size:clamp(1.8rem,5vw,3.2rem);margin:.6rem 0 1.4rem">Three live packages</h2>
+      </div>
+
+      <div class="packages reveal">
+        <article class="pack">
+          <div class="pack__row"><h3>Intimate</h3><span class="pack__price">from $1,500</span></div>
+          <ul>
+            <li>Up to 4 hours painting live</li>
+            <li>Around 16 guest keepsakes</li>
+            <li>About 32 guests painted</li>
+          </ul>
+        </article>
+
+        <article class="pack pack--feature">
+          <div class="pack__row"><h3>Full Reception <span class="pack__tag">Most chosen</span></h3><span class="pack__price">from $2,400</span></div>
+          <ul>
+            <li>Up to 5 hours painting live</li>
+            <li>Around 20 guest keepsakes</li>
+            <li>About 40 guests painted</li>
+          </ul>
+        </article>
+
+        <article class="pack">
+          <div class="pack__row"><h3>Grand</h3><span class="pack__price">from $3,400</span></div>
+          <ul>
+            <li>Up to 6 hours painting live</li>
+            <li>Around 28 guest keepsakes</li>
+            <li>About 56 guests, with a painting assistant</li>
+          </ul>
+        </article>
+      </div>
+
+      <p class="included">Every package is painted live on archival cotton-rag paper and includes a framed couple portrait, high-resolution scans, each guest piece sleeved to take home, and travel within Greater Sydney. Studio commissions from photographs are priced on enquiry.</p>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-band" id="enquire" aria-label="Enquire">
+      <div class="reveal">
+        <h2 class="display" style="font-size:clamp(2.4rem,8vw,6rem)">Hold your <em>date</em></h2>
+        <p class="section__lead" style="margin:0 auto 2rem">I take a limited number of weddings each season. Tell me your date and venue and I will let you know what I have open.</p>
+        <!-- Links to the full enquiry form on the finished site -->
+        <a class="btn" href="mailto:hello@example.com?subject=Wedding%20watercolour%20enquiry">Start an enquiry</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="foot">
+      <div class="foot__top">
+        <span class="foot__word">Christopher Wang</span>
+        <nav class="foot__links" aria-label="Elsewhere">
+          <!-- Instagram is live. RedNote and email are placeholders. -->
+          <a href="https://www.instagram.com/christopherwangpaints" target="_blank" rel="noopener">Instagram</a>
+          <a href="#" aria-label="RedNote, link to be added">RedNote · TO ADD</a>
+          <a href="mailto:hello@example.com">hello@example.com · TO ADD</a>
+        </nav>
+      </div>
+      <small>Live wedding watercolour, painted across Greater Sydney. &copy; <span id="yr"></span> Christopher Wang. All works painted by hand.</small>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+/* ================================================================
+   HYDROLOGY · behaviour
+   1. Live pigment canvas (cursor trail + scroll blooms + load wash)
+   2. Hero "paint in" reveal
+   3. Work marquee with scroll-velocity drift
+   4. Section reveals via IntersectionObserver
+   5. Optional Lenis smooth scroll, guarded
+   All gated on prefers-reduced-motion.
+   ================================================================ */
+(function(){
+  "use strict";
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.getElementById("yr").textContent = new Date().getFullYear();
+
+  /* ---------- 3. build + animate the work marquee ---------- */
+  const captions = [
+    ["The first dance","Painted from the floor's edge, watercolour on cotton rag."],
+    ["A guest keepsake","Finished in minutes and sleeved to take home."],
+    ["Studio commission","From a single photograph, four weeks in the studio."],
+    ["The vows","Caught while the room held its breath."],
+    ["Long table, late light","The reception at golden hour."],
+    ["Two of you","The framed couple portrait, the piece you keep."]
+  ];
+  const washes = [
+    "linear-gradient(135deg,rgba(192,102,74,.34),rgba(110,132,151,.30))",
+    "linear-gradient(135deg,rgba(126,139,111,.34),rgba(199,154,78,.26))",
+    "linear-gradient(135deg,rgba(110,132,151,.34),rgba(192,102,74,.24))",
+    "linear-gradient(135deg,rgba(199,154,78,.30),rgba(126,139,111,.30))"
+  ];
+  const track = document.getElementById("marqueeTrack");
+  function buildPlate(i){
+    const f = document.createElement("figure");
+    f.className = "plate";
+    f.innerHTML =
+      '<div class="plate__img"><div class="placeholder" role="img" aria-label="Placeholder portrait, '+captions[i][0]+'">'
+      + '<span style="background:'+washes[i%washes.length]+';position:absolute;inset:0"></span>'
+      + '<span style="position:relative"><b>Placeholder</b></span></div></div>'
+      + '<figcaption><b>'+captions[i][0]+'</b>'+captions[i][1]+'</figcaption>';
+    return f;
+  }
+  // two sets for a seamless loop
+  for(let pass=0;pass<2;pass++){
+    for(let i=0;i<captions.length;i++) track.appendChild(buildPlate(i));
+  }
+
+  let marqueeX = 0, baseSpeed = 0.4, velBoost = 0, half = 0;
+  function measure(){ half = track.scrollWidth/2; }
+  measure(); window.addEventListener("resize", measure);
+
+  /* ---------- 1. pigment canvas ---------- */
+  const cv = document.getElementById("pigment");
+  const ctx = cv.getContext("2d", { alpha:true });
+  let W=0,H=0,dpr=1, drops=[];
+  function size(){
+    dpr = Math.min(window.devicePixelRatio||1, 2);
+    W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = Math.floor(W*dpr); cv.height = Math.floor(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    // lay down the paper base so the very first frame is not transparent
+    ctx.fillStyle = "#F4EFE6"; ctx.fillRect(0,0,W,H);
+  }
+  const COLORS = ["192,102,74","110,132,151","126,139,111","199,154,78"];
+  function addDrop(x,y,r,a){
+    drops.push({x,y,r:0,maxR:r,a,c:COLORS[(Math.random()*COLORS.length)|0],grow:0.6+Math.random()*0.7});
+  }
+  // bloom helper for a cluster
+  function bloom(x,y,n,spread,size){
+    for(let i=0;i<n;i++){
+      addDrop(x+(Math.random()-.5)*spread, y+(Math.random()-.5)*spread, size*(0.6+Math.random()), 0.05+Math.random()*0.05);
+    }
+  }
+
+  function frame(){
+    // decay: wash a translucent paper veil over everything so old pigment fades
+    ctx.fillStyle = "rgba(244,239,230,0.045)";
+    ctx.fillRect(0,0,W,H);
+    // draw drops
+    for(let i=drops.length-1;i>=0;i--){
+      const d = drops[i];
+      d.r += (d.maxR - d.r)*0.05*d.grow;
+      d.a *= 0.992;
+      const g = ctx.createRadialGradient(d.x,d.y,0,d.x,d.y,d.r);
+      g.addColorStop(0,"rgba("+d.c+","+d.a+")");
+      g.addColorStop(1,"rgba("+d.c+",0)");
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2); ctx.fill();
+      if(d.a < 0.004) drops.splice(i,1);
+    }
+    // cap the population for performance
+    if(drops.length>260) drops.splice(0,drops.length-260);
+
+    // marquee transport, driven here so it shares one rAF
+    velBoost *= 0.92;
+    marqueeX -= (baseSpeed + velBoost);
+    if(half && -marqueeX >= half) marqueeX += half;
+    track.style.transform = "translate3d("+marqueeX+"px,0,0)";
+
+    raf = requestAnimationFrame(frame);
+  }
+
+  let raf=null;
+  function start(){ if(!raf) raf=requestAnimationFrame(frame); }
+  function stop(){ if(raf){ cancelAnimationFrame(raf); raf=null; } }
+
+  if(!reduce){
+    size(); window.addEventListener("resize", size);
+    start();
+
+    // cursor pigment trail (desktop pointers only)
+    let lastT=0;
+    window.addEventListener("pointermove",(e)=>{
+      if(e.pointerType==="touch") return;
+      const now=performance.now();
+      if(now-lastT<16) return; lastT=now;
+      addDrop(e.clientX, e.clientY, 26+Math.random()*22, 0.05);
+    },{passive:true});
+
+    // scroll injects washes along a band, and speeds the marquee
+    let lastY=window.scrollY;
+    window.addEventListener("scroll",()=>{
+      const y=window.scrollY, dv=y-lastY; lastY=y;
+      velBoost = Math.min(7, Math.abs(dv)*0.18);
+      if(Math.abs(dv)>4){
+        bloom(Math.random()*W, (window.innerHeight*0.5)+(Math.random()-.5)*120, 2, 220, 60);
+      }
+    },{passive:true});
+
+    // pause when the tab is hidden
+    document.addEventListener("visibilitychange",()=>{ document.hidden?stop():start(); });
+
+    // opening wash on load
+    window.addEventListener("load",()=>{
+      const hx=W*0.32, hy=H*0.52;
+      bloom(hx,hy,10,360,90);
+      setTimeout(()=>bloom(W*0.7,H*0.4,6,300,80),250);
+    });
+  }
+
+  /* ---------- 2. hero paints in ---------- */
+  const hero = document.getElementById("heroPortrait");
+  if(reduce){ hero.style.setProperty("--wash","100%"); }
+  else{
+    let v=0; const tick=()=>{ v+=(100-v)*0.03; hero.style.setProperty("--wash",v.toFixed(1)+"%"); if(v<99.4) requestAnimationFrame(tick); };
+    // small delay so the wash feels like it lands
+    setTimeout(()=>requestAnimationFrame(tick),300);
+  }
+
+  /* ---------- 4. reveals ---------- */
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target);} });
+  },{threshold:.18});
+  document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+
+  /* ---------- 5. Lenis smooth scroll, optional + guarded ---------- */
+  if(!reduce){
+    const s=document.createElement("script");
+    s.src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js";
+    s.onload=()=>{ try{
+      const lenis=new Lenis({lerp:.09,wheelMultiplier:.95});
+      function rl(t){ lenis.raf(t); requestAnimationFrame(rl); } requestAnimationFrame(rl);
+      // anchor links go through Lenis
+      document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener("click",ev=>{
+        const id=a.getAttribute("href"); if(id.length>1){ ev.preventDefault(); lenis.scrollTo(id,{offset:-20}); }
+      }));
+    }catch(e){/* native scroll remains */} };
+    s.onerror=()=>{/* CDN blocked, native scroll remains */};
+    document.head.appendChild(s);
+  }
+})();
+</script>
+</body>
+</html>

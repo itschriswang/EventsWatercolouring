@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- ============================================================
+     CONCEPT D  ·  THE REEL
+     Christopher Wang  ·  Live wedding watercolour, Sydney
+     Proof of concept. Scenes: hero, the work (film strip),
+     moving work (Instagram reels), packages (billing), enquiry form.
+
+     Governing idea: the site behaves like a film. Full-frame scenes
+     cut to one another with ink-spread wipes, timecode annotations,
+     a drifting film strip, and his designer-art-toy watercolour reels
+     embedded as the moving work. This concept also carries the
+     working enquiry form.
+     ============================================================ -->
+
+<title>Christopher Wang · Live Wedding Watercolour · Sydney</title>
+<meta name="description" content="Christopher Wang paints Sydney weddings live in watercolour, frame by frame. Guest keepsakes on the day, a framed couple portrait, studio commissions from photographs." />
+<meta property="og:title" content="Christopher Wang · Live Wedding Watercolour" />
+<meta property="og:type" content="website" />
+
+<!-- Type: Bodoni Moda (cinematic Didone) + Space Mono (timecodes) + Hanken Grotesk (body) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Hanken+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* ----------------------------------------------------------------
+   TOKENS · warm paper that turns filmic and deep at the frame edges.
+   Stronger grain than the other concepts for a cinema feel.
+---------------------------------------------------------------- */
+:root{
+  --paper:#F2ECE0;
+  --frame:#211E1A;          /* deep filmic frame / letterbox */
+  --ink:#2A2723;
+  --ink-soft:#736A5E;
+  --cream:#F7F2E8;
+  --terracotta:#C2664A;
+  --ochre:#C99A4B;
+  --sage:#7E8B6F;
+
+  --didone:"Bodoni Moda",Georgia,serif;
+  --mono:"Space Mono",ui-monospace,monospace;
+  --body:"Hanken Grotesk",system-ui,sans-serif;
+
+  --gutter:clamp(18px,4.5vw,60px);
+  --maxw:1280px;
+  --ease:cubic-bezier(.16,.7,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-weight:400;line-height:1.65;
+  font-size:clamp(16px,1vw + 12px,18px);
+  -webkit-text-size-adjust:100%;overflow-x:hidden;
+}
+
+/* film grain, slightly stronger here */
+.grain{position:fixed;inset:0;z-index:80;pointer-events:none;opacity:.09;mix-blend-mode:multiply;filter:url(#dGrain)}
+
+/* persistent timecode HUD, like a film transport readout */
+.hud{position:fixed;left:var(--gutter);bottom:14px;z-index:70;font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;color:var(--ink-soft);mix-blend-mode:multiply}
+.hud b{color:var(--terracotta);font-weight:700}
+
+/* ---------- header ---------- */
+.masthead{position:fixed;top:0;left:0;right:0;z-index:70;display:flex;justify-content:space-between;align-items:center;padding:12px var(--gutter);mix-blend-mode:multiply}
+.wordmark{font-family:var(--didone);font-size:1.2rem;font-weight:500;letter-spacing:.04em;text-decoration:none;color:var(--ink)}
+.wordmark i{font-style:italic;font-weight:400}
+.enq{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;color:var(--ink);border:1px solid var(--ink);padding:.5em .9em}
+.enq:hover{background:var(--ink);color:var(--cream)}
+
+/* ----------------------------------------------------------------
+   SCENE · a full frame with a 2.39:1 letterboxed stage.
+   Content reveals with an ink-spread wipe as the scene plays.
+---------------------------------------------------------------- */
+.scene{position:relative;padding:clamp(4.5rem,11vh,8rem) var(--gutter);max-width:var(--maxw);margin-inline:auto}
+.slate{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);display:flex;gap:1.2rem;flex-wrap:wrap;border-bottom:1px solid rgba(115,106,94,.4);padding-bottom:.7rem;margin-bottom:2.4rem}
+.slate b{color:var(--ink)}
+
+/* ink-spread wipe: an overlay that clears to reveal the scene body */
+.wipe{position:relative}
+.wipe__body{opacity:0;filter:blur(8px);transform:scale(.992);transition:opacity 1s var(--ease),filter 1s var(--ease),transform 1s var(--ease)}
+.wipe.play .wipe__body{opacity:1;filter:none;transform:none}
+.wipe__ink{position:absolute;inset:0;background:var(--paper);z-index:3;pointer-events:none;
+  -webkit-mask:radial-gradient(120% 120% at 20% 30%,transparent 0,transparent var(--m,0%),#000 calc(var(--m,0%) + 16%));
+          mask:radial-gradient(120% 120% at 20% 30%,transparent 0,transparent var(--m,0%),#000 calc(var(--m,0%) + 16%));
+}
+
+/* ---------- HERO scene ---------- */
+.hero{height:100svh;display:grid;align-content:center;max-width:var(--maxw);margin-inline:auto;padding:6rem var(--gutter) 4rem;position:relative}
+/* letterbox bars that draw in on load */
+.bar{position:fixed;left:0;right:0;height:6vh;background:var(--frame);z-index:60;transform:scaleY(0);transform-origin:center;transition:transform 1s var(--ease)}
+.bar--top{top:0;transform-origin:top}
+.bar--bottom{bottom:0;transform-origin:bottom}
+body.rolling .bar{transform:scaleY(1)}
+.hero__title{font-family:var(--didone);font-weight:400;font-size:clamp(3rem,12vw,9.5rem);line-height:.95;letter-spacing:-.005em;margin:1.4rem 0 0}
+.hero__title em{font-style:italic}
+.hero__title .ln{display:block;overflow:hidden}
+.hero__title .ln span{display:block;transform:translateY(110%);transition:transform .9s var(--ease)}
+body.rolling .hero__title .ln span{transform:none}
+.hero__title .ln:nth-child(2) span{transition-delay:.08s}
+.hero__title .ln:nth-child(3) span{transition-delay:.16s}
+.hero__sub{font-family:var(--body);max-width:38ch;margin-top:1.8rem;font-size:1.1rem;color:var(--ink);opacity:0;transition:opacity 1s var(--ease) .5s}
+body.rolling .hero__sub{opacity:.92}
+.hero__credit{position:absolute;right:var(--gutter);bottom:8vh;font-family:var(--mono);font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);text-align:right;opacity:0;transition:opacity 1s ease .8s}
+body.rolling .hero__credit{opacity:1}
+
+/* ---------- film strip (the work) ---------- */
+.strip-head{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap;margin-bottom:1.8rem}
+.strip-head h2{font-family:var(--didone);font-weight:400;font-size:clamp(1.9rem,6vw,3.4rem);margin:0}
+.strip-head p{color:var(--ink-soft);max-width:30ch;font-size:.9rem}
+.filmstrip{position:relative;width:100vw;left:50%;transform:translateX(-50%);background:var(--frame);padding:18px 0;border-block:2px solid #100e0c}
+/* sprocket holes top and bottom */
+.filmstrip::before,.filmstrip::after{content:"";position:absolute;left:0;right:0;height:14px;background-image:repeating-linear-gradient(90deg,transparent 0 18px,#0d0b09 18px 30px);opacity:.7}
+.filmstrip::before{top:2px}.filmstrip::after{bottom:2px}
+.filmstrip__track{display:flex;gap:10px;width:max-content;will-change:transform;padding:10px 0}
+.frame{flex:0 0 auto;width:clamp(180px,26vw,260px)}
+.frame__img{aspect-ratio:4/5;position:relative;overflow:hidden;background:#15130f;outline:1px solid rgba(247,242,232,.12)}
+.frame figcaption{margin-top:8px;font-family:var(--mono);font-size:.6rem;letter-spacing:.04em;color:#cfc6b6;display:flex;justify-content:space-between;gap:8px}
+.frame figcaption b{color:#fff;font-weight:400;text-transform:none}
+
+/* ---------- moving work (Instagram reels) ---------- */
+.reels-head{max-width:46ch}
+.reels-head h2{font-family:var(--didone);font-weight:400;font-size:clamp(1.9rem,6vw,3.4rem);margin:0 0 .6rem}
+.reels-head p{color:var(--ink-soft)}
+.reels{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-top:2.4rem}
+.reel{position:relative}
+/* Instagram official embed. The blockquote is replaced by an iframe
+   when //www.instagram.com/embed.js runs on the live hosted site.
+   Until then (and offline) the marked fallback poster below shows. */
+.instagram-media{margin:0 !important;min-width:auto !important}
+.reel__fallback{position:relative;aspect-ratio:9/16;border-radius:4px;overflow:hidden;display:grid;place-content:end;padding:14px;color:var(--cream);text-decoration:none;outline:1px solid rgba(0,0,0,.08)}
+.reel__fallback::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(20,17,14,.7))}
+.reel__play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;background:rgba(247,242,232,.92);display:grid;place-content:center;z-index:2}
+.reel__play::before{content:"";border-left:16px solid var(--frame);border-top:10px solid transparent;border-bottom:10px solid transparent;margin-left:4px}
+.reel__meta{position:relative;z-index:2}
+.reel__meta b{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;display:block;opacity:.85}
+.reel__meta span{font-family:var(--didone);font-size:1rem}
+.reels__note{font-family:var(--mono);font-size:.62rem;color:var(--ink-soft);margin-top:1.4rem;letter-spacing:.04em}
+
+/* ---------- packages (billing block / credits) ---------- */
+.billing{display:grid;gap:1px;background:rgba(115,106,94,.35);border:1px solid rgba(115,106,94,.35)}
+.bill{background:var(--paper);padding:clamp(1.4rem,3.6vw,2.4rem);display:grid;grid-template-columns:1fr auto;gap:.4rem 1.4rem;align-items:baseline}
+.bill__name{font-family:var(--didone);font-size:clamp(1.4rem,4vw,2rem)}
+.bill__name em{font-style:italic}
+.bill__from{font-family:var(--mono);font-weight:700;white-space:nowrap}
+.bill__meta{grid-column:1/-1;color:var(--ink-soft);font-size:.92rem}
+.bill--feature{background:linear-gradient(90deg,rgba(201,154,75,.14),var(--paper))}
+.bill__tag{font-family:var(--mono);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--terracotta);margin-left:.7em}
+.included-note{margin-top:1.4rem;color:var(--ink-soft);font-size:.92rem;max-width:66ch}
+
+/* ---------- enquiry form ---------- */
+.enquire{max-width:760px;margin-inline:auto}
+.enquire h2{font-family:var(--didone);font-weight:400;font-size:clamp(2rem,7vw,3.8rem);margin:0 0 .4rem;text-align:center}
+.enquire__sub{text-align:center;color:var(--ink-soft);max-width:42ch;margin:0 auto 2.6rem}
+form{display:grid;gap:1.2rem}
+.field{display:grid;gap:.4rem}
+.row{display:grid;gap:1.2rem}
+@media(min-width:620px){ .row{grid-template-columns:1fr 1fr} }
+label{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+label .req{color:var(--terracotta)}
+input,select,textarea{
+  font-family:var(--body);font-size:1rem;color:var(--ink);
+  background:var(--cream);border:1px solid rgba(115,106,94,.5);border-radius:2px;
+  padding:.85em .9em;width:100%;transition:border-color .25s,box-shadow .25s;
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--terracotta);box-shadow:0 0 0 3px rgba(194,102,74,.18)}
+textarea{min-height:120px;resize:vertical}
+.field.invalid input,.field.invalid select,.field.invalid textarea{border-color:#b23a2e;box-shadow:0 0 0 3px rgba(178,58,46,.16)}
+.err{font-family:var(--body);font-size:.78rem;color:#b23a2e;min-height:1em}
+/* honeypot, visually and from AT hidden */
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.submit{
+  font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--cream);background:var(--ink);border:none;border-radius:100px;
+  padding:1.05em 2.2em;cursor:pointer;justify-self:center;transition:transform .3s var(--ease),opacity .3s}
+.submit:hover{transform:translateY(-2px)}
+.submit[disabled]{opacity:.6;cursor:progress;transform:none}
+.formstatus{text-align:center;font-size:.92rem;min-height:1.4em}
+.formstatus[data-state="error"]{color:#b23a2e}
+.formstatus[data-state="success"]{color:var(--sage);font-weight:500}
+.success-card{text-align:center;padding:2rem;border:1px solid rgba(115,106,94,.4);border-radius:4px;background:var(--cream)}
+.success-card h3{font-family:var(--didone);font-weight:400;font-size:1.8rem;margin:0 0 .6rem}
+.hidden{display:none !important}
+
+/* ---------- end credits / footer ---------- */
+.credits{background:var(--frame);color:var(--cream);margin-top:4rem}
+.credits__inner{max-width:var(--maxw);margin-inline:auto;padding:clamp(3rem,8vh,6rem) var(--gutter);display:grid;gap:1.6rem}
+.credits__word{font-family:var(--didone);font-size:clamp(2rem,7vw,4rem);font-weight:400}
+.credits__word em{font-style:italic}
+.credits__links{display:flex;gap:1.6rem;flex-wrap:wrap;font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase}
+.credits__links a{color:var(--cream);text-decoration:none;opacity:.8;border-bottom:1px solid transparent;transition:opacity .3s,border-color .3s}
+.credits__links a:hover{opacity:1;border-color:var(--cream)}
+.credits small{color:rgba(247,242,232,.6);font-family:var(--mono);font-size:.66rem}
+
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2.5px solid var(--terracotta);outline-offset:2px}
+
+/* reduced motion: no transport, no wipes, everything shown */
+@media(prefers-reduced-motion:reduce){
+  body.rolling .bar{transition:none}
+  .bar{transform:scaleY(1)}
+  .hero__title .ln span{transform:none !important}
+  .hero__sub,.hero__credit{opacity:1 !important;transition:none}
+  .wipe__body{opacity:1 !important;filter:none !important;transform:none !important;transition:none}
+  .wipe__ink{display:none}
+  .filmstrip__track{animation:none !important}
+  *{scroll-behavior:auto !important}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <filter id="dGrain"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter>
+</svg>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- letterbox bars -->
+<div class="bar bar--top" aria-hidden="true"></div>
+<div class="bar bar--bottom" aria-hidden="true"></div>
+
+<div class="hud" aria-hidden="true">REEL 01 · <b id="tc">00:00:00</b> · CHRISTOPHER WANG</div>
+
+<header class="masthead">
+  <a class="wordmark" href="#top">Christopher <i>Wang</i></a>
+  <a class="enq" href="#enquire">Enquire</a>
+</header>
+
+<main id="top">
+
+  <!-- SCENE 01 · HERO -->
+  <section class="hero" aria-label="Introduction">
+    <p class="slate" style="border:none;margin:0;padding:0"><b>Scene 01</b> · Sydney · Live wedding watercolour</p>
+    <h1 class="hero__title" aria-label="A wedding, painted live, frame by frame">
+      <span class="ln"><span>A wedding,</span></span>
+      <span class="ln"><span><em>painted live</em>,</span></span>
+      <span class="ln"><span>frame by frame</span></span>
+    </h1>
+    <p class="hero__sub">I set up in the room and paint as the day unfolds. Guests leave with a small portrait, and you keep a framed piece that holds the feeling of the night.</p>
+    <p class="hero__credit">Dir. Christopher Wang<br>Watercolour on cotton rag<br>Greater Sydney</p>
+  </section>
+
+  <!-- SCENE 02 · THE WORK · film strip -->
+  <section class="scene wipe" aria-label="Selected work">
+    <div class="wipe__ink" aria-hidden="true"></div>
+    <div class="wipe__body">
+      <p class="slate"><b>Scene 02</b><span>The work</span><span>Stills from the day</span></p>
+      <div class="strip-head">
+        <h2>Stills from the day</h2>
+        <p>A reel of live pieces and studio commissions. Replace with final portfolio scans.</p>
+      </div>
+    </div>
+    <!-- film strip is full-bleed and drifts, reacting to scroll velocity -->
+    <div class="filmstrip" aria-hidden="false">
+      <div class="filmstrip__track" id="strip"><!-- frames injected by script --></div>
+    </div>
+  </section>
+
+  <!-- SCENE 03 · MOVING WORK · Instagram reels -->
+  <section class="scene wipe" aria-label="Other work, watercolour art toys">
+    <div class="wipe__ink" aria-hidden="true"></div>
+    <div class="wipe__body">
+      <p class="slate"><b>Scene 03</b><span>Moving work</span><span>Watercolour, in motion</span></p>
+      <div class="reels-head">
+        <h2>When the brush keeps moving</h2>
+        <p>Away from weddings I paint short watercolour studies of designer art toys, loose nods to collectible figures in the spirit of POP MART's Hirono. A few reels below.</p>
+      </div>
+      <div class="reels" id="reels"><!-- reels injected by script with fallbacks --></div>
+      <p class="reels__note">Note: Instagram embeds render on the live hosted site. The posters below link straight to each reel and act as the fallback. Thumbnails are placeholders to replace with real stills.</p>
+    </div>
+  </section>
+
+  <!-- SCENE 04 · PACKAGES · billing block -->
+  <section class="scene wipe" id="packages" aria-label="Packages">
+    <div class="wipe__ink" aria-hidden="true"></div>
+    <div class="wipe__body">
+      <p class="slate"><b>Scene 04</b><span>Billing</span><span>Three live packages</span></p>
+      <div class="billing">
+        <article class="bill">
+          <span class="bill__name">Intimate</span><span class="bill__from">from $1,500</span>
+          <span class="bill__meta">Up to 4 hours live · around 16 keepsakes · about 32 guests painted</span>
+        </article>
+        <article class="bill bill--feature">
+          <span class="bill__name">Full Reception <span class="bill__tag">Most chosen</span></span><span class="bill__from">from $2,400</span>
+          <span class="bill__meta">Up to 5 hours live · around 20 keepsakes · about 40 guests painted</span>
+        </article>
+        <article class="bill">
+          <span class="bill__name">Grand</span><span class="bill__from">from $3,400</span>
+          <span class="bill__meta">Up to 6 hours live · around 28 keepsakes · about 56 guests · with a painting assistant</span>
+        </article>
+      </div>
+      <p class="included-note">Every package is painted live on archival cotton-rag paper and includes a framed couple portrait, high-resolution scans, each guest piece sleeved to take home, and travel within Greater Sydney. Studio commissions from photographs are priced on enquiry.</p>
+    </div>
+  </section>
+
+  <!-- SCENE 05 · ENQUIRY FORM -->
+  <section class="scene wipe" id="enquire" aria-label="Request a booking">
+    <div class="wipe__ink" aria-hidden="true"></div>
+    <div class="wipe__body enquire">
+      <p class="slate" style="justify-content:center"><b>Scene 05</b><span>Request a booking</span></p>
+      <h2>Request a booking</h2>
+      <p class="enquire__sub">Tell me your date and venue. I take a limited number of weddings each season and will reply with what I have open.</p>
+
+      <!-- FORM
+           Posts to FORM_ENDPOINT (set in script). Includes a honeypot,
+           client validation, loading / success / error states, and a
+           mailto fallback so the form is never a dead end. -->
+      <form id="bookingForm" novalidate>
+        <!-- honeypot: real people never see or fill this -->
+        <div class="hp" aria-hidden="true">
+          <label for="company">Company</label>
+          <input id="company" name="company" type="text" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="name">Your name <span class="req">*</span></label>
+            <input id="name" name="name" type="text" autocomplete="name" required aria-describedby="name-err">
+            <span class="err" id="name-err"></span>
+          </div>
+          <div class="field">
+            <label for="partner">Partner's name</label>
+            <input id="partner" name="partner" type="text" autocomplete="off">
+            <span class="err"></span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="email">Email <span class="req">*</span></label>
+            <input id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-err">
+            <span class="err" id="email-err"></span>
+          </div>
+          <div class="field">
+            <label for="date">Wedding date <span class="req">*</span></label>
+            <input id="date" name="date" type="date" required aria-describedby="date-err">
+            <span class="err" id="date-err"></span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="venue">Venue or city <span class="req">*</span></label>
+            <input id="venue" name="venue" type="text" autocomplete="off" required aria-describedby="venue-err" placeholder="e.g. The Grounds, Sydney">
+            <span class="err" id="venue-err"></span>
+          </div>
+          <div class="field">
+            <label for="package">Package interest</label>
+            <select id="package" name="package">
+              <option value="">Not sure yet</option>
+              <option>Intimate</option>
+              <option>Full Reception</option>
+              <option>Grand</option>
+              <option>Studio commission</option>
+            </select>
+            <span class="err"></span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="message">Anything else</label>
+          <textarea id="message" name="message" placeholder="Tell me about your day."></textarea>
+          <span class="err"></span>
+        </div>
+
+        <button class="submit" type="submit" id="submitBtn">Send enquiry</button>
+        <p class="formstatus" id="formStatus" role="status" aria-live="polite"></p>
+      </form>
+
+      <!-- success replaces the form -->
+      <div class="success-card hidden" id="successCard" role="status">
+        <h3>Thank you, it is on its way.</h3>
+        <p>I have your enquiry and will be in touch shortly with what I have open around your date. If you would rather email directly, write to <a href="mailto:hello@example.com">hello@example.com</a>.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- END CREDITS -->
+<footer class="credits">
+  <div class="credits__inner">
+    <span class="credits__word">Christopher <em>Wang</em></span>
+    <nav class="credits__links" aria-label="Elsewhere">
+      <a href="https://www.instagram.com/christopherwangpaints" target="_blank" rel="noopener">Instagram</a>
+      <a href="#" aria-label="RedNote, link to be added">RedNote · TO ADD</a>
+      <a href="mailto:hello@example.com">hello@example.com · TO ADD</a>
+    </nav>
+    <small>Live wedding watercolour · Greater Sydney · &copy; <span id="yr"></span> Christopher Wang. All works painted by hand.</small>
+  </div>
+</footer>
+
+<script>
+/* ================================================================
+   THE REEL · behaviour
+   1. Title roll + letterbox bars on load
+   2. Film strip drift with scroll-velocity boost
+   3. Scene ink-spread wipes on enter
+   4. Instagram reels (official embed + marked fallback poster)
+   5. Running timecode HUD
+   6. Enquiry form: validation, honeypot, states, mailto fallback
+   Gated on prefers-reduced-motion.
+   ================================================================ */
+(function(){
+  "use strict";
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.getElementById("yr").textContent = new Date().getFullYear();
+
+  /* ---------- 1. roll the film ---------- */
+  requestAnimationFrame(()=>{ document.body.classList.add("rolling"); });
+
+  /* ---------- 2. film strip ---------- */
+  const frames=[
+    ["The first dance","SHOT 12"],["Guest keepsake","SHOT 13"],["The vows","SHOT 14"],
+    ["Studio commission","SHOT 15"],["Long table","SHOT 16"],["The couple","SHOT 17"]
+  ];
+  const washes=[
+    "linear-gradient(135deg,rgba(194,102,74,.6),rgba(126,139,111,.45))",
+    "linear-gradient(135deg,rgba(201,154,75,.6),rgba(194,102,74,.4))",
+    "linear-gradient(135deg,rgba(126,139,111,.6),rgba(201,154,75,.42))",
+    "linear-gradient(135deg,rgba(194,102,74,.5),rgba(126,139,111,.55))"
+  ];
+  const strip=document.getElementById("strip");
+  function buildFrame(i){
+    const f=document.createElement("figure"); f.className="frame";
+    f.innerHTML='<div class="frame__img" style="background:'+washes[i%washes.length]+'">'
+      +'<span style="position:absolute;left:8px;bottom:8px;font-family:var(--mono);font-size:.56rem;color:rgba(247,242,232,.8);text-transform:uppercase;letter-spacing:.08em">Placeholder</span></div>'
+      +'<figcaption><b>'+frames[i][0]+'</b><span>'+frames[i][1]+'</span></figcaption>';
+    return f;
+  }
+  for(let pass=0;pass<2;pass++) for(let i=0;i<frames.length;i++) strip.appendChild(buildFrame(i));
+  let stripX=0, speed=0.35, boost=0, half=0;
+  const measure=()=>{ half=strip.scrollWidth/2; };
+  measure(); window.addEventListener("resize",measure);
+
+  if(!reduce){
+    let lastY=window.scrollY;
+    window.addEventListener("scroll",()=>{ const y=window.scrollY; boost=Math.min(8,Math.abs(y-lastY)*0.2); lastY=y; },{passive:true});
+    (function drift(){
+      boost*=0.93; stripX-=(speed+boost);
+      if(half && -stripX>=half) stripX+=half;
+      strip.style.transform="translate3d("+stripX+"px,0,0)";
+      requestAnimationFrame(drift);
+    })();
+  }
+
+  /* ---------- 3. scene wipes ---------- */
+  const wipes=Array.from(document.querySelectorAll(".wipe"));
+  if(reduce){ wipes.forEach(w=>w.classList.add("play")); }
+  else{
+    const io=new IntersectionObserver((es)=>{
+      es.forEach(e=>{
+        if(e.isIntersecting){
+          const w=e.target; w.classList.add("play");
+          const ink=w.querySelector(".wipe__ink");
+          if(ink){ let m=0; const step=()=>{ m+=(100-m)*0.06; ink.style.setProperty("--m",m.toFixed(1)+"%"); if(m<99){requestAnimationFrame(step);} else {ink.style.display="none";} }; requestAnimationFrame(step); }
+          io.unobserve(w);
+        }
+      });
+    },{threshold:.2});
+    wipes.forEach(w=>io.observe(w));
+  }
+
+  /* ---------- 4. Instagram reels + fallback ---------- */
+  const REELS=[
+    ["https://www.instagram.com/reel/DUzCi-LEvAc/","Art toy study 01","linear-gradient(160deg,#C2664A,#7E8B6F)"],
+    ["https://www.instagram.com/reel/DU38HYjk_T1/","Art toy study 02","linear-gradient(160deg,#C99A4B,#C2664A)"],
+    ["https://www.instagram.com/reel/DU9hsOjiOXt/","Art toy study 03","linear-gradient(160deg,#7E8B6F,#C99A4B)"],
+    ["https://www.instagram.com/reel/DVQIr0KiJql/","Art toy study 04","linear-gradient(160deg,#C2664A,#C99A4B)"]
+  ];
+  const reelsWrap=document.getElementById("reels");
+  REELS.forEach(r=>{
+    const fig=document.createElement("figure"); fig.className="reel";
+    // Official Instagram blockquote. embed.js swaps it for the live video.
+    // The fallback poster lives inside, so it shows wherever the script
+    // has not rendered (offline, or before load).
+    fig.innerHTML=
+      '<blockquote class="instagram-media" data-instgrm-permalink="'+r[0]+'" data-instgrm-version="14">'
+        +'<a class="reel__fallback" href="'+r[0]+'" target="_blank" rel="noopener" style="background:'+r[2]+'">'
+          +'<span class="reel__play" aria-hidden="true"></span>'
+          +'<span class="reel__meta"><b>Watch on Instagram · placeholder still</b><span>'+r[1]+'</span></span>'
+        +'</a>'
+      +'</blockquote>';
+    reelsWrap.appendChild(fig);
+  });
+  // load the embed script once (renders only on the live hosted site)
+  (function(){ const s=document.createElement("script"); s.async=true; s.src="//www.instagram.com/embed.js"; s.onerror=function(){/* fallback posters remain */}; document.body.appendChild(s); })();
+
+  /* ---------- 5. timecode HUD ---------- */
+  if(!reduce){
+    const tc=document.getElementById("tc"); const t0=performance.now();
+    (function run(){ const s=Math.floor((performance.now()-t0)/1000); const hh=String(Math.floor(s/3600)).padStart(2,"0"); const mm=String(Math.floor(s/60)%60).padStart(2,"0"); const ss=String(s%60).padStart(2,"0"); tc.textContent=hh+":"+mm+":"+ss; setTimeout(run,1000); })();
+  }
+
+  /* ---------- 6. enquiry form ---------- */
+  // REPLACE these two before going live:
+  const FORM_ENDPOINT = "FORM_ENDPOINT";          // <-- paste your form backend URL (Formspree, Basin, etc.)
+  const FALLBACK_EMAIL = "hello@example.com";     // <-- replace with the real enquiry address
+
+  const form=document.getElementById("bookingForm");
+  const statusEl=document.getElementById("formStatus");
+  const btn=document.getElementById("submitBtn");
+  const successCard=document.getElementById("successCard");
+
+  const setErr=(id,msg)=>{ const el=document.getElementById(id); if(!el)return; el.textContent=msg||""; const field=el.closest(".field"); if(field) field.classList.toggle("invalid",!!msg); };
+  const emailOk=(v)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+  function validate(){
+    let ok=true, first=null;
+    const checks=[
+      ["name","name-err", v=>v.trim()? "" : "Please add your name"],
+      ["email","email-err", v=>!v.trim()? "Please add your email" : (emailOk(v)? "" : "That email does not look right")],
+      ["date","date-err", v=>v? "" : "Please choose your wedding date"],
+      ["venue","venue-err", v=>v.trim()? "" : "Please add a venue or city"]
+    ];
+    checks.forEach(([id,errid,fn])=>{
+      const msg=fn(form.elements[id].value); setErr(errid,msg);
+      if(msg && !first){ first=form.elements[id]; } if(msg) ok=false;
+    });
+    if(first) first.focus();
+    return ok;
+  }
+
+  function buildMailto(){
+    const f=form.elements;
+    const body=
+      "Name: "+f.name.value+"\nPartner: "+f.partner.value+"\nEmail: "+f.email.value+
+      "\nWedding date: "+f.date.value+"\nVenue or city: "+f.venue.value+
+      "\nPackage interest: "+f.package.value+"\n\n"+f.message.value;
+    return "mailto:"+FALLBACK_EMAIL+"?subject="+encodeURIComponent("Wedding watercolour enquiry")+"&body="+encodeURIComponent(body);
+  }
+
+  function showSuccess(){ form.classList.add("hidden"); successCard.classList.remove("hidden"); successCard.focus && successCard.focus(); }
+
+  form.addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    // honeypot: if filled, treat as a bot and stop quietly
+    if(form.elements.company.value){ showSuccess(); return; }
+    if(!validate()){ statusEl.dataset.state="error"; statusEl.textContent="Please check the highlighted fields."; return; }
+
+    statusEl.dataset.state=""; statusEl.textContent="";
+    btn.disabled=true; const label=btn.textContent; btn.textContent="Sending...";
+
+    const payload=Object.fromEntries(new FormData(form).entries());
+    delete payload.company;
+
+    // If the endpoint is still the placeholder, go straight to the email fallback.
+    if(FORM_ENDPOINT==="FORM_ENDPOINT"){
+      window.location.href=buildMailto();
+      btn.disabled=false; btn.textContent=label;
+      statusEl.dataset.state=""; statusEl.textContent="Opening your email app so nothing is lost. Add the form backend to send without it.";
+      return;
+    }
+
+    try{
+      const res=await fetch(FORM_ENDPOINT,{method:"POST",headers:{"Accept":"application/json","Content-Type":"application/json"},body:JSON.stringify(payload)});
+      if(!res.ok) throw new Error("Bad response");
+      showSuccess();
+    }catch(err){
+      statusEl.dataset.state="error";
+      statusEl.innerHTML='Something went wrong sending that. Please <a href="'+buildMailto()+'">email your enquiry instead</a>.';
+    }finally{
+      btn.disabled=false; btn.textContent=label;
+    }
+  });
+
+  // clear a field's error as the person fixes it
+  form.addEventListener("input",(e)=>{ const f=e.target.closest(".field"); if(f&&f.classList.contains("invalid")){ const err=f.querySelector(".err"); if(err) err.textContent=""; f.classList.remove("invalid"); } });
+})();
+</script>
+</body>
+</html>

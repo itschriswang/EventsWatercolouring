@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<!--
+  ============================================================================
+  CONCEPT F  ·  "MECHANISM"
+  A colder, kinetic direction for my live wedding watercolour work.
+
+  The thinking: I came to paint from architecture and engineering, so this one
+  treats the studio like an instrument. Mono readouts, a crosshair, a hard grid,
+  and one live wash at the centre that you can actually operate. Drag the water
+  control and the pigment spreads in real time. The whole page is the machine,
+  and the painting is the one warm thing inside it.
+
+  To swap before launch (search "PLACEHOLDER"):
+   - my photograph for the studio note
+   - RedNote handle and enquiry email
+  Instagram is live and correct.
+  ============================================================================
+-->
+
+<title>Christopher Wang · Live wedding watercolour, Sydney</title>
+<meta name="description" content="Live wedding watercolour in Sydney. An architect turned painter who works your reception like an instrument, your guests as keepsakes, the two of you as one portrait." />
+<meta name="keywords" content="live wedding painter Sydney, wedding watercolour portrait, live wedding watercolour, wedding artist Sydney" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+:root{
+  --paper:   #F4EFE6;
+  --paper-2: #ECE4D6;
+  --ink:     #1C1A17;
+  --ink-2:   #5A544B;
+  --olive:   #5E6B4F;   /* the structural accent, warm green */
+  --olive-d: #45503A;
+  --terra:   #B5654A;   /* only ever appears inside the live wash */
+  --line:    #C9BFAE;
+
+  --disp:"Space Grotesk", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, monospace;
+  --gut: clamp(1rem, 3vw, 2.5rem);
+  --ease: cubic-bezier(.16,.84,.34,1);
+}
+*{ box-sizing:border-box; }
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--mono); font-size:15px; line-height:1.55;
+  overflow-x:hidden; -webkit-font-smoothing:antialiased;
+}
+@media (hover:hover) and (pointer:fine){
+  body.cross, body.cross *{ cursor:none; }
+}
+a{ color:inherit; text-decoration:none; }
+canvas,svg,img{ display:block; max-width:100%; }
+:focus-visible{ outline:2px solid var(--olive); outline-offset:2px; }
+::selection{ background:rgba(94,107,79,.25); }
+
+.mono-label{ font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-2); }
+
+/* grain */
+.grain{ position:fixed; inset:0; z-index:6; pointer-events:none; mix-blend-mode:multiply; opacity:.4; }
+
+/* ---------- crosshair cursor ---------- */
+.cross-x,.cross-y{ position:fixed; z-index:40; pointer-events:none; background:var(--olive); opacity:0; transition:opacity .25s; }
+.cross-x{ left:0; right:0; height:1px; }
+.cross-y{ top:0; bottom:0; width:1px; }
+.cross-read{
+  position:fixed; z-index:41; pointer-events:none; opacity:0;
+  transform:translate(14px,14px);
+  font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase;
+  background:var(--ink); color:var(--paper); padding:.25rem .45rem; white-space:nowrap;
+  transition:opacity .2s;
+}
+body.armed .cross-x, body.armed .cross-y, body.armed .cross-read{ opacity:.9; }
+
+/* ---------- header ---------- */
+header{
+  position:fixed; top:0; left:0; right:0; z-index:30;
+  display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:1rem;
+  padding:var(--gut); mix-blend-mode:multiply;
+}
+header .wm{ font-family:var(--disp); font-weight:700; font-size:1.05rem; letter-spacing:-.01em; }
+header .sys{ justify-self:center; }
+header .sys span{ color:var(--olive-d); }
+header .cta-top{ justify-self:end; border:1px solid var(--ink); padding:.5rem .9rem; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; transition:background .35s var(--ease), color .35s var(--ease); }
+header .cta-top:hover{ background:var(--ink); color:var(--paper); }
+
+/* ---------- hero ---------- */
+.hero{ min-height:100svh; min-height:100vh; padding:calc(var(--gut) * 4) var(--gut) var(--gut); display:flex; flex-direction:column; justify-content:space-between; position:relative; }
+.hero-grid{ position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-image:linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size:clamp(40px,7vw,90px) clamp(40px,7vw,90px); opacity:.35; mask-image:linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent); }
+
+.hero-top{ position:relative; z-index:2; display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+.hero-top .coords{ max-width:30ch; }
+
+.bigtype{ position:relative; z-index:2; }
+.bigtype h1{
+  font-family:var(--disp); font-weight:700;
+  font-size:clamp(2.6rem, 13vw, 11rem); line-height:.86; letter-spacing:-.03em;
+  text-transform:uppercase; margin:.2em 0; word-break:break-word;
+}
+.bigtype h1 .ghost{ -webkit-text-stroke:1.5px var(--ink); color:transparent; }
+.bigtype h1 .fill{ color:var(--ink); }
+.bigtype h1 .accent{ color:var(--olive); }
+.scramble{ display:inline-block; }
+
+.hero-bottom{ position:relative; z-index:2; display:grid; grid-template-columns:1fr; gap:1.5rem; align-items:end; }
+.hero-statement{ font-family:var(--disp); font-weight:400; font-size:clamp(1.05rem,2.2vw,1.5rem); line-height:1.3; max-width:40ch; }
+.hero-statement b{ font-weight:600; color:var(--olive-d); }
+@media(min-width:880px){ .hero-bottom{ grid-template-columns:1.4fr 1fr; } }
+
+/* drifting word marquee under the hero */
+.marquee{ position:relative; z-index:2; overflow:hidden; border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:.6rem 0; margin-top:1.5rem; }
+.marquee .track{ display:inline-flex; gap:2.5rem; white-space:nowrap; will-change:transform; font-family:var(--disp); font-weight:500; text-transform:uppercase; letter-spacing:.02em; font-size:1rem; }
+.marquee .track span{ color:var(--ink-2); }
+.marquee .track b{ color:var(--olive); font-weight:600; }
+
+/* ---------- STUDIO (signature interactive wash) ---------- */
+.studio{ padding:clamp(4rem,12vh,9rem) var(--gut); border-top:1px solid var(--ink); position:relative; }
+.studio-head{ display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; margin-bottom:2rem; }
+.studio-head h2{ font-family:var(--disp); font-weight:600; font-size:clamp(1.6rem,5vw,3rem); text-transform:uppercase; letter-spacing:-.02em; margin:0; }
+.studio-rig{ display:grid; grid-template-columns:1fr; gap:1.5rem; border:1px solid var(--ink); }
+@media(min-width:820px){ .studio-rig{ grid-template-columns:1.3fr .7fr; gap:0; } }
+.studio-stage{ position:relative; aspect-ratio:16/11; background:var(--paper-2); overflow:hidden; }
+.studio-stage canvas{ width:100%; height:100%; filter:url(#wob); }
+.studio-stage .stamp{ position:absolute; top:1rem; left:1rem; }
+.studio-panel{ border-top:1px solid var(--ink); padding:clamp(1.4rem,3vw,2rem); display:flex; flex-direction:column; gap:1.6rem; }
+@media(min-width:820px){ .studio-panel{ border-top:0; border-left:1px solid var(--ink); } }
+
+.control .row{ display:flex; justify-content:space-between; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; margin-bottom:.6rem; }
+.control .row .val{ color:var(--olive-d); }
+input[type=range]{ -webkit-appearance:none; appearance:none; width:100%; height:2px; background:var(--line); outline:none; }
+input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:16px; height:24px; background:var(--ink); border:0; cursor:grab; }
+input[type=range]::-moz-range-thumb{ width:16px; height:24px; background:var(--ink); border:0; cursor:grab; border-radius:0; }
+input[type=range]:active::-webkit-slider-thumb{ background:var(--olive); cursor:grabbing; }
+
+.pigments{ display:flex; gap:.5rem; flex-wrap:wrap; }
+.pigments button{ font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; padding:.4rem .6rem; background:transparent; border:1px solid var(--line); cursor:pointer; transition:border-color .3s, color .3s; color:var(--ink-2); }
+.pigments button[aria-pressed=true]{ border-color:var(--ink); color:var(--ink); }
+.panel-actions{ margin-top:auto; display:flex; gap:.6rem; }
+.panel-actions button{ flex:1; font-family:var(--mono); font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; padding:.7rem; border:1px solid var(--ink); background:transparent; cursor:pointer; transition:background .3s, color .3s; }
+.panel-actions button:hover{ background:var(--ink); color:var(--paper); }
+.studio-note{ font-size:.78rem; color:var(--ink-2); line-height:1.5; }
+
+/* ---------- WORKS strip (horizontal, drag/scroll) ---------- */
+.works{ padding:clamp(4rem,10vh,8rem) 0; border-top:1px solid var(--line); overflow:hidden; }
+.works .head{ padding:0 var(--gut); display:flex; justify-content:space-between; align-items:baseline; margin-bottom:2rem; flex-wrap:wrap; gap:.5rem; }
+.works .head h2{ font-family:var(--disp); font-weight:600; font-size:clamp(1.6rem,5vw,3rem); text-transform:uppercase; margin:0; letter-spacing:-.02em; }
+.strip{ display:flex; gap:1.5rem; padding:0 var(--gut); will-change:transform; }
+.card{ flex:0 0 auto; width:clamp(220px, 30vw, 360px); }
+.card .frame{ aspect-ratio:4/5; background:var(--paper-2); overflow:hidden; border:1px solid var(--line); filter:url(#wob); }
+.card canvas{ width:100%; height:100%; }
+.card .cap{ display:flex; justify-content:space-between; margin-top:.7rem; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; }
+.card .cap .id{ color:var(--olive-d); }
+.card .cap .t{ font-family:var(--disp); font-weight:500; letter-spacing:0; text-transform:none; font-size:.92rem; }
+
+/* ---------- SPEC SHEET (packages) ---------- */
+.spec{ padding:clamp(4rem,10vh,8rem) var(--gut); border-top:1px solid var(--ink); }
+.spec h2{ font-family:var(--disp); font-weight:600; font-size:clamp(1.6rem,5vw,3rem); text-transform:uppercase; margin:0 0 2rem; letter-spacing:-.02em; }
+.sheet{ border:1px solid var(--ink); }
+.srow{ display:grid; grid-template-columns:auto 1fr auto; gap:1rem 1.5rem; padding:1.4rem clamp(1rem,2.5vw,2rem); border-bottom:1px solid var(--line); align-items:center; transition:background .35s var(--ease); }
+.srow:last-child{ border-bottom:0; }
+.srow:hover{ background:var(--paper-2); }
+.srow .idx{ font-size:.72rem; color:var(--olive-d); letter-spacing:.1em; }
+.srow .name{ font-family:var(--disp); font-weight:600; font-size:clamp(1.2rem,3vw,1.8rem); }
+.srow .name small{ display:block; font-family:var(--mono); font-weight:400; font-size:.72rem; color:var(--ink-2); letter-spacing:.05em; margin-top:.3rem; text-transform:none; }
+.srow .price{ font-family:var(--disp); font-weight:500; font-size:1.1rem; white-space:nowrap; }
+.srow.feat .name{ color:var(--olive-d); }
+
+/* ---------- enquire + footer ---------- */
+.enq{ padding:clamp(5rem,14vh,11rem) var(--gut); text-align:center; border-top:1px solid var(--ink); }
+.enq h2{ font-family:var(--disp); font-weight:700; font-size:clamp(2.2rem,9vw,7rem); text-transform:uppercase; letter-spacing:-.03em; line-height:.9; margin:0 0 1.5rem; }
+.enq h2 .accent{ color:var(--olive); }
+.enq p{ max-width:46ch; margin:0 auto 2rem; color:var(--ink-2); font-size:.95rem; }
+.enq a.big{ display:inline-block; border:1px solid var(--ink); padding:1rem 1.8rem; font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; transition:background .35s var(--ease), color .35s var(--ease); }
+.enq a.big:hover{ background:var(--olive); border-color:var(--olive); color:var(--paper); }
+
+.ticker{ border-top:1px solid var(--ink); border-bottom:1px solid var(--ink); overflow:hidden; padding:.5rem 0; }
+.ticker .t{ display:inline-flex; gap:2rem; white-space:nowrap; font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-2); will-change:transform; }
+.ticker .t b{ color:var(--olive); }
+
+footer{ padding:clamp(2.5rem,5vw,4rem) var(--gut); display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:space-between; align-items:flex-end; }
+footer .wm{ font-family:var(--disp); font-weight:700; font-size:1.2rem; }
+footer nav{ display:flex; gap:1.2rem; flex-wrap:wrap; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; }
+footer .c{ width:100%; font-size:.64rem; color:var(--ink-2); letter-spacing:.08em; }
+
+.reveal{ opacity:0; transform:translateY(24px); transition:opacity .9s var(--ease), transform .9s var(--ease); }
+.reveal.in{ opacity:1; transform:none; }
+
+@media (prefers-reduced-motion:reduce){
+  *{ animation:none !important; transition-duration:.01ms !important; }
+  .reveal{ opacity:1 !important; transform:none !important; }
+  .studio-stage canvas, .card .frame{ filter:none; }
+}
+</style>
+</head>
+<body class="cross">
+
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <filter id="grain2"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="4"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope="0.55"/></feComponentTransfer></filter>
+  <filter id="wob" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.014" numOctaves="2" seed="9" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="12" xChannelSelector="R" yChannelSelector="G"/></filter>
+</svg>
+
+<div class="grain" aria-hidden="true"><svg width="100%" height="100%"><rect width="100%" height="100%" filter="url(#grain2)"/></svg></div>
+<div class="cross-x" aria-hidden="true"></div>
+<div class="cross-y" aria-hidden="true"></div>
+<div class="cross-read" id="crossRead" aria-hidden="true">PAINT</div>
+
+<header>
+  <a class="wm" href="#top">CHRISTOPHER WANG</a>
+  <span class="sys mono-label">SYDNEY · LIVE WATERCOLOUR · <span id="clock">00:00</span></span>
+  <a class="cta-top" href="#enquire">Enquire</a>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-grid" aria-hidden="true"></div>
+
+    <div class="hero-top">
+      <p class="coords mono-label">EST. STUDIO / ARCHITECT TURNED PAINTER / WEDDINGS PAINTED IN THE ROOM, NOT FROM A DESK</p>
+      <p class="mono-label">[ 01 — HERO ]</p>
+    </div>
+
+    <div class="bigtype">
+      <h1>
+        <span class="fill scramble" data-text="LIVE">LIVE</span><br>
+        <span class="ghost scramble" data-text="WEDDING">WEDDING</span><br>
+        <span class="accent scramble" data-text="WATERCOLOUR">WATERCOLOUR</span>
+      </h1>
+    </div>
+
+    <div class="hero-bottom">
+      <p class="hero-statement">
+        I bring the studio to your reception and <b>paint as it happens.</b>
+        Guests sit for small keepsakes they carry home that night, and the two of you
+        become one finished portrait, in pigment on cotton rag.
+      </p>
+      <div class="mono-label" style="text-align:left">
+        OUTPUT / 16 TO 28 KEEPSAKES<br>
+        FORMAT / ARCHIVAL COTTON RAG<br>
+        RANGE / GREATER SYDNEY, TRAVEL ON REQUEST
+      </div>
+    </div>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="track" id="heroTrack">
+        <span>PIGMENT</span><b>·</b><span>WATER</span><b>·</b><span>PAPER</span><b>·</b><span>LIGHT</span><b>·</b><span>FACES</span><b>·</b><span>THE ROOM</span><b>·</b>
+        <span>PIGMENT</span><b>·</b><span>WATER</span><b>·</b><span>PAPER</span><b>·</b><span>LIGHT</span><b>·</b><span>FACES</span><b>·</b><span>THE ROOM</span><b>·</b>
+      </div>
+    </div>
+  </section>
+
+  <!-- STUDIO (signature) -->
+  <section class="studio reveal" aria-label="The studio">
+    <div class="studio-head">
+      <h2>Operate the wash</h2>
+      <p class="mono-label" style="max-width:34ch; text-align:right">A live painting, the way water actually behaves. Add water, change pigment, repaint.</p>
+    </div>
+    <div class="studio-rig">
+      <div class="studio-stage">
+        <canvas id="studioCanvas" role="img" aria-label="An interactive watercolour wash you can control"></canvas>
+        <span class="stamp mono-label" id="studioStamp">WATER 0.50 / TERRACOTTA</span>
+      </div>
+      <div class="studio-panel">
+        <div class="control">
+          <div class="row"><label for="water">Water</label><span class="val" id="waterVal">0.50</span></div>
+          <input id="water" type="range" min="0" max="1" step="0.01" value="0.5" aria-describedby="waterVal" />
+        </div>
+        <div class="control">
+          <div class="row"><span>Pigment</span></div>
+          <div class="pigments" role="group" aria-label="Pigment">
+            <button data-pig="terracotta" aria-pressed="true">Terracotta</button>
+            <button data-pig="ochre" aria-pressed="false">Ochre</button>
+            <button data-pig="sage" aria-pressed="false">Sage</button>
+            <button data-pig="dusty" aria-pressed="false">Dusty blue</button>
+          </div>
+        </div>
+        <p class="studio-note">
+          This is the same engine that paints the portraits below. Nothing here is a stock image,
+          it is pigment diffusing in your browser. PLACEHOLDER for a short note from me and my photo.
+        </p>
+        <div class="panel-actions">
+          <button id="repaint" type="button">Repaint</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKS -->
+  <section class="works reveal" id="work" aria-label="Selected work">
+    <div class="head">
+      <h2>The work</h2>
+      <p class="mono-label">[ DRAG OR SCROLL ] · GENERATED LIVE · PLACEHOLDER FOR REAL SCANS</p>
+    </div>
+    <div class="strip" id="strip">
+      <figure class="card"><div class="frame"><canvas data-piece="0"></canvas></div><figcaption class="cap"><span class="t">The long table</span><span class="id">W/01</span></figcaption></figure>
+      <figure class="card"><div class="frame"><canvas data-piece="1"></canvas></div><figcaption class="cap"><span class="t">First look</span><span class="id">W/02</span></figcaption></figure>
+      <figure class="card"><div class="frame"><canvas data-piece="2"></canvas></div><figcaption class="cap"><span class="t">Her mother</span><span class="id">W/03</span></figcaption></figure>
+      <figure class="card"><div class="frame"><canvas data-piece="3"></canvas></div><figcaption class="cap"><span class="t">Last dance</span><span class="id">W/04</span></figcaption></figure>
+      <figure class="card"><div class="frame"><canvas data-piece="4"></canvas></div><figcaption class="cap"><span class="t">The toast</span><span class="id">W/05</span></figcaption></figure>
+    </div>
+  </section>
+
+  <!-- SPEC SHEET -->
+  <section class="spec reveal" id="ways" aria-label="Ways to work">
+    <h2>Specification</h2>
+    <div class="sheet">
+      <div class="srow">
+        <span class="idx">01</span>
+        <span class="name">Intimate <small>Up to 4 hrs live · ~16 keepsakes · framed couple portrait</small></span>
+        <span class="price">From $1,500</span>
+      </div>
+      <div class="srow feat">
+        <span class="idx">02</span>
+        <span class="name">Full Reception <small>Up to 5 hrs live · ~20 keepsakes · framed portrait · most chosen</small></span>
+        <span class="price">From $2,400</span>
+      </div>
+      <div class="srow">
+        <span class="idx">03</span>
+        <span class="name">Grand <small>Up to 6 hrs · ~28 keepsakes · painting assistant for larger lists</small></span>
+        <span class="price">From $3,400</span>
+      </div>
+      <div class="srow">
+        <span class="idx">+</span>
+        <span class="name">Studio commission <small>Painted from your photographs after the day</small></span>
+        <span class="price">On enquiry</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENQUIRE -->
+  <section class="enq" id="enquire" aria-label="Enquire">
+    <h2>Book the <span class="accent">room.</span></h2>
+    <p>Send your date, your venue and a little about the two of you. I take a limited number of weddings each season.</p>
+    <!-- PLACEHOLDER email -->
+    <a class="big" href="mailto:hello@example.com?subject=Wedding%20watercolour%20enquiry">Start an enquiry</a>
+  </section>
+</main>
+
+<div class="ticker" aria-hidden="true">
+  <div class="t" id="ticker">
+    <span>SYDNEY</span><b>+</b><span>COTTON RAG</span><b>+</b><span>LIGHTFAST PIGMENT</span><b>+</b><span>PAINTED IN THE ROOM</span><b>+</b><span>LIMITED DATES EACH SEASON</span><b>+</b>
+    <span>SYDNEY</span><b>+</b><span>COTTON RAG</span><b>+</b><span>LIGHTFAST PIGMENT</span><b>+</b><span>PAINTED IN THE ROOM</span><b>+</b><span>LIMITED DATES EACH SEASON</span><b>+</b>
+  </div>
+</div>
+
+<footer>
+  <span class="wm">CHRISTOPHER WANG</span>
+  <nav aria-label="Elsewhere">
+    <a href="https://www.instagram.com/christopherwangpaints" target="_blank" rel="noopener">Instagram</a>
+    <a href="#" aria-disabled="true">RedNote</a><!-- PLACEHOLDER -->
+    <a href="mailto:hello@example.com">Email</a><!-- PLACEHOLDER -->
+  </nav>
+  <div class="c">© 2026 CHRISTOPHER WANG / LIVE WEDDING WATERCOLOUR / SYDNEY</div>
+</footer>
+
+<script>
+/* ===========================================================================
+   Shared pigment engine (same core as Concept E), driving the interactive
+   studio wash, the works strip, and the crosshair readout.
+   =========================================================================== */
+(function(){
+  "use strict";
+  const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const fine=matchMedia("(hover:hover) and (pointer:fine)").matches;
+  const DPR=Math.min(devicePixelRatio||1,2);
+  const PIG={ terracotta:[181,101,74], ochre:[192,138,62], sage:[124,138,107], dusty:[110,130,148], ink:[28,26,23] };
+  const PAPER=[236,228,214];
+
+  function polygon(cx,cy,r,n){ const p=[]; for(let i=0;i<n;i++){ const a=i/n*Math.PI*2, rr=r*(0.82+Math.random()*0.36); p.push({x:cx+Math.cos(a)*rr,y:cy+Math.sin(a)*rr}); } return p; }
+  function deform(points,depth,variance,decay){ let pts=points.map(p=>({x:p.x,y:p.y})); for(let d=0;d<depth;d++){ const out=[]; for(let i=0;i<pts.length;i++){ const a=pts[i],b=pts[(i+1)%pts.length]; out.push(a); const mx=(a.x+b.x)/2,my=(a.y+b.y)/2,dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy)||1,off=(Math.random()*2-1)*variance; out.push({x:mx+(-dy/len)*off,y:my+(dx/len)*off}); } pts=out; variance*=decay; } return pts; }
+  function trace(ctx,pts){ ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y); for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x,pts[i].y); ctx.closePath(); }
+  function bloom(cx,cy,r,rgb,layers,alpha,spread){ const base=polygon(cx,cy,r,6+(Math.random()*3|0)); const list=[]; for(let l=0;l<layers;l++){ const v=r*(0.10+(l/layers)*spread); list.push({pts:deform(base,5,v,0.62),rgb,alpha}); } for(let l=0;l<4;l++) list.push({pts:deform(base,5,r*0.08,0.6),rgb,alpha:alpha*1.4}); return list; }
+  function paint(ctx,L){ ctx.globalCompositeOperation="multiply"; ctx.fillStyle=`rgba(${L.rgb[0]},${L.rgb[1]},${L.rgb[2]},${L.alpha})`; trace(ctx,L.pts); ctx.fill(); }
+  function prep(c,w,h){ const ctx=c.getContext("2d"); c.width=Math.round(w*DPR); c.height=Math.round(h*DPR); ctx.setTransform(DPR,0,0,DPR,0,0); ctx.fillStyle=`rgb(${PAPER[0]},${PAPER[1]},${PAPER[2]})`; ctx.fillRect(0,0,w,h); return ctx; }
+  function composition(w,h,palette,n,spread){ const blooms=[]; for(let i=0;i<n;i++){ const rgb=PIG[palette[i%palette.length]]; const cx=w*(0.30+Math.random()*0.40), cy=h*(0.30+Math.random()*0.40), r=Math.min(w,h)*(0.20+Math.random()*0.16); blooms.push(bloom(cx,cy,r,rgb,24,0.04,spread||0.22)); } const flat=[]; let idx=0,more=true; while(more){ more=false; for(const b of blooms){ if(idx<b.length){ flat.push(b[idx]); more=true; } } idx++; } return flat; }
+  function animateIn(ctx,list,div){ if(reduce){ list.forEach(L=>paint(ctx,L)); return; } let i=0; const per=Math.max(1,Math.round(list.length/(div||80))); (function step(){ if(document.hidden){ requestAnimationFrame(step); return; } for(let k=0;k<per&&i<list.length;k++,i++) paint(ctx,list[i]); if(i<list.length) requestAnimationFrame(step); })(); }
+
+  /* ---- clock ---- */
+  (function(){ const el=document.getElementById("clock"); if(!el) return; function t(){ const d=new Date(); el.textContent=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0"); } t(); setInterval(t,15000); })();
+
+  /* ---- scramble headline on load ---- */
+  (function(){
+    if(reduce) return;
+    const chars="ACEHILORTUWPGN/0123456789";
+    document.querySelectorAll(".scramble").forEach((el,n)=>{
+      const final=el.dataset.text; let frame=0; const total=18+final.length*2;
+      setTimeout(()=>{ const id=setInterval(()=>{ let out=""; for(let i=0;i<final.length;i++){ if(i< (frame-8)/ (total-8) * final.length){ out+=final[i]; } else { out+= final[i]===" "?" ":chars[Math.random()*chars.length|0]; } } el.textContent=out; if(frame++>=total){ el.textContent=final; clearInterval(id); } }, 28); }, n*140);
+    });
+  })();
+
+  /* ---- STUDIO interactive wash ---- */
+  (function(){
+    const canvas=document.getElementById("studioCanvas"); if(!canvas) return;
+    let pig="terracotta", water=0.5;
+    const stamp=document.getElementById("studioStamp");
+    const waterVal=document.getElementById("waterVal");
+    function render(){
+      const rect=canvas.getBoundingClientRect();
+      const w=Math.max(360,rect.width), h=Math.max(240,rect.height);
+      const ctx=prep(canvas,w,h);
+      // water maps to spread + alpha + bloom count, so more water = looser, wetter
+      const spread=0.12+water*0.55;
+      const alpha=0.055-water*0.025;
+      const n=2+Math.round(water*3);
+      const list=composition(w,h,[pig,pig,"ochre"],n,spread).map(L=>({pts:L.pts,rgb:PIG[pig],alpha}));
+      animateIn(ctx,list,60);
+      if(stamp) stamp.textContent="WATER "+water.toFixed(2)+" / "+pig.toUpperCase();
+    }
+    const slider=document.getElementById("water");
+    let raf;
+    slider.addEventListener("input",()=>{ water=+slider.value; waterVal.textContent=water.toFixed(2); cancelAnimationFrame(raf); raf=requestAnimationFrame(render); });
+    document.querySelectorAll(".pigments button").forEach(b=>{
+      b.addEventListener("click",()=>{ document.querySelectorAll(".pigments button").forEach(x=>x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true"); pig=b.dataset.pig; render(); });
+    });
+    document.getElementById("repaint").addEventListener("click",render);
+    // first paint when scrolled into view
+    const io=new IntersectionObserver((e)=>{ e.forEach(x=>{ if(x.isIntersecting){ render(); io.disconnect(); } }); },{rootMargin:"100px"});
+    io.observe(canvas);
+    addEventListener("resize",()=>{ clearTimeout(canvas._rt); canvas._rt=setTimeout(render,200); });
+  })();
+
+  /* ---- WORKS strip generation + drag ---- */
+  (function(){
+    const palettes=[["terracotta","ochre","sage"],["dusty","sage","ink"],["ochre","terracotta","ochre"],["sage","dusty","terracotta"],["terracotta","ink","ochre"]];
+    const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(!e.isIntersecting) return; io.unobserve(e.target); const c=e.target; const rect=c.parentElement.getBoundingClientRect(); const w=Math.max(280,rect.width), h=Math.max(340,rect.height); const ctx=prep(c,w,h); const pi=+c.dataset.piece||0; animateIn(ctx,composition(w,h,palettes[pi%palettes.length],3,0.22),60); }); },{rootMargin:"150px"});
+    document.querySelectorAll(".card canvas").forEach(c=>io.observe(c));
+
+    // pointer drag to scroll the strip
+    const strip=document.getElementById("strip"); if(!strip) return;
+    let down=false,sx=0,sl=0;
+    const wrap=strip.parentElement;
+    wrap.style.overflowX="auto"; wrap.style.scrollbarWidth="none";
+    strip.addEventListener("pointerdown",e=>{ down=true; sx=e.clientX; sl=wrap.scrollLeft; strip.setPointerCapture(e.pointerId); });
+    strip.addEventListener("pointermove",e=>{ if(!down) return; wrap.scrollLeft=sl-(e.clientX-sx); });
+    strip.addEventListener("pointerup",()=>down=false);
+    strip.addEventListener("pointercancel",()=>down=false);
+  })();
+
+  /* ---- marquees react to scroll velocity ---- */
+  (function(){
+    if(reduce) return;
+    const tracks=[{el:document.getElementById("heroTrack"),x:0,base:-0.4},{el:document.getElementById("ticker"),x:0,base:-0.3}];
+    let vel=0,last=scrollY;
+    addEventListener("scroll",()=>{ vel=(scrollY-last); last=scrollY; },{passive:true});
+    (function loop(){ requestAnimationFrame(loop); if(document.hidden) return; vel*=0.9; tracks.forEach(t=>{ if(!t.el) return; t.x+= t.base + vel*0.3; const w=t.el.scrollWidth/2; if(t.x<=-w) t.x+=w; if(t.x>0) t.x-=w; t.el.style.transform=`translateX(${t.x}px)`; }); })();
+  })();
+
+  /* ---- crosshair cursor + readout ---- */
+  (function(){
+    if(!fine||reduce){ document.body.classList.remove("cross"); return; }
+    const cx=document.querySelector(".cross-x"), cy=document.querySelector(".cross-y"), rd=document.getElementById("crossRead");
+    let x=innerWidth/2,y=innerHeight/2;
+    addEventListener("pointermove",e=>{
+      x=e.clientX; y=e.clientY; document.body.classList.add("armed");
+      cx.style.transform=`translateY(${y}px)`; cy.style.transform=`translateX(${x}px)`;
+      rd.style.transform=`translate(${x}px,${y}px) translate(14px,14px)`;
+      const t=document.elementFromPoint(x,y);
+      let label="PAINT";
+      if(t){ if(t.closest("input[type=range]")) label="DRAG"; else if(t.closest(".strip")) label="PULL"; else if(t.closest("a,button")) label="OPEN"; else { label=String(x).padStart(4,"0")+" "+String(y).padStart(4,"0"); } }
+      rd.textContent=label;
+    },{passive:true});
+    addEventListener("pointerleave",()=>document.body.classList.remove("armed"));
+  })();
+
+  /* ---- reveals ---- */
+  (function(){ const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } }); },{threshold:.1}); document.querySelectorAll(".reveal").forEach(el=>io.observe(el)); })();
+
+  /* ---- smooth scroll (optional, defensive) ---- */
+  (function(){
+    if(reduce) return;
+    const s=document.createElement("script"); s.src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js";
+    s.onload=()=>{ try{ const l=new Lenis({lerp:.1}); function raf(t){ l.raf(t); requestAnimationFrame(raf); } requestAnimationFrame(raf); document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener("click",ev=>{ const id=a.getAttribute("href"); if(id.length<2) return; const el=document.querySelector(id); if(el){ ev.preventDefault(); l.scrollTo(el); } })); }catch(_){} };
+    s.onerror=()=>{}; document.head.appendChild(s);
+  })();
+})();
+</script>
+</body>
+</html>
