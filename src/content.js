@@ -181,12 +181,11 @@ export const PAINTER = {
   emphasis: 'behind the brush.',
   portrait: 'assets/portrait-christopher.jpg',
   portraitWebp: 'assets/portrait-christopher.webp',
-  caption: 'Christopher Wang · Melbourne',
   body: [
     'I am Christopher, a Sydney-born artist now based in Melbourne, who fell in love with watercolour over a decade ago.',
     'Painting live at a wedding is the truest test of that, and the part I love most. A few quiet minutes with each guest, a small portrait made by hand while the night carries on around us, and something real to take home at the end of it.',
   ],
-  signature: 'Christopher',
+  
 }
 
 export const PACKAGES = {
