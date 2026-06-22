@@ -1,72 +1,54 @@
-import { useRef } from 'react'
-import { motion, useMotionValue, useSpring, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
+import useMagnetic from '../hooks/useMagnetic.js'
 import { SPRING } from '../lib/site.js'
 
 /**
- * A floating "magnet" button. On a fine pointer it leans toward the cursor and
- * the label skews + opens its tracking; on touch / reduced-motion it stays a
- * plain, accessible link with a simple hover.
+ * Primary CTA with a magnetic pull (via useMagnetic) and a reactive label that
+ * skews and opens its tracking on hover. Renders as an anchor.
  */
 export default function MagneticButton({
   href = '#',
   children,
   className = '',
-  strength = 0.4,
+  variant = 'ink',
 }) {
   const reduce = useReducedMotion()
-  const ref = useRef(null)
+  const { ref, style } = useMagnetic({ radius: 45, strength: 0.5 })
 
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
-  const sx = useSpring(x, SPRING)
-  const sy = useSpring(y, SPRING)
-
-  const handleMove = (e) => {
-    if (reduce) return
-    const el = ref.current
-    if (!el) return
-    // Only magnetise when the pointer is a mouse (fine pointer).
-    if (!window.matchMedia('(pointer: fine)').matches) return
-    const rect = el.getBoundingClientRect()
-    const relX = e.clientX - (rect.left + rect.width / 2)
-    const relY = e.clientY - (rect.top + rect.height / 2)
-    x.set(relX * strength)
-    y.set(relY * strength)
-  }
-
-  const reset = () => {
-    x.set(0)
-    y.set(0)
-  }
+  const palette =
+    variant === 'paper'
+      ? 'bg-paper text-ink hover:bg-terracotta hover:text-paper'
+      : 'bg-ink text-paper hover:bg-terracotta'
 
   return (
     <motion.a
       ref={ref}
       href={href}
-      onMouseMove={handleMove}
-      onMouseLeave={reset}
-      style={{ x: sx, y: sy }}
+      style={style}
       whileHover="hover"
-      whileTap={{ scale: 0.95 }}
+      whileTap={{ scale: 0.96 }}
       className={
-        'group relative inline-flex items-center gap-3 rounded-full ' +
-        'bg-ink px-9 py-5 font-mono text-xs uppercase tracking-[0.18em] text-paper ' +
-        'transition-colors duration-300 ease-organic hover:bg-terracotta ' +
+        'group relative inline-flex items-center gap-3 rounded-full px-9 py-5 ' +
+        'font-mono text-xs uppercase tracking-[0.18em] transition-colors duration-300 ' +
+        palette +
+        ' ' +
         className
       }
     >
+      <span
+        className="h-2 w-2 rounded-full bg-current opacity-60 transition-transform duration-300 group-hover:scale-125"
+        aria-hidden="true"
+      />
       <motion.span
-        variants={{
-          hover: reduce ? {} : { skewX: -6, letterSpacing: '0.32em' },
-        }}
+        variants={{ hover: reduce ? {} : { skewX: -6, letterSpacing: '0.32em' } }}
         transition={SPRING}
-        className="relative z-10 inline-block"
+        className="inline-block"
       >
         {children}
       </motion.span>
       <span
         aria-hidden="true"
-        className="inline-block transition-transform duration-300 ease-organic group-hover:translate-x-1"
+        className="inline-block transition-transform duration-300 group-hover:translate-x-1"
       >
         →
       </span>

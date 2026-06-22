@@ -1,23 +1,30 @@
 import { useEffect, useState } from 'react'
+import GrainOverlay from './components/GrainOverlay.jsx'
 import Preloader from './components/Preloader.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
 import Hero from './components/Hero.jsx'
-import ProcessGrid from './components/ProcessGrid.jsx'
-import Offerings from './components/Offerings.jsx'
-import EnquireFooter from './components/EnquireFooter.jsx'
+import Marquee from './components/Marquee.jsx'
+import WhyWatercolour from './components/WhyWatercolour.jsx'
+import TwoPaths from './components/TwoPaths.jsx'
+import EveningTimeline from './components/EveningTimeline.jsx'
+import SelectedWork from './components/SelectedWork.jsx'
+import InMotion from './components/InMotion.jsx'
+import AboutMe from './components/AboutMe.jsx'
+import Packages from './components/Packages.jsx'
+import BeyondWeddings from './components/BeyondWeddings.jsx'
+import Faq from './components/Faq.jsx'
+import EnquireForm from './components/EnquireForm.jsx'
+import Footer from './components/Footer.jsx'
 
 /**
- * The premium watercolour landing page.
- *
- * Flow: the gamified Preloader blocks the viewport and locks scroll until the
- * visitor "paints to enter"; that hands over to `revealed`, which releases
- * scroll and triggers the staggered hero, then the interactive process grid,
- * offerings and closing CTA.
+ * Live wedding watercolour — a full-bleed, immersive editorial single page.
+ * The preloader auto-dissolves (no gate); `revealed` then releases scroll and
+ * plays the hero entrance, with each section revealing organically on scroll.
  */
 export default function App() {
   const [revealed, setRevealed] = useState(false)
 
-  // Lock body scroll while the preloader owns the viewport.
+  // Lock scroll only while the preloader owns the viewport.
   useEffect(() => {
     document.body.style.overflow = revealed ? '' : 'hidden'
     return () => {
@@ -26,18 +33,28 @@ export default function App() {
   }, [revealed])
 
   return (
-    <div id="top" className="min-h-screen bg-paper">
-      <Preloader onEnter={() => setRevealed(true)} />
+    <div className="relative min-h-screen bg-paper">
+      <GrainOverlay />
+      <Preloader onDone={() => setRevealed(true)} />
 
       <SiteHeader revealed={revealed} />
 
       <main>
         <Hero revealed={revealed} />
-        <ProcessGrid />
-        <Offerings />
+        <Marquee />
+        <WhyWatercolour />
+        <TwoPaths />
+        <EveningTimeline />
+        <SelectedWork />
+        <InMotion />
+        <AboutMe />
+        <Packages />
+        <BeyondWeddings />
+        <Faq />
+        <EnquireForm />
       </main>
 
-      <EnquireFooter />
+      <Footer />
     </div>
   )
 }

@@ -10,7 +10,8 @@ export const SPRING_SOFT = { type: 'spring', stiffness: 70, damping: 18 }
 export const asset = (path) =>
   `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
 
-// Where the "Enquire" actions point. No backend in this scaffold, so a
-// mailto keeps it functional, matching the legacy static site's pattern.
-export const ENQUIRE_HREF =
-  'mailto:hello@watercolour.studio?subject=Wedding%20portrait%20enquiry'
+// Where the "Enquire" actions point in-page.
+export const ENQUIRE_HREF = '#enquiry'
+
+// Placeholder enquiry address, carried over verbatim from the legacy copy.
+export const EMAIL = 'hello@example.com'

@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Warm editorial base — bone/off-white per the brief.
-        paper: '#F3F3E9',
+        // Warm editorial base — the organic paper colour from the original site.
+        paper: '#F4EFE6',
         'paper-deep': '#EAE2D4',
         ink: '#2A2724',
         'ink-soft': '#6B6258',
