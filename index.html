@@ -58,6 +58,7 @@
   --ochre:        #C9A23A;
   --gold:         #C9A23A;
   --sage:         #6E7E4E;
+  --lime:         #AEBF56;
   --cornflower:   #6E8CA8;
   --teal:         #3A7F9D;
   --rose:         #C98B8C;
@@ -166,16 +167,25 @@ img,canvas,svg,video{ display:block; max-width:100%; }
 .wordmark b{ font-family:var(--display); font-weight:500; font-size:1.18rem; letter-spacing:.01em; }
 .wordmark span{ font-family:var(--mono); font-size:.62rem; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-soft); margin-top:.45rem; }
 
+/* enquire tab — fixed blob that hangs from the top edge, outside the header's
+   mix-blend-mode so the lime green stays true against any background */
 .enquire-link{
+  position:fixed; top:0; right:var(--gutter); z-index:21;
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:clamp(1rem,2.4vw,1.6rem) 1.6rem clamp(2.8rem,5.5vw,3.6rem);
+  background:var(--lime);
+  /* flat top (attached to header edge), organic rounded bottom */
+  border-radius:0 0 55% 45% / 0 0 50px 44px;
+  color:#fff;
   font-family:var(--mono); font-size:.74rem; letter-spacing:.18em; text-transform:uppercase;
-  position:relative; padding-bottom:.3rem;
+  transition:transform .35s var(--ease), filter .3s var(--ease);
+  transform-origin:top center;
 }
-.enquire-link::after{
-  content:""; position:absolute; left:0; bottom:0; height:1.5px; width:100%;
-  background:var(--ink); transform:scaleX(0); transform-origin:right;
-  transition:transform .5s var(--ease);
+.enquire-link:hover{
+  transform:scale(1.06) rotate(.6deg);
+  filter:brightness(1.12);
 }
-.enquire-link:hover::after{ transform:scaleX(1); transform-origin:left; }
+.enquire-link::after{ display:none; }
 
 /* ===========================================================================
    HERO
@@ -842,8 +852,8 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     <b>Christopher Wang</b>
     <span>Live wedding watercolour · Melbourne</span>
   </a>
-  <a class="enquire-link" href="#enquiry">Enquire</a>
 </header>
+<a class="enquire-link" href="#enquiry">Enquire</a>
 
 <main id="top">
 
