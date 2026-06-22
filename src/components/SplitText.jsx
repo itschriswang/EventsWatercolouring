@@ -59,8 +59,7 @@ export default function SplitText({
                     variants={item}
                     aria-hidden="true"
                     className={
-                      'inline-block whitespace-pre will-change-transform ' +
-                      (isEmph ? 'italic' : '')
+                      'inline-block whitespace-pre ' + (isEmph ? 'italic' : '')
                     }
                   >
                     {ch}
@@ -71,7 +70,7 @@ export default function SplitText({
                     key={wi}
                     variants={item}
                     aria-hidden="true"
-                    className="inline-block will-change-transform"
+                    className="inline-block"
                   >
                     {word}
                     {wi < arr.length - 1 ? ' ' : ''}

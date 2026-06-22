@@ -36,7 +36,9 @@
   .display-xl {
     font-family: theme('fontFamily.display');
     font-weight: 300;
-    font-size: clamp(3rem, 11vw, 11rem);
+    /* Mobile-safe lower bound: small enough that the longest word can't clip
+       horizontally on a ~320px viewport, while still scaling up boldly. */
+    font-size: clamp(2.5rem, 11vw, 11rem);
     line-height: 0.82;
     letter-spacing: -0.045em;
     text-transform: uppercase;

@@ -2,6 +2,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion
 import { useRef } from 'react'
 import SplitText from './SplitText.jsx'
 import MagneticButton from './MagneticButton.jsx'
+import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset, ENQUIRE_HREF } from '../lib/site.js'
 import { HERO } from '../content.js'
 
@@ -12,6 +13,10 @@ import { HERO } from '../content.js'
  */
 export default function Hero({ revealed }) {
   const reduce = useReducedMotion()
+  // Scroll-linked parallax is only worth its per-frame cost on capable
+  // desktops; touch devices render the art statically to stay smooth.
+  const heavyFx = useHeavyFx()
+  const parallax = heavyFx && !reduce
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -44,10 +49,10 @@ export default function Hero({ revealed }) {
         <span className="hidden sm:inline">Melbourne · Australia-wide</span>
       </motion.div>
 
-      <div className="relative mt-[clamp(2rem,5vw,4rem)] grid grid-cols-12 items-start gap-y-10">
+      <div className="relative mt-[clamp(2rem,5vw,4rem)] grid grid-cols-4 items-start gap-y-10 lg:grid-cols-12">
         {/* Floating bouquet painting — sits behind the type, offset right */}
         <motion.div
-          style={reduce ? {} : { y: artY }}
+          style={parallax ? { y: artY } : {}}
           initial={{ opacity: 0, scale: 0.92 }}
           animate={revealed ? { opacity: 1, scale: 1 } : { opacity: 0 }}
           transition={{ ...SPRING_SOFT, delay: 0.5 }}
@@ -63,8 +68,8 @@ export default function Hero({ revealed }) {
 
         {/* Headline — massive, char-split, overlapping the art */}
         <motion.div
-          style={reduce ? {} : { y: copyY }}
-          className="relative z-10 col-span-12 lg:col-span-9"
+          style={parallax ? { y: copyY } : {}}
+          className="relative z-10 col-span-4 col-start-1 lg:col-span-9"
         >
           {revealed && (
             <SplitText
@@ -83,7 +88,7 @@ export default function Hero({ revealed }) {
           variants={fade}
           initial="hidden"
           animate={state}
-          className="relative z-10 col-span-12 mt-[clamp(1.5rem,3vw,2.5rem)] sm:col-span-7 lg:col-span-5"
+          className="relative z-10 col-span-3 col-start-1 mt-[clamp(1.5rem,3vw,2.5rem)] lg:col-span-5"
         >
           <p className="max-w-md text-[clamp(1rem,1.1vw,1.18rem)] leading-relaxed text-ink-soft">
             {HERO.lede}
@@ -105,7 +110,10 @@ export default function Hero({ revealed }) {
           animate={revealed ? { opacity: 1, y: 0, rotate: 4 } : { opacity: 0 }}
           transition={{ ...SPRING_SOFT, delay: 0.9 }}
           whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
-          className="relative z-10 col-span-6 -mt-6 ml-auto w-[44%] overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)] sm:col-span-5 sm:w-[60%] lg:col-span-3 lg:w-full"
+          // Media frame offset one column right of the lede (col-start-2) and
+          // pulled up into the whitespace. The overlap scales responsively so
+          // it never crowds the body text on a narrow viewport.
+          className="relative z-10 col-span-3 col-start-2 -mt-4 ml-auto w-[88%] overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)] sm:w-[70%] md:-mt-10 lg:col-span-3 lg:col-start-auto lg:-mt-6 lg:w-full"
         >
           <img
             src={asset('assets/art-character-boy.webp')}
