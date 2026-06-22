@@ -29,7 +29,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <!-- Fraunces requested across its full optical-size, weight, SOFT and WONK axes so
      headlines can stretch and shift weight live with scroll velocity. -->
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Hanken+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<!-- Load the font CSS without blocking first paint: apply as print, then flip to
+     all once it arrives. With display=swap, text shows immediately in the fallback. -->
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Hanken+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+<noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Hanken+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" /></noscript>
 
 <style>
 /* ===========================================================================
@@ -146,6 +149,9 @@ img,canvas,svg,video{ display:block; max-width:100%; }
   position:fixed; inset:0; z-index:9; pointer-events:none;
   mix-blend-mode:multiply; opacity:.5;
 }
+/* the full-viewport turbulence + multiply blend is costly to composite on phones;
+   drop it there so scrolling stays smooth (desktop keeps the filmic grain) */
+@media (max-width:760px){ .grain{ display:none; } }
 
 /* ===========================================================================
    HEADER
@@ -219,10 +225,15 @@ img,canvas,svg,video{ display:block; max-width:100%; }
 }
 .hero-bouquet-float{ display:flex; animation:bouquetFloat 11s ease-in-out infinite alternate; }
 .hero-bouquet{
-  width:min(58vw, 620px); margin-right:clamp(-3rem, -3vw, 1.5rem);
+  width:min(58vw, 620px); height:auto; aspect-ratio:589 / 717;
+  margin-right:clamp(-3rem, -3vw, 1.5rem);
   filter:drop-shadow(0 26px 46px rgba(108,42,62,.22));
   opacity:0; transform:scale(1.06);
   transition:opacity 1.3s var(--ease), transform 1.6s var(--ease);
+}
+@media (max-width:760px){
+  .hero-bouquet{ width:min(72vw, 340px); margin-right:0; }
+  .hero-gl.ready{ opacity:.55; } /* keep the wash, dial it back on phones */
 }
 .hero.is-in .hero-bouquet{ opacity:1; transform:none; }
 @keyframes bouquetFloat{
@@ -236,7 +247,7 @@ img,canvas,svg,video{ display:block; max-width:100%; }
   font-family:var(--display);
   font-weight:600;
   font-variation-settings:"opsz" 144, "wght" 620, "SOFT" 0, "WONK" 0;
-  font-size:clamp(3.3rem, 15vw, 13rem);
+  font-size:clamp(2.6rem, 10vw, 8.5rem);
   line-height:.82;
   letter-spacing:-.035em;
   margin:0 0 1.6rem;
@@ -677,15 +688,9 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 .incl-grid li .drop{ flex:0 0 auto; width:15px; height:17px; margin-top:.2em; }
 
 /* ===========================================================================
-   ADD-ONS  ·  now with real figures and a most-loved marker
+   ADD-ONS  ·  now with real figures
    =========================================================================== */
 .addon{ position:relative; }
-.addon.is-popular{ background:var(--paper-deep); }
-.addon .pop{
-  position:absolute; top:1rem; right:1rem; font-family:var(--mono);
-  font-size:.55rem; letter-spacing:.16em; text-transform:uppercase; color:var(--paper);
-  background:var(--terracotta); padding:.3rem .55rem; border-radius:999px;
-}
 .addon .tag.price{ font-family:var(--display); font-style:italic; font-size:1.05rem; color:var(--ink); letter-spacing:0; text-transform:none; }
 .addon .tag.price small{ font-family:var(--mono); font-style:normal; font-size:.58rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); margin-right:.4rem; }
 .addon-feature .tag.price{ font-family:var(--display); font-style:italic; font-size:1.15rem; color:var(--ink); letter-spacing:0; text-transform:none; }
@@ -856,8 +861,11 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     <!-- the bouquet painting itself, floating, washing in on load -->
     <div class="hero-bouquet-stage" aria-hidden="true">
       <div class="hero-bouquet-float">
-        <img class="hero-bouquet" id="heroBouquet" src="assets/art-bouquet_transparent.png"
-             alt="" width="589" height="717" decoding="async" fetchpriority="high" />
+        <picture>
+          <source srcset="assets/art-bouquet_transparent.webp" type="image/webp" />
+          <img class="hero-bouquet" id="heroBouquet" src="assets/art-bouquet_transparent.png"
+               alt="" width="589" height="717" decoding="async" fetchpriority="high" />
+        </picture>
       </div>
     </div>
 
@@ -880,8 +888,8 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
       </h1>
       <div class="hero-foot">
         <p class="hero-lede">
-          I set up at your reception and paint as the night moves. Your guests become
-          small keepsakes to take home, and the two of you become a portrait painted on the night,
+          I set up at your reception and paint as the night moves. A selected number of your guests
+          leave with a small keepsake of their own, and the two of you with one portrait painted on the night,
           <strong>all in pigment on cotton-rag paper.</strong>
         </p>
         <a class="cta" href="#enquiry"><span class="dot" aria-hidden="true"></span><span>Enquire</span></a>
@@ -911,7 +919,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
         <div class="why-note reveal" data-delay="2">
           <span class="wn-no">03</span>
           <h3>Something to keep</h3>
-          <p>Everyone leaves with a small painting of their own, and the two of you with a portrait made while the day is still unfolding. A keepsake that does not fade.</p>
+          <p>Many of your guests leave with a small painting of their own, and the two of you with a portrait made while the day is still unfolding. Painted on archival cotton-rag paper, it is made to last.</p>
         </div>
       </div>
     </div>
@@ -919,7 +927,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 
   <!-- ON THE NIGHT  ·  colour-drenched evening timeline -->
   <section class="section block block--rust" id="night" aria-label="How the evening unfolds">
-    <img class="block-cut block-cut--tr" src="assets/art-bouquet_transparent.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+    <picture><source srcset="assets/art-bouquet_transparent.webp" type="image/webp" /><img class="block-cut block-cut--tr" src="assets/art-bouquet_transparent.png" alt="" aria-hidden="true" loading="lazy" decoding="async" /></picture>
     <div class="wrap">
       <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>On the night</span>
       <h2 class="h2 reveal" data-morph data-wght="320">How the evening <em>unfolds.</em></h2>
@@ -948,8 +956,8 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
         </div>
         <div class="beat reveal" data-delay="4">
           <span class="bn">05</span>
-          <h3>No one misses out</h3>
-          <p>Anyone not painted on the night can still be drawn afterwards through the optional After-Event Service.</p>
+          <h3>If I don't reach everyone</h3>
+          <p>Guest numbers mean I paint a selected few on the night. Anyone I don't reach can still be painted afterwards through the optional After-Event Service.</p>
         </div>
       </div>
     </div>
@@ -967,9 +975,9 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
           <h3>Live on the day</h3>
           <p class="psub">I come to your wedding and paint as it happens.</p>
           <ol class="steps">
-            <li><span class="n">1</span><span><b>We say hello</b><span>You tell me about the day, the venue, and the people who matter. A deposit holds your date.</span></span></li>
-            <li><span class="n">2</span><span><b>I paint in the room</b><span>I arrive early, set up quietly, and paint your guests through the celebration while they watch.</span></span></li>
-            <li><span class="n">3</span><span><b>Everyone takes one home</b><span>Guests leave with their own little painting. Your couple portrait is painted on the night and left with you.</span></span></li>
+            <li><span class="n">1</span><span><b>We shape the day together</b><span>We start from one base package and build it around your wedding: how long I paint, roughly how many guests, and any extras. A deposit holds your date.</span></span></li>
+            <li><span class="n">2</span><span><b>I paint through the night</b><span>I arrive early and set up quietly, then paint a selected number of your guests as the celebration carries on around them. No posing, no interruption.</span></span></li>
+            <li><span class="n">3</span><span><b>Keepsakes to take home</b><span>The guests I paint leave with a small portrait of their own, sleeved and ready to travel. Your couple portrait is painted on the night and left with you.</span></span></li>
           </ol>
         </div>
         <div class="path reveal" data-delay="1">
@@ -998,15 +1006,15 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
       </div>
       <div class="gallery">
         <figure class="piece p1 reveal">
-          <div class="frame"><img src="assets/art-bouquet.jpg" alt="Watercolour study of a bridal bouquet, with rust ribbon, orange roses and forget-me-not blue, painted on cotton-rag paper" loading="lazy" width="1600" height="1200" /></div>
+          <div class="frame"><picture><source srcset="assets/art-bouquet.webp" type="image/webp" /><img src="assets/art-bouquet.jpg" alt="Watercolour study of a bridal bouquet, with rust ribbon, orange roses and forget-me-not blue, painted on cotton-rag paper" loading="lazy" width="1600" height="1200" /></picture></div>
           <figcaption><span class="ttl">The bouquet</span><span class="meta">Watercolour · A5</span></figcaption>
         </figure>
         <figure class="piece p2 reveal" data-delay="1">
-          <div class="frame"><img src="assets/art-character-girl.jpg" alt="Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre" loading="lazy" width="1600" height="1600" /></div>
+          <div class="frame"><picture><source srcset="assets/art-character-girl.webp" type="image/webp" /><img src="assets/art-character-girl.jpg" alt="Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre" loading="lazy" width="1600" height="1600" /></picture></div>
           <figcaption><span class="ttl">Little character, in green</span><span class="meta">Studio study</span></figcaption>
         </figure>
         <figure class="piece p3 reveal" data-delay="2">
-          <div class="frame"><img src="assets/art-character-boy.jpg" alt="Small watercolour character portrait with the artist's palette alongside, in warm terracotta and ochre" loading="lazy" width="1600" height="1200" /></div>
+          <div class="frame"><picture><source srcset="assets/art-character-boy.webp" type="image/webp" /><img src="assets/art-character-boy.jpg" alt="Small watercolour character portrait with the artist's palette alongside, in warm terracotta and ochre" loading="lazy" width="1600" height="1200" /></picture></div>
           <figcaption><span class="ttl">At the palette</span><span class="meta">Studio study</span></figcaption>
         </figure>
       </div>
@@ -1026,7 +1034,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
       <div class="films">
         <figure class="film reveal">
           <div class="stage">
-            <video src="assets/reel-painting-1.mp4" poster="assets/reel-painting-1.jpg"
+            <video src="assets/reel-painting-1.mp4" poster="assets/reel-painting-1.webp"
                    muted loop playsinline preload="none" controls
                    aria-label="Watercolour painting in progress, filmed in the studio"></video>
           </div>
@@ -1034,7 +1042,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
         </figure>
         <figure class="film reveal" data-delay="1">
           <div class="stage">
-            <video src="assets/reel-painting-2.mp4" poster="assets/reel-painting-2.jpg"
+            <video src="assets/reel-painting-2.mp4" poster="assets/reel-painting-2.webp"
                    muted loop playsinline preload="none" controls
                    aria-label="A second watercolour painting in progress, filmed in the studio"></video>
           </div>
@@ -1056,13 +1064,13 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   <section class="section section--soft" id="painter" aria-label="The painter">
     <div class="wrap painter-grid">
       <figure class="painter-portrait reveal">
-        <div class="frame"><img src="assets/portrait-christopher.jpg" alt="Christopher Wang, the painter, in a dark suit on a terrace overlooking the harbour" loading="lazy" width="1100" height="1467" /></div>
+        <div class="frame"><picture><source srcset="assets/portrait-christopher.webp" type="image/webp" /><img src="assets/portrait-christopher.jpg" alt="Christopher Wang, the painter, in a dark suit on a terrace overlooking the harbour" loading="lazy" width="1100" height="1467" /></picture></div>
         <figcaption>Christopher Wang · Melbourne</figcaption>
       </figure>
       <div class="painter-body reveal" data-delay="1">
         <span class="label"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>The painter</span>
         <h2 class="h2" data-morph data-wght="320">The hand <em>behind the brush.</em></h2>
-        <p>I am Christopher, a Melbourne painter. I have spent years learning to read people quickly: the way a shoulder drops when someone laughs, the particular light of an evening, and how to catch it in pigment before the moment passes.</p>
+        <p>I am Christopher, a Sydney-born artist now based in Melbourne, who fell in love with watercolour over a decade ago.</p>
         <p>Painting live at a wedding is the truest test of that, and the part I love most. A few quiet minutes with each guest, a small portrait made by hand while the night carries on around us, and something real to take home at the end of it.</p>
         <span class="signature">Christopher</span>
         <a class="cta" href="#enquiry"><span class="dot" aria-hidden="true"></span><span>Enquire</span></a>
@@ -1117,8 +1125,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
         <p>Priced on enquiry</p>
       </div>
       <div class="addon-grid reveal" data-delay="1">
-        <div class="addon is-popular">
-          <span class="pop">Most loved</span>
+        <div class="addon">
           <h4>After-Event Service</h4>
           <p>Any guest photographed on the night who missed out can still be painted. I finish their portrait in the studio afterwards and post the set to you to hand on.</p>
           <span class="tag price"><small>From</small>$30 / guest</span>
@@ -1161,7 +1168,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
       </div>
 
       <figure class="addon-feature reveal">
-        <div class="af-img frame"><img src="assets/art-bouquet.jpg" alt="Watercolour illustration of a bridal bouquet in full bloom, with rust ribbon, orange roses and forget-me-not blue on cotton-rag paper" loading="lazy" width="1600" height="1200" /></div>
+        <div class="af-img frame"><picture><source srcset="assets/art-bouquet.webp" type="image/webp" /><img src="assets/art-bouquet.jpg" alt="Watercolour illustration of a bridal bouquet in full bloom, with rust ribbon, orange roses and forget-me-not blue on cotton-rag paper" loading="lazy" width="1600" height="1200" /></picture></div>
         <figcaption class="af-body">
           <h4>Wedding bouquet illustration</h4>
           <p>A painting of your bouquet in full bloom, worked up from your photographs after the day. A quiet floral keepsake of the flowers you carried, holding its colour long after the real ones have faded.</p>
@@ -1175,7 +1182,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 
   <!-- BEYOND WEDDINGS -->
   <section class="section block block--teal" id="beyond" aria-label="Beyond weddings">
-    <img class="block-cut block-cut--bl" src="assets/art-bouquet_transparent.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+    <picture><source srcset="assets/art-bouquet_transparent.webp" type="image/webp" /><img class="block-cut block-cut--bl" src="assets/art-bouquet_transparent.png" alt="" aria-hidden="true" loading="lazy" decoding="async" /></picture>
     <div class="wrap">
       <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Beyond weddings</span>
       <h2 class="h2 reveal" data-morph data-wght="320">The same hand, <em>for any room.</em></h2>
@@ -1195,7 +1202,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
         <div class="beyond-card reveal" data-delay="2">
           <span class="bn">Private celebrations</span>
           <h3>Milestones worth keeping</h3>
-          <p>Birthdays, anniversaries and engagements. Smaller, warmer gatherings where everyone goes home with a small painting of their own.</p>
+          <p>Birthdays, anniversaries and engagements. Smaller, warmer gatherings where guests go home with a small painting of their own.</p>
         </div>
       </div>
     </div>
@@ -1409,7 +1416,9 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     const uTime = gl.getUniformLocation(prog, "u_time");
     const uMouse = gl.getUniformLocation(prog, "u_mouse");
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // keep the wash, but lighten the load on phones: cap the buffer at 1x DPR
+    const isPhone = window.matchMedia("(max-width:760px)").matches;
+    const dpr = isPhone ? 1 : Math.min(window.devicePixelRatio || 1, 2);
     let mouse = [0.78, 0.5], target = [0.78, 0.5];
     function resize(){
       const w = Math.max(1, Math.round(canvas.clientWidth * dpr));
@@ -1427,14 +1436,18 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 
     resize();
     const start = performance.now();
-    let ready = false;
+    let ready = false, lastDraw = 0;
+    const minFrame = isPhone ? 33 : 0; // throttle the wash to ~30fps on phones
     (function frame(){
       if(document.hidden){ requestAnimationFrame(frame); return; }
+      const now = performance.now();
+      if(now - lastDraw < minFrame){ requestAnimationFrame(frame); return; }
+      lastDraw = now;
       resize();
       mouse[0] += (target[0]-mouse[0])*0.06;
       mouse[1] += (target[1]-mouse[1])*0.06;
       gl.uniform2f(uRes, canvas.width, canvas.height);
-      gl.uniform1f(uTime, (performance.now()-start)/1000);
+      gl.uniform1f(uTime, (now-start)/1000);
       gl.uniform2f(uMouse, mouse[0], mouse[1]);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       if(!ready){ ready = true; canvas.classList.add("ready"); }
@@ -1586,6 +1599,10 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 
   function runMotion(){
     if(reduce) return; // reduced-motion: native scroll, no smoothing or scrub
+    // On phones/touch, skip Lenis + GSAP scrub entirely. Smooth-scroll fights
+    // native touch scrolling and the scrubbed parallax janks; native scroll plus
+    // the IntersectionObserver reveals (runReveals) carry the page cleanly.
+    if(window.matchMedia("(max-width:760px), (pointer:coarse)").matches) return;
     const V="3.12.5";
     const GSAP="https://cdn.jsdelivr.net/npm/gsap@"+V+"/dist/gsap.min.js";
     const STR ="https://cdn.jsdelivr.net/npm/gsap@"+V+"/dist/ScrollTrigger.min.js";
@@ -1672,7 +1689,9 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
          masthead and section headings live via font-variation-settings. Smooth,
          clamped, and off entirely for reduced-motion. ---- */
   function runVelocity(){
-    if(reduce) return;
+    // off for reduced-motion and on phones: the per-frame variable-font rewrite
+    // is the heaviest mobile cost and the cause of subheadings flipping line count
+    if(reduce || window.matchMedia("(max-width:760px)").matches) return;
     const skews  = Array.prototype.slice.call(document.querySelectorAll(".piece .frame, .film .stage"));
     const morphs = Array.prototype.slice.call(document.querySelectorAll("[data-morph]"))
                     .map(el=>({ el, base:parseInt(el.dataset.wght,10) || 360 }));
@@ -1694,7 +1713,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
         const wonk = +(smooth * 0.6).toFixed(2);        // WONK: a touch of wobble
         for(let i=0;i<morphs.length;i++){
           const m = morphs[i];
-          const w = Math.round(m.base + smooth * (840 - m.base) * 0.55);
+          const w = Math.round(m.base + smooth * (560 - m.base) * 0.55);
           m.el.style.fontVariationSettings =
             '"opsz" 144, "wght" ' + w + ', "SOFT" ' + soft + ', "WONK" ' + wonk;
         }
