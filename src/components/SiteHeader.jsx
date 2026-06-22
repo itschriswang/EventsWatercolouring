@@ -2,14 +2,20 @@ import { motion } from 'framer-motion'
 import { SPRING, ENQUIRE_HREF } from '../lib/site.js'
 import { NAV } from '../content.js'
 
-/** Slim full-bleed sticky header, revealed after the preloader hands over. */
+/**
+ * Slim full-bleed sticky header, revealed after the preloader hands over.
+ *
+ * A sticky backdrop-blur re-blurs the page behind it on every scroll frame —
+ * costly on mobile — so we use a near-opaque fill on small screens and only
+ * enable the blur from md up.
+ */
 export default function SiteHeader({ revealed }) {
   return (
     <motion.header
       initial={{ y: -90, opacity: 0 }}
       animate={revealed ? { y: 0, opacity: 1 } : { y: -90, opacity: 0 }}
       transition={{ ...SPRING, delay: 0.25 }}
-      className="sticky top-0 z-40 border-b border-line/50 bg-paper/70 backdrop-blur-md"
+      className="sticky top-0 z-40 border-b border-line/50 bg-paper/90 md:bg-paper/70 md:backdrop-blur-md"
     >
       <div className="bleed flex items-center justify-between py-4">
         <a href="#top" className="font-display text-xl uppercase tracking-[-0.03em] text-ink">
