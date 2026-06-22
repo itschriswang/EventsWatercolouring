@@ -544,6 +544,73 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 .reveal.in{ opacity:1; transform:none; }
 .reveal[data-delay="1"]{ transition-delay:.08s; }
 .reveal[data-delay="2"]{ transition-delay:.16s; }
+.reveal[data-delay="3"]{ transition-delay:.24s; }
+.reveal[data-delay="4"]{ transition-delay:.32s; }
+
+/* ===========================================================================
+   INCLUDED AS STANDARD  ·  what every booking carries
+   A quiet strip of the things that come with the base package, drawn from my
+   kit list: materials, templates, paper, sleeves, insurance, set-up.
+   =========================================================================== */
+.included{ margin-top:clamp(2.6rem,6vw,4rem); border-top:1px solid var(--line); padding-top:clamp(1.8rem,4vw,2.6rem); }
+.included h3{ font-family:var(--display); font-weight:300; font-size:clamp(1.4rem,3.4vw,2rem); letter-spacing:-.015em; margin:0 0 .3rem; }
+.included p.sub{ margin:0; color:var(--ink-soft); font-size:.95rem; }
+.incl-grid{ list-style:none; margin:clamp(1.4rem,3vw,2rem) 0 0; padding:0; display:grid; gap:.7rem 2rem; grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr)); }
+.incl-grid li{ display:flex; gap:.6rem; align-items:flex-start; font-size:.94rem; }
+.incl-grid li .drop{ flex:0 0 auto; width:15px; height:17px; margin-top:.2em; }
+
+/* ===========================================================================
+   ADD-ONS  ·  now with real figures and a most-loved marker
+   =========================================================================== */
+.addon{ position:relative; }
+.addon.is-popular{ background:var(--paper-deep); }
+.addon .pop{
+  position:absolute; top:1rem; right:1rem; font-family:var(--mono);
+  font-size:.55rem; letter-spacing:.16em; text-transform:uppercase; color:var(--paper);
+  background:var(--terracotta); padding:.3rem .55rem; border-radius:999px;
+}
+.addon .tag.price{ font-family:var(--display); font-style:italic; font-size:1.05rem; color:var(--ink); letter-spacing:0; text-transform:none; }
+.addon .tag.price small{ font-family:var(--mono); font-style:normal; font-size:.58rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); margin-right:.4rem; }
+.addon-feature .tag.price{ font-family:var(--display); font-style:italic; font-size:1.15rem; color:var(--ink); letter-spacing:0; text-transform:none; }
+.addon-feature .tag.price small{ font-family:var(--mono); font-style:normal; font-size:.58rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); margin-right:.4rem; }
+
+/* a single line of fine print on style and licence */
+.licence-note{ margin-top:clamp(2rem,5vw,3rem); max-width:62ch; color:var(--ink-soft); font-size:.9rem; }
+.licence-note b{ color:var(--ink); font-weight:600; }
+
+/* ===========================================================================
+   ON THE NIGHT  ·  colour-drenched evening timeline
+   A bolder, fully drenched band, the way the reference sites soak a whole
+   panel in pigment. Paper-coloured text on a terracotta wash, with the five
+   beats of the evening as little posters that lift into view.
+   =========================================================================== */
+.night{ background:var(--rust); color:var(--paper); }
+.night .label{ color:rgba(244,239,230,.9); }
+.night .label .drop path{ fill:var(--paper); }
+.night .h2{ color:var(--paper); }
+.night .h2 em{ color:#F4D9C9; }
+.night-lede{ max-width:32ch; margin:1rem 0 0; color:rgba(244,239,230,.92); font-size:1.05rem; }
+.beats{ display:grid; gap:clamp(1rem,2.4vw,1.5rem); margin-top:clamp(2.6rem,6vw,4rem); grid-template-columns:1fr; }
+@media (min-width:600px){ .beats{ grid-template-columns:repeat(2,1fr); } }
+@media (min-width:1040px){ .beats{ grid-template-columns:repeat(5,1fr); } }
+.beat{
+  border:1px solid rgba(244,239,230,.34); border-radius:4px;
+  background:rgba(244,239,230,.07);
+  padding:clamp(1.2rem,2.4vw,1.5rem); display:flex; flex-direction:column; gap:.55rem;
+}
+.beat .bn{ font-family:var(--mono); font-size:.7rem; letter-spacing:.2em; color:rgba(244,239,230,.82); }
+.beat h3{ font-family:var(--display); font-style:italic; font-weight:400; font-size:1.2rem; margin:0; line-height:1.15; }
+.beat p{ margin:0; font-size:.9rem; color:rgba(244,239,230,.92); }
+
+/* ===========================================================================
+   BEYOND WEDDINGS  ·  corporate, brand activations, private events
+   =========================================================================== */
+.beyond-grid{ display:grid; gap:clamp(1.2rem,3vw,2rem); margin-top:clamp(2.4rem,6vw,3.5rem); grid-template-columns:1fr; }
+@media (min-width:760px){ .beyond-grid{ grid-template-columns:repeat(3,1fr); } }
+.beyond-card{ padding-top:1.4rem; border-top:1.5px solid var(--line); }
+.beyond-card .bn{ font-family:var(--mono); font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; color:var(--terracotta); }
+.beyond-card h3{ font-family:var(--display); font-style:italic; font-weight:400; font-size:1.35rem; margin:.5rem 0 .55rem; }
+.beyond-card p{ margin:0; color:var(--ink-soft); font-size:.95rem; }
 
 /* ===========================================================================
    REDUCED MOTION
@@ -654,6 +721,43 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
           <span class="wn-no">03</span>
           <h3>Something to keep</h3>
           <p>Everyone leaves with a small painting of their own, and the two of you with a portrait made while the day is still unfolding. A keepsake that does not fade.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ON THE NIGHT  ·  colour-drenched evening timeline -->
+  <section class="section night" id="night" aria-label="How the evening unfolds">
+    <div class="wrap">
+      <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>On the night</span>
+      <h2 class="h2 reveal" style="max-width:18ch">How the evening <em>unfolds.</em></h2>
+      <p class="night-lede reveal" data-delay="1">The first thing I paint is the two of you on A4, while the energy is fresh. It is bigger and more detailed, the one you will want to frame. Then the night takes over.</p>
+
+      <div class="beats">
+        <div class="beat reveal">
+          <span class="bn">01</span>
+          <h3>Quietly set up</h3>
+          <p>I arrive about 15 minutes ahead. Materials are laid out and ready, with nothing for you to think about.</p>
+        </div>
+        <div class="beat reveal" data-delay="1">
+          <span class="bn">02</span>
+          <h3>No need to pose</h3>
+          <p>Guests keep enjoying the night. A quick photo is taken and names noted, so the moment is never interrupted.</p>
+        </div>
+        <div class="beat reveal" data-delay="2">
+          <span class="bn">03</span>
+          <h3>The painting begins</h3>
+          <p>Each piece takes around 5 to 20 minutes. As finished sketches appear, a little buzz starts to spread.</p>
+        </div>
+        <div class="beat reveal" data-delay="3">
+          <span class="bn">04</span>
+          <h3>Sleeved to take home</h3>
+          <p>Each painting slips into a clear sleeve, ready to travel safely once the champagne is flowing.</p>
+        </div>
+        <div class="beat reveal" data-delay="4">
+          <span class="bn">05</span>
+          <h3>No one misses out</h3>
+          <p>Anyone not painted on the night can still be drawn afterwards through the optional After-Event Service.</p>
         </div>
       </div>
     </div>
@@ -774,27 +878,59 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
             <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>A couple portrait, painted on the night and left with you</li>
             <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Each piece sleeved, ready to take home</li>
             <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>High-resolution scans of every piece</li>
-            <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Travel within about an hour of the Melbourne CBD by public transport</li>
+            <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Travel within about 1.5 hours of the Melbourne CBD included</li>
           </ul>
           <a class="btn btn--primary" href="#enquiry">Enquire <span class="arrow" aria-hidden="true">&rarr;</span></a>
         </article>
       </div>
 
-      <p class="pkg-note reveal">Want longer, more guests, or a portrait from photographs instead? We build it from the base. Add-ons are priced for your day, so just tell me what you have in mind.</p>
+      <p class="pkg-note reveal">Want longer, more guests, or a portrait from photographs instead? We build it from the base. Some pieces have a set price, others I quote for your day, so just tell me what you have in mind.</p>
+
+      <!-- INCLUDED AS STANDARD -->
+      <div class="included reveal">
+        <h3>Included as standard</h3>
+        <p class="sub">Everything below comes with the base package. Nothing to source or set up at your end beyond a table and a chair.</p>
+        <ul class="incl-grid">
+          <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#7E8B62"/></svg>All drawing and painting materials</li>
+          <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#7E8B62"/></svg>Custom-designed A5 templates</li>
+          <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#7E8B62"/></svg>Premium 300gsm watercolour paper</li>
+          <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#7E8B62"/></svg>Sealable clear sleeves for every piece</li>
+          <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#7E8B62"/></svg>Live painting through your reception</li>
+          <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#7E8B62"/></svg>Set-up about 15 minutes before I start</li>
+          <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#7E8B62"/></svg>Public liability insurance</li>
+          <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#7E8B62"/></svg>Travel within about 1.5 hours of the Melbourne CBD</li>
+        </ul>
+      </div>
 
       <div class="addons-head reveal">
         <h3>Add-ons</h3>
         <p>Priced on enquiry</p>
       </div>
       <div class="addon-grid reveal" data-delay="1">
+        <div class="addon is-popular">
+          <span class="pop">Most loved</span>
+          <h4>After-Event Service</h4>
+          <p>Any guest photographed on the night who missed out can still be painted. I finish their portrait in the studio afterwards and post the set to you to hand on.</p>
+          <span class="tag price"><small>From</small>$30 / guest</span>
+        </div>
+        <div class="addon">
+          <h4>Family portrait, A3</h4>
+          <p>The two of you with your immediate family, painted larger on A3 from photographs you provide after the day.</p>
+          <span class="tag price">$600</span>
+        </div>
+        <div class="addon">
+          <h4>Bridal party, A3</h4>
+          <p>A group portrait of the bridal party on A3, commemorating the people closest to you on the day.</p>
+          <span class="tag price">$600</span>
+        </div>
+        <div class="addon">
+          <h4>Spot illustrations</h4>
+          <p>Small paintings of the details: the venue, the cake, glasses raised, quiet corners of the night.</p>
+          <span class="tag price">$120 / each</span>
+        </div>
         <div class="addon">
           <h4>Extra live hours</h4>
           <p>Stay longer through the reception, for more of the night and more guests painted.</p>
-          <span class="tag">On enquiry</span>
-        </div>
-        <div class="addon">
-          <h4>More guests painted</h4>
-          <p>Lift the number of keepsakes so more of your room takes a piece home.</p>
           <span class="tag">On enquiry</span>
         </div>
         <div class="addon">
@@ -819,14 +955,43 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
         <figcaption class="af-body">
           <h4>Wedding bouquet illustration</h4>
           <p>A painting of your bouquet in full bloom, worked up from your photographs after the day. A quiet floral keepsake of the flowers you carried, holding its colour long after the real ones have faded.</p>
-          <span class="tag">On enquiry</span>
+          <span class="tag price">$400</span>
         </figcaption>
       </figure>
+
+      <p class="licence-note reveal"><b>A note on style.</b> My work is an interpretation, not a literal likeness, and my style keeps evolving, so no two pieces are exact replicas. Booking assumes you are happy with that creative freedom. A 50% deposit holds your date, with the balance due two weeks before the day.</p>
+    </div>
+  </section>
+
+  <!-- BEYOND WEDDINGS -->
+  <section class="section" id="beyond" aria-label="Beyond weddings">
+    <div class="wrap">
+      <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Beyond weddings</span>
+      <h2 class="h2 reveal" style="max-width:20ch">The same hand, <em>for any room.</em></h2>
+      <p class="pkg-intro reveal" data-delay="1">Live painting is just as at home away from a wedding. I work across Melbourne and Australia-wide, turning a few hours into keepsakes guests carry out the door.</p>
+
+      <div class="beyond-grid">
+        <div class="beyond-card reveal">
+          <span class="bn">Brand activations</span>
+          <h3>A drawcard that lingers</h3>
+          <p>Live portraits give people a reason to stop, watch and stay. Each guest leaves with a branded keepsake rather than another giveaway destined for the bin.</p>
+        </div>
+        <div class="beyond-card reveal" data-delay="1">
+          <span class="bn">Corporate events</span>
+          <h3>Memorable, not corporate</h3>
+          <p>Galas, launches and end-of-year nights. A quiet, elegant alternative to a photo booth that suits a considered room.</p>
+        </div>
+        <div class="beyond-card reveal" data-delay="2">
+          <span class="bn">Private celebrations</span>
+          <h3>Milestones worth keeping</h3>
+          <p>Birthdays, anniversaries and engagements. Smaller, warmer gatherings where everyone goes home with a small painting of their own.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- FAQ -->
-  <section class="section" id="faq" aria-label="Questions">
+  <section class="section section--soft" id="faq" aria-label="Questions">
     <div class="wrap">
       <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Questions</span>
       <h2 class="h2 reveal">The practical bits.</h2>
@@ -844,15 +1009,19 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 
         <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">When do we receive the finished work?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>Guest keepsakes are finished on the night and go home with your guests. Your couple portrait is painted on the night too and left with you as I finish. Studio commissions from photographs arrive within four weeks.</div></div></div>
 
-        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">Do you travel?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>Travel is included for venues within about an hour of the Melbourne CBD by public transport. Anywhere further, including regional Victoria and destination weddings, I am glad to discuss, with travel quoted on enquiry. Just include your venue and I will let you know.</div></div></div>
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">Do you travel?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>Travel is included for venues within about 1.5 hours of the Melbourne CBD. Anywhere further, including regional Victoria and destination weddings, I am glad to discuss, with travel quoted on enquiry. Just include your venue and I will let you know.</div></div></div>
 
         <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">Do you frame the work?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>I do not frame pieces. Everything comes to you on beautiful cotton-rag paper, sleeved and ready for a framer you love. I am happy to suggest framers if that helps.</div></div></div>
 
         <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">Do we get a digital copy?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>Yes. Every couple receives a high-resolution scan of their portrait to keep and reprint, for thank-you cards and the like. If you would like a file licensed specifically for stationery, just ask.</div></div></div>
 
-        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">How do we secure our date?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>A 25% deposit holds your date, with the balance due four weeks before the wedding. I only confirm a booking once the deposit is received, so your date is yours from that point.</div></div></div>
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">How do we secure our date?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>A 50% deposit holds your date, with the balance due two weeks before the wedding. I only confirm a booking once the deposit is received, so your date is yours from that point.</div></div></div>
 
-        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">What if we need to postpone or cancel?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>Weddings move, and I understand that. If you postpone, your deposit transfers to a new date subject to my availability. The deposit is non-refundable, as it reserves time I turn away other couples to hold. Full terms are set out in your booking agreement.</div></div></div>
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">What if we need to postpone or cancel?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>Weddings move, and I understand that. Cancel more than two months ahead and your deposit is refunded in full. More than two weeks ahead, half the deposit is refunded. Within two weeks of the day, the deposit is non-refundable, as it reserves time I turn away other couples to hold. If you would rather postpone, your deposit transfers to a new date subject to my availability. Full terms are set out in your booking agreement.</div></div></div>
+
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">What do you need from us on the day?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>Very little. One table around 100 by 60cm at seated height with room for a front-facing chair underneath, one chair, and somewhere I can stand for a short break each hour. I bring everything else. Light refreshments are always welcome but never expected.</div></div></div>
+
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">Do you paint events other than weddings?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>Yes. Alongside weddings I take on brand activations, corporate events and private celebrations across Melbourne and Australia-wide. The format flexes to the room, so tell me what you have in mind and I will shape it to suit.</div></div></div>
 
         <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">How should we send photos for a commission?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>The clearer the photographs, the better the portrait. Send a few well-lit, high-resolution images that show your faces clearly, and let me know which one feels most like you. I will guide you from there.</div></div></div>
 
@@ -861,7 +1030,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   </section>
 
   <!-- ENQUIRY -->
-  <section class="section section--soft enq" id="enquiry" aria-label="Enquire">
+  <section class="section enq" id="enquiry" aria-label="Enquire">
     <div class="wrap enq-grid">
       <div class="enq-intro reveal">
         <span class="label"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Enquire</span>
@@ -886,7 +1055,10 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
               <option value="">Choose one</option>
               <option>Live on the day (base package)</option>
               <option>Live on the day, with add-ons</option>
+              <option>After-Event Service for guests</option>
               <option>Studio commission from photographs</option>
+              <option>Corporate event or brand activation</option>
+              <option>Private celebration</option>
               <option>Not sure yet</option>
             </select>
           </div>
@@ -919,9 +1091,11 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     <span class="fm">Christopher Wang</span>
     <nav aria-label="Elsewhere">
       <a href="#why">Why</a>
+      <a href="#night">On the night</a>
       <a href="#work">The work</a>
       <a href="#process">How it works</a>
       <a href="#offerings">Packages</a>
+      <a href="#beyond">Beyond weddings</a>
       <a href="#faq">Questions</a>
       <a href="https://www.instagram.com/christopherwangpaints" target="_blank" rel="noopener">Instagram</a>
       <!-- PLACEHOLDER email -->
