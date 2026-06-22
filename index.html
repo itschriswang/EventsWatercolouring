@@ -613,6 +613,86 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 .beyond-card p{ margin:0; color:var(--ink-soft); font-size:.95rem; }
 
 /* ===========================================================================
+   SCROLL PROGRESS  ·  a thin pigment seam that fills as you read
+   Sits along the very top of the page, drawn from the rust ribbon.
+   =========================================================================== */
+.read-line{
+  position:fixed; top:0; left:0; right:0; height:2px; z-index:30;
+  transform:scaleX(0); transform-origin:left;
+  background:linear-gradient(90deg, var(--terracotta), var(--ochre) 55%, var(--sage));
+  pointer-events:none;
+}
+
+/* header settles onto the paper once you leave the hero */
+.site-head{ transition:padding .5s var(--ease), background .5s var(--ease), box-shadow .5s var(--ease); }
+.site-head.docked{
+  padding-top:clamp(.7rem,1.4vw,1rem); padding-bottom:clamp(.7rem,1.4vw,1rem);
+  background:rgba(244,239,230,.82); box-shadow:0 1px 0 var(--line);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); mix-blend-mode:normal;
+}
+
+/* ===========================================================================
+   KINETIC MARQUEE  ·  a slow drift of the work, reactive to scroll velocity
+   The brief's drifting portrait strip. It glides on its own, leans into a
+   skew as you scroll, and the words bleed between pigment and a hollow outline.
+   =========================================================================== */
+.marquee{
+  position:relative; overflow:hidden;
+  padding:clamp(1.4rem,3vw,2.4rem) 0;
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  background:rgba(234,226,212,.4);
+}
+.marquee-row{
+  display:flex; width:max-content; gap:0; white-space:nowrap;
+  will-change:transform; transform:translate3d(0,0,0);
+}
+.marquee-item{
+  font-family:var(--display); font-weight:300; font-style:italic;
+  font-size:clamp(2.2rem,7vw,5.5rem); line-height:1; letter-spacing:-.02em;
+  padding:0 clamp(1.5rem,4vw,3.5rem); color:var(--ink);
+}
+/* every other phrase reads as a hollow, drawn outline */
+.marquee-item.ghost{
+  color:transparent; -webkit-text-stroke:1px var(--terracotta); text-stroke:1px var(--terracotta);
+}
+.marquee-item .sep{ color:var(--terracotta); font-style:normal; font-weight:500; padding:0 .2em; }
+
+/* ===========================================================================
+   MAGNETIC + VELOCITY  ·  micro-physics borrowed from the reference sites
+   Buttons lean toward the cursor; galleries take a gentle skew as the page
+   moves, the way pigment lags behind a quick brush.
+   =========================================================================== */
+.magnetic{ will-change:transform; transition:transform .3s var(--ease); }
+
+/* ===========================================================================
+   WORD-RISE HEADINGS  ·  section titles climb out of a wet mask, word by word
+   A richer take on the hero's line reveal, applied across the page.
+   =========================================================================== */
+.h2 .word, .why-lede .word, .foot-cta .word{
+  display:inline-block; overflow:hidden; vertical-align:top;
+  padding-bottom:.12em; margin-bottom:-.12em; /* room for italic descenders */
+}
+.h2 .word > span, .why-lede .word > span, .foot-cta .word > span{
+  display:inline-block; transform:translateY(110%);
+  transition:transform .9s var(--ease);
+}
+.reveal.in .word > span, .h2.in .word > span{ transform:translateY(0); }
+/* stagger each word a touch as the line draws itself in */
+.word:nth-child(2) > span{ transition-delay:.04s; }
+.word:nth-child(3) > span{ transition-delay:.08s; }
+.word:nth-child(4) > span{ transition-delay:.12s; }
+.word:nth-child(5) > span{ transition-delay:.16s; }
+.word:nth-child(6) > span{ transition-delay:.20s; }
+.word:nth-child(7) > span{ transition-delay:.24s; }
+.word:nth-child(8) > span{ transition-delay:.28s; }
+
+/* ===========================================================================
+   CURSOR PIGMENT TRAIL  ·  a soft wash that follows the brush (desktop only)
+   Low opacity, eased, paused for reduced-motion and hidden on touch.
+   =========================================================================== */
+.pigment-trail{ position:fixed; inset:0; z-index:8; pointer-events:none; mix-blend-mode:multiply; }
+
+/* ===========================================================================
    REDUCED MOTION
    =========================================================================== */
 @media (prefers-reduced-motion:reduce){
@@ -623,6 +703,11 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   .hero-motes{ display:none; }
   .bloom{ opacity:.2 !important; }
   #heroCanvas, .piece .frame, .film .stage{ filter:none; } /* drop the SVG wobble for clarity */
+  /* new motion: settle everything flat */
+  .h2 .word > span, .why-lede .word > span, .foot-cta .word > span{ transform:none !important; }
+  .read-line{ display:none; }
+  .pigment-trail{ display:none; }
+  .marquee-row{ transform:none !important; }
 }
 </style>
 </head>
@@ -648,6 +733,12 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 </div>
 
 <div class="grain" aria-hidden="true"><svg width="100%" height="100%"><rect width="100%" height="100%" filter="url(#grainFilter)"/></svg></div>
+
+<!-- pigment trail that eases after the cursor (desktop, painted in JS) -->
+<canvas class="pigment-trail" aria-hidden="true"></canvas>
+
+<!-- reading progress: a thin pigment seam along the top -->
+<div class="read-line" aria-hidden="true"></div>
 
 <header class="site-head">
   <a class="wordmark" href="#top" aria-label="Christopher Wang, home">
@@ -698,6 +789,18 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     </div>
 
     <div class="scroll-cue" aria-hidden="true"><span class="bar"></span> Scroll</div>
+  </section>
+
+  <!-- KINETIC MARQUEE  ·  drifts on its own, leans with scroll velocity -->
+  <section class="marquee" aria-hidden="true">
+    <div class="marquee-row" id="marqueeRow">
+      <!-- filled and duplicated in JS so the loop is seamless -->
+      <span class="marquee-item">Painted on the night</span>
+      <span class="marquee-item ghost">Pigment on cotton rag</span>
+      <span class="marquee-item">A keepsake to take home</span>
+      <span class="marquee-item ghost">Live in the room</span>
+      <span class="marquee-item">Melbourne <span class="sep">&amp;</span> beyond</span>
+    </div>
   </section>
 
   <!-- WHY LIVE WATERCOLOUR -->
@@ -1085,7 +1188,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 <footer aria-label="Footer">
   <div class="wrap">
     <div class="foot-top">
-      <p class="foot-cta">Let&rsquo;s make something <em>to keep.</em></p>
+      <p class="foot-cta reveal">Let&rsquo;s make something <em>to keep.</em></p>
       <a class="cta" href="#enquiry"><span class="dot" aria-hidden="true"></span><span>Enquire</span></a>
     </div>
     <span class="fm">Christopher Wang</span>
@@ -1375,9 +1478,132 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     });
   }
 
+  /* ---- chrome: reading-progress seam + header that docks past the hero ---- */
+  function runChrome(){
+    const line = document.querySelector(".read-line");
+    const head = document.querySelector(".site-head");
+    const hero = document.getElementById("hero");
+    let ticking = false;
+    function update(){
+      ticking = false;
+      const st  = window.scrollY || 0;
+      const docH = document.documentElement.scrollHeight - window.innerHeight;
+      const p = docH > 0 ? Math.min(1, st / docH) : 0;
+      if(line) line.style.transform = "scaleX(" + p + ")";
+      if(head) head.classList.toggle("docked", st > (hero ? hero.offsetHeight * 0.55 : 420));
+    }
+    window.addEventListener("scroll", ()=>{ if(!ticking){ ticking = true; requestAnimationFrame(update); } }, {passive:true});
+    update();
+  }
+
+  /* ---- kinetics: the marquee drifts on its own and leans with scroll speed,
+         and the gallery takes a faint skew, the way pigment lags a quick brush ---- */
+  function runKinetics(){
+    if(reduce) return;
+    const row   = document.getElementById("marqueeRow");
+    const skews = Array.prototype.slice.call(document.querySelectorAll(".piece .frame, .film .stage"));
+    if(row){ row.innerHTML += row.innerHTML; }       // duplicate for a seamless loop
+    let half = 0, marqX = 0, last = window.scrollY || 0, vel = 0;
+    function measure(){ if(row) half = row.scrollWidth / 2; }
+    window.addEventListener("resize", ()=>{ measure(); marqX = 0; });
+    function frame(){
+      if(document.hidden){ requestAnimationFrame(frame); return; }
+      const sc = window.scrollY || 0;
+      vel = vel * 0.86 + (sc - last) * 0.14; last = sc;
+      const v = Math.max(-26, Math.min(26, vel));
+      if(row){
+        if(!half) measure();
+        marqX -= (0.55 + Math.abs(v) * 0.22);
+        if(half && -marqX >= half) marqX += half;
+        row.style.transform = "translate3d(" + marqX + "px,0,0) skewX(" + (v * -0.35) + "deg)";
+      }
+      if(skews.length){
+        const sk = "skewY(" + (v * 0.05) + "deg)";
+        for(let i=0;i<skews.length;i++) skews[i].style.transform = sk;
+      }
+      requestAnimationFrame(frame);
+    }
+    measure();
+    requestAnimationFrame(frame);
+  }
+
+  /* ---- magnetic CTAs: the button leans toward the cursor (desktop only) ---- */
+  function runMagnetic(){
+    if(reduce || !window.matchMedia("(pointer:fine)").matches) return;
+    document.querySelectorAll(".cta, .btn--primary").forEach(el=>{
+      el.classList.add("magnetic");
+      el.addEventListener("pointermove", e=>{
+        const r = el.getBoundingClientRect();
+        const x = (e.clientX - (r.left + r.width / 2)) * 0.35;
+        const y = (e.clientY - (r.top + r.height / 2)) * 0.35;
+        el.style.transform = "translate(" + x + "px," + y + "px)";
+      });
+      el.addEventListener("pointerleave", ()=>{ el.style.transform = ""; });
+    });
+  }
+
+  /* ---- word-rise: split section titles so each word climbs out of a wet mask ---- */
+  function splitWords(el){
+    (function walk(node){
+      Array.prototype.slice.call(node.childNodes).forEach(child=>{
+        if(child.nodeType === 3){
+          if(!child.textContent.trim()) return;
+          const frag = document.createDocumentFragment();
+          child.textContent.split(/(\s+)/).forEach(tok=>{
+            if(tok === "") return;
+            if(!tok.trim()){ frag.appendChild(document.createTextNode(tok)); return; }
+            const wrap = document.createElement("span"); wrap.className = "word";
+            const inner = document.createElement("span"); inner.textContent = tok;
+            wrap.appendChild(inner); frag.appendChild(wrap);
+          });
+          node.replaceChild(frag, child);
+        } else if(child.nodeType === 1){
+          walk(child); // recurse so words inside <em> are masked too
+        }
+      });
+    })(el);
+  }
+  function runWordReveal(){
+    if(reduce) return;
+    document.querySelectorAll(".h2, .why-lede, .foot-cta").forEach(splitWords);
+  }
+
+  /* ---- cursor pigment trail: a soft wash eases after the brush (desktop) ---- */
+  function runCursorTrail(){
+    if(reduce || !window.matchMedia("(pointer:fine)").matches) return;
+    const cv = document.querySelector(".pigment-trail");
+    if(!cv) return;
+    const ctx = cv.getContext("2d");
+    function size(){ cv.width = innerWidth * DPR; cv.height = innerHeight * DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
+    size(); window.addEventListener("resize", size);
+    const cols = [[181,101,74],[192,138,62],[126,139,98],[110,140,168],[201,139,140]];
+    let mx = -200, my = -200, px = mx, py = my, ci = 0;
+    window.addEventListener("pointermove", e=>{ mx = e.clientX; my = e.clientY; }, {passive:true});
+    (function frame(){
+      if(document.hidden){ requestAnimationFrame(frame); return; }
+      px += (mx - px) * 0.16; py += (my - py) * 0.16;
+      ctx.globalCompositeOperation = "destination-out";   // dissolve old pigment
+      ctx.fillStyle = "rgba(0,0,0,0.08)";
+      ctx.fillRect(0,0,innerWidth,innerHeight);
+      const speed = Math.hypot(mx - px, my - py);
+      if(speed > 0.6){
+        const c = cols[(ci++ >> 3) % cols.length];
+        const r = 7 + Math.min(28, speed * 0.6);
+        const g = ctx.createRadialGradient(px,py,0,px,py,r);
+        g.addColorStop(0, "rgba(" + c[0] + "," + c[1] + "," + c[2] + ",0.11)");
+        g.addColorStop(1, "rgba(" + c[0] + "," + c[1] + "," + c[2] + ",0)");
+        ctx.globalCompositeOperation = "source-over";
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2); ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    })();
+  }
+
   /* ---- boot ---- */
   function boot(){
     runHero(); runReveals(); runFaq(); runVideos(); runInstagram(); runForm(); runSmoothScroll();
+    runWordReveal(); runChrome(); runKinetics(); runMagnetic(); runCursorTrail();
   }
   if(document.readyState!=="loading") boot();
   else document.addEventListener("DOMContentLoaded", boot);
