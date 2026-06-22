@@ -387,6 +387,21 @@ img,canvas,svg,video{ display:block; max-width:100%; }
 .addon p{ margin:0; color:var(--ink-soft); font-size:.92rem; }
 .addon .tag{ margin-top:auto; font-family:var(--mono); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; color:var(--terracotta); padding-top:.4rem; }
 
+/* a featured add-on with a real example painted alongside */
+.addon-feature{
+  display:grid; gap:clamp(1.4rem,4vw,2.6rem); align-items:center;
+  margin-top:clamp(1.5rem,4vw,2.5rem);
+  background:var(--paper); border:1px solid var(--line); border-radius:4px;
+  padding:clamp(1.3rem,3vw,1.9rem);
+}
+@media (min-width:680px){ .addon-feature{ grid-template-columns:minmax(0,.85fr) 1.15fr; } }
+.addon-feature .af-img{ aspect-ratio:4/5; border-radius:3px; overflow:hidden; background:var(--paper-deep); filter:url(#wcWobble); }
+.addon-feature .af-img img{ width:100%; height:100%; object-fit:cover; }
+.addon-feature .af-body{ display:flex; flex-direction:column; gap:.7rem; }
+.addon-feature h4{ font-family:var(--display); font-style:italic; font-weight:400; font-size:clamp(1.4rem,3vw,1.95rem); margin:0; }
+.addon-feature p{ margin:0; color:var(--ink-soft); }
+.addon-feature .tag{ font-family:var(--mono); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; color:var(--terracotta); margin-top:.3rem; }
+
 /* ===========================================================================
    FAQ
    =========================================================================== */
@@ -798,6 +813,15 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
           <span class="tag">On enquiry</span>
         </div>
       </div>
+
+      <figure class="addon-feature reveal">
+        <div class="af-img frame"><img src="assets/art-bouquet.jpg" alt="Watercolour illustration of a bridal bouquet in full bloom, with rust ribbon, orange roses and forget-me-not blue on cotton-rag paper" loading="lazy" width="1600" height="1200" /></div>
+        <figcaption class="af-body">
+          <h4>Wedding bouquet illustration</h4>
+          <p>A painting of your bouquet in full bloom, worked up from your photographs after the day. A quiet floral keepsake of the flowers you carried, holding its colour long after the real ones have faded.</p>
+          <span class="tag">On enquiry</span>
+        </figcaption>
+      </figure>
     </div>
   </section>
 
