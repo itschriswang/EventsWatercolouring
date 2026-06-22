@@ -6,27 +6,23 @@
 
 <!--
   ============================================================================
-  CONCEPT E  ·  "DIFFUSION"
-  A homepage direction for my live wedding watercolour work.
-
-  The idea: nothing on this page is a stock photo in a box. The portrait in the
-  hero, the cursor trail, and every piece in the gallery are painted live in the
-  browser by a small pigment engine I wrote, so the imagery diffuses onto the
-  paper the way real watercolour does, and never lands the same way twice.
+  CHRISTOPHER WANG · LIVE WEDDING WATERCOLOUR · MELBOURNE
+  Editorial homepage. Warm filmic paper palette, drawn from the colours in my
+  own paintings: rust ribbon, terracotta, ochre, sage, forget-me-not blue and
+  a soft blush.
 
   Things for me to swap before this goes live (search "PLACEHOLDER"):
-   - my photograph for the introduction
-   - RedNote handle and enquiry email address
-   - the contact form endpoint, once I have one
+   - my enquiry email address (currently hello@example.com)
+   - the form endpoint, once I have a backend (Formspree / Web3Forms)
   Instagram is already live and correct.
   ============================================================================
 -->
 
-<title>Christopher Wang · Live wedding watercolour, Sydney</title>
-<meta name="description" content="I paint weddings live in watercolour across Sydney. Your guests as small keepsakes, the two of you as one finished portrait, all in pigment on cotton rag." />
-<meta name="keywords" content="live wedding painter Sydney, wedding watercolour portrait, live wedding watercolour, wedding artist Sydney" />
+<title>Christopher Wang · Live wedding watercolour, Melbourne</title>
+<meta name="description" content="I paint weddings live in watercolour across Melbourne. Your guests as small keepsakes to take home, the two of you as one portrait painted on the night, all in pigment on cotton-rag paper." />
+<meta name="keywords" content="live wedding painter Melbourne, wedding watercolour portrait, live wedding watercolour, wedding artist Melbourne" />
 <meta property="og:title" content="Christopher Wang · Live wedding watercolour" />
-<meta property="og:description" content="Weddings painted live in watercolour, across Sydney." />
+<meta property="og:description" content="Weddings painted live in watercolour, across Melbourne." />
 <meta property="og:type" content="website" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -36,8 +32,9 @@
 <style>
 /* ===========================================================================
    TOKENS
-   Warm filmic paper palette. The pigments are deliberately desaturated so the
-   live washes read as stains, not flat fills.
+   Warm filmic paper palette, sampled from my own paintings: the rust ribbon,
+   the orange roses, forget-me-not blue, olive sage and a blush pink. Pigments
+   are kept low saturation so washes read as stains, not flat fills.
    =========================================================================== */
 :root{
   --paper:        #F4EFE6;
@@ -46,11 +43,13 @@
   --ink-soft:     #6B6258;
   --line:         #D8CFBF;
 
-  /* pigments, kept low saturation */
+  /* pigments drawn from the artwork */
   --terracotta:   #B5654A;
+  --rust:         #A4502F;
   --ochre:        #C08A3E;
-  --sage:         #7C8A6B;
-  --dusty:        #6E8294;
+  --sage:         #7E8B62;
+  --cornflower:   #6E8CA8;
+  --rose:         #C98B8C;
 
   --display: "Fraunces", Georgia, serif;
   --body:    "Hanken Grotesk", system-ui, sans-serif;
@@ -76,15 +75,10 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 
-/* On desktop with a fine pointer, hide the native cursor and use the brush. */
-@media (hover:hover) and (pointer:fine){
-  body.custom-cursor, body.custom-cursor *{ cursor:none; }
-}
-
 ::selection{ background:rgba(181,101,74,.22); color:var(--ink); }
 
 a{ color:inherit; text-decoration:none; }
-img,canvas,svg{ display:block; max-width:100%; }
+img,canvas,svg,video{ display:block; max-width:100%; }
 
 /* Visible, on-brand focus ring for keyboard users. */
 :focus-visible{
@@ -100,6 +94,37 @@ img,canvas,svg{ display:block; max-width:100%; }
 }
 
 /* ===========================================================================
+   BACKGROUND WATERCOLOUR FIELD
+   Soft pigment patches framed down the left and right margins, drifting and
+   breathing slowly so the page feels alive without distracting. Sits behind
+   all content. Paused for reduced-motion users.
+   =========================================================================== */
+.bloom-field{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+.bloom{
+  position:absolute; width:42vmin; height:42vmin; border-radius:50%;
+  filter:blur(46px); mix-blend-mode:multiply; opacity:.22;
+  will-change:transform, opacity;
+}
+/* left frame */
+.bloom.l1{ left:-14vmin; top:6%;  background:radial-gradient(circle at 40% 40%, var(--terracotta), transparent 68%); animation:drift1 26s var(--ease) infinite alternate; }
+.bloom.l2{ left:-16vmin; top:42%; background:radial-gradient(circle at 50% 50%, var(--sage), transparent 70%);       animation:drift2 34s var(--ease) infinite alternate; }
+.bloom.l3{ left:-12vmin; top:74%; background:radial-gradient(circle at 45% 45%, var(--ochre), transparent 68%);      animation:drift3 30s var(--ease) infinite alternate; }
+/* right frame */
+.bloom.r1{ right:-14vmin; top:12%; background:radial-gradient(circle at 60% 40%, var(--cornflower), transparent 70%); animation:drift2 32s var(--ease) infinite alternate; }
+.bloom.r2{ right:-16vmin; top:48%; background:radial-gradient(circle at 55% 55%, var(--rose), transparent 70%);       animation:drift3 28s var(--ease) infinite alternate; }
+.bloom.r3{ right:-12vmin; top:80%; background:radial-gradient(circle at 50% 45%, var(--terracotta), transparent 68%); animation:drift1 36s var(--ease) infinite alternate; }
+
+@keyframes drift1{ 0%{ transform:translate(0,0) scale(1) rotate(0deg); opacity:.16; } 100%{ transform:translate(4vmin,-3vmin) scale(1.18) rotate(8deg); opacity:.3; } }
+@keyframes drift2{ 0%{ transform:translate(0,0) scale(1.05) rotate(0deg); opacity:.14; } 100%{ transform:translate(-3vmin,4vmin) scale(.9) rotate(-6deg); opacity:.26; } }
+@keyframes drift3{ 0%{ transform:translate(0,2vmin) scale(.95) rotate(0deg); opacity:.18; } 100%{ transform:translate(3vmin,-2vmin) scale(1.12) rotate(5deg); opacity:.28; } }
+
+@media (max-width:760px){
+  /* keep the field gentle and out of the way on phones */
+  .bloom{ width:54vmin; height:54vmin; opacity:.16; }
+  .bloom.l2,.bloom.r2{ display:none; }
+}
+
+/* ===========================================================================
    FILM + PAPER GRAIN
    A single fixed turbulence overlay across everything for the filmic surface.
    =========================================================================== */
@@ -107,22 +132,6 @@ img,canvas,svg{ display:block; max-width:100%; }
   position:fixed; inset:0; z-index:9; pointer-events:none;
   mix-blend-mode:multiply; opacity:.5;
 }
-.cursor-layer{ position:fixed; inset:0; z-index:8; pointer-events:none; }
-
-/* ===========================================================================
-   CUSTOM CURSOR (the brush)
-   =========================================================================== */
-.brush{
-  position:fixed; top:0; left:0; z-index:10; pointer-events:none;
-  width:14px; height:14px; border-radius:50%;
-  background:var(--terracotta);
-  mix-blend-mode:multiply;
-  transform:translate(-50%,-50%);
-  transition:width .3s var(--ease), height .3s var(--ease), opacity .3s var(--ease);
-  opacity:0;
-}
-.brush.is-active{ opacity:.85; }
-.brush.is-hot{ width:46px; height:46px; opacity:.4; }
 
 /* ===========================================================================
    HEADER
@@ -150,7 +159,7 @@ img,canvas,svg{ display:block; max-width:100%; }
 
 /* ===========================================================================
    HERO
-   Oversized kinetic headline overlapping a generated pigment portrait.
+   Oversized kinetic headline overlapping a generated pigment wash.
    =========================================================================== */
 .hero{
   position:relative; min-height:100svh; min-height:100vh;
@@ -241,31 +250,44 @@ img,canvas,svg{ display:block; max-width:100%; }
 @keyframes cue{ 0%{transform:translateX(-100%)} 55%{transform:translateX(0)} 100%{transform:translateX(100%)} }
 
 /* ===========================================================================
-   INTRO BAND
+   SECTION SCAFFOLD
    =========================================================================== */
-.intro{ position:relative; padding:clamp(6rem,16vh,12rem) 0; }
-.intro .wrap{ display:grid; grid-template-columns:1fr; gap:clamp(2rem,5vw,4rem); }
-.intro-quote{
+.section{ position:relative; padding:clamp(5rem,13vh,10rem) 0; }
+.section--soft{ background:rgba(234,226,212,.45); }
+.label{
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--ink-soft); display:inline-flex; align-items:center; gap:.6em;
+}
+.label .drop{ width:18px; height:20px; }
+.h2{
   font-family:var(--display); font-weight:300;
-  font-size:clamp(1.9rem, 5.2vw, 4.4rem); line-height:1.04; letter-spacing:-.015em;
-  max-width:20ch; text-wrap:balance;
+  font-size:clamp(2rem,6vw,4.2rem); line-height:1.02; letter-spacing:-.02em;
+  margin:.5em 0 0; text-wrap:balance;
 }
-.intro-quote em{ font-style:italic; color:var(--terracotta); }
-.intro-body{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr)); gap:2rem 3rem; }
-.intro-body p{ margin:0; color:var(--ink); max-width:52ch; }
-.intro-body .label{ font-family:var(--mono); font-size:.7rem; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:.8rem; }
-
-@media (min-width:900px){
-  .intro .wrap{ grid-template-columns:1.1fr 1fr; align-items:start; }
-}
+.h2 em{ font-style:italic; color:var(--terracotta); }
 
 /* ===========================================================================
-   THE WORK  ·  generated gallery
+   HOW IT WORKS
    =========================================================================== */
-.work{ padding:clamp(2rem,6vh,5rem) 0 clamp(6rem,14vh,10rem); }
+.paths{ display:grid; gap:clamp(2rem,5vw,4rem); margin-top:clamp(2.5rem,6vw,4rem); }
+@media (min-width:860px){ .paths{ grid-template-columns:1fr 1fr; } }
+.path h3{ font-family:var(--display); font-style:italic; font-weight:400; font-size:1.8rem; margin:0 0 .3rem; }
+.path .psub{ color:var(--ink-soft); margin:0 0 1.6rem; max-width:42ch; }
+.steps{ list-style:none; margin:0; padding:0; display:grid; gap:1.4rem; }
+.steps li{ display:flex; gap:1.1rem; align-items:flex-start; }
+.steps .n{
+  flex:0 0 auto; width:2.1rem; height:2.1rem; border-radius:50%;
+  border:1.5px solid var(--line); display:grid; place-items:center;
+  font-family:var(--mono); font-size:.8rem; color:var(--terracotta);
+}
+.steps li > span:last-child{ display:flex; flex-direction:column; gap:.25rem; }
+.steps b{ font-weight:600; }
+.steps li span span{ color:var(--ink-soft); font-size:.96rem; }
+
+/* ===========================================================================
+   THE WORK  ·  real artwork gallery
+   =========================================================================== */
 .work-head{ display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:clamp(2.5rem,6vw,4.5rem); }
-.work-head h2{ font-family:var(--display); font-weight:400; font-size:clamp(2.2rem,7vw,5rem); letter-spacing:-.02em; margin:0; }
-.work-head h2 em{ font-style:italic; }
 .work-head .note{ font-family:var(--mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft); max-width:26ch; text-align:right; }
 
 .gallery{ display:grid; grid-template-columns:repeat(12,1fr); gap:clamp(1.5rem,3vw,3rem) clamp(1.25rem,2.5vw,2.5rem); }
@@ -273,55 +295,146 @@ img,canvas,svg{ display:block; max-width:100%; }
 .piece figure{ margin:0; position:relative; }
 .piece .frame{
   position:relative; overflow:hidden; background:var(--paper-deep);
-  border-radius:2px;
+  border-radius:2px; filter:url(#wcWobble);
 }
-.piece canvas{ width:100%; height:100%; display:block; }
-.piece .frame{ filter:url(#wcWobble); }
+.piece .frame img{ width:100%; height:100%; object-fit:cover; display:block; }
 .piece figcaption{ display:flex; justify-content:space-between; gap:1rem; margin-top:1rem; align-items:baseline; }
 .piece .ttl{ font-family:var(--display); font-style:italic; font-size:1.15rem; }
 .piece .meta{ font-family:var(--mono); font-size:.66rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); }
 
-/* deliberate asymmetry, magazine placement */
 .piece.p1{ grid-column:1 / span 7; }
 .piece.p1 .frame{ aspect-ratio:4/5; }
 .piece.p2{ grid-column:9 / span 4; align-self:end; }
 .piece.p2 .frame{ aspect-ratio:3/4; }
-.piece.p3{ grid-column:2 / span 4; }
-.piece.p3 .frame{ aspect-ratio:1/1; }
-.piece.p4{ grid-column:7 / span 6; margin-top:-6%; }
-.piece.p4 .frame{ aspect-ratio:5/4; }
+.piece.p3{ grid-column:3 / span 6; margin-top:-4%; }
+.piece.p3 .frame{ aspect-ratio:5/4; }
 
 @media (max-width:760px){
   .gallery{ gap:2.5rem 1.25rem; }
-  .piece.p1,.piece.p2,.piece.p3,.piece.p4{ grid-column:1 / -1; margin-top:0; }
+  .piece.p1,.piece.p2,.piece.p3{ grid-column:1 / -1; margin-top:0; }
   .work-head .note{ text-align:left; }
 }
 
 /* ===========================================================================
-   WAYS TO WORK  (teaser strip)
+   IN MOTION  ·  reels (local video) + studio character work
    =========================================================================== */
-.ways{ padding:clamp(5rem,12vh,9rem) 0; border-top:1px solid var(--line); }
-.ways .wrap{ display:grid; gap:clamp(2.5rem,6vw,4rem); }
-.ways h2{ font-family:var(--display); font-weight:300; font-size:clamp(2rem,6vw,4rem); margin:0; letter-spacing:-.015em; }
-.tiers{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr)); gap:1px; background:var(--line); border:1px solid var(--line); }
-.tier{ background:var(--paper); padding:clamp(1.6rem,3vw,2.4rem); display:flex; flex-direction:column; gap:1rem; min-height:15rem; transition:background .5s var(--ease); }
-.tier:hover{ background:var(--paper-deep); }
-.tier .no{ font-family:var(--mono); font-size:.68rem; letter-spacing:.2em; color:var(--ink-soft); }
-.tier h3{ font-family:var(--display); font-style:italic; font-weight:400; font-size:1.7rem; margin:0; }
-.tier .price{ font-family:var(--mono); font-size:.82rem; letter-spacing:.04em; margin-top:auto; }
-.tier.feat{ background:var(--ink); color:var(--paper); }
-.tier.feat .no,.tier.feat .price{ color:rgba(244,239,230,.7); }
-.tier.feat:hover{ background:#22201d; }
-.tier p{ margin:0; font-size:.95rem; color:inherit; opacity:.85; }
+.films{ display:grid; gap:clamp(1.5rem,3vw,2.5rem); grid-template-columns:1fr; margin-top:clamp(2.5rem,6vw,4rem); }
+@media (min-width:680px){ .films{ grid-template-columns:1fr 1fr; } }
+.film{ position:relative; }
+.film .stage{
+  position:relative; overflow:hidden; border-radius:3px; background:var(--ink);
+  aspect-ratio:9/16; filter:url(#wcWobble);
+}
+.film video{ width:100%; height:100%; object-fit:cover; }
+.film figcaption{ margin-top:.9rem; font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); }
+
+.studio-head{ display:grid; gap:1rem; max-width:60ch; }
+.studio-head p{ color:var(--ink-soft); margin:0; }
+
+.reels{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr)); gap:clamp(1.2rem,3vw,2rem); margin-top:clamp(2.5rem,6vw,3.5rem); align-items:start; }
+.reels .instagram-media{ margin:0 auto !important; }
+.reel-fallback{ font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); }
 
 /* ===========================================================================
-   ENQUIRY STRIP + FOOTER
+   PACKAGES  ·  equal weight, no clickbait highlight
    =========================================================================== */
-.enquire{ padding:clamp(6rem,16vh,12rem) 0; text-align:center; position:relative; }
-.enquire h2{ font-family:var(--display); font-weight:300; font-size:clamp(2.6rem,11vw,9rem); line-height:.9; letter-spacing:-.025em; margin:0 0 2rem; }
-.enquire h2 em{ font-style:italic; color:var(--terracotta); }
-.enquire p{ max-width:46ch; margin:0 auto 2.4rem; color:var(--ink-soft); }
+.pkg-intro{ max-width:60ch; color:var(--ink-soft); margin:1.4rem 0 0; }
+.pkgs{ display:grid; gap:clamp(1.25rem,2.5vw,2rem); margin-top:clamp(2.5rem,6vw,4rem); grid-template-columns:1fr; }
+@media (min-width:720px){ .pkgs{ grid-template-columns:repeat(2,1fr); } }
+@media (min-width:1040px){ .pkgs{ grid-template-columns:repeat(4,1fr); } }
+.pkg{
+  background:var(--paper); border:1px solid var(--line); border-radius:4px;
+  padding:clamp(1.6rem,3vw,2.1rem); display:flex; flex-direction:column; gap:.9rem;
+  transition:transform .5s var(--ease), box-shadow .5s var(--ease);
+}
+.pkg:hover{ transform:translateY(-4px); box-shadow:0 18px 40px -28px rgba(42,39,36,.5); }
+.pkg h3{ font-family:var(--display); font-style:italic; font-weight:400; font-size:1.6rem; margin:0; }
+.pkg .pnote{ color:var(--ink-soft); font-size:.92rem; margin:0; }
+.pkg .price{ font-family:var(--display); font-weight:500; font-size:2rem; margin:.2rem 0 0; line-height:1; }
+.pkg .price small{ display:block; font-family:var(--mono); font-size:.62rem; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:.35rem; font-weight:400; }
+.pkg .facts{ display:flex; flex-wrap:wrap; gap:.4rem; }
+.pkg .facts span{ font-family:var(--mono); font-size:.64rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); border:1px solid var(--line); border-radius:999px; padding:.3rem .6rem; }
+.pkg ul{ list-style:none; margin:.4rem 0 0; padding:0; display:grid; gap:.55rem; font-size:.93rem; }
+.pkg ul li{ display:flex; gap:.55rem; align-items:flex-start; }
+.pkg ul li .drop{ flex:0 0 auto; width:15px; height:17px; margin-top:.18em; }
+.pkg .btn{ margin-top:auto; }
+.pkg--studio{ background:var(--paper-deep); }
 
+.btn{
+  display:inline-flex; align-items:center; gap:.6rem; align-self:flex-start;
+  font-family:var(--mono); text-transform:uppercase; letter-spacing:.14em; font-size:.72rem;
+  padding:.85rem 1.3rem; border:1.5px solid var(--ink); border-radius:999px;
+  background:transparent; color:var(--ink); cursor:pointer; transition:background .4s var(--ease), color .4s var(--ease);
+}
+.btn:hover{ background:var(--ink); color:var(--paper); }
+.btn--primary{ background:var(--terracotta); border-color:var(--terracotta); color:var(--paper); }
+.btn--primary:hover{ background:var(--rust); border-color:var(--rust); }
+
+.pkg-note{ margin-top:clamp(2rem,5vw,3rem); max-width:60ch; color:var(--ink-soft); }
+.addons{ margin-top:1.4rem; border-top:1px solid var(--line); padding-top:1.2rem; max-width:60ch; }
+.addons summary{ cursor:pointer; font-family:var(--mono); font-size:.74rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); }
+.addons dl{ display:grid; gap:.5rem; margin:1rem 0 0; }
+.addons dl > div{ display:flex; justify-content:space-between; gap:1rem; border-bottom:1px dotted var(--line); padding-bottom:.5rem; }
+.addons dt{ color:var(--ink); }
+.addons dd{ margin:0; font-family:var(--mono); font-size:.74rem; color:var(--ink-soft); white-space:nowrap; }
+
+/* ===========================================================================
+   FAQ
+   =========================================================================== */
+.faq-list{ margin-top:clamp(2rem,5vw,3rem); border-top:1px solid var(--line); }
+.faq-item{ border-bottom:1px solid var(--line); }
+.faq-item h3{ margin:0; }
+.faq-q{
+  width:100%; text-align:left; background:none; border:0; cursor:pointer;
+  display:flex; justify-content:space-between; align-items:center; gap:1rem;
+  padding:1.4rem 0; font-family:var(--display); font-weight:400; font-size:clamp(1.1rem,2.4vw,1.4rem); color:var(--ink);
+}
+.faq-q .drop{ flex:0 0 auto; width:18px; height:20px; transition:transform .4s var(--ease); }
+.faq-item.open .faq-q .drop{ transform:rotate(180deg); }
+.faq-a{ height:0; overflow:hidden; transition:height .45s var(--ease); }
+.faq-a > div{ padding:0 0 1.4rem; max-width:62ch; color:var(--ink-soft); }
+
+/* ===========================================================================
+   ENQUIRY FORM
+   =========================================================================== */
+.enq-grid{ display:grid; gap:clamp(2rem,5vw,4rem); }
+@media (min-width:900px){ .enq-grid{ grid-template-columns:.85fr 1.15fr; align-items:start; } }
+.enq-intro h2{ font-family:var(--display); font-weight:300; font-size:clamp(2.2rem,6vw,4rem); line-height:1; letter-spacing:-.02em; margin:.4em 0 .8rem; }
+.enq-intro h2 em{ font-style:italic; color:var(--terracotta); }
+.enq-intro p{ color:var(--ink-soft); max-width:40ch; }
+
+.enq-card{ background:var(--paper); border:1px solid var(--line); border-radius:4px; padding:clamp(1.5rem,3.5vw,2.4rem); position:relative; }
+.enq-card form{ display:grid; gap:1.1rem; }
+.field{ display:grid; gap:.4rem; }
+.field label{ font-family:var(--mono); font-size:.66rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); }
+.field input, .field select, .field textarea{
+  font-family:var(--body); font-size:1rem; color:var(--ink);
+  background:var(--paper-deep); border:1px solid var(--line); border-radius:3px;
+  padding:.8rem .9rem; width:100%;
+}
+.field textarea{ min-height:7rem; resize:vertical; }
+.field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color:var(--terracotta); }
+.field [aria-invalid="true"]{ border-color:var(--rust); }
+@media (min-width:560px){ .enq-card form{ grid-template-columns:1fr 1fr; } .field.full, .enq-foot, .enq-status{ grid-column:1 / -1; } }
+.hp{ position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+.enq-foot{ display:flex; flex-wrap:wrap; align-items:center; gap:1rem 1.5rem; margin-top:.4rem; }
+.enq-fine{ font-size:.85rem; color:var(--ink-soft); margin:0; }
+.enq-fine a{ color:var(--terracotta); }
+.enq-status{ font-size:.9rem; color:var(--ink-soft); margin:0; min-height:1.2em; }
+.enq-status.err{ color:var(--rust); }
+.arrow{ transition:transform .3s var(--ease); }
+.btn:hover .arrow{ transform:translateX(3px); }
+
+.enq-confirm{ display:none; text-align:center; padding:1rem; }
+.enq-confirm .drop{ width:42px; height:48px; margin:0 auto 1rem; }
+.enq-confirm h3{ font-family:var(--display); font-style:italic; font-weight:400; font-size:1.8rem; margin:0 0 .5rem; }
+.enq-confirm p{ color:var(--ink-soft); max-width:40ch; margin:0 auto; }
+.enq.sent .enq-card form{ display:none; }
+.enq.sent .enq-confirm{ display:block; }
+
+/* ===========================================================================
+   FOOTER
+   =========================================================================== */
 footer{ border-top:1px solid var(--line); padding:clamp(2.5rem,5vw,4rem) 0 3rem; }
 footer .wrap{ display:flex; flex-wrap:wrap; gap:2rem; justify-content:space-between; align-items:flex-end; }
 footer .fm{ font-family:var(--display); font-weight:500; font-size:1.3rem; }
@@ -334,6 +447,8 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 /* generic scroll reveal */
 .reveal{ opacity:0; transform:translateY(28px); transition:opacity 1s var(--ease), transform 1s var(--ease); }
 .reveal.in{ opacity:1; transform:none; }
+.reveal[data-delay="1"]{ transition-delay:.08s; }
+.reveal[data-delay="2"]{ transition-delay:.16s; }
 
 /* ===========================================================================
    REDUCED MOTION
@@ -343,11 +458,12 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   .line-mask > span{ transform:none !important; }
   .reveal{ opacity:1 !important; transform:none !important; }
   .scroll-cue .bar::after{ display:none; }
-  #heroCanvas, .piece .frame{ filter:none; } /* drop the SVG wobble for clarity */
+  .bloom{ opacity:.2 !important; }
+  #heroCanvas, .piece .frame, .film .stage{ filter:none; } /* drop the SVG wobble for clarity */
 }
 </style>
 </head>
-<body class="custom-cursor">
+<body>
 
 <!-- SVG filters: paper grain + a gentle watercolour edge wobble -->
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
@@ -358,20 +474,24 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   </filter>
   <filter id="wcWobble" x="-6%" y="-6%" width="112%" height="112%">
     <feTurbulence type="fractalNoise" baseFrequency="0.012 0.016" numOctaves="2" seed="11" result="n"/>
-    <feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="10" xChannelSelector="R" yChannelSelector="G"/>
   </filter>
 </svg>
 
+<!-- background watercolour field, framed down the sides -->
+<div class="bloom-field" aria-hidden="true">
+  <span class="bloom l1"></span><span class="bloom l2"></span><span class="bloom l3"></span>
+  <span class="bloom r1"></span><span class="bloom r2"></span><span class="bloom r3"></span>
+</div>
+
 <div class="grain" aria-hidden="true"><svg width="100%" height="100%"><rect width="100%" height="100%" filter="url(#grainFilter)"/></svg></div>
-<canvas class="cursor-layer" id="cursorCanvas" aria-hidden="true"></canvas>
-<div class="brush" id="brush" aria-hidden="true"></div>
 
 <header class="site-head">
   <a class="wordmark" href="#top" aria-label="Christopher Wang, home">
     <b>Christopher Wang</b>
-    <span>Live wedding watercolour · Sydney</span>
+    <span>Live wedding watercolour · Melbourne</span>
   </a>
-  <a class="enquire-link" href="#enquire">Enquire</a>
+  <a class="enquire-link" href="#enquiry">Enquire</a>
 </header>
 
 <main id="top">
@@ -380,7 +500,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   <section class="hero" id="hero" aria-label="Introduction">
     <div class="hero-canvas-stage" aria-hidden="true">
       <canvas id="heroCanvas" width="760" height="760"
-              role="img" aria-label="A watercolour portrait painting itself onto the paper"></canvas>
+              role="img" aria-label="A loose watercolour wash settling onto the paper"></canvas>
     </div>
     <svg class="hero-gesture" viewBox="0 0 660 520" aria-hidden="true" id="heroGesture">
       <path id="g1" d="M205 470 C 150 360 175 250 250 200 C 320 152 330 90 300 60"/>
@@ -397,101 +517,267 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
       <div class="hero-foot">
         <p class="hero-lede">
           I set up at your reception and paint as the night moves. Your guests become
-          small keepsakes to take home, and the two of you become one finished portrait,
-          <strong>all in pigment on cotton rag.</strong>
+          small keepsakes to take home, and the two of you become a portrait painted on the night,
+          <strong>all in pigment on cotton-rag paper.</strong>
         </p>
-        <a class="cta" href="#enquire"><span class="dot" aria-hidden="true"></span><span>Enquire</span></a>
+        <a class="cta" href="#enquiry"><span class="dot" aria-hidden="true"></span><span>Enquire</span></a>
       </div>
     </div>
 
     <div class="scroll-cue" aria-hidden="true"><span class="bar"></span> Scroll</div>
   </section>
 
-  <!-- INTRO -->
-  <section class="intro reveal" aria-label="About the work">
+  <!-- HOW IT WORKS -->
+  <section class="section" id="process" aria-label="How it works">
     <div class="wrap">
-      <p class="intro-quote">
-        I trained as an architect, then went back to <em>painting people.</em>
-      </p>
-      <div class="intro-body">
-        <p>
-          <span class="label">The approach</span>
-          That training never left. I build a portrait the way I once built a drawing,
-          with composition first and restraint everywhere else. Then I let the water do
-          the part I cannot control. The discipline is mine. The bloom is the paint's.
-        </p>
-        <p>
-          <span class="label">On the night</span>
-          Working live changes the room. Guests drift over to watch a face appear out of
-          a wash, and by the last dance there is a painting carrying the feeling of the
-          evening, made in front of the people who were in it.
-        </p>
+      <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>How it works</span>
+      <h2 class="h2 reveal" style="max-width:16ch">Two ways in. <em>Both unhurried.</em></h2>
+
+      <div class="paths">
+        <div class="path reveal">
+          <h3>Live on the day</h3>
+          <p class="psub">I come to your wedding and paint as it happens.</p>
+          <ol class="steps">
+            <li><span class="n">1</span><span><b>We say hello</b><span>You tell me about the day, the venue, and the people who matter. A deposit holds your date.</span></span></li>
+            <li><span class="n">2</span><span><b>I paint in the room</b><span>I arrive early, set up quietly, and paint your guests through the celebration while they watch.</span></span></li>
+            <li><span class="n">3</span><span><b>Everyone takes one home</b><span>Guests leave with their own little painting. Your couple portrait is painted on the night and left with you.</span></span></li>
+          </ol>
+        </div>
+        <div class="path reveal" data-delay="1">
+          <h3>A studio commission</h3>
+          <p class="psub">From your photographs, before or after the wedding.</p>
+          <ol class="steps">
+            <li><span class="n">1</span><span><b>Send me your photos</b><span>A few well-lit, high-resolution images that look like you. I will help you choose the one to paint from.</span></span></li>
+            <li><span class="n">2</span><span><b>I paint in the studio</b><span>I work from your images on cotton-rag paper, building the portrait by hand over the weeks that follow.</span></span></li>
+            <li><span class="n">3</span><span><b>It arrives within four weeks</b><span>Your finished watercolour is delivered with a high-resolution scan for your records.</span></span></li>
+          </ol>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- THE WORK -->
-  <section class="work" id="work" aria-label="Selected work">
+  <section class="section section--soft" id="work" aria-label="Selected work">
     <div class="wrap">
       <div class="work-head reveal">
-        <h2>Selected <em>work</em></h2>
-        <p class="note">Each piece below is generated live as you load the page. PLACEHOLDER for my real portfolio scans.</p>
+        <div>
+          <span class="label"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Selected work</span>
+          <h2 class="h2" style="margin-top:.3em">Pigment on <em>cotton rag.</em></h2>
+        </div>
+        <p class="note">Painted by hand on 300gsm A5 watercolour pads.</p>
       </div>
       <div class="gallery">
         <figure class="piece p1 reveal">
-          <div class="frame"><canvas data-piece="0"></canvas></div>
-          <figcaption><span class="ttl">The long table</span><span class="meta">Live · Reception</span></figcaption>
+          <div class="frame"><img src="assets/art-bouquet.jpg" alt="Watercolour study of a bridal bouquet, with rust ribbon, orange roses and forget-me-not blue, painted on cotton-rag paper" loading="lazy" width="1600" height="1200" /></div>
+          <figcaption><span class="ttl">The bouquet</span><span class="meta">Watercolour · A5</span></figcaption>
         </figure>
-        <figure class="piece p2 reveal">
-          <div class="frame"><canvas data-piece="1"></canvas></div>
-          <figcaption><span class="ttl">First look</span><span class="meta">Live · Couple</span></figcaption>
+        <figure class="piece p2 reveal" data-delay="1">
+          <div class="frame"><img src="assets/art-character-girl.jpg" alt="Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre" loading="lazy" width="1600" height="1600" /></div>
+          <figcaption><span class="ttl">Little character, in green</span><span class="meta">Studio study</span></figcaption>
         </figure>
-        <figure class="piece p3 reveal">
-          <div class="frame"><canvas data-piece="2"></canvas></div>
-          <figcaption><span class="ttl">Her mother</span><span class="meta">Keepsake</span></figcaption>
-        </figure>
-        <figure class="piece p4 reveal">
-          <div class="frame"><canvas data-piece="3"></canvas></div>
-          <figcaption><span class="ttl">Last dance</span><span class="meta">Commission · Studio</span></figcaption>
+        <figure class="piece p3 reveal" data-delay="2">
+          <div class="frame"><img src="assets/art-character-boy.jpg" alt="Small watercolour character portrait with the artist's palette alongside, in warm terracotta and ochre" loading="lazy" width="1600" height="1200" /></div>
+          <figcaption><span class="ttl">At the palette</span><span class="meta">Studio study</span></figcaption>
         </figure>
       </div>
     </div>
   </section>
 
-  <!-- WAYS TO WORK -->
-  <section class="ways" id="ways" aria-label="Ways to work">
+  <!-- IN MOTION -->
+  <section class="section" id="studio" aria-label="In the studio">
     <div class="wrap">
-      <h2 class="reveal">Three ways to work together.</h2>
-      <div class="tiers reveal">
-        <div class="tier">
-          <span class="no">01 / Intimate</span>
+      <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>In motion</span>
+      <div class="studio-head reveal" data-delay="1">
+        <h2 class="h2" style="max-width:18ch">Watch a piece <em>come together.</em></h2>
+        <p>A couple of short films of the paint going down. Between weddings I also paint little character portraits, in the soft, wistful spirit of the art-toy world. It keeps my hand loose and my eye on character.</p>
+      </div>
+
+      <!-- Local reels: play directly on the page. -->
+      <div class="films">
+        <figure class="film reveal">
+          <div class="stage">
+            <video src="assets/reel-painting-1.mp4" poster="assets/reel-painting-1.jpg"
+                   muted loop playsinline preload="none" controls
+                   aria-label="Watercolour painting in progress, filmed in the studio"></video>
+          </div>
+          <figcaption>Painting in progress</figcaption>
+        </figure>
+        <figure class="film reveal" data-delay="1">
+          <div class="stage">
+            <video src="assets/reel-painting-2.mp4" poster="assets/reel-painting-2.jpg"
+                   muted loop playsinline preload="none" controls
+                   aria-label="A second watercolour painting in progress, filmed in the studio"></video>
+          </div>
+          <figcaption>Laying in the wash</figcaption>
+        </figure>
+      </div>
+
+      <!-- Instagram reels, embedded so they play in place. -->
+      <div class="reels reveal">
+        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/DUzCi-LEvAc/" data-instgrm-version="14"><a href="https://www.instagram.com/reel/DUzCi-LEvAc/" class="reel-fallback">Watch on Instagram</a></blockquote>
+        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/DU38HYjk_T1/" data-instgrm-version="14"><a href="https://www.instagram.com/reel/DU38HYjk_T1/" class="reel-fallback">Watch on Instagram</a></blockquote>
+        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/DU9hsOjiOXt/" data-instgrm-version="14"><a href="https://www.instagram.com/reel/DU9hsOjiOXt/" class="reel-fallback">Watch on Instagram</a></blockquote>
+        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/DVQIr0KiJql/" data-instgrm-version="14"><a href="https://www.instagram.com/reel/DVQIr0KiJql/" class="reel-fallback">Watch on Instagram</a></blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- PACKAGES -->
+  <section class="section section--soft" id="offerings" aria-label="Packages">
+    <div class="wrap">
+      <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Packages</span>
+      <h2 class="h2 reveal" style="max-width:18ch">Live on the day, <em>or from photographs.</em></h2>
+      <p class="pkg-intro reveal" data-delay="1">Every live package is painted at your wedding on 300gsm cotton-rag paper, with a couple portrait painted on the night and left with you, and high-resolution scans of every piece. I quote guest coverage honestly: a chosen, happy subset of the room, not every single guest.</p>
+
+      <div class="pkgs">
+        <article class="pkg reveal">
           <h3>Intimate</h3>
-          <p>Up to four hours live. Around sixteen keepsakes for a smaller room, plus your couple portrait.</p>
-          <span class="price">From $1,500</span>
-        </div>
-        <div class="tier feat">
-          <span class="no">02 / Most chosen</span>
+          <p class="pnote">For smaller weddings and a relaxed pace.</p>
+          <p class="price"><small>From</small>$1,000</p>
+          <div class="facts"><span>3 hours live</span><span>~12 keepsakes</span><span>~24 guests</span></div>
+          <ul>
+            <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Live guest keepsakes, A5 cotton rag</li>
+            <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>A couple portrait, painted on the night</li>
+            <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Each piece sleeved, ready to take home</li>
+            <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>High-resolution scans</li>
+          </ul>
+          <a class="btn" href="#enquiry">Enquire</a>
+        </article>
+
+        <article class="pkg reveal" data-delay="1">
+          <h3>Half Reception</h3>
+          <p class="pnote">A little more of the night, covered.</p>
+          <p class="price"><small>From</small>$1,200</p>
+          <div class="facts"><span>4 hours live</span><span>~16 keepsakes</span><span>~32 guests</span></div>
+          <ul>
+            <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Everything in Intimate, plus</li>
+            <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>An extra hour and more guests painted</li>
+            <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>A larger couple portrait</li>
+          </ul>
+          <a class="btn" href="#enquiry">Enquire</a>
+        </article>
+
+        <article class="pkg reveal" data-delay="2">
           <h3>Full Reception</h3>
-          <p>Up to five hours live. Around twenty keepsakes across the night, plus your framed portrait.</p>
-          <span class="price">From $2,400</span>
-        </div>
-        <div class="tier">
-          <span class="no">03 / Grand</span>
-          <h3>Grand</h3>
-          <p>Up to six hours, around twenty-eight keepsakes, with a painting assistant for the larger guest list.</p>
-          <span class="price">From $3,400</span>
-        </div>
+          <p class="pnote">The reception, well covered.</p>
+          <p class="price"><small>From</small>$1,400</p>
+          <div class="facts"><span>5 hours live</span><span>~20 keepsakes</span><span>~40 guests</span></div>
+          <ul>
+            <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Everything in Half Reception, plus</li>
+            <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>The most guests painted</li>
+            <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Short breaks built in so the work stays good to the last piece</li>
+          </ul>
+          <a class="btn" href="#enquiry">Enquire</a>
+        </article>
+
+        <article class="pkg pkg--studio reveal" data-delay="2">
+          <h3>Studio commission</h3>
+          <p class="pnote">From your photographs, no painter at the reception.</p>
+          <p class="price"><small>From</small>On enquiry</p>
+          <div class="facts"><span>From photos</span><span>4 week turnaround</span></div>
+          <ul>
+            <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#A4502F"/></svg>One watercolour portrait, painted from your images</li>
+            <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#A4502F"/></svg>Before or after the wedding, whenever suits</li>
+            <li><svg class="drop" viewBox="0 0 30 34"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#A4502F"/></svg>A5 on cotton-rag paper, with a high-resolution scan</li>
+          </ul>
+          <a class="btn btn--primary" href="#enquiry">Enquire <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        </article>
+      </div>
+
+      <details class="addons reveal">
+        <summary>Add-ons &amp; extras</summary>
+        <dl>
+          <div><dt>Extra live hours</dt><dd>on enquiry</dd></div>
+          <div><dt>More guests painted</dt><dd>on enquiry</dd></div>
+          <div><dt>An additional studio portrait</dt><dd>on enquiry</dd></div>
+          <div><dt>Travel beyond metropolitan Melbourne</dt><dd>on enquiry</dd></div>
+        </dl>
+      </details>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq" aria-label="Questions">
+    <div class="wrap">
+      <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Questions</span>
+      <h2 class="h2 reveal">The practical bits.</h2>
+      <div class="faq-list reveal">
+
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">How far ahead should we book?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>I am taking bookings up to about two months out for now, so reach out with your date and I will let you know what I have open. Earlier is always welcome, as I only take a limited number of weddings.</div></div></div>
+
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">Do you paint live, or from photographs?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>Both. The three live packages have me at your wedding, painting through the reception. If you would rather a studio commission from your own photographs, before or after the day, I am glad to do that too, priced on enquiry.</div></div></div>
+
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">How long do you paint on the day?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>Three to five hours depending on the package, usually through the reception, with short breaks built in. I pace myself rather than paint flat out, so every piece stays as considered as the first.</div></div></div>
+
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">How many guests can you paint?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>Around 12 to 20 keepsake pieces depending on the package, covering roughly 24 to 40 guests when I group a few people together. I quote this as a chosen subset of the room, painted well, rather than a rushed attempt at everyone.</div></div></div>
+
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">What materials do you use?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>Professional watercolours on 300gsm A5 cotton-rag pads, Arches or similar, with lightfast pigments that hold their colour for decades when cared for. Everything is made to last.</div></div></div>
+
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">When do we receive the finished work?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>Guest keepsakes are finished on the night and go home with your guests. Your couple portrait is painted on the night too and left with you as I finish. Studio commissions from photographs arrive within four weeks.</div></div></div>
+
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">Do you travel?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>Travel is included for venues within about an hour of the Melbourne CBD by public transport. Anywhere further, including regional Victoria and destination weddings, I am glad to discuss, with travel quoted on enquiry. Just include your venue and I will let you know.</div></div></div>
+
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">Do you frame the work?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>I do not frame pieces. Everything comes to you on beautiful cotton-rag paper, sleeved and ready for a framer you love. I am happy to suggest framers if that helps.</div></div></div>
+
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">Do we get a digital copy?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>Yes. Every couple receives a high-resolution scan of their portrait to keep and reprint, for thank-you cards and the like. If you would like a file licensed specifically for stationery, just ask.</div></div></div>
+
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">How do we secure our date?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>A 25% deposit holds your date, with the balance due four weeks before the wedding. I only confirm a booking once the deposit is received, so your date is yours from that point.</div></div></div>
+
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">What if we need to postpone or cancel?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>Weddings move, and I understand that. If you postpone, your deposit transfers to a new date subject to my availability. The deposit is non-refundable, as it reserves time I turn away other couples to hold. Full terms are set out in your booking agreement.</div></div></div>
+
+        <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">How should we send photos for a commission?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>The clearer the photographs, the better the portrait. Send a few well-lit, high-resolution images that show your faces clearly, and let me know which one feels most like you. I will guide you from there.</div></div></div>
+
       </div>
     </div>
   </section>
 
-  <!-- ENQUIRE -->
-  <section class="enquire" id="enquire" aria-label="Enquire">
-    <div class="wrap">
-      <h2>Tell me about <em>your day.</em></h2>
-      <p>Share your date, your venue, and a little about the two of you. I take a limited number of weddings each season, so the earlier the better.</p>
-      <!-- PLACEHOLDER email: replace hello@example.com with my real enquiry address -->
-      <a class="cta" href="mailto:hello@example.com?subject=Wedding%20watercolour%20enquiry"><span class="dot" aria-hidden="true"></span><span>Start an enquiry</span></a>
+  <!-- ENQUIRY -->
+  <section class="section section--soft enq" id="enquiry" aria-label="Enquire">
+    <div class="wrap enq-grid">
+      <div class="enq-intro reveal">
+        <span class="label"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Enquire</span>
+        <h2>Tell me about <em>your day.</em></h2>
+        <p>A few details to start. I read and reply to every enquiry myself, usually within a few days.</p>
+      </div>
+
+      <div class="enq-card reveal" data-delay="1">
+        <!-- FORM: works via a form backend. Set FORM_ENDPOINT in the script below.
+             Until then it falls back to opening your email app. -->
+        <form id="enquiry-form" novalidate>
+          <!-- honeypot: hidden from people; bots fill it and get silently dropped -->
+          <div class="hp" aria-hidden="true"><label>Leave this empty<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
+
+          <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" type="text" autocomplete="name" required></div>
+          <div class="field"><label for="f-partner">Your partner&rsquo;s name</label><input id="f-partner" name="partner" type="text" autocomplete="off"></div>
+          <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" required></div>
+          <div class="field"><label for="f-date">Wedding date</label><input id="f-date" name="date" type="date"></div>
+          <div class="field"><label for="f-venue">Venue or city</label><input id="f-venue" name="venue" type="text" placeholder="e.g. Melbourne"></div>
+          <div class="field"><label for="f-package">Package of interest</label>
+            <select id="f-package" name="package">
+              <option value="">Choose one</option>
+              <option>Intimate</option>
+              <option>Half Reception</option>
+              <option>Full Reception</option>
+              <option>Studio commission from photographs</option>
+              <option>Not sure yet</option>
+            </select>
+          </div>
+          <div class="field full"><label for="f-message">Message</label><textarea id="f-message" name="message" placeholder="Tell me a little about the day, and the people who matter most."></textarea></div>
+
+          <div class="enq-foot">
+            <button type="submit" class="btn btn--primary" id="f-submit">Send enquiry <span class="arrow" aria-hidden="true">&rarr;</span></button>
+            <!-- PLACEHOLDER email: replace hello@example.com with my real enquiry address -->
+            <p class="enq-fine">Or email me at <a href="mailto:hello@example.com">hello@example.com</a></p>
+          </div>
+          <p class="enq-status" id="f-status" role="status" aria-live="polite"></p>
+        </form>
+
+        <div class="enq-confirm" tabindex="-1">
+          <svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/><circle cx="11.5" cy="23" r="1.6" fill="#2A2724"/><circle cx="18.5" cy="23" r="1.6" fill="#2A2724"/><path d="M12 27 q3 2 6 0" stroke="#2A2724" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+          <h3>Thank you.</h3>
+          <p>Your enquiry is with me. I will read it properly and write back soon, usually within a few days.</p>
+        </div>
+      </div>
     </div>
   </section>
 </main>
@@ -500,32 +786,33 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   <div class="wrap">
     <span class="fm">Christopher Wang</span>
     <nav aria-label="Elsewhere">
+      <a href="#work">The work</a>
+      <a href="#process">How it works</a>
+      <a href="#offerings">Packages</a>
+      <a href="#faq">Questions</a>
       <a href="https://www.instagram.com/christopherwangpaints" target="_blank" rel="noopener">Instagram</a>
-      <!-- PLACEHOLDER: add my RedNote profile link -->
-      <a href="#" aria-disabled="true">RedNote</a>
       <!-- PLACEHOLDER email -->
       <a href="mailto:hello@example.com">Email</a>
     </nav>
-    <div class="copy">© 2026 Christopher Wang · Live wedding watercolour · Sydney and beyond</div>
+    <div class="copy">&copy; 2026 Christopher Wang · Live wedding watercolour · Melbourne and beyond</div>
   </div>
 </footer>
 
 <script>
 /* ===========================================================================
-   DIFFUSION  ·  the pigment engine
-   A compact watercolour renderer. The look comes from stacking many low alpha,
-   irregularly deformed copies of a base polygon, the way overlapping washes
-   build a stained, soft edged body of colour on real paper.
+   SITE SCRIPT
+   The pigment engine still paints the hero wash. Everything else is light:
+   reveals, the FAQ accordion, lazy video, Instagram embeds, and the form.
+   No custom cursor.
    =========================================================================== */
 (function(){
   "use strict";
   const reduce = window.matchMedia("(prefers-reduced-motion:reduce)").matches;
-  const fine   = window.matchMedia("(hover:hover) and (pointer:fine)").matches;
   const DPR    = Math.min(window.devicePixelRatio || 1, 2);
 
   const PIGMENTS = {
-    terracotta:[181,101,74], ochre:[192,138,62], sage:[124,138,107],
-    dusty:[110,130,148], ink:[42,39,36]
+    terracotta:[181,101,74], ochre:[192,138,62], sage:[126,139,98],
+    cornflower:[110,140,168], rose:[201,139,140], ink:[42,39,36]
   };
   const PAPER = [244,239,230];
 
@@ -539,7 +826,6 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     }
     return pts;
   }
-  // subdivide each edge, push the new midpoint out along the edge normal
   function deform(points, depth, variance, decay){
     let pts = points.map(p=>({x:p.x,y:p.y}));
     for(let d=0; d<depth; d++){
@@ -563,9 +849,6 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x, pts[i].y);
     ctx.closePath();
   }
-
-  /* Build the draw list for one bloom: many deformed layers, low alpha each.
-     Returned as data so it can be painted progressively for the "wash in". */
   function buildBloom(cx, cy, r, rgb, opts){
     opts = opts || {};
     const layers = opts.layers || 26;
@@ -573,11 +856,9 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     const base   = polygon(cx, cy, r, 6 + (Math.random()*3|0));
     const list=[];
     for(let l=0; l<layers; l++){
-      // tighter layers near the centre, looser ones bleed outward
       const v = r*(0.10 + (l/layers)*0.22);
       list.push({ pts:deform(base, 5, v, 0.62), rgb, alpha });
     }
-    // a few darker rim layers for the characteristic pooled edge
     for(let l=0;l<4;l++){
       list.push({ pts:deform(base, 5, r*0.08, 0.6), rgb, alpha:alpha*1.4 });
     }
@@ -589,8 +870,6 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     tracePath(ctx, layer.pts);
     ctx.fill();
   }
-
-  /* A full composition = a handful of overlapping blooms in chosen pigments. */
   function buildComposition(w, h, palette, density){
     const blooms=[];
     const n = density || 3;
@@ -601,7 +880,6 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
       const r  = Math.min(w,h)*(0.20 + Math.random()*0.16);
       blooms.push(buildBloom(cx, cy, r, rgb, {layers:24, alpha:0.04}));
     }
-    // flatten, interleave so blooms wash in together rather than one by one
     const flat=[]; let idx=0, more=true;
     while(more){
       more=false;
@@ -610,7 +888,6 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     }
     return flat;
   }
-
   function prep(canvas, cssW, cssH){
     const ctx = canvas.getContext("2d");
     canvas.width  = Math.round(cssW*DPR);
@@ -621,19 +898,19 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     return ctx;
   }
 
-  /* ---- HERO: paint the portrait in over time ---- */
+  /* ---- HERO: paint the wash in over time ---- */
   function runHero(){
     const canvas = document.getElementById("heroCanvas");
     if(!canvas) return;
     const size = 760;
     const ctx = prep(canvas, size, size);
-    const palette = ["terracotta","ochre","sage","terracotta"];
+    const palette = ["terracotta","ochre","sage","rose"];
     const list = buildComposition(size, size, palette, 4);
 
     if(reduce){ list.forEach(L=>paintLayer(ctx,L)); drawGesture(true); return; }
 
     let i=0;
-    const per = Math.max(1, Math.round(list.length/110)); // ~1.8s at 60fps
+    const per = Math.max(1, Math.round(list.length/110));
     (function step(){
       if(document.hidden){ requestAnimationFrame(step); return; }
       for(let k=0;k<per && i<list.length;k++,i++) paintLayer(ctx, list[i]);
@@ -642,7 +919,6 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     })();
   }
 
-  /* the loose ink gesture draws itself once the wash is down */
   function drawGesture(instant){
     const g = document.getElementById("heroGesture");
     if(!g) return;
@@ -652,118 +928,70 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
       if(instant || reduce){ p.style.strokeDashoffset = 0; return; }
       p.style.strokeDashoffset = len;
       p.style.transition = "none";
-      // force reflow then animate
       void p.getBoundingClientRect();
       p.style.transition = `stroke-dashoffset 1.6s cubic-bezier(.7,0,.3,1) ${idx*0.25}s`;
       p.style.strokeDashoffset = 0;
     });
   }
 
-  /* ---- GALLERY: generate each piece, distinct palette + composition ---- */
-  function runGallery(){
-    const canvases = document.querySelectorAll(".piece canvas");
-    const palettes = [
-      ["terracotta","ochre","sage"],
-      ["dusty","sage","ink"],
-      ["ochre","terracotta","ochre"],
-      ["sage","dusty","terracotta"]
-    ];
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{
-        if(!e.isIntersecting) return;
-        io.unobserve(e.target);
-        const c = e.target;
-        const rect = c.parentElement.getBoundingClientRect();
-        const w = Math.max(320, rect.width), h = Math.max(320, rect.height);
-        const ctx = prep(c, w, h);
-        const pi = +c.dataset.piece || 0;
-        const list = buildComposition(w, h, palettes[pi % palettes.length], 3);
-        // a small ink gesture inside each piece
-        const gx = w*(0.3+Math.random()*0.4), gy = h*(0.35+Math.random()*0.3);
-        const gesture = buildBloom(gx, gy, Math.min(w,h)*0.05, PIGMENTS.ink, {layers:6, alpha:0.05});
-        if(reduce){ list.concat(gesture).forEach(L=>paintLayer(ctx,L)); return; }
-        let i=0, full=list.concat(gesture);
-        const per=Math.max(1, Math.round(full.length/70));
-        (function step(){
-          if(document.hidden){ requestAnimationFrame(step); return; }
-          for(let k=0;k<per && i<full.length;k++,i++) paintLayer(ctx, full[i]);
-          if(i<full.length) requestAnimationFrame(step);
-        })();
-      });
-    }, {rootMargin:"120px"});
-    canvases.forEach(c=>io.observe(c));
-  }
-
-  /* ---- CURSOR: a brush that leaves a slowly drying pigment trail ---- */
-  function runCursor(){
-    const brush = document.getElementById("brush");
-    const canvas = document.getElementById("cursorCanvas");
-    if(!fine || reduce || !canvas){ if(brush) brush.style.display="none"; document.body.classList.remove("custom-cursor"); return; }
-    const ctx = canvas.getContext("2d");
-    let w,h;
-    function size(){ w=canvas.width=innerWidth*DPR; h=canvas.height=innerHeight*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
-    size(); addEventListener("resize", size);
-
-    let mx=innerWidth/2, my=innerHeight/2, bx=mx, by=my, last=0;
-    addEventListener("pointermove", (e)=>{
-      mx=e.clientX; my=e.clientY;
-      brush.classList.add("is-active");
-      const t = document.elementFromPoint(mx,my);
-      brush.classList.toggle("is-hot", !!(t && t.closest("a,button,.cta,.tier,.piece")));
-    }, {passive:true});
-    addEventListener("pointerdown", ()=> stamp(mx,my,true));
-
-    function stamp(x,y,big){
-      const r = big ? 26 : 7 + Math.random()*6;
-      const rgb = PIGMENTS.terracotta;
-      const base = polygon(x*1, y*1, r, 6);
-      ctx.globalCompositeOperation="source-over";
-      for(let l=0;l<(big?8:4);l++){
-        const pts=deform(base, 3, r*0.5, 0.6);
-        ctx.fillStyle=`rgba(${rgb[0]},${rgb[1]},${rgb[2]},${big?0.05:0.035})`;
-        tracePath(ctx, pts); ctx.fill();
-      }
-    }
-    (function loop(ts){
-      requestAnimationFrame(loop);
-      if(document.hidden) return;
-      bx += (mx-bx)*0.18; by += (my-by)*0.18;
-      brush.style.transform = `translate(${bx}px,${by}px) translate(-50%,-50%)`;
-      // deposit pigment along movement, rate limited
-      if(ts-last > 28){ last=ts; stamp(bx,by,false); }
-      // dry the trail: erase a touch each frame so it eases away
-      ctx.globalCompositeOperation="destination-out";
-      ctx.fillStyle="rgba(0,0,0,0.04)";
-      ctx.fillRect(0,0,innerWidth,innerHeight);
-    })(0);
-  }
-
   /* ---- reveals + hero copy in ---- */
   function runReveals(){
     document.getElementById("hero")?.classList.add("is-in");
+    if(!("IntersectionObserver" in window)){
+      document.querySelectorAll(".reveal").forEach(el=>el.classList.add("in")); return;
+    }
     const io=new IntersectionObserver((es)=>{
       es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
     }, {threshold:.12});
     document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
   }
 
-  /* ---- hover liquid distortion on gallery pieces ---- */
-  function runHoverDistort(){
-    if(reduce) return;
-    document.querySelectorAll(".piece .frame").forEach(frame=>{
-      let raf, t=0, dir=0;
-      const disp = document.querySelector("#wcWobble feDisplacementMap");
-      frame.addEventListener("pointerenter", ()=>{ dir=1; tick(); });
-      frame.addEventListener("pointerleave", ()=>{ dir=-1; tick(); });
-      function tick(){
-        t += dir*0.08; t=Math.max(0,Math.min(1,t));
-        // local scale per frame via inline filter override
-        frame.style.setProperty("filter", `url(#wcWobble)`);
-        frame.style.transform = `scale(${1+0.012*t})`;
-        frame.style.transition = "transform .2s linear";
-        if((dir>0&&t<1)||(dir<0&&t>0)) raf=requestAnimationFrame(tick);
-      }
+  /* ---- FAQ accordion ---- */
+  function runFaq(){
+    document.querySelectorAll(".faq-item").forEach(item=>{
+      const btn=item.querySelector(".faq-q"), panel=item.querySelector(".faq-a");
+      if(!btn||!panel) return;
+      btn.addEventListener("click", ()=>{
+        const open=item.classList.toggle("open");
+        btn.setAttribute("aria-expanded", open?"true":"false");
+        panel.style.height = open ? panel.scrollHeight+"px" : "0px";
+      });
     });
+  }
+
+  /* ---- lazy-load + autoplay-on-view for the local reels ---- */
+  function runVideos(){
+    const vids = document.querySelectorAll(".film video");
+    if(!("IntersectionObserver" in window)){ vids.forEach(v=>v.preload="metadata"); return; }
+    const io=new IntersectionObserver((es)=>{
+      es.forEach(e=>{
+        const v=e.target;
+        if(e.isIntersecting){
+          if(!v.src && v.dataset.src) v.src=v.dataset.src;
+          if(!reduce){ v.play().catch(()=>{}); }
+        } else { v.pause(); }
+      });
+    }, {threshold:.4});
+    vids.forEach(v=>io.observe(v));
+  }
+
+  /* ---- Instagram embeds: load their script once the section is near ---- */
+  function runInstagram(){
+    const reels = document.querySelector(".reels");
+    if(!reels) return;
+    let loaded=false;
+    const load=()=>{
+      if(loaded) return; loaded=true;
+      const s=document.createElement("script");
+      s.async=true; s.src="https://www.instagram.com/embed.js";
+      s.onload=()=>{ try{ window.instgrm && window.instgrm.Embeds.process(); }catch(_){} };
+      document.body.appendChild(s);
+    };
+    if(!("IntersectionObserver" in window)){ load(); return; }
+    const io=new IntersectionObserver((es)=>{
+      es.forEach(e=>{ if(e.isIntersecting){ load(); io.disconnect(); } });
+    }, {rootMargin:"300px"});
+    io.observe(reels);
   }
 
   /* ---- optional smooth scroll (Lenis), loaded defensively ---- */
@@ -785,13 +1013,64 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
         });
       }catch(_){}
     };
-    s.onerror=()=>{}; // graceful: native scroll still works
+    s.onerror=()=>{};
     document.head.appendChild(s);
+  }
+
+  /* ---- ENQUIRY FORM: functional + secure --------------------------------
+     1) Pick a form backend that gives you an endpoint:
+          Formspree  -> https://formspree.io/f/XXXXXXXX
+          Web3Forms  -> https://api.web3forms.com/submit  (also add access_key)
+     2) Paste it into FORM_ENDPOINT.
+     3) Host on HTTPS. Until configured, it falls back to your email app.
+  ------------------------------------------------------------------------ */
+  function runForm(){
+    const FORM_ENDPOINT=""; // <-- e.g. "https://formspree.io/f/XXXXXXXX"
+    const form=document.getElementById("enquiry-form");
+    if(!form) return;
+    const statusEl=document.getElementById("f-status");
+    const submitBtn=document.getElementById("f-submit");
+    const email=form.querySelector("#f-email"), name=form.querySelector("#f-name");
+
+    function mailtoFallback(){
+      const to="hello@example.com"; // PLACEHOLDER: your email
+      const subject=encodeURIComponent("Wedding enquiry from "+(name.value||"a couple"));
+      const body=encodeURIComponent(
+        "Name: "+name.value+"\nPartner: "+form.partner.value+"\nEmail: "+email.value+
+        "\nDate: "+form.date.value+"\nVenue: "+form.venue.value+"\nPackage: "+form.package.value+"\n\n"+form.message.value);
+      window.location.href="mailto:"+to+"?subject="+subject+"&body="+body;
+    }
+    function showConfirm(){
+      const sec=document.getElementById("enquiry");
+      sec.classList.add("sent");
+      const c=sec.querySelector(".enq-confirm");
+      if(c && c.focus) c.focus();
+    }
+    function fail(){ statusEl.classList.add("err"); statusEl.textContent="Something went wrong. Please email me directly and I will reply."; }
+
+    form.addEventListener("submit", (e)=>{
+      e.preventDefault();
+      statusEl.textContent=""; statusEl.classList.remove("err");
+      if(form._gotcha && form._gotcha.value){ showConfirm(); return; } // bot
+      let ok=true;
+      [name,email].forEach(f=>{ const bad=!f.value.trim(); f.setAttribute("aria-invalid",bad?"true":"false"); if(bad) ok=false; });
+      if(email.value && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value)){ email.setAttribute("aria-invalid","true"); ok=false; }
+      if(!ok){ statusEl.classList.add("err"); statusEl.textContent="Please add your name and a valid email."; (name.value.trim()?email:name).focus(); return; }
+
+      if(!FORM_ENDPOINT){ mailtoFallback(); return; }
+
+      const data=new FormData(form);
+      submitBtn.setAttribute("disabled","true"); submitBtn.textContent="Sending...";
+      fetch(FORM_ENDPOINT,{ method:"POST", body:data, headers:{ "Accept":"application/json" } })
+        .then(res=>{ if(res.ok){ showConfirm(); form.reset(); } else { fail(); } })
+        .catch(fail)
+        .finally(()=>{ submitBtn.removeAttribute("disabled"); submitBtn.innerHTML='Send enquiry <span class="arrow" aria-hidden="true">&rarr;</span>'; });
+    });
   }
 
   /* ---- boot ---- */
   function boot(){
-    runHero(); runGallery(); runCursor(); runReveals(); runHoverDistort(); runSmoothScroll();
+    runHero(); runReveals(); runFaq(); runVideos(); runInstagram(); runForm(); runSmoothScroll();
   }
   if(document.readyState!=="loading") boot();
   else document.addEventListener("DOMContentLoaded", boot);
