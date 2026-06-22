@@ -27,7 +27,9 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Hanken+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<!-- Fraunces requested across its full optical-size, weight, SOFT and WONK axes so
+     headlines can stretch and shift weight live with scroll velocity. -->
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Hanken+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
 <style>
 /* ===========================================================================
@@ -67,6 +69,13 @@
   --measure: 62ch;
   --ease: cubic-bezier(.22,.61,.36,1);
   --gutter: clamp(1.25rem, 4vw, 4rem);
+
+  /* one spacing scale the whole page's rhythm hangs from */
+  --sp-3: clamp(1.4rem, 3vw, 2rem);
+  --sp-4: clamp(2rem, 5vw, 3rem);
+  --sp-5: clamp(2.5rem, 6vw, 4rem);
+  --sp-6: clamp(4rem, 8vw, 6rem);
+  --sp-7: clamp(5rem, 13vh, 10rem);
 }
 
 *{ box-sizing:border-box; }
@@ -97,10 +106,6 @@ img,canvas,svg,video{ display:block; max-width:100%; }
 }
 
 .wrap{ width:min(100% - calc(var(--gutter) * 2), 1320px); margin-inline:auto; }
-.eyebrow{
-  font-family:var(--mono); font-size:.72rem; letter-spacing:.28em;
-  text-transform:uppercase; color:var(--ink-soft); font-weight:400;
-}
 
 /* ===========================================================================
    BACKGROUND WATERCOLOUR FIELD
@@ -173,16 +178,17 @@ img,canvas,svg,video{ display:block; max-width:100%; }
    =========================================================================== */
 .hero{
   position:relative; min-height:100svh; min-height:100vh;
-  display:grid; align-items:end;
-  padding:0 var(--gutter) clamp(2rem,6vh,4rem);
+  display:grid; align-items:end; justify-items:start;
+  padding:0 var(--gutter) clamp(2.4rem,7vh,5rem);
   overflow:hidden;
 }
-/* a soft scrim grounds the bouquet into the paper and keeps the copy legible */
+/* a soft scrim grounds the bouquet into the paper and, weighted to the left,
+   keeps the masthead legible where the copy sits */
 .hero::after{
   content:""; position:absolute; inset:0; z-index:3; pointer-events:none;
   background:
-    linear-gradient(to top, var(--paper) 1%, rgba(244,239,230,0) 36%),
-    linear-gradient(to right, rgba(244,239,230,.55) 0%, rgba(244,239,230,0) 42%);
+    linear-gradient(to top, var(--paper) 1%, rgba(244,239,230,0) 40%),
+    linear-gradient(to right, rgba(244,239,230,.62) 0%, rgba(244,239,230,0) 46%);
 }
 
 /* WebGL watercolour field: tints the paper like a living wash. Fades in only
@@ -224,23 +230,23 @@ img,canvas,svg,video{ display:block; max-width:100%; }
   to{   transform:translateY(1.8%)  rotate(1.2deg); }
 }
 
-.hero-copy{ position:relative; z-index:4; max-width:min(92vw, 940px); }
+/* the masthead sits hard against the left gutter, never a centred block */
+.hero-copy{ position:relative; z-index:4; width:100%; max-width:min(100%, 1180px); margin:0; justify-self:start; }
 .hero h1{
   font-family:var(--display);
-  font-weight:300;
-  font-size:clamp(3.2rem, 13vw, 12rem);
-  line-height:.86;
-  letter-spacing:-.02em;
-  margin:0 0 1.4rem;
+  font-weight:600;
+  font-variation-settings:"opsz" 144, "wght" 620, "SOFT" 0, "WONK" 0;
+  font-size:clamp(3.3rem, 15vw, 13rem);
+  line-height:.82;
+  letter-spacing:-.035em;
+  margin:0 0 1.6rem;
   text-wrap:balance;
 }
 .hero h1 .lead{
-  display:block; font-weight:600; font-size:.92em;
-  font-variation-settings:"opsz" 144;
+  display:block; font-size:1em;
 }
 .hero h1 em{
-  font-style:italic; font-weight:400; color:var(--magenta);
-  font-variation-settings:"opsz" 144;
+  font-style:italic; color:var(--magenta);
 }
 /* let the accent word bleed from ribbon magenta into bird-of-paradise orange */
 @supports ((-webkit-background-clip:text) or (background-clip:text)){
@@ -295,24 +301,63 @@ img,canvas,svg,video{ display:block; max-width:100%; }
 /* ===========================================================================
    SECTION SCAFFOLD
    =========================================================================== */
-.section{ position:relative; padding:clamp(5rem,13vh,10rem) 0; }
+.section{ position:relative; padding:var(--sp-7) 0; }
 .section--soft{ background:rgba(234,226,212,.45); }
+
+/* one eyebrow/label treatment, shared everywhere */
 .label{
   font-family:var(--mono); font-size:.72rem; letter-spacing:.22em; text-transform:uppercase;
   color:var(--ink-soft); display:inline-flex; align-items:center; gap:.6em;
 }
 .label .drop{ width:18px; height:20px; }
+
+/* one heading style. Big optical size, tight leading, light by default so the
+   weight can swell with scroll velocity. */
 .h2{
   font-family:var(--display); font-weight:300;
-  font-size:clamp(2rem,6vw,4.2rem); line-height:1.02; letter-spacing:-.02em;
-  margin:.5em 0 0; text-wrap:balance;
+  font-variation-settings:"opsz" 144, "wght" 320, "SOFT" 0, "WONK" 0;
+  font-size:clamp(2.2rem,7vw,4.6rem); line-height:.98; letter-spacing:-.025em;
+  margin:.4em 0 0; text-wrap:balance; max-width:18ch;
 }
 .h2 em{ font-style:italic; color:var(--terracotta); }
+
+/* HARD COLOUR-BLOCK PANELS
+   Full-bleed pigment fields, paper-coloured text, with the bouquet PNG layered
+   in as torn-paper cut-outs. A few of these punctuate the warm-paper base. */
+.block{ position:relative; overflow:hidden; color:var(--paper); isolation:isolate; }
+.block--rust{ background:var(--rust); }
+.block--teal{ background:var(--teal); }
+.block > .wrap{ position:relative; z-index:2; }
+.block .label{ color:rgba(244,239,230,.9); }
+.block .label .drop path{ fill:var(--paper); }
+.block .h2{ color:var(--paper); }
+.block .h2 em{ color:#F4D9C9; }
+.block--teal .h2 em{ color:#E7D38A; }
+/* generic copy inside a block reads in paper tones; borders soften to match */
+.block .pkg-intro{ color:rgba(244,239,230,.9); }
+.block .beyond-card{ border-top-color:rgba(244,239,230,.4); }
+.block .beyond-card .bn{ color:#E7D38A; }
+.block .beyond-card h3{ color:var(--paper); }
+.block .beyond-card p{ color:rgba(244,239,230,.9); }
+/* a bouquet cut-out, bled off a corner and torn at one edge */
+.block-cut{
+  position:absolute; z-index:1; pointer-events:none; opacity:.92;
+  filter:drop-shadow(0 24px 40px rgba(20,12,8,.32));
+  -webkit-mask-image:linear-gradient(115deg, transparent 0, #000 14%);
+          mask-image:linear-gradient(115deg, transparent 0, #000 14%);
+}
+.block-cut--tr{ top:-8%; right:-6%; width:min(46vw,520px); transform:rotate(8deg); }
+.block-cut--bl{ bottom:-12%; left:-7%; width:min(40vw,440px); transform:rotate(-12deg) scaleX(-1); }
+@media (max-width:760px){
+  .block-cut{ opacity:.5; }
+  .block-cut--tr{ width:62vw; right:-14%; }
+  .block-cut--bl{ display:none; }
+}
 
 /* ===========================================================================
    HOW IT WORKS
    =========================================================================== */
-.paths{ display:grid; gap:clamp(2rem,5vw,4rem); margin-top:clamp(2.5rem,6vw,4rem); }
+.paths{ display:grid; gap:clamp(2rem,5vw,4rem); margin-top:var(--sp-5); }
 @media (min-width:860px){ .paths{ grid-template-columns:1fr 1fr; } }
 .path h3{ font-family:var(--display); font-style:italic; font-weight:400; font-size:1.8rem; margin:0 0 .3rem; }
 .path .psub{ color:var(--ink-soft); margin:0 0 1.6rem; max-width:42ch; }
@@ -361,7 +406,7 @@ img,canvas,svg,video{ display:block; max-width:100%; }
 /* ===========================================================================
    IN MOTION  ·  reels (local video) + studio character work
    =========================================================================== */
-.films{ display:grid; gap:clamp(1.5rem,3vw,2.5rem); grid-template-columns:1fr; margin-top:clamp(2.5rem,6vw,4rem); }
+.films{ display:grid; gap:clamp(1.5rem,3vw,2.5rem); grid-template-columns:1fr; margin-top:var(--sp-5); }
 @media (min-width:680px){ .films{ grid-template-columns:1fr 1fr; } }
 .film{ position:relative; }
 .film .stage{
@@ -379,12 +424,41 @@ img,canvas,svg,video{ display:block; max-width:100%; }
 .reel-fallback{ font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); }
 
 /* ===========================================================================
+   THE PAINTER  ·  an asymmetric portrait of the artist, anchored left
+   =========================================================================== */
+.painter-grid{ display:grid; gap:var(--sp-5); align-items:center; }
+@media (min-width:860px){ .painter-grid{ grid-template-columns:minmax(0,.72fr) 1fr; } }
+.painter-portrait{ margin:0; width:min(100%, 420px); position:relative; }
+.painter-portrait .frame{
+  position:relative; overflow:hidden; aspect-ratio:3/4;
+  background:var(--paper-deep); border-radius:2px; filter:url(#wcWobble);
+}
+.painter-portrait .frame img{ width:100%; height:100%; object-fit:cover; display:block; }
+/* a soft pigment bloom sits behind the portrait, off to one corner */
+.painter-portrait::before{
+  content:""; position:absolute; z-index:-1; left:-12%; bottom:-10%;
+  width:62%; height:62%; border-radius:50%; filter:blur(34px); opacity:.4;
+  mix-blend-mode:multiply; pointer-events:none;
+  background:radial-gradient(circle at 50% 50%, var(--orange), transparent 68%);
+}
+.painter-portrait figcaption{
+  margin-top:1rem; font-family:var(--mono); font-size:.66rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-soft);
+}
+.painter-body{ display:flex; flex-direction:column; align-items:flex-start; gap:1.1rem; }
+.painter-body p{ margin:0; color:var(--ink-soft); max-width:48ch; }
+.painter-body .signature{
+  font-family:var(--display); font-style:italic; font-weight:500; font-size:1.5rem;
+  color:var(--ink); margin-top:.2rem;
+}
+
+/* ===========================================================================
    PACKAGES  ·  equal weight, no clickbait highlight
    =========================================================================== */
 .pkg-intro{ max-width:60ch; color:var(--ink-soft); margin:1.4rem 0 0; }
-/* single base package, centred */
-.pkgs{ display:flex; justify-content:center; margin-top:clamp(2.5rem,6vw,4rem); }
-.pkg--base{ width:min(100%, 560px); }
+/* single base package, anchored hard left with the page's negative space to its right */
+.pkgs{ display:flex; justify-content:flex-start; margin-top:var(--sp-5); }
+.pkg--base{ width:min(100%, 520px); }
 .pkg{
   background:var(--paper); border:1px solid var(--line); border-radius:4px;
   padding:clamp(1.6rem,3vw,2.1rem); display:flex; flex-direction:column; gap:.9rem;
@@ -413,10 +487,10 @@ img,canvas,svg,video{ display:block; max-width:100%; }
 .btn--primary{ background:var(--terracotta); border-color:var(--terracotta); color:var(--paper); }
 .btn--primary:hover{ background:var(--rust); border-color:var(--rust); }
 
-.pkg-note{ margin-top:clamp(2rem,5vw,3rem); max-width:60ch; color:var(--ink-soft); }
+.pkg-note{ margin-top:var(--sp-4); max-width:60ch; color:var(--ink-soft); }
 
 /* add-ons: shaped around the base package, priced on enquiry */
-.addons-head{ display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:.6rem 1.5rem; margin-top:clamp(3rem,7vw,5rem); }
+.addons-head{ display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:.6rem 1.5rem; margin-top:var(--sp-6); }
 .addons-head h3{ font-family:var(--display); font-weight:300; font-size:clamp(1.5rem,4vw,2.4rem); letter-spacing:-.015em; margin:0; }
 .addons-head p{ margin:0; font-family:var(--mono); font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft); }
 .addon-grid{
@@ -448,7 +522,7 @@ img,canvas,svg,video{ display:block; max-width:100%; }
 /* ===========================================================================
    FAQ
    =========================================================================== */
-.faq-list{ margin-top:clamp(2rem,5vw,3rem); border-top:1px solid var(--line); }
+.faq-list{ margin-top:var(--sp-4); border-top:1px solid var(--line); }
 .faq-item{ border-bottom:1px solid var(--line); }
 .faq-item h3{ margin:0; }
 .faq-q{
@@ -553,7 +627,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   text-wrap:balance;
 }
 .why-lede em{ font-style:italic; color:var(--terracotta); }
-.why-notes{ display:grid; gap:clamp(1.4rem,3.5vw,2.5rem); margin-top:clamp(2.6rem,6vw,4rem); grid-template-columns:1fr; }
+.why-notes{ display:grid; gap:clamp(1.4rem,3.5vw,2.5rem); margin-top:var(--sp-5); grid-template-columns:1fr; }
 @media (min-width:760px){ .why-notes{ grid-template-columns:repeat(3,1fr); } }
 .why-note{ padding-top:1.4rem; border-top:1.5px solid var(--line); }
 .why-note .wn-no{ font-family:var(--mono); font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; color:var(--terracotta); }
@@ -595,10 +669,10 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
    A quiet strip of the things that come with the base package, drawn from my
    kit list: materials, templates, paper, sleeves, insurance, set-up.
    =========================================================================== */
-.included{ margin-top:clamp(2.6rem,6vw,4rem); border-top:1px solid var(--line); padding-top:clamp(1.8rem,4vw,2.6rem); }
+.included{ margin-top:var(--sp-5); border-top:1px solid var(--line); padding-top:clamp(1.8rem,4vw,2.6rem); }
 .included h3{ font-family:var(--display); font-weight:300; font-size:clamp(1.4rem,3.4vw,2rem); letter-spacing:-.015em; margin:0 0 .3rem; }
 .included p.sub{ margin:0; color:var(--ink-soft); font-size:.95rem; }
-.incl-grid{ list-style:none; margin:clamp(1.4rem,3vw,2rem) 0 0; padding:0; display:grid; gap:.7rem 2rem; grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr)); }
+.incl-grid{ list-style:none; margin:var(--sp-3) 0 0; padding:0; display:grid; gap:.7rem 2rem; grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr)); }
 .incl-grid li{ display:flex; gap:.6rem; align-items:flex-start; font-size:.94rem; }
 .incl-grid li .drop{ flex:0 0 auto; width:15px; height:17px; margin-top:.2em; }
 
@@ -618,7 +692,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 .addon-feature .tag.price small{ font-family:var(--mono); font-style:normal; font-size:.58rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); margin-right:.4rem; }
 
 /* a single line of fine print on style and licence */
-.licence-note{ margin-top:clamp(2rem,5vw,3rem); max-width:62ch; color:var(--ink-soft); font-size:.9rem; }
+.licence-note{ margin-top:var(--sp-4); max-width:62ch; color:var(--ink-soft); font-size:.9rem; }
 .licence-note b{ color:var(--ink); font-weight:600; }
 
 /* ===========================================================================
@@ -627,13 +701,8 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
    panel in pigment. Paper-coloured text on a terracotta wash, with the five
    beats of the evening as little posters that lift into view.
    =========================================================================== */
-.night{ background:var(--rust); color:var(--paper); }
-.night .label{ color:rgba(244,239,230,.9); }
-.night .label .drop path{ fill:var(--paper); }
-.night .h2{ color:var(--paper); }
-.night .h2 em{ color:#F4D9C9; }
 .night-lede{ max-width:32ch; margin:1rem 0 0; color:rgba(244,239,230,.92); font-size:1.05rem; }
-.beats{ display:grid; gap:clamp(1rem,2.4vw,1.5rem); margin-top:clamp(2.6rem,6vw,4rem); grid-template-columns:1fr; }
+.beats{ display:grid; gap:clamp(1rem,2.4vw,1.5rem); margin-top:var(--sp-5); grid-template-columns:1fr; }
 @media (min-width:600px){ .beats{ grid-template-columns:repeat(2,1fr); } }
 @media (min-width:1040px){ .beats{ grid-template-columns:repeat(5,1fr); } }
 .beat{
@@ -673,32 +742,6 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   background:rgba(244,239,230,.82); box-shadow:0 1px 0 var(--line);
   -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); mix-blend-mode:normal;
 }
-
-/* ===========================================================================
-   KINETIC MARQUEE  ·  a slow drift of the work, reactive to scroll velocity
-   The brief's drifting portrait strip. It glides on its own, leans into a
-   skew as you scroll, and the words bleed between pigment and a hollow outline.
-   =========================================================================== */
-.marquee{
-  position:relative; overflow:hidden;
-  padding:clamp(1.4rem,3vw,2.4rem) 0;
-  border-top:1px solid var(--line); border-bottom:1px solid var(--line);
-  background:rgba(234,226,212,.4);
-}
-.marquee-row{
-  display:flex; width:max-content; gap:0; white-space:nowrap;
-  will-change:transform; transform:translate3d(0,0,0);
-}
-.marquee-item{
-  font-family:var(--display); font-weight:300; font-style:italic;
-  font-size:clamp(2.2rem,7vw,5.5rem); line-height:1; letter-spacing:-.02em;
-  padding:0 clamp(1.5rem,4vw,3.5rem); color:var(--ink);
-}
-/* every other phrase reads as a hollow, drawn outline in ribbon magenta */
-.marquee-item.ghost{
-  color:transparent; -webkit-text-stroke:1.2px var(--magenta); text-stroke:1.2px var(--magenta);
-}
-.marquee-item .sep{ color:var(--orange); font-style:normal; font-weight:500; padding:0 .2em; }
 
 /* ===========================================================================
    MAGNETIC + VELOCITY  ·  micro-physics borrowed from the reference sites
@@ -754,7 +797,9 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   .h2 .word > span, .why-lede .word > span, .foot-cta .word > span{ transform:none !important; }
   .read-line{ display:none; }
   .pigment-trail{ display:none; }
-  .marquee-row{ transform:none !important; }
+  /* headlines settle to their resting weight, no live velocity morph */
+  .hero h1{ font-variation-settings:"opsz" 144, "wght" 620, "SOFT" 0, "WONK" 0 !important; }
+  .h2{ font-variation-settings:"opsz" 144, "wght" 320, "SOFT" 0, "WONK" 0 !important; }
 }
 </style>
 </head>
@@ -827,8 +872,8 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
       <span style="left:88%; width:20px; height:20px; border-radius:50%;            background:radial-gradient(circle at 50% 50%, var(--magenta), transparent 72%); animation-delay:-2s;  animation-duration:15s;"></span>
     </div>
 
-    <div class="hero-copy wrap">
-      <h1>
+    <div class="hero-copy">
+      <h1 data-morph data-wght="620">
         <span class="line-mask"><span class="lead">Painted</span></span>
         <span class="line-mask"><span><em>live</em>, while</span></span>
         <span class="line-mask"><span>you celebrate.</span></span>
@@ -844,18 +889,6 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     </div>
 
     <div class="scroll-cue" aria-hidden="true"><span class="bar"></span> Scroll</div>
-  </section>
-
-  <!-- KINETIC MARQUEE  ·  drifts on its own, leans with scroll velocity -->
-  <section class="marquee" aria-hidden="true">
-    <div class="marquee-row" id="marqueeRow">
-      <!-- filled and duplicated in JS so the loop is seamless -->
-      <span class="marquee-item">Painted on the night</span>
-      <span class="marquee-item ghost">Pigment on cotton rag</span>
-      <span class="marquee-item">A keepsake to take home</span>
-      <span class="marquee-item ghost">Live in the room</span>
-      <span class="marquee-item">Melbourne <span class="sep">&amp;</span> beyond</span>
-    </div>
   </section>
 
   <!-- WHY LIVE WATERCOLOUR -->
@@ -885,10 +918,11 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   </section>
 
   <!-- ON THE NIGHT  ·  colour-drenched evening timeline -->
-  <section class="section night" id="night" aria-label="How the evening unfolds">
+  <section class="section block block--rust" id="night" aria-label="How the evening unfolds">
+    <img class="block-cut block-cut--tr" src="assets/art-bouquet_transparent.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
     <div class="wrap">
       <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>On the night</span>
-      <h2 class="h2 reveal" style="max-width:18ch">How the evening <em>unfolds.</em></h2>
+      <h2 class="h2 reveal" data-morph data-wght="320">How the evening <em>unfolds.</em></h2>
       <p class="night-lede reveal" data-delay="1">The first thing I paint is the two of you on A4, while the energy is fresh. It is bigger and more detailed, the one you will want to frame. Then the night takes over.</p>
 
       <div class="beats">
@@ -925,7 +959,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   <section class="section" id="process" aria-label="How it works">
     <div class="wrap">
       <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>How it works</span>
-      <h2 class="h2 reveal" style="max-width:16ch">Two ways in. <em>Both unhurried.</em></h2>
+      <h2 class="h2 reveal" data-morph data-wght="320">Two ways in. <em>Both unhurried.</em></h2>
 
       <div class="paths">
         <div class="path reveal">
@@ -958,7 +992,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
       <div class="work-head reveal">
         <div>
           <span class="label"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Selected work</span>
-          <h2 class="h2" style="margin-top:.3em">Pigment on <em>cotton rag.</em></h2>
+          <h2 class="h2" data-morph data-wght="320">Pigment on <em>cotton rag.</em></h2>
         </div>
         <p class="note">Painted by hand on 300gsm A5 watercolour pads.</p>
       </div>
@@ -984,7 +1018,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     <div class="wrap">
       <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>In motion</span>
       <div class="studio-head reveal" data-delay="1">
-        <h2 class="h2" style="max-width:18ch">Watch a piece <em>come together.</em></h2>
+        <h2 class="h2" data-morph data-wght="320">Watch a piece <em>come together.</em></h2>
         <p>A couple of short films of the paint going down. Between weddings I also paint little character portraits, in the soft, wistful spirit of the art-toy world. It keeps my hand loose and my eye on character.</p>
       </div>
 
@@ -1018,11 +1052,29 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     </div>
   </section>
 
+  <!-- THE PAINTER -->
+  <section class="section section--soft" id="painter" aria-label="The painter">
+    <div class="wrap painter-grid">
+      <figure class="painter-portrait reveal">
+        <div class="frame"><img src="assets/portrait-christopher.jpg" alt="Christopher Wang, the painter, in a dark suit on a terrace overlooking the harbour" loading="lazy" width="1100" height="1467" /></div>
+        <figcaption>Christopher Wang · Melbourne</figcaption>
+      </figure>
+      <div class="painter-body reveal" data-delay="1">
+        <span class="label"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>The painter</span>
+        <h2 class="h2" data-morph data-wght="320">The hand <em>behind the brush.</em></h2>
+        <p>I am Christopher, a Melbourne painter. I have spent years learning to read people quickly: the way a shoulder drops when someone laughs, the particular light of an evening, and how to catch it in pigment before the moment passes.</p>
+        <p>Painting live at a wedding is the truest test of that, and the part I love most. A few quiet minutes with each guest, a small portrait made by hand while the night carries on around us, and something real to take home at the end of it.</p>
+        <span class="signature">Christopher</span>
+        <a class="cta" href="#enquiry"><span class="dot" aria-hidden="true"></span><span>Enquire</span></a>
+      </div>
+    </div>
+  </section>
+
   <!-- PACKAGES -->
-  <section class="section section--soft" id="offerings" aria-label="Packages">
+  <section class="section" id="offerings" aria-label="Packages">
     <div class="wrap">
       <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Packages</span>
-      <h2 class="h2 reveal" style="max-width:18ch">One base package, <em>shaped around your day.</em></h2>
+      <h2 class="h2 reveal" data-morph data-wght="320">One base package, <em>shaped around your day.</em></h2>
       <p class="pkg-intro reveal" data-delay="1">I start from one live package and build on it with you. Everything is painted at your wedding on 300gsm cotton-rag paper, with a couple portrait painted on the night and left with you, and high-resolution scans of every piece. I quote guest coverage honestly: a chosen, happy subset of the room, not every single guest.</p>
 
       <div class="pkgs reveal" data-delay="1">
@@ -1122,10 +1174,11 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   </section>
 
   <!-- BEYOND WEDDINGS -->
-  <section class="section" id="beyond" aria-label="Beyond weddings">
+  <section class="section block block--teal" id="beyond" aria-label="Beyond weddings">
+    <img class="block-cut block-cut--bl" src="assets/art-bouquet_transparent.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
     <div class="wrap">
       <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Beyond weddings</span>
-      <h2 class="h2 reveal" style="max-width:20ch">The same hand, <em>for any room.</em></h2>
+      <h2 class="h2 reveal" data-morph data-wght="320">The same hand, <em>for any room.</em></h2>
       <p class="pkg-intro reveal" data-delay="1">Live painting is just as at home away from a wedding. I work across Melbourne and Australia-wide, turning a few hours into keepsakes guests carry out the door.</p>
 
       <div class="beyond-grid">
@@ -1152,7 +1205,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   <section class="section section--soft" id="faq" aria-label="Questions">
     <div class="wrap">
       <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Questions</span>
-      <h2 class="h2 reveal">The practical bits.</h2>
+      <h2 class="h2 reveal" data-morph data-wght="320">The practical bits.</h2>
       <div class="faq-list reveal">
 
         <div class="faq-item"><h3><button class="faq-q" aria-expanded="false">How far ahead should we book?<svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg></button></h3><div class="faq-a"><div>I am taking bookings up to about two months out for now, so reach out with your date and I will let you know what I have open. Earlier is always welcome, as I only take a limited number of weddings.</div></div></div>
@@ -1251,6 +1304,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
       <a href="#why">Why</a>
       <a href="#night">On the night</a>
       <a href="#work">The work</a>
+      <a href="#painter">The painter</a>
       <a href="#process">How it works</a>
       <a href="#offerings">Packages</a>
       <a href="#beyond">Beyond weddings</a>
@@ -1266,102 +1320,14 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 <script>
 /* ===========================================================================
    SITE SCRIPT
-   The pigment engine still paints the hero wash. Everything else is light:
-   reveals, the FAQ accordion, lazy video, Instagram embeds, and the form.
-   No custom cursor.
+   A live WebGL watercolour field paints the hero wash. Everything else is light:
+   scroll reveals, velocity-driven type, the FAQ accordion, lazy video,
+   Instagram embeds, and the enquiry form.
    =========================================================================== */
 (function(){
   "use strict";
   const reduce = window.matchMedia("(prefers-reduced-motion:reduce)").matches;
   const DPR    = Math.min(window.devicePixelRatio || 1, 2);
-
-  const PIGMENTS = {
-    terracotta:[181,101,74], ochre:[192,138,62], sage:[126,139,98],
-    cornflower:[110,140,168], rose:[201,139,140], ink:[42,39,36]
-  };
-  const PAPER = [244,239,230];
-
-  /* ---- geometry helpers ---- */
-  function polygon(cx, cy, r, n){
-    const pts=[];
-    for(let i=0;i<n;i++){
-      const a=(i/n)*Math.PI*2;
-      const rr=r*(0.82+Math.random()*0.36);
-      pts.push({x:cx+Math.cos(a)*rr, y:cy+Math.sin(a)*rr});
-    }
-    return pts;
-  }
-  function deform(points, depth, variance, decay){
-    let pts = points.map(p=>({x:p.x,y:p.y}));
-    for(let d=0; d<depth; d++){
-      const out=[];
-      for(let i=0;i<pts.length;i++){
-        const a=pts[i], b=pts[(i+1)%pts.length];
-        out.push(a);
-        const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
-        const dx=b.x-a.x, dy=b.y-a.y;
-        const len=Math.hypot(dx,dy)||1;
-        const off=(Math.random()*2-1)*variance;
-        out.push({x:mx + (-dy/len)*off, y:my + (dx/len)*off});
-      }
-      pts=out; variance*=decay;
-    }
-    return pts;
-  }
-  function tracePath(ctx, pts){
-    ctx.beginPath();
-    ctx.moveTo(pts[0].x, pts[0].y);
-    for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x, pts[i].y);
-    ctx.closePath();
-  }
-  function buildBloom(cx, cy, r, rgb, opts){
-    opts = opts || {};
-    const layers = opts.layers || 26;
-    const alpha  = opts.alpha  || 0.045;
-    const base   = polygon(cx, cy, r, 6 + (Math.random()*3|0));
-    const list=[];
-    for(let l=0; l<layers; l++){
-      const v = r*(0.10 + (l/layers)*0.22);
-      list.push({ pts:deform(base, 5, v, 0.62), rgb, alpha });
-    }
-    for(let l=0;l<4;l++){
-      list.push({ pts:deform(base, 5, r*0.08, 0.6), rgb, alpha:alpha*1.4 });
-    }
-    return list;
-  }
-  function paintLayer(ctx, layer){
-    ctx.globalCompositeOperation = "multiply";
-    ctx.fillStyle = `rgba(${layer.rgb[0]},${layer.rgb[1]},${layer.rgb[2]},${layer.alpha})`;
-    tracePath(ctx, layer.pts);
-    ctx.fill();
-  }
-  function buildComposition(w, h, palette, density){
-    const blooms=[];
-    const n = density || 3;
-    for(let i=0;i<n;i++){
-      const rgb = PIGMENTS[palette[i % palette.length]];
-      const cx = w*(0.30 + Math.random()*0.40);
-      const cy = h*(0.30 + Math.random()*0.40);
-      const r  = Math.min(w,h)*(0.20 + Math.random()*0.16);
-      blooms.push(buildBloom(cx, cy, r, rgb, {layers:24, alpha:0.04}));
-    }
-    const flat=[]; let idx=0, more=true;
-    while(more){
-      more=false;
-      for(const b of blooms){ if(idx<b.length){ flat.push(b[idx]); more=true; } }
-      idx++;
-    }
-    return flat;
-  }
-  function prep(canvas, cssW, cssH){
-    const ctx = canvas.getContext("2d");
-    canvas.width  = Math.round(cssW*DPR);
-    canvas.height = Math.round(cssH*DPR);
-    ctx.scale(DPR, DPR);
-    ctx.fillStyle = `rgb(${PAPER[0]},${PAPER[1]},${PAPER[2]})`;
-    ctx.fillRect(0,0,cssW,cssH);
-    return ctx;
-  }
 
   /* ---- HERO: a live WebGL watercolour field behind the bouquet --------------
      A single full-screen fragment shader: domain-warped noise blends the
@@ -1384,10 +1350,14 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
       "precision highp float;",
       "uniform vec2 u_res; uniform float u_time; uniform vec2 u_mouse;",
       "float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }",
+      // value noise with quintic (smootherstep) interpolation: no faceting
       "float noise(vec2 p){ vec2 i=floor(p), f=fract(p);",
       "  float a=hash(i), b=hash(i+vec2(1.0,0.0)), c=hash(i+vec2(0.0,1.0)), d=hash(i+vec2(1.0,1.0));",
-      "  vec2 u=f*f*(3.0-2.0*f); return mix(a,b,u.x)+(c-a)*u.y*(1.0-u.x)+(d-b)*u.x*u.y; }",
-      "float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<5;i++){ v+=a*noise(p); p*=2.0; a*=0.5; } return v; }",
+      "  vec2 u=f*f*f*(f*(f*6.0-15.0)+10.0); return mix(mix(a,b,u.x), mix(c,d,u.x), u.y); }",
+      // fbm that ROTATES the domain by a fixed 2x2 between octaves so the noise
+      // never stays axis-aligned (kills the horizontal/vertical streaks)
+      "const mat2 ROT = mat2(0.80,0.60,-0.60,0.80);",
+      "float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<6;i++){ v+=a*noise(p); p=ROT*p*2.0; a*=0.5; } return v; }",
       "void main(){",
       "  vec2 uv = gl_FragCoord.xy / u_res.xy;",
       "  float asp = u_res.x / u_res.y;",
@@ -1439,7 +1409,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     const uTime = gl.getUniformLocation(prog, "u_time");
     const uMouse = gl.getUniformLocation(prog, "u_mouse");
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     let mouse = [0.78, 0.5], target = [0.78, 0.5];
     function resize(){
       const w = Math.max(1, Math.round(canvas.clientWidth * dpr));
@@ -1594,7 +1564,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     });
 
     // gallery: each piece drifts at its own pace (applied to the figure so it
-    // never fights the velocity-skew that runKinetics puts on .frame)
+    // never fights the velocity-skew that runVelocity puts on .frame)
     gsap.utils.toArray(".piece").forEach((fig, i)=>{
       gsap.fromTo(fig, { yPercent: 6*(i+1) }, {
         yPercent: -6*(i+1), ease:"none",
@@ -1697,34 +1667,40 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     update();
   }
 
-  /* ---- kinetics: the marquee drifts on its own and leans with scroll speed,
-         and the gallery takes a faint skew, the way pigment lags a quick brush ---- */
-  function runKinetics(){
+  /* ---- velocity engine: one scroll-velocity loop that (a) gives the gallery a
+         faint skew, the way pigment lags a quick brush, and (b) stretches the
+         masthead and section headings live via font-variation-settings. Smooth,
+         clamped, and off entirely for reduced-motion. ---- */
+  function runVelocity(){
     if(reduce) return;
-    const row   = document.getElementById("marqueeRow");
-    const skews = Array.prototype.slice.call(document.querySelectorAll(".piece .frame, .film .stage"));
-    if(row){ row.innerHTML += row.innerHTML; }       // duplicate for a seamless loop
-    let half = 0, marqX = 0, last = window.scrollY || 0, vel = 0;
-    function measure(){ if(row) half = row.scrollWidth / 2; }
-    window.addEventListener("resize", ()=>{ measure(); marqX = 0; });
+    const skews  = Array.prototype.slice.call(document.querySelectorAll(".piece .frame, .film .stage"));
+    const morphs = Array.prototype.slice.call(document.querySelectorAll("[data-morph]"))
+                    .map(el=>({ el, base:parseInt(el.dataset.wght,10) || 360 }));
+    let last = window.scrollY || 0, vel = 0, smooth = 0;
     function frame(){
       if(document.hidden){ requestAnimationFrame(frame); return; }
       const sc = window.scrollY || 0;
       vel = vel * 0.86 + (sc - last) * 0.14; last = sc;
       const v = Math.max(-26, Math.min(26, vel));
-      if(row){
-        if(!half) measure();
-        marqX -= (0.55 + Math.abs(v) * 0.22);
-        if(half && -marqX >= half) marqX += half;
-        row.style.transform = "translate3d(" + marqX + "px,0,0) skewX(" + (v * -0.35) + "deg)";
-      }
       if(skews.length){
         const sk = "skewY(" + (v * 0.05) + "deg)";
         for(let i=0;i<skews.length;i++) skews[i].style.transform = sk;
       }
+      // ease the velocity magnitude (0..1) so the type swells and relaxes gently
+      const mag = Math.min(1, Math.abs(v) / 26);
+      smooth += (mag - smooth) * 0.12;
+      if(morphs.length){
+        const soft = Math.round(smooth * 70);          // SOFT: rounds the terminals
+        const wonk = +(smooth * 0.6).toFixed(2);        // WONK: a touch of wobble
+        for(let i=0;i<morphs.length;i++){
+          const m = morphs[i];
+          const w = Math.round(m.base + smooth * (840 - m.base) * 0.55);
+          m.el.style.fontVariationSettings =
+            '"opsz" 144, "wght" ' + w + ', "SOFT" ' + soft + ', "WONK" ' + wonk;
+        }
+      }
       requestAnimationFrame(frame);
     }
-    measure();
     requestAnimationFrame(frame);
   }
 
@@ -1804,7 +1780,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   /* ---- boot ---- */
   function boot(){
     runHeroGL(); runReveals(); runFaq(); runVideos(); runInstagram(); runForm(); runMotion();
-    runWordReveal(); runChrome(); runKinetics(); runMagnetic(); runCursorTrail();
+    runWordReveal(); runChrome(); runVelocity(); runMagnetic(); runCursorTrail();
   }
   if(document.readyState!=="loading") boot();
   else document.addEventListener("DOMContentLoaded", boot);
