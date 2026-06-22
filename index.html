@@ -43,13 +43,22 @@
   --ink-soft:     #6B6258;
   --line:         #D8CFBF;
 
-  /* pigments drawn from the artwork */
-  --terracotta:   #B5654A;
+  /* pigments sampled straight from the bouquet painting:
+     the magenta ribbon, bird-of-paradise orange, mimosa gold, petrol-blue
+     berries, leaf green and the soft blush of the callas. A warmer, more
+     colourful set than before, while the base stays warm paper. */
+  --terracotta:   #C2613C;
   --rust:         #A4502F;
-  --ochre:        #C08A3E;
-  --sage:         #7E8B62;
+  --orange:       #ED8A33;
+  --ochre:        #C9A23A;
+  --gold:         #C9A23A;
+  --sage:         #6E7E4E;
   --cornflower:   #6E8CA8;
+  --teal:         #3A7F9D;
   --rose:         #C98B8C;
+  --magenta:      #B5395B;
+  --blush:        #E4889C;
+  --wine:         #6C2A3E;
 
   --display: "Fraunces", Georgia, serif;
   --body:    "Hanken Grotesk", system-ui, sans-serif;
@@ -106,13 +115,13 @@ img,canvas,svg,video{ display:block; max-width:100%; }
   will-change:transform, opacity;
 }
 /* left frame */
-.bloom.l1{ left:-14vmin; top:6%;  background:radial-gradient(circle at 40% 40%, var(--terracotta), transparent 68%); animation:drift1 26s var(--ease) infinite alternate; }
-.bloom.l2{ left:-16vmin; top:42%; background:radial-gradient(circle at 50% 50%, var(--sage), transparent 70%);       animation:drift2 34s var(--ease) infinite alternate; }
-.bloom.l3{ left:-12vmin; top:74%; background:radial-gradient(circle at 45% 45%, var(--ochre), transparent 68%);      animation:drift3 30s var(--ease) infinite alternate; }
+.bloom.l1{ left:-14vmin; top:6%;  background:radial-gradient(circle at 40% 40%, var(--magenta), transparent 68%);  animation:drift1 26s var(--ease) infinite alternate; }
+.bloom.l2{ left:-16vmin; top:42%; background:radial-gradient(circle at 50% 50%, var(--sage), transparent 70%);     animation:drift2 34s var(--ease) infinite alternate; }
+.bloom.l3{ left:-12vmin; top:74%; background:radial-gradient(circle at 45% 45%, var(--orange), transparent 68%);   animation:drift3 30s var(--ease) infinite alternate; }
 /* right frame */
-.bloom.r1{ right:-14vmin; top:12%; background:radial-gradient(circle at 60% 40%, var(--cornflower), transparent 70%); animation:drift2 32s var(--ease) infinite alternate; }
-.bloom.r2{ right:-16vmin; top:48%; background:radial-gradient(circle at 55% 55%, var(--rose), transparent 70%);       animation:drift3 28s var(--ease) infinite alternate; }
-.bloom.r3{ right:-12vmin; top:80%; background:radial-gradient(circle at 50% 45%, var(--terracotta), transparent 68%); animation:drift1 36s var(--ease) infinite alternate; }
+.bloom.r1{ right:-14vmin; top:12%; background:radial-gradient(circle at 60% 40%, var(--teal), transparent 70%);    animation:drift2 32s var(--ease) infinite alternate; }
+.bloom.r2{ right:-16vmin; top:48%; background:radial-gradient(circle at 55% 55%, var(--rose), transparent 70%);    animation:drift3 28s var(--ease) infinite alternate; }
+.bloom.r3{ right:-12vmin; top:80%; background:radial-gradient(circle at 50% 45%, var(--gold), transparent 68%);    animation:drift1 36s var(--ease) infinite alternate; }
 
 @keyframes drift1{ 0%{ transform:translate(0,0) scale(1) rotate(0deg); opacity:.16; } 100%{ transform:translate(4vmin,-3vmin) scale(1.18) rotate(8deg); opacity:.3; } }
 @keyframes drift2{ 0%{ transform:translate(0,0) scale(1.05) rotate(0deg); opacity:.14; } 100%{ transform:translate(-3vmin,4vmin) scale(.9) rotate(-6deg); opacity:.26; } }
@@ -159,7 +168,8 @@ img,canvas,svg,video{ display:block; max-width:100%; }
 
 /* ===========================================================================
    HERO
-   Oversized kinetic headline overlapping a generated pigment wash.
+   The bouquet painting itself carries the landing now: a colourful foreground
+   that washes in over a halo of pigment, with the kinetic headline across it.
    =========================================================================== */
 .hero{
   position:relative; min-height:100svh; min-height:100vh;
@@ -167,29 +177,54 @@ img,canvas,svg,video{ display:block; max-width:100%; }
   padding:0 var(--gutter) clamp(2rem,6vh,4rem);
   overflow:hidden;
 }
-.hero-canvas-stage{
-  position:absolute; inset:0; z-index:0;
-  display:flex; align-items:center; justify-content:flex-end;
-  pointer-events:none;
-}
-#heroCanvas{
-  width:min(78vw, 760px); height:min(78vw, 760px);
-  margin-right:clamp(-2rem, -2vw, 2rem);
-  filter:url(#wcWobble);
-}
-/* the loose ink gesture drawn over the wash */
-.hero-gesture{
-  position:absolute; z-index:1; right:clamp(2%, 6vw, 9%); top:50%;
-  width:min(70vw, 660px); transform:translateY(-50%);
-  pointer-events:none; overflow:visible;
-}
-.hero-gesture path{
-  fill:none; stroke:var(--ink); stroke-width:2;
-  stroke-linecap:round; stroke-linejoin:round;
-  opacity:.78;
+/* a soft scrim grounds the bouquet into the paper and keeps the copy legible */
+.hero::after{
+  content:""; position:absolute; inset:0; z-index:3; pointer-events:none;
+  background:
+    linear-gradient(to top, var(--paper) 1%, rgba(244,239,230,0) 36%),
+    linear-gradient(to right, rgba(244,239,230,.55) 0%, rgba(244,239,230,0) 42%);
 }
 
-.hero-copy{ position:relative; z-index:2; max-width:min(92vw, 940px); }
+/* WebGL watercolour field: tints the paper like a living wash. Fades in only
+   once the shader is running; otherwise it stays invisible and the CSS wash shows. */
+.hero-gl{
+  position:absolute; inset:0; z-index:1; width:100%; height:100%;
+  opacity:0; transition:opacity 1.4s var(--ease);
+  pointer-events:none; mix-blend-mode:multiply;
+}
+.hero-gl.ready{ opacity:.92; }
+
+/* coloured wash blooms behind the painting, pulled from its own pigments */
+.hero-wash{ position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+.hero-wash span{
+  position:absolute; border-radius:50%; filter:blur(60px);
+  mix-blend-mode:multiply; will-change:transform, opacity;
+}
+.hero-wash .w-mag{ right:6%;  top:30%; width:48vmin; height:48vmin; background:radial-gradient(circle at 50% 50%, var(--magenta), transparent 66%); opacity:.34; animation:drift1 30s var(--ease) infinite alternate; }
+.hero-wash .w-org{ right:24%; top:8%;  width:34vmin; height:34vmin; background:radial-gradient(circle at 50% 50%, var(--orange), transparent 66%);  opacity:.3;  animation:drift2 26s var(--ease) infinite alternate; }
+.hero-wash .w-teal{ right:10%; top:62%; width:36vmin; height:36vmin; background:radial-gradient(circle at 50% 50%, var(--teal), transparent 68%);    opacity:.26; animation:drift3 34s var(--ease) infinite alternate; }
+.hero-wash .w-gold{ right:34%; top:48%; width:24vmin; height:24vmin; background:radial-gradient(circle at 50% 50%, var(--gold), transparent 66%);    opacity:.24; animation:drift1 28s var(--ease) infinite alternate; }
+
+/* the painting: foreground, anchored to the right, floating gently */
+.hero-bouquet-stage{
+  position:absolute; inset:0; z-index:2;
+  display:flex; align-items:center; justify-content:flex-end;
+  pointer-events:none; will-change:transform; /* JS drives scroll parallax + tilt */
+}
+.hero-bouquet-float{ display:flex; animation:bouquetFloat 11s ease-in-out infinite alternate; }
+.hero-bouquet{
+  width:min(58vw, 620px); margin-right:clamp(-3rem, -3vw, 1.5rem);
+  filter:drop-shadow(0 26px 46px rgba(108,42,62,.22));
+  opacity:0; transform:scale(1.06);
+  transition:opacity 1.3s var(--ease), transform 1.6s var(--ease);
+}
+.hero.is-in .hero-bouquet{ opacity:1; transform:none; }
+@keyframes bouquetFloat{
+  from{ transform:translateY(-1.4%) rotate(-1deg); }
+  to{   transform:translateY(1.8%)  rotate(1.2deg); }
+}
+
+.hero-copy{ position:relative; z-index:4; max-width:min(92vw, 940px); }
 .hero h1{
   font-family:var(--display);
   font-weight:300;
@@ -204,8 +239,16 @@ img,canvas,svg,video{ display:block; max-width:100%; }
   font-variation-settings:"opsz" 144;
 }
 .hero h1 em{
-  font-style:italic; font-weight:400; color:var(--terracotta);
+  font-style:italic; font-weight:400; color:var(--magenta);
   font-variation-settings:"opsz" 144;
+}
+/* let the accent word bleed from ribbon magenta into bird-of-paradise orange */
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .hero h1 em{
+    background:linear-gradient(100deg, var(--magenta) 0%, var(--orange) 100%);
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent; color:transparent;
+  }
 }
 /* kinetic reveal: each line rises out of a wet mask */
 .line-mask{ display:block; overflow:hidden; padding-bottom:.04em; }
@@ -619,7 +662,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 .read-line{
   position:fixed; top:0; left:0; right:0; height:2px; z-index:30;
   transform:scaleX(0); transform-origin:left;
-  background:linear-gradient(90deg, var(--terracotta), var(--ochre) 55%, var(--sage));
+  background:linear-gradient(90deg, var(--magenta), var(--orange) 35%, var(--gold) 60%, var(--teal));
   pointer-events:none;
 }
 
@@ -651,11 +694,11 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   font-size:clamp(2.2rem,7vw,5.5rem); line-height:1; letter-spacing:-.02em;
   padding:0 clamp(1.5rem,4vw,3.5rem); color:var(--ink);
 }
-/* every other phrase reads as a hollow, drawn outline */
+/* every other phrase reads as a hollow, drawn outline in ribbon magenta */
 .marquee-item.ghost{
-  color:transparent; -webkit-text-stroke:1px var(--terracotta); text-stroke:1px var(--terracotta);
+  color:transparent; -webkit-text-stroke:1.2px var(--magenta); text-stroke:1.2px var(--magenta);
 }
-.marquee-item .sep{ color:var(--terracotta); font-style:normal; font-weight:500; padding:0 .2em; }
+.marquee-item .sep{ color:var(--orange); font-style:normal; font-weight:500; padding:0 .2em; }
 
 /* ===========================================================================
    MAGNETIC + VELOCITY  ·  micro-physics borrowed from the reference sites
@@ -702,7 +745,11 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   .scroll-cue .bar::after{ display:none; }
   .hero-motes{ display:none; }
   .bloom{ opacity:.2 !important; }
-  #heroCanvas, .piece .frame, .film .stage{ filter:none; } /* drop the SVG wobble for clarity */
+  .piece .frame, .film .stage{ filter:none; } /* drop the SVG wobble for clarity */
+  /* hero: show the painting flat, no float, no shader */
+  .hero-bouquet{ opacity:1 !important; transform:none !important; }
+  .hero-bouquet-float{ animation:none !important; }
+  .hero-gl{ display:none !important; }
   /* new motion: settle everything flat */
   .h2 .word > span, .why-lede .word > span, .foot-cta .word > span{ transform:none !important; }
   .read-line{ display:none; }
@@ -752,25 +799,33 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 
   <!-- HERO -->
   <section class="hero" id="hero" aria-label="Introduction">
-    <div class="hero-canvas-stage" aria-hidden="true">
-      <canvas id="heroCanvas" width="760" height="760"
-              role="img" aria-label="A loose watercolour wash settling onto the paper"></canvas>
+    <!-- WebGL watercolour field. Progressive enhancement: if WebGL or the libs
+         fail, the CSS pigment wash below carries the colour instead. -->
+    <canvas class="hero-gl" id="heroGL" aria-hidden="true"></canvas>
+
+    <!-- CSS pigment wash: a halo of the painting's colours, and the fallback -->
+    <div class="hero-wash" aria-hidden="true">
+      <span class="w-mag"></span><span class="w-org"></span><span class="w-teal"></span><span class="w-gold"></span>
     </div>
-    <!-- soft pigment shapes drifting up on landing -->
+
+    <!-- the bouquet painting itself, floating, washing in on load -->
+    <div class="hero-bouquet-stage" aria-hidden="true">
+      <div class="hero-bouquet-float">
+        <img class="hero-bouquet" id="heroBouquet" src="assets/art-bouquet_transparent.png"
+             alt="" width="589" height="717" decoding="async" fetchpriority="high" />
+      </div>
+    </div>
+
+    <!-- petals of pigment drifting up on landing, in the painting's palette -->
     <div class="hero-motes" aria-hidden="true">
-      <span style="left:8%;  width:46px; height:46px; border-radius:50%;      background:radial-gradient(circle at 40% 40%, var(--terracotta), transparent 70%); animation-delay:0s;     animation-duration:16s;"></span>
-      <span style="left:20%; width:30px; height:30px; border-radius:38% 62% 55% 45%; background:radial-gradient(circle at 50% 50%, var(--ochre), transparent 72%);   animation-delay:-6s;    animation-duration:18s;"></span>
-      <span style="left:34%; width:22px; height:22px; border-radius:50%;      background:radial-gradient(circle at 50% 50%, var(--sage), transparent 72%);        animation-delay:-11s;   animation-duration:14s;"></span>
-      <span style="left:48%; width:38px; height:38px; border-radius:60% 40% 50% 50%; background:radial-gradient(circle at 45% 45%, var(--cornflower), transparent 72%); animation-delay:-3s;    animation-duration:20s;"></span>
-      <span style="left:63%; width:26px; height:26px; border-radius:50%;      background:radial-gradient(circle at 50% 50%, var(--rose), transparent 72%);        animation-delay:-9s;    animation-duration:17s;"></span>
-      <span style="left:76%; width:34px; height:34px; border-radius:45% 55% 60% 40%; background:radial-gradient(circle at 50% 50%, var(--ochre), transparent 70%);   animation-delay:-14s;   animation-duration:19s;"></span>
-      <span style="left:88%; width:20px; height:20px; border-radius:50%;      background:radial-gradient(circle at 50% 50%, var(--terracotta), transparent 72%); animation-delay:-2s;    animation-duration:15s;"></span>
+      <span style="left:8%;  width:46px; height:46px; border-radius:50%;            background:radial-gradient(circle at 40% 40%, var(--magenta), transparent 70%); animation-delay:0s;   animation-duration:16s;"></span>
+      <span style="left:20%; width:30px; height:30px; border-radius:38% 62% 55% 45%; background:radial-gradient(circle at 50% 50%, var(--orange), transparent 72%);  animation-delay:-6s;  animation-duration:18s;"></span>
+      <span style="left:34%; width:22px; height:22px; border-radius:50%;            background:radial-gradient(circle at 50% 50%, var(--teal), transparent 72%);    animation-delay:-11s; animation-duration:14s;"></span>
+      <span style="left:48%; width:38px; height:38px; border-radius:60% 40% 50% 50%; background:radial-gradient(circle at 45% 45%, var(--gold), transparent 72%);    animation-delay:-3s;  animation-duration:20s;"></span>
+      <span style="left:63%; width:26px; height:26px; border-radius:50%;            background:radial-gradient(circle at 50% 50%, var(--blush), transparent 72%);   animation-delay:-9s;  animation-duration:17s;"></span>
+      <span style="left:76%; width:34px; height:34px; border-radius:45% 55% 60% 40%; background:radial-gradient(circle at 50% 50%, var(--orange), transparent 70%);  animation-delay:-14s; animation-duration:19s;"></span>
+      <span style="left:88%; width:20px; height:20px; border-radius:50%;            background:radial-gradient(circle at 50% 50%, var(--magenta), transparent 72%); animation-delay:-2s;  animation-duration:15s;"></span>
     </div>
-    <svg class="hero-gesture" viewBox="0 0 660 520" aria-hidden="true" id="heroGesture">
-      <path id="g1" d="M205 470 C 150 360 175 250 250 200 C 320 152 330 90 300 60"/>
-      <path id="g2" d="M395 470 C 450 380 440 270 380 215 C 322 162 330 96 372 64"/>
-      <path id="g3" d="M250 215 C 300 250 360 250 395 218"/>
-    </svg>
 
     <div class="hero-copy wrap">
       <h1>
@@ -1308,40 +1363,113 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     return ctx;
   }
 
-  /* ---- HERO: paint the wash in over time ---- */
-  function runHero(){
-    const canvas = document.getElementById("heroCanvas");
+  /* ---- HERO: a live WebGL watercolour field behind the bouquet --------------
+     A single full-screen fragment shader: domain-warped noise blends the
+     painting's pigments into a slow, flowing wash that pools toward the cursor.
+     Pure progressive enhancement: any failure leaves the CSS wash in place. --- */
+  function runHeroGL(){
+    if(reduce) return;
+    const canvas = document.getElementById("heroGL");
     if(!canvas) return;
-    const size = 760;
-    const ctx = prep(canvas, size, size);
-    const palette = ["terracotta","ochre","sage","rose"];
-    const list = buildComposition(size, size, palette, 4);
 
-    if(reduce){ list.forEach(L=>paintLayer(ctx,L)); drawGesture(true); return; }
+    let gl;
+    try{
+      const opts = { alpha:true, premultipliedAlpha:false, antialias:true, depth:false, stencil:false };
+      gl = canvas.getContext("webgl", opts) || canvas.getContext("experimental-webgl", opts);
+    }catch(_){}
+    if(!gl) return; // no WebGL: the CSS pigment wash carries the colour
 
-    let i=0;
-    const per = Math.max(1, Math.round(list.length/110));
-    (function step(){
-      if(document.hidden){ requestAnimationFrame(step); return; }
-      for(let k=0;k<per && i<list.length;k++,i++) paintLayer(ctx, list[i]);
-      if(i<list.length) requestAnimationFrame(step);
-      else drawGesture(false);
+    const VERT = "attribute vec2 p; void main(){ gl_Position = vec4(p,0.0,1.0); }";
+    const FRAG = [
+      "precision highp float;",
+      "uniform vec2 u_res; uniform float u_time; uniform vec2 u_mouse;",
+      "float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }",
+      "float noise(vec2 p){ vec2 i=floor(p), f=fract(p);",
+      "  float a=hash(i), b=hash(i+vec2(1.0,0.0)), c=hash(i+vec2(0.0,1.0)), d=hash(i+vec2(1.0,1.0));",
+      "  vec2 u=f*f*(3.0-2.0*f); return mix(a,b,u.x)+(c-a)*u.y*(1.0-u.x)+(d-b)*u.x*u.y; }",
+      "float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<5;i++){ v+=a*noise(p); p*=2.0; a*=0.5; } return v; }",
+      "void main(){",
+      "  vec2 uv = gl_FragCoord.xy / u_res.xy;",
+      "  float asp = u_res.x / u_res.y;",
+      "  vec2 p = vec2(uv.x*asp, uv.y) * 2.4;",
+      "  float t = u_time * 0.045;",
+      "  vec2 q = vec2(fbm(p + t), fbm(p + vec2(5.2,1.3) - t));",
+      "  vec2 r = vec2(fbm(p + 3.5*q + vec2(1.7,9.2)), fbm(p + 3.5*q + vec2(8.3,2.8)));",
+      "  float f = fbm(p + 3.5*r);",
+      "  vec3 magenta = vec3(0.71,0.22,0.36);",
+      "  vec3 orange  = vec3(0.93,0.54,0.20);",
+      "  vec3 teal    = vec3(0.23,0.50,0.62);",
+      "  vec3 gold    = vec3(0.79,0.64,0.23);",
+      "  vec3 col = mix(magenta, orange, smoothstep(0.2,0.85,f));",
+      "  col = mix(col, teal, smoothstep(0.45,0.95,length(r)));",
+      "  col = mix(col, gold, smoothstep(0.6,1.0,q.x));",
+      "  vec2 m = vec2(u_mouse.x*asp, u_mouse.y);",
+      "  float d = distance(vec2(uv.x*asp, uv.y), m);",
+      "  float bloom = smoothstep(0.45, 0.0, d);",
+      "  col = mix(col, orange, bloom*0.45);",
+      "  float a = smoothstep(0.28,0.95,f)*0.5 + bloom*0.22;",
+      "  col = mix(vec3(0.96,0.94,0.90), col, 0.85);", // lighten so multiply stays a stain, not mud
+      "  gl_FragColor = vec4(col, a*0.9);",
+      "}"
+    ].join("\n");
+
+    function compile(type, src){
+      const sh = gl.createShader(type);
+      gl.shaderSource(sh, src); gl.compileShader(sh);
+      if(!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) return null;
+      return sh;
+    }
+    const vs = compile(gl.VERTEX_SHADER, VERT);
+    const fs = compile(gl.FRAGMENT_SHADER, FRAG);
+    if(!vs || !fs) return;
+    const prog = gl.createProgram();
+    gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+    if(!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+    gl.useProgram(prog);
+
+    // one big triangle covering the viewport
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, "p");
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+    const uRes = gl.getUniformLocation(prog, "u_res");
+    const uTime = gl.getUniformLocation(prog, "u_time");
+    const uMouse = gl.getUniformLocation(prog, "u_mouse");
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    let mouse = [0.78, 0.5], target = [0.78, 0.5];
+    function resize(){
+      const w = Math.max(1, Math.round(canvas.clientWidth * dpr));
+      const h = Math.max(1, Math.round(canvas.clientHeight * dpr));
+      if(canvas.width !== w || canvas.height !== h){ canvas.width = w; canvas.height = h; }
+      gl.viewport(0,0,canvas.width,canvas.height);
+    }
+    window.addEventListener("resize", resize);
+    const hero = document.getElementById("hero");
+    (hero || window).addEventListener("pointermove", (e)=>{
+      const rect = (hero || document.body).getBoundingClientRect();
+      target[0] = (e.clientX - rect.left) / rect.width;
+      target[1] = 1.0 - (e.clientY - rect.top) / rect.height;
+    }, {passive:true});
+
+    resize();
+    const start = performance.now();
+    let ready = false;
+    (function frame(){
+      if(document.hidden){ requestAnimationFrame(frame); return; }
+      resize();
+      mouse[0] += (target[0]-mouse[0])*0.06;
+      mouse[1] += (target[1]-mouse[1])*0.06;
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+      gl.uniform1f(uTime, (performance.now()-start)/1000);
+      gl.uniform2f(uMouse, mouse[0], mouse[1]);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      if(!ready){ ready = true; canvas.classList.add("ready"); }
+      requestAnimationFrame(frame);
     })();
-  }
-
-  function drawGesture(instant){
-    const g = document.getElementById("heroGesture");
-    if(!g) return;
-    g.querySelectorAll("path").forEach((p, idx)=>{
-      const len = p.getTotalLength();
-      p.style.strokeDasharray = len;
-      if(instant || reduce){ p.style.strokeDashoffset = 0; return; }
-      p.style.strokeDashoffset = len;
-      p.style.transition = "none";
-      void p.getBoundingClientRect();
-      p.style.transition = `stroke-dashoffset 1.6s cubic-bezier(.7,0,.3,1) ${idx*0.25}s`;
-      p.style.strokeDashoffset = 0;
-    });
   }
 
   /* ---- reveals + hero copy in ---- */
@@ -1404,27 +1532,100 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     io.observe(reels);
   }
 
-  /* ---- optional smooth scroll (Lenis), loaded defensively ---- */
-  function runSmoothScroll(){
-    if(reduce) return;
-    const s=document.createElement("script");
-    s.src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js";
-    s.onload=()=>{
-      try{
-        const lenis=new Lenis({ lerp:.09, wheelMultiplier:.95 });
-        function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
-        requestAnimationFrame(raf);
-        document.querySelectorAll('a[href^="#"]').forEach(a=>{
-          a.addEventListener("click", ev=>{
-            const id=a.getAttribute("href"); if(id.length<2) return;
-            const el=document.querySelector(id);
-            if(el){ ev.preventDefault(); lenis.scrollTo(el,{offset:0}); }
-          });
-        });
-      }catch(_){}
-    };
-    s.onerror=()=>{};
-    document.head.appendChild(s);
+  /* ---- MOTION ENGINE: Lenis smooth scroll + GSAP ScrollTrigger ---------------
+     The award stack. Lenis carries the inertia; GSAP scrubs the hero parallax
+     and the gallery drift against it. Loaded from CDN with a hard fallback: if
+     the rich stack does not load, we drop back to plain Lenis, and if that
+     fails too, native scrolling and the IntersectionObserver reveals remain. -- */
+  function loadScript(src){
+    return new Promise((res, rej)=>{
+      const s=document.createElement("script");
+      s.src=src; s.async=true;
+      s.onload=()=>res(); s.onerror=()=>rej(new Error("load "+src));
+      document.head.appendChild(s);
+    });
+  }
+
+  let _lenis=null;
+  function anchorScroll(lenis){
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener("click", ev=>{
+        const id=a.getAttribute("href"); if(id.length<2) return;
+        const el=document.querySelector(id);
+        if(el){ ev.preventDefault(); lenis.scrollTo(el,{offset:0}); }
+      });
+    });
+  }
+
+  function fallbackSmooth(){
+    if(typeof Lenis==="undefined") return;
+    try{
+      _lenis=new Lenis({ lerp:.09, wheelMultiplier:.95 });
+      (function raf(t){ _lenis.raf(t); requestAnimationFrame(raf); })();
+      anchorScroll(_lenis);
+    }catch(_){}
+  }
+
+  function initMotion(){
+    if(!window.gsap || !window.ScrollTrigger || typeof Lenis==="undefined"){ fallbackSmooth(); return; }
+    const gsap=window.gsap;
+    gsap.registerPlugin(window.ScrollTrigger);
+    const ST=window.ScrollTrigger;
+
+    // Lenis, synced to the GSAP ticker so ScrollTrigger reads it natively
+    _lenis=new Lenis({ lerp:.085, wheelMultiplier:.95, smoothWheel:true });
+    _lenis.on("scroll", ST.update);
+    gsap.ticker.add((t)=>{ _lenis.raf(t*1000); });
+    gsap.ticker.lagSmoothing(0);
+    anchorScroll(_lenis);
+
+    // hero: the bouquet floats up and the copy drifts as you leave the fold
+    gsap.to(".hero-bouquet-stage", {
+      yPercent:-16, ease:"none",
+      scrollTrigger:{ trigger:".hero", start:"top top", end:"bottom top", scrub:true }
+    });
+    gsap.to(".hero-copy", {
+      yPercent:22, opacity:.55, ease:"none",
+      scrollTrigger:{ trigger:".hero", start:"top top", end:"bottom top", scrub:true }
+    });
+    gsap.to(".hero-gl", {
+      scale:1.12, ease:"none",
+      scrollTrigger:{ trigger:".hero", start:"top top", end:"bottom top", scrub:true }
+    });
+
+    // gallery: each piece drifts at its own pace (applied to the figure so it
+    // never fights the velocity-skew that runKinetics puts on .frame)
+    gsap.utils.toArray(".piece").forEach((fig, i)=>{
+      gsap.fromTo(fig, { yPercent: 6*(i+1) }, {
+        yPercent: -6*(i+1), ease:"none",
+        scrollTrigger:{ trigger:fig, start:"top bottom", end:"bottom top", scrub:true }
+      });
+    });
+
+    // the colour-drenched "On the night" band parallaxes its own backdrop a touch
+    gsap.utils.toArray(".beat").forEach((el, i)=>{
+      gsap.from(el, {
+        yPercent: 18, opacity: 0, ease:"power2.out", duration:.9,
+        scrollTrigger:{ trigger:el, start:"top 88%" }, delay:(i%5)*0.04
+      });
+    });
+
+    window.addEventListener("load", ()=>ST.refresh());
+    ST.refresh();
+  }
+
+  function runMotion(){
+    if(reduce) return; // reduced-motion: native scroll, no smoothing or scrub
+    const V="3.12.5";
+    const GSAP="https://cdn.jsdelivr.net/npm/gsap@"+V+"/dist/gsap.min.js";
+    const STR ="https://cdn.jsdelivr.net/npm/gsap@"+V+"/dist/ScrollTrigger.min.js";
+    const LEN ="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js";
+    Promise.all([loadScript(LEN), loadScript(GSAP).then(()=>loadScript(STR))])
+      .then(initMotion)
+      .catch(()=>{
+        // last resort: try plain Lenis if it happened to load
+        if(typeof Lenis!=="undefined") fallbackSmooth();
+      });
   }
 
   /* ---- ENQUIRY FORM: functional + secure --------------------------------
@@ -1576,7 +1777,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     const ctx = cv.getContext("2d");
     function size(){ cv.width = innerWidth * DPR; cv.height = innerHeight * DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
     size(); window.addEventListener("resize", size);
-    const cols = [[181,101,74],[192,138,62],[126,139,98],[110,140,168],[201,139,140]];
+    const cols = [[181,57,91],[237,138,51],[58,127,157],[201,162,58],[110,126,78],[228,136,156]];
     let mx = -200, my = -200, px = mx, py = my, ci = 0;
     window.addEventListener("pointermove", e=>{ mx = e.clientX; my = e.clientY; }, {passive:true});
     (function frame(){
@@ -1602,7 +1803,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 
   /* ---- boot ---- */
   function boot(){
-    runHero(); runReveals(); runFaq(); runVideos(); runInstagram(); runForm(); runSmoothScroll();
+    runHeroGL(); runReveals(); runFaq(); runVideos(); runInstagram(); runForm(); runMotion();
     runWordReveal(); runChrome(); runKinetics(); runMagnetic(); runCursorTrail();
   }
   if(document.readyState!=="loading") boot();
