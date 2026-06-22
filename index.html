@@ -102,7 +102,7 @@ img,canvas,svg,video{ display:block; max-width:100%; }
 .bloom-field{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
 .bloom{
   position:absolute; width:42vmin; height:42vmin; border-radius:50%;
-  filter:blur(46px); mix-blend-mode:multiply; opacity:.22;
+  filter:blur(46px); mix-blend-mode:multiply; opacity:.26;
   will-change:transform, opacity;
 }
 /* left frame */
@@ -453,6 +453,77 @@ footer nav a::after{ content:""; position:absolute; left:0; bottom:-3px; height:
 footer nav a:hover::after{ transform:scaleX(1); transform-origin:left; }
 footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spacing:.1em; color:var(--ink-soft); margin-top:1.5rem; }
 
+/* a closing line above the footer nav, so the page ends on an invitation */
+.foot-top{
+  display:flex; flex-wrap:wrap; gap:1.5rem 2.5rem; justify-content:space-between; align-items:flex-end;
+  padding-bottom:clamp(2rem,5vw,3.5rem); margin-bottom:clamp(2rem,4vw,3rem);
+  border-bottom:1px solid var(--line);
+}
+.foot-cta{
+  font-family:var(--display); font-weight:300; line-height:1.02; letter-spacing:-.02em;
+  font-size:clamp(1.9rem,5.4vw,3.6rem); max-width:15ch; margin:0;
+}
+.foot-cta em{ font-style:italic; color:var(--terracotta); }
+
+/* ===========================================================================
+   HERO RISING MOTES
+   Soft pigment shapes that drift up the hero on landing, the way letters and
+   shapes float up on the reference sites. Sits behind the headline. Paused for
+   reduced-motion users.
+   =========================================================================== */
+.hero-motes{ position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+.hero-motes span{
+  position:absolute; bottom:-16vh; mix-blend-mode:multiply; opacity:0;
+  filter:blur(7px); will-change:transform, opacity;
+  animation:rise 15s var(--ease) infinite;
+}
+@keyframes rise{
+  0%{   transform:translateY(0) rotate(0deg) scale(.8);  opacity:0; }
+  12%{  opacity:.5; }
+  80%{  opacity:.3; }
+  100%{ transform:translateY(-122vh) rotate(24deg) scale(1.18); opacity:0; }
+}
+
+/* ===========================================================================
+   WHY LIVE WATERCOLOUR
+   Entertainment, a photo booth and a keepsake in one. Editorial statement plus
+   three short notes.
+   =========================================================================== */
+.why-lede{
+  font-family:var(--display); font-weight:300; line-height:1.18; letter-spacing:-.01em;
+  font-size:clamp(1.5rem,3.6vw,2.5rem); max-width:24ch; margin:clamp(1.4rem,4vw,2.4rem) 0 0;
+  text-wrap:balance;
+}
+.why-lede em{ font-style:italic; color:var(--terracotta); }
+.why-notes{ display:grid; gap:clamp(1.4rem,3.5vw,2.5rem); margin-top:clamp(2.6rem,6vw,4rem); grid-template-columns:1fr; }
+@media (min-width:760px){ .why-notes{ grid-template-columns:repeat(3,1fr); } }
+.why-note{ padding-top:1.4rem; border-top:1.5px solid var(--line); }
+.why-note .wn-no{ font-family:var(--mono); font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; color:var(--terracotta); }
+.why-note h3{ font-family:var(--display); font-style:italic; font-weight:400; font-size:1.4rem; margin:.5rem 0 .55rem; }
+.why-note p{ margin:0; color:var(--ink-soft); font-size:.96rem; }
+
+/* ===========================================================================
+   HOW IT WORKS  ·  poster cards
+   The two paths read like little posters that lift up as they enter view, with
+   a soft wash bleeding from one corner.
+   =========================================================================== */
+.path{
+  position:relative; overflow:hidden;
+  background:var(--paper); border:1px solid var(--line); border-radius:4px;
+  padding:clamp(1.6rem,3.4vw,2.4rem);
+}
+.path::before{
+  content:""; position:absolute; right:-3.5rem; top:-3.5rem; width:12rem; height:12rem;
+  border-radius:50%; mix-blend-mode:multiply; filter:blur(10px); opacity:.18; pointer-events:none;
+  background:radial-gradient(circle at 50% 50%, var(--ochre), transparent 68%);
+}
+.path:nth-child(2)::before{ background:radial-gradient(circle at 50% 50%, var(--cornflower), transparent 68%); }
+.path-no{ font-family:var(--mono); font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--terracotta); display:block; margin-bottom:.7rem; }
+.path > *{ position:relative; }
+/* a stronger lift than the generic reveal, so the cards feel like they slide up */
+.paths .path.reveal{ transform:translateY(56px) scale(.985); }
+.paths .path.reveal.in{ transform:none; }
+
 /* generic scroll reveal */
 .reveal{ opacity:0; transform:translateY(28px); transition:opacity 1s var(--ease), transform 1s var(--ease); }
 .reveal.in{ opacity:1; transform:none; }
@@ -467,6 +538,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
   .line-mask > span{ transform:none !important; }
   .reveal{ opacity:1 !important; transform:none !important; }
   .scroll-cue .bar::after{ display:none; }
+  .hero-motes{ display:none; }
   .bloom{ opacity:.2 !important; }
   #heroCanvas, .piece .frame, .film .stage{ filter:none; } /* drop the SVG wobble for clarity */
 }
@@ -511,6 +583,16 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
       <canvas id="heroCanvas" width="760" height="760"
               role="img" aria-label="A loose watercolour wash settling onto the paper"></canvas>
     </div>
+    <!-- soft pigment shapes drifting up on landing -->
+    <div class="hero-motes" aria-hidden="true">
+      <span style="left:8%;  width:46px; height:46px; border-radius:50%;      background:radial-gradient(circle at 40% 40%, var(--terracotta), transparent 70%); animation-delay:0s;     animation-duration:16s;"></span>
+      <span style="left:20%; width:30px; height:30px; border-radius:38% 62% 55% 45%; background:radial-gradient(circle at 50% 50%, var(--ochre), transparent 72%);   animation-delay:-6s;    animation-duration:18s;"></span>
+      <span style="left:34%; width:22px; height:22px; border-radius:50%;      background:radial-gradient(circle at 50% 50%, var(--sage), transparent 72%);        animation-delay:-11s;   animation-duration:14s;"></span>
+      <span style="left:48%; width:38px; height:38px; border-radius:60% 40% 50% 50%; background:radial-gradient(circle at 45% 45%, var(--cornflower), transparent 72%); animation-delay:-3s;    animation-duration:20s;"></span>
+      <span style="left:63%; width:26px; height:26px; border-radius:50%;      background:radial-gradient(circle at 50% 50%, var(--rose), transparent 72%);        animation-delay:-9s;    animation-duration:17s;"></span>
+      <span style="left:76%; width:34px; height:34px; border-radius:45% 55% 60% 40%; background:radial-gradient(circle at 50% 50%, var(--ochre), transparent 70%);   animation-delay:-14s;   animation-duration:19s;"></span>
+      <span style="left:88%; width:20px; height:20px; border-radius:50%;      background:radial-gradient(circle at 50% 50%, var(--terracotta), transparent 72%); animation-delay:-2s;    animation-duration:15s;"></span>
+    </div>
     <svg class="hero-gesture" viewBox="0 0 660 520" aria-hidden="true" id="heroGesture">
       <path id="g1" d="M205 470 C 150 360 175 250 250 200 C 320 152 330 90 300 60"/>
       <path id="g2" d="M395 470 C 450 380 440 270 380 215 C 322 162 330 96 372 64"/>
@@ -536,6 +618,32 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
     <div class="scroll-cue" aria-hidden="true"><span class="bar"></span> Scroll</div>
   </section>
 
+  <!-- WHY LIVE WATERCOLOUR -->
+  <section class="section" id="why" aria-label="Why live watercolour">
+    <div class="wrap">
+      <span class="label reveal"><svg class="drop" viewBox="0 0 30 34" aria-hidden="true"><path d="M15 2 C20 11,27 17,27 23 a12 12 0 0 1 -24 0 C3 17,10 11,15 2 Z" fill="#6E8CA8"/></svg>Why live watercolour</span>
+      <p class="why-lede reveal" data-delay="1">Entertainment, a photo booth and a keepsake, <em>all in one evening.</em></p>
+
+      <div class="why-notes">
+        <div class="why-note reveal">
+          <span class="wn-no">01</span>
+          <h3>A quiet centre of the room</h3>
+          <p>Guests drift over to watch a portrait find its shape. The table becomes a gentle gathering point, and a talking point that lasts long after the night.</p>
+        </div>
+        <div class="why-note reveal" data-delay="1">
+          <span class="wn-no">02</span>
+          <h3>Made by hand, in the moment</h3>
+          <p>Not a print or a photo off a phone. Each piece is an original painted in the room, on the day, carrying the feeling of your wedding while it happens.</p>
+        </div>
+        <div class="why-note reveal" data-delay="2">
+          <span class="wn-no">03</span>
+          <h3>Something to keep</h3>
+          <p>Everyone leaves with a small painting of their own, and the two of you with a portrait made while the day is still unfolding. A keepsake that does not fade.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- HOW IT WORKS -->
   <section class="section" id="process" aria-label="How it works">
     <div class="wrap">
@@ -544,6 +652,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 
       <div class="paths">
         <div class="path reveal">
+          <span class="path-no">Path 01</span>
           <h3>Live on the day</h3>
           <p class="psub">I come to your wedding and paint as it happens.</p>
           <ol class="steps">
@@ -553,6 +662,7 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
           </ol>
         </div>
         <div class="path reveal" data-delay="1">
+          <span class="path-no">Path 02</span>
           <h3>A studio commission</h3>
           <p class="psub">From your photographs, before or after the wedding.</p>
           <ol class="steps">
@@ -778,8 +888,13 @@ footer .copy{ width:100%; font-family:var(--mono); font-size:.64rem; letter-spac
 
 <footer aria-label="Footer">
   <div class="wrap">
+    <div class="foot-top">
+      <p class="foot-cta">Let&rsquo;s make something <em>to keep.</em></p>
+      <a class="cta" href="#enquiry"><span class="dot" aria-hidden="true"></span><span>Enquire</span></a>
+    </div>
     <span class="fm">Christopher Wang</span>
     <nav aria-label="Elsewhere">
+      <a href="#why">Why</a>
       <a href="#work">The work</a>
       <a href="#process">How it works</a>
       <a href="#offerings">Packages</a>
