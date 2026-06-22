@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
+import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, asset } from '../lib/site.js'
 import { WORK } from '../content.js'
 
@@ -36,6 +37,7 @@ export default function SelectedWork() {
 
 function Piece({ piece, index }) {
   const reduce = useReducedMotion()
+  const parallax = useHeavyFx() && !reduce
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -60,7 +62,7 @@ function Piece({ piece, index }) {
       className={layout}
     >
       <motion.div
-        style={reduce ? {} : { y }}
+        style={parallax ? { y } : {}}
         className="overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep"
       >
         <picture>

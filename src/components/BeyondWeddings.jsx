@@ -50,7 +50,9 @@ export default function BeyondWeddings() {
             transition={{ ...SPRING, delay: reduce ? 0 : i * 0.1 }}
             whileHover={reduce ? {} : { y: -8 }}
             className={
-              'col-span-12 flex flex-col border border-paper/25 p-7 backdrop-blur-sm sm:col-span-6 lg:col-span-4 ' +
+              // backdrop-blur is costly to recompute while scrolling on mobile;
+              // enable it only from md up and use a faint solid fill below that.
+              'col-span-12 flex flex-col border border-paper/25 bg-paper/5 p-7 md:bg-transparent md:backdrop-blur-sm sm:col-span-6 lg:col-span-4 ' +
               (i === 1 ? 'lg:mt-10' : i === 2 ? 'lg:mt-5' : '')
             }
           >

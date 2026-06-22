@@ -3,12 +3,14 @@ import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
 import MagneticButton from './MagneticButton.jsx'
+import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, asset, ENQUIRE_HREF } from '../lib/site.js'
 import { PAINTER } from '../content.js'
 
 /** "The painter" — bio set against an asymmetric framed portrait. */
 export default function AboutMe() {
   const reduce = useReducedMotion()
+  const parallax = useHeavyFx() && !reduce
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -38,7 +40,7 @@ export default function AboutMe() {
               className="absolute -left-4 -top-4 h-full w-full rounded-[1.2rem] border border-terracotta/60"
             />
             <motion.div
-              style={reduce ? {} : { y }}
+              style={parallax ? { y } : {}}
               className="relative overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep"
             >
               <picture>
