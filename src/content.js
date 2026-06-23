@@ -2,17 +2,6 @@
 // (the user's own refined, non-plagiarised text), except `evening` whose
 // prose is reworded/enriched from the "Additional Content to Consider" source.
 
-export const DATE_CHECK = {
-  prompt: 'Wondering if your date is still free?',
-  cta: 'Check your date',
-  datePlaceholder: 'Wedding date',
-  emailPlaceholder: 'Your email',
-  confirm: {
-    title: 'Date received.',
-    body: "I'll check my calendar and reply within a day or two.",
-  },
-}
-
 export const HERO = {
   lines: ['Painted', 'live, while', 'you celebrate.'],
   emphasis: 'live',

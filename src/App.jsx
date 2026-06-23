@@ -13,7 +13,6 @@ import AboutMe from './components/AboutMe.jsx'
 import Packages from './components/Packages.jsx'
 import BeyondWeddings from './components/BeyondWeddings.jsx'
 import Faq from './components/Faq.jsx'
-import DateCheck from './components/DateCheck.jsx'
 import EnquireForm from './components/EnquireForm.jsx'
 import Footer from './components/Footer.jsx'
 
@@ -44,7 +43,6 @@ export default function App() {
 
       <main className="relative z-10 pb-28 md:pb-0">
         <Hero revealed={revealed} />
-        <DateCheck />
         <WhyWatercolour />
         <AboutMe />
         <TwoPaths />
