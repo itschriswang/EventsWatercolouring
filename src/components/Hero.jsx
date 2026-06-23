@@ -69,7 +69,7 @@ export default function Hero({ revealed }) {
         {/* Headline — massive, char-split, overlapping the art */}
         <motion.div
           style={parallax ? { y: copyY } : {}}
-          className="relative z-10 col-span-4 col-start-1 pr-[40vw] sm:pr-0 lg:col-span-9"
+          className="relative z-10 col-span-4 col-start-1 lg:col-span-9"
         >
           {revealed && (
             <SplitText
