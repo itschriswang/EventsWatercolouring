@@ -26,12 +26,59 @@ export default function SelectedWork() {
         </p>
       </div>
 
-      <div className="mt-[clamp(2.5rem,6vw,5rem)] grid grid-cols-12 gap-x-8 gap-y-10 sm:items-start">
+      {/* Desktop / tablet — the curated three-piece gallery. */}
+      <div className="mt-[clamp(2.5rem,6vw,5rem)] hidden grid-cols-12 gap-x-8 gap-y-10 sm:grid sm:items-start">
         {WORK.pieces.map((piece, i) => (
           <Piece key={piece.ttl} piece={piece} index={i} />
         ))}
       </div>
+
+      {/* Mobile — a fuller two-column masonry. Placeholder pieces (the real
+          images repeated) with every other tile a touch taller for emphasis. */}
+      <MobileGallery />
     </section>
+  )
+}
+
+/**
+ * Mobile-only masonry gallery. Uses CSS columns so tiles of differing height
+ * pack without row gaps; alternating tiles are slightly taller as emphasis.
+ * The images repeat the three real studies as stand-ins for a fuller wall.
+ */
+function MobileGallery() {
+  const reduce = useReducedMotion()
+  // Repeat the real pieces to stand in for a fuller gallery wall.
+  const tiles = Array.from({ length: 8 }, (_, i) => WORK.pieces[i % WORK.pieces.length])
+
+  return (
+    <div className="mt-[clamp(2rem,8vw,3rem)] columns-2 gap-3 sm:hidden">
+      {tiles.map((piece, i) => (
+        <motion.figure
+          key={i}
+          initial={{ opacity: 0, y: reduce ? 0 : 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ ...SPRING, delay: reduce ? 0 : (i % 4) * 0.06 }}
+          className="mb-3 break-inside-avoid"
+        >
+          <div className="overflow-hidden rounded-[1rem] border border-line bg-paper-deep">
+            <picture>
+              <source srcSet={asset(piece.webp)} type="image/webp" />
+              <img
+                src={asset(piece.src)}
+                alt={piece.alt}
+                loading="lazy"
+                // Every other tile a touch taller — a subtle emphasis rhythm.
+                className={
+                  'w-full object-cover ' +
+                  (i % 2 === 1 ? 'aspect-[3/4]' : 'aspect-[4/5]')
+                }
+              />
+            </picture>
+          </div>
+        </motion.figure>
+      ))}
+    </div>
   )
 }
 
