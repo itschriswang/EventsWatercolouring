@@ -37,8 +37,8 @@
     font-family: theme('fontFamily.display');
     font-weight: 700;
     font-size: clamp(2.25rem, 8vw, 8rem);
-    line-height: 0.88;
-    letter-spacing: -0.01em;
+    line-height: 0.92;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
   }
 
@@ -46,8 +46,8 @@
     font-family: theme('fontFamily.display');
     font-weight: 700;
     font-size: clamp(2rem, 6vw, 6rem);
-    line-height: 0.9;
-    letter-spacing: -0.01em;
+    line-height: 0.94;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
   }
 
@@ -55,8 +55,8 @@
     font-family: theme('fontFamily.display');
     font-weight: 400;
     font-size: clamp(1.5rem, 3.5vw, 3rem);
-    line-height: 0.95;
-    letter-spacing: 0;
+    line-height: 0.98;
+    letter-spacing: 0.02em;
   }
 
   .eyebrow {
