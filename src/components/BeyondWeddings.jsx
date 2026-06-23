@@ -28,6 +28,7 @@ export default function BeyondWeddings() {
         unit="char"
         lines={BEYOND.title}
         emphasis={BEYOND.emphasis}
+        emphasisClassName="text-wine"
         className="display-lg mt-5 text-paper"
       />
       <motion.p

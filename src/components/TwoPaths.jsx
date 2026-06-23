@@ -22,6 +22,7 @@ export default function TwoPaths() {
           unit="char"
           lines={PATHS.title}
           emphasis={PATHS.emphasis}
+          emphasisClassName="text-ochre"
           className="display-lg text-paper"
         />
       </div>
