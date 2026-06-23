@@ -4,8 +4,9 @@
 
 export const HERO = {
   lines: ['Painted', 'live, while', 'you celebrate.'],
-  emphasis: 'Painted', // word rendered in the display italic
-  emphasis: 'live', // word rendered in the display italic
+  emphasis: 'live',
+  linesMobile: ['Painted', 'live,', 'while you', 'celebrate.'],
+  emphasisMobile: 'live,',
   lede: 'I set up at your reception and paint as the night moves. A selected number of your guests leave with a small keepsake of their own, and the two of you with one portrait painted on the night, all in pigment on cotton-rag paper.',
 }
 
@@ -58,7 +59,7 @@ export const EVENING = {
     {
       no: '03',
       title: 'The painting begins',
-      body: 'Each portrait takes somewhere between five and twenty minutes. As the first finished pieces appear a quiet buzz starts to spread, and guests drift over to watch the next one come to life.',
+      body: 'Each piece takes around five to ten minutes. As the first finished portraits appear a quiet buzz starts to spread, and guests drift over to watch the next one come to life.',
     },
     {
       no: '04',
@@ -66,9 +67,9 @@ export const EVENING = {
       body: 'Every painting slides into a clear protective sleeve, ready to travel home safely, just as the champagne starts to flow a little more freely.',
     },
     {
-      no: '05',
-      title: 'If I don’t reach everyone',
-      body: 'Guest numbers mean I paint a selected few on the night. Anyone I do not get to can still be painted afterwards through the optional After-Event Service, finished in the studio and posted on.',
+      no: ‘05’,
+      title: ‘A guaranteed number’,
+      body: ‘I commit to a minimum of 10 pieces per hour. Anyone not reached on the night is finished in the studio and posted to you to hand on — so the number you book is the number you get.’,
     },
   ],
 }
@@ -200,7 +201,7 @@ export const PACKAGES = {
     note: 'The base package, painted through your reception.',
     priceSmall: 'From',
     price: '$1,000',
-    facts: ['3 hours live', '~12 keepsakes', '~24 guests'],
+    facts: ['3 hours live', '30 keepsakes', '~30 guests'],
     bullets: [
       'Live guest keepsakes, A5 archival cotton paper',
       'A couple portrait, painted on the night and left with you',
@@ -227,7 +228,7 @@ export const PACKAGES = {
   addons: [
     {
       h: 'After-Event Service',
-      p: 'Any guest photographed on the night who missed out can still be painted. I finish their portrait in the studio afterwards and post the set to you to hand on.',
+      p: 'Any shortfall against the guaranteed minimum is finished in the studio and posted to you to hand on. Additional guests beyond the guaranteed count can also be added at this rate.',
       tag: '$30 / guest',
       small: 'From',
     },
@@ -321,7 +322,7 @@ export const FAQ = {
     },
     {
       q: 'How many guests can you paint?',
-      a: 'Around 12 to 20 keepsake pieces depending on the package, covering roughly 24 to 40 guests when I group a few people together. I quote this as a chosen subset of the room, painted well, rather than a rushed attempt at everyone.',
+      a: 'I work to a minimum of 10 pieces per hour. For a three-hour booking that is at least 30 keepsakes. Any I do not reach on the night are finished in the studio and posted to you to hand on, so no guest misses out.',
     },
     {
       q: 'What materials do you use?',
