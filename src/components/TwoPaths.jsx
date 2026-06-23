@@ -10,11 +10,11 @@ export default function TwoPaths() {
   return (
     <section
       id="process"
-      className="relative w-full overflow-hidden bg-sage px-[5vw] py-[clamp(4rem,10vw,9rem)] text-ink"
+      className="relative w-full overflow-hidden bg-magenta px-[5vw] py-[clamp(4rem,10vw,9rem)] text-paper"
     >
       
       <div className="relative z-10 flex flex-col gap-4">
-        <Label fill="#F4EFE6" className="!text-ink/60">
+        <Label fill="#F4EFE6" className="!text-paper/60">
           {PATHS.label}
         </Label>
         <SplitText
@@ -22,7 +22,7 @@ export default function TwoPaths() {
           unit="char"
           lines={PATHS.title}
           emphasis={PATHS.emphasis}
-          className="display-lg text-ink"
+          className="display-lg text-paper"
         />
       </div>
 
@@ -38,23 +38,23 @@ export default function TwoPaths() {
               'col-span-12 lg:col-span-6 ' + (i === 1 ? 'lg:mt-24' : '')
             }
           >
-            <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink/50">
+            <span className="font-mono text-xs uppercase tracking-[0.25em] text-paper/50">
               {path.no}
             </span>
-            <h3 className="mt-3 font-display text-[clamp(2rem,4.5vw,4rem)] font-light leading-[0.95] tracking-tight text-ink">
+            <h3 className="mt-3 font-display text-[clamp(2rem,4.5vw,4rem)] font-light leading-[0.95] tracking-tight text-paper">
               {path.title}
             </h3>
-            <p className="mt-3 max-w-md text-ink/70">{path.sub}</p>
+            <p className="mt-3 max-w-md text-paper/70">{path.sub}</p>
 
-            <ol className="mt-8 flex flex-col gap-6 border-t border-ink/15 pt-8">
+            <ol className="mt-8 flex flex-col gap-6 border-t border-paper/15 pt-8">
               {path.steps.map((s, si) => (
                 <li key={si} className="flex gap-5">
                   <span className="mt-1 font-mono text-sm text-paper">{si + 1}</span>
                   <span>
-                    <b className="block font-display text-lg font-normal text-ink">
+                    <b className="block font-display text-lg font-normal text-paper">
                       {s.b}
                     </b>
-                    <span className="mt-1 block max-w-md text-sm leading-relaxed text-ink/65">
+                    <span className="mt-1 block max-w-md text-sm leading-relaxed text-paper/65">
                       {s.t}
                     </span>
                   </span>
