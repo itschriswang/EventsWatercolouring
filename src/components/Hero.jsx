@@ -129,7 +129,7 @@ export default function Hero({ revealed }) {
                     loading="eager"
                   />
                   <figcaption className="bg-paper px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft sm:px-3 sm:py-2 sm:text-[0.6rem] sm:tracking-[0.2em]">
-                    No. 002 — Bouquet
+                    No. 002 · Bouquet
                   </figcaption>
                 </motion.figure>
               </div>
@@ -152,7 +152,7 @@ export default function Hero({ revealed }) {
                     loading="eager"
                   />
                   <figcaption className="bg-paper px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft sm:px-3 sm:py-2 sm:text-[0.6rem] sm:tracking-[0.2em]">
-                    No. 001 — Cotton rag
+                    No. 001 · Cotton paper
                   </figcaption>
                 </motion.figure>
               </div>
