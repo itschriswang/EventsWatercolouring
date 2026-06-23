@@ -219,8 +219,6 @@ export const PACKAGES = {
     bullets: [
       'Guest portraits painted live, A5 on archival cotton paper',
       'A portrait of the two of you, painted on the night and left with you',
-      'Every piece sleeved and ready to take home',
-      'Travel within about 1.5 hours of the Melbourne CBD included',
     ],
   },
   baseNote:
