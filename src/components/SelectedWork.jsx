@@ -65,7 +65,11 @@ export default function SelectedWork() {
             item={item}
             index={i}
             onOpen={item.testimonial ? undefined : () => setActive(item)}
-            className={item.feature ? 'col-span-2 row-span-2' : 'col-span-1 row-span-1'}
+            className={
+              item.feature ? 'col-span-2 row-span-2'
+              : item.wide  ? 'col-span-2 row-span-1'
+              :               'col-span-1 row-span-1'
+            }
           />
         ))}
       </div>
@@ -116,7 +120,7 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
     >
       {item.testimonial ? (
         <div className={cardShape + ' bg-paper-deep'}>
-          <Testimonial item={item} />
+          <Testimonial item={item} compact={!!item.wide} />
         </div>
       ) : (
         <button
@@ -152,17 +156,36 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
   )
 }
 
-/** The quote card body — fills the card shape and scales its type to fit. */
-function Testimonial({ item }) {
+/** The quote card body — fills the card shape and scales its type to fit.
+ *  `compact` is true for wide (2-col, 1-row) tiles where vertical space is halved. */
+function Testimonial({ item, compact = false }) {
   return (
-    <blockquote className="flex h-full flex-col justify-between gap-4 p-[clamp(1.25rem,2vw,2rem)]">
-      <span aria-hidden="true" className="font-display text-5xl leading-none text-terracotta/60">
+    <blockquote
+      className={
+        'flex h-full flex-col justify-between p-[clamp(1.25rem,2vw,2rem)] ' +
+        (compact ? 'gap-2' : 'gap-4')
+      }
+    >
+      <span
+        aria-hidden=”true”
+        className={
+          'font-display leading-none text-terracotta/60 ' +
+          (compact ? 'text-3xl' : 'text-5xl')
+        }
+      >
         “
       </span>
-      <p className="font-display text-[clamp(0.95rem,1.4vw,1.4rem)] font-light leading-snug text-ink">
+      <p
+        className={
+          'font-display font-light leading-snug text-ink ' +
+          (compact
+            ? 'text-[clamp(0.75rem,1.05vw,1rem)]'
+            : 'text-[clamp(0.95rem,1.4vw,1.4rem)]')
+        }
+      >
         {item.quote}
       </p>
-      <footer className="font-mono text-[0.6rem] uppercase tracking-[0.18em] text-ink-soft">
+      <footer className=”font-mono text-[0.6rem] uppercase tracking-[0.18em] text-ink-soft”>
         {item.author} · {item.detail}
       </footer>
     </blockquote>
