@@ -4,6 +4,7 @@
 
 export const HERO = {
   lines: ['Painted', 'live, while', 'you celebrate.'],
+  emphasis: 'Painted', // word rendered in the display italic
   emphasis: 'live', // word rendered in the display italic
   lede: 'I set up at your reception and paint as the night moves. A selected number of your guests leave with a small keepsake of their own, and the two of you with one portrait painted on the night, all in pigment on cotton-rag paper.',
 }
@@ -17,7 +18,7 @@ export const MARQUEE = [
 
 export const WHY = {
   label: 'Why live watercolour',
-  lede: 'Live entertainment and a hand-painted keepsake for every guest — all in one evening.',
+  lede: 'Live entertainment and a hand-painted keepsake for every guest all in one evening.',
   notes: [
     {
       no: '01',
@@ -109,7 +110,7 @@ export const PATHS = {
         },
         {
           b: 'I paint in the studio',
-          t: 'I work from your images on cotton-rag paper, building the portrait by hand over the weeks that follow.',
+          t: 'I work from your images on archival cotton watercolour paper, building the portrait by hand over the weeks that follow.',
         },
         {
           b: 'It arrives within four weeks',
@@ -122,7 +123,7 @@ export const PATHS = {
 
 export const WORK = {
   label: 'Selected work',
-  title: ['Pigment on', 'cotton rag.'],
+  title: ['Pigment on', 'cotton archival watercolour paper.'],
   emphasis: 'cotton rag.',
   note: 'Painted by hand on 300gsm A5 watercolour pads.',
   pieces: [
@@ -193,7 +194,7 @@ export const PACKAGES = {
   title: ['One base package,', 'shaped around your day.'],
   emphasis: 'shaped around your day.',
   intro:
-    'Everything is painted at your wedding on 300gsm cotton-rag paper, with a couple portrait painted on the night and left with you.',
+    'Everything is painted at your wedding on 300gsm cotton paper, with a couple portrait painted on the night and left with you.',
   base: {
     title: 'Live on the day',
     note: 'The base package, painted through your reception.',
@@ -201,7 +202,7 @@ export const PACKAGES = {
     price: '$1,000',
     facts: ['3 hours live', '~12 keepsakes', '~24 guests'],
     bullets: [
-      'Live guest keepsakes, A5 cotton rag',
+      'Live guest keepsakes, A5 archival cotton paper',
       'A couple portrait, painted on the night and left with you',
       'Each piece sleeved, ready to take home',
       'Travel within about 1.5 hours of the Melbourne CBD included',
@@ -214,8 +215,7 @@ export const PACKAGES = {
     sub: 'Everything below comes with the base package. You provide one table (around 100 × 60 cm, at seated height, with a front-facing chair able to tuck underneath) and a chair for me. Everything else I bring.',
     items: [
       'All drawing and painting materials',
-      'Custom-designed A5 templates',
-      'Premium 300gsm watercolour paper',
+      'Premium 300gsm achival watercolour paper',
       'Sealable clear sleeves for every piece',
       'Live painting through your reception',
       'Set-up about 15 minutes before I start',
@@ -325,7 +325,7 @@ export const FAQ = {
     },
     {
       q: 'What materials do you use?',
-      a: 'Professional watercolours on 300gsm A5 cotton-rag pads, Arches or similar, with lightfast pigments that hold their colour for decades when cared for. Everything is made to last.',
+      a: 'Professional watercolours on archival 300gsm A5 cotton paper, with lightfast pigments that hold their colour for decades when cared for. Everything is made to last.',
     },
     {
       q: 'When do we receive the finished work?',
