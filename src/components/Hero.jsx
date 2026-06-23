@@ -50,14 +50,14 @@ export default function Hero({ revealed }) {
         <span className="hidden sm:inline">Melbourne · Australia-wide</span>
       </motion.div>
 
-      <div className="relative mt-[clamp(2rem,5vw,4rem)] grid grid-cols-4 items-start gap-y-10 lg:grid-cols-12">
+      <div className="relative mt-[clamp(2rem,5vw,4rem)] grid grid-cols-4 items-start gap-y-10 lg:min-h-[62vh] lg:grid-cols-12 lg:items-end lg:gap-x-8">
         {/* Floating bouquet painting — sits behind the type, offset right */}
         <motion.div
           style={parallax ? { y: artY } : {}}
           initial={{ opacity: 0, scale: 0.92 }}
           animate={revealed ? { opacity: 1, scale: 1 } : { opacity: 0 }}
           transition={{ ...SPRING_SOFT, delay: 0.5 }}
-          className="pointer-events-none absolute right-[-4vw] top-[-2vw] z-0 col-span-6 w-[46vw] max-w-[640px] sm:w-[40vw] lg:w-[34vw]"
+          className="pointer-events-none absolute right-[-4vw] top-[-2vw] z-0 col-span-6 w-[46vw] max-w-[640px] sm:w-[40vw] lg:w-[28vw]"
           aria-hidden="true"
         >
           <img
@@ -67,54 +67,14 @@ export default function Hero({ revealed }) {
           />
         </motion.div>
 
-        {/* Headline — massive, char-split, overlapping the art */}
-        <motion.div
-          style={parallax ? { y: copyY } : {}}
-          className="relative z-10 col-span-4 col-start-1 lg:col-span-9"
-        >
-          {revealed && (
-            <SplitText
-              as="h1"
-              unit="char"
-              playOnMount
-              lines={isMobile ? HERO.linesMobile : HERO.lines}
-              emphasis={isMobile ? HERO.emphasisMobile : HERO.emphasis}
-              className="display-xl text-ink"
-            />
-          )}
-        </motion.div>
-
-        {/* Lower split: lede (left, narrow) + study card (right, offset) */}
-        <motion.div
-          variants={fade}
-          initial="hidden"
-          animate={state}
-          className="relative z-10 col-span-3 col-start-1 mt-[clamp(1.5rem,3vw,2.5rem)] lg:col-span-5"
-        >
-          <p className="max-w-md text-[clamp(1rem,1.1vw,1.18rem)] leading-relaxed text-ink-soft">
-            {HERO.lede}
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-5">
-            <MagneticButton href={ENQUIRE_HREF}>Enquire</MagneticButton>
-            <a
-              href="#process"
-              className="font-mono text-xs uppercase tracking-[0.18em] text-ink underline-offset-8 transition-colors hover:text-terracotta hover:underline"
-            >
-              How it works
-            </a>
-          </div>
-        </motion.div>
-
-        {/* Small overlapping study card, pulled up into the whitespace */}
+        {/* Hero character study — its own prominent column on wide screens,
+            centred cleanly on mobile so it no longer floats off to one side. */}
         <motion.figure
           initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : 5 }}
-          animate={revealed ? { opacity: 1, y: 0, rotate: 4 } : { opacity: 0 }}
+          animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : 3 } : { opacity: 0 }}
           transition={{ ...SPRING_SOFT, delay: 0.9 }}
           whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
-          // Media frame offset one column right of the lede (col-start-2) and
-          // pulled up into the whitespace. The overlap scales responsively so
-          // it never crowds the body text on a narrow viewport.
-          className="relative z-10 col-span-3 col-start-2 -mt-4 ml-auto w-[88%] overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)] sm:w-[70%] md:-mt-10 lg:col-span-3 lg:col-start-auto lg:-mt-6 lg:w-full"
+          className="relative z-10 order-2 col-span-4 col-start-1 mx-auto w-[78%] max-w-[320px] overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)] sm:w-[58%] lg:order-none lg:col-span-5 lg:col-start-8 lg:mx-0 lg:ml-auto lg:w-[92%] lg:max-w-none lg:self-center"
         >
           <img
             src={asset('assets/art-character-boy.webp')}
@@ -126,6 +86,43 @@ export default function Hero({ revealed }) {
             No. 001 — Cotton rag
           </figcaption>
         </motion.figure>
+
+        {/* Headline + lede + actions — anchored to the bottom-left on wide
+            screens, with a notably smaller display size there. */}
+        <div className="relative z-10 order-1 col-span-4 col-start-1 lg:order-none lg:col-span-7 lg:col-start-1">
+          <motion.div style={parallax ? { y: copyY } : {}}>
+            {revealed && (
+              <SplitText
+                as="h1"
+                unit="char"
+                playOnMount
+                lines={isMobile ? HERO.linesMobile : HERO.lines}
+                emphasis={isMobile ? HERO.emphasisMobile : HERO.emphasis}
+                className="display-xl text-ink lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)]"
+              />
+            )}
+          </motion.div>
+
+          <motion.div
+            variants={fade}
+            initial="hidden"
+            animate={state}
+            className="mt-[clamp(1.5rem,3vw,2.5rem)]"
+          >
+            <p className="max-w-md text-[clamp(1rem,1.1vw,1.18rem)] leading-relaxed text-ink-soft">
+              {HERO.lede}
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-5">
+              <MagneticButton href={ENQUIRE_HREF}>Enquire</MagneticButton>
+              <a
+                href="#process"
+                className="font-mono text-xs uppercase tracking-[0.18em] text-ink underline-offset-8 transition-colors hover:text-terracotta hover:underline"
+              >
+                How it works
+              </a>
+            </div>
+          </motion.div>
+        </div>
       </div>
 
       {/* Scroll cue */}

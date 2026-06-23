@@ -68,9 +68,9 @@ export const EVENING = {
       body: 'Every painting slides into a clear protective sleeve, ready to travel home safely, just as the champagne starts to flow a little more freely.',
     },
     {
-      no: ‘05’,
-      title: ‘A guaranteed number’,
-      body: ‘I commit to a minimum of 10 pieces per hour. Anyone not reached on the night is finished in the studio and posted to you to hand on — so the number you book is the number you get.’,
+      no: '05',
+      title: 'A guaranteed number',
+      body: 'I commit to a minimum of 10 pieces per hour. Anyone not reached on the night is finished in the studio and posted to you to hand on — so the number you book is the number you get.',
     },
   ],
 }
