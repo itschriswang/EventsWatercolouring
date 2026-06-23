@@ -1,16 +1,34 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
-import { SPRING, asset } from '../lib/site.js'
+import { SPRING, SPRING_SOFT, asset } from '../lib/site.js'
 import { WORK } from '../content.js'
 
 /**
  * Selected work — a gallery wall driven entirely by `WORK.gallery` (see
- * content.js). Every tile is a 3:4 portrait with its caption below. Wide
- * screens lay the pieces on a six-column grid where any `feature` piece fills a
- * larger 2-wide focus block; narrower screens flow into a 2/3-column masonry.
+ * content.js). Most tiles are a 3:4 portrait with its caption below; a tile
+ * flagged `testimonial` takes the same card shape but holds a client quote.
+ * Wide screens lay the pieces on a six-column grid where any `feature` piece
+ * fills a larger 2-wide focus block; narrower screens flow into a 2/3-column
+ * masonry. Tapping a painting opens it in a lightbox.
  */
 export default function SelectedWork() {
+  // The painting currently enlarged in the lightbox (null when closed).
+  const [active, setActive] = useState(null)
+
+  // Close the lightbox on Escape, and lock background scroll while it is open.
+  useEffect(() => {
+    if (!active) return
+    const onKey = (e) => e.key === 'Escape' && setActive(null)
+    window.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [active])
+
   return (
     <section id="work" className="relative w-full px-[5vw] py-[clamp(4rem,10vw,9rem)]">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
@@ -24,9 +42,16 @@ export default function SelectedWork() {
             className="display-lg mt-5 text-ink"
           />
         </div>
-        <p className="max-w-xs font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
-          {WORK.note}
-        </p>
+        <div className="max-w-xs">
+          <p className="font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
+            {WORK.note}
+          </p>
+          {WORK.zoomHint && (
+            <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-terracotta">
+              {WORK.zoomHint}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Wide screens — a six-column wall of 3:4 portraits. `feature` pieces
@@ -39,6 +64,7 @@ export default function SelectedWork() {
             key={i}
             item={item}
             index={i}
+            onOpen={item.testimonial ? undefined : () => setActive(item)}
             className={item.feature ? 'col-span-2 row-span-2' : 'col-span-1 row-span-1'}
           />
         ))}
@@ -47,21 +73,34 @@ export default function SelectedWork() {
       {/* Narrow / medium — a masonry wall (2 columns, then 3). */}
       <div className="mt-[clamp(2rem,8vw,3rem)] columns-2 gap-3 sm:columns-3 lg:hidden">
         {WORK.gallery.map((item, i) => (
-          <Tile key={i} item={item} index={i} masonry />
+          <Tile
+            key={i}
+            item={item}
+            index={i}
+            onOpen={item.testimonial ? undefined : () => setActive(item)}
+            masonry
+          />
         ))}
       </div>
+
+      <Lightbox item={active} onClose={() => setActive(null)} />
     </section>
   )
 }
 
 /**
- * A single gallery tile: a 3:4 image card with the caption beneath it. In the
- * wide grid the surrounding cell sets the height, so the image fills it
- * (object-cover) while the caption sits at the foot; in masonry the image keeps
- * an explicit 3:4 aspect.
+ * A single gallery tile. For paintings it is a 3:4 image card with the caption
+ * beneath it (and a tap target that opens the lightbox); for a testimonial it
+ * is the same card shape holding a quote. In the wide grid the surrounding cell
+ * sets the height, so the contents fill it; in masonry the card keeps an
+ * explicit 3:4 aspect.
  */
-function Tile({ item, index, className = '', masonry = false }) {
+function Tile({ item, index, className = '', masonry = false, onOpen }) {
   const reduce = useReducedMotion()
+
+  const cardShape =
+    'relative overflow-hidden rounded-[1rem] border border-line ' +
+    (masonry ? 'aspect-[3/4]' : 'min-h-0 flex-1')
 
   return (
     <motion.figure
@@ -75,30 +114,118 @@ function Tile({ item, index, className = '', masonry = false }) {
         className
       }
     >
-      <div
-        className={
-          'relative overflow-hidden rounded-[1rem] border border-line bg-paper-deep ' +
-          (masonry ? 'aspect-[3/4]' : 'min-h-0 flex-1')
-        }
-      >
-        <picture>
-          <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
-          <img
-            src={asset(`assets/${item.img}.jpg`)}
-            alt={item.alt || item.ttl}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-          />
-        </picture>
-      </div>
+      {item.testimonial ? (
+        <div className={cardShape + ' bg-paper-deep'}>
+          <Testimonial item={item} />
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={onOpen}
+          aria-label={`Enlarge ${item.ttl}`}
+          className={
+            cardShape +
+            ' block w-full cursor-zoom-in bg-paper-deep text-left outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-paper'
+          }
+        >
+          <picture>
+            <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
+            <img
+              src={asset(`assets/${item.img}.jpg`)}
+              alt={item.alt || item.ttl}
+              loading="lazy"
+              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+            />
+          </picture>
+        </button>
+      )}
+
       <figcaption className="mt-2.5">
         <span className="block font-display text-[0.95rem] leading-tight text-ink">
-          {item.ttl}
+          {item.testimonial ? item.author : item.ttl}
         </span>
         <span className="mt-0.5 block font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft">
-          {item.meta}
+          {item.testimonial ? item.detail : item.meta}
         </span>
       </figcaption>
     </motion.figure>
+  )
+}
+
+/** The quote card body — fills the card shape and scales its type to fit. */
+function Testimonial({ item }) {
+  return (
+    <blockquote className="flex h-full flex-col justify-between gap-4 p-[clamp(1.25rem,2vw,2rem)]">
+      <span aria-hidden="true" className="font-display text-5xl leading-none text-terracotta/60">
+        “
+      </span>
+      <p className="font-display text-[clamp(0.95rem,1.4vw,1.4rem)] font-light leading-snug text-ink">
+        {item.quote}
+      </p>
+      <footer className="font-mono text-[0.6rem] uppercase tracking-[0.18em] text-ink-soft">
+        {item.author} · {item.detail}
+      </footer>
+    </blockquote>
+  )
+}
+
+/**
+ * Lightbox — an overlay that grows the selected painting to fill the screen.
+ * Closes on backdrop click, the close button, or Escape (handled by the
+ * parent). Honours reduced-motion by skipping the scale-in.
+ */
+function Lightbox({ item, onClose }) {
+  const reduce = useReducedMotion()
+
+  return (
+    <AnimatePresence>
+      {item && (
+        <motion.div
+          key="lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label={item.ttl}
+          onClick={onClose}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          className="fixed inset-0 z-[120] flex items-center justify-center bg-ink/85 p-[5vw] backdrop-blur-sm"
+        >
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full border border-paper/30 text-2xl text-paper transition-colors hover:bg-paper/10"
+          >
+            ×
+          </button>
+
+          <motion.figure
+            onClick={(e) => e.stopPropagation()}
+            initial={{ scale: reduce ? 1 : 0.92, opacity: 0, y: reduce ? 0 : 16 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: reduce ? 1 : 0.96, opacity: 0 }}
+            transition={SPRING_SOFT}
+            className="flex max-h-full max-w-5xl flex-col items-center"
+          >
+            <picture>
+              <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
+              <img
+                src={asset(`assets/${item.img}.jpg`)}
+                alt={item.alt || item.ttl}
+                className="max-h-[80vh] w-auto rounded-[1rem] object-contain shadow-2xl"
+              />
+            </picture>
+            <figcaption className="mt-4 text-center">
+              <span className="block font-display text-lg text-paper">{item.ttl}</span>
+              <span className="mt-0.5 block font-mono text-[0.6rem] uppercase tracking-[0.18em] text-paper/60">
+                {item.meta}
+              </span>
+            </figcaption>
+          </motion.figure>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }

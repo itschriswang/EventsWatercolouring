@@ -124,6 +124,10 @@ export const PATHS = {
 
 export const WORK = {
   label: 'Selected work',
+  title: ['Pigment on', 'cotton archival watercolour paper.'],
+  emphasis: 'cotton rag.',
+  note: 'Painted by hand on 300gsm A5 watercolour pads.',
+  zoomHint: 'Tap any piece to enlarge.',
   title: ['Real watercolour, on', 'cotton paper.'],
   emphasis: 'cotton paper.',
   note: 'Painted by hand on 300gsm A5 cotton paper.',
@@ -133,7 +137,21 @@ export const WORK = {
   // once. Reorder entries to change placement. Set `feature: true` to make a
   // piece fill a 2×2 block on wide screens (and stand taller on mobile).
   // Add as many as you like — the layout flows to fit.
+  //
+  // A testimonial slots into the wall like any other tile — give it
+  // `testimonial: true` with `quote`, `author` and `detail` instead of `img`.
+  // It takes the same card shape as the paintings (a 2×2 feature reads best
+  // for a quote; drop `feature` to make it a single tile).
   gallery: [
+    { img: 'art-bouquet',        ttl: 'The bouquet',          meta: 'Watercolour · A5', feature: true, alt: 'Watercolour study of a bridal bouquet, with rust ribbon, orange roses and forget-me-not blue, painted on cotton-rag paper' },
+    {
+      testimonial: true,
+      feature: true,
+      quote:
+        'Christopher painted us from our photographs after the wedding, and it has become the piece everyone stops at in our home. Our only regret is not having him there on the night — honestly, it is the reason this whole thing exists.',
+      author: 'Clare & William',
+      detail: 'Post-wedding commission',
+    },
     { img: 'art-bouquet',        ttl: 'The bouquet',          meta: 'Watercolour · A5', feature: true, alt: 'Watercolour study of a bridal bouquet, with rust ribbon, orange roses and forget-me-not blue, painted on cotton paper' },
     { img: 'art-character-girl', ttl: 'Little character, in green', meta: 'Studio study', alt: 'Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre' },
     { img: 'art-character-boy',  ttl: 'At the palette',       meta: 'Studio study', alt: "Small watercolour character portrait with the artist's palette alongside, in warm terracotta and ochre" },
