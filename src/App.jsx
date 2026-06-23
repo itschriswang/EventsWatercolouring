@@ -9,7 +9,6 @@ import WhyWatercolour from './components/WhyWatercolour.jsx'
 import TwoPaths from './components/TwoPaths.jsx'
 import EveningTimeline from './components/EveningTimeline.jsx'
 import SelectedWork from './components/SelectedWork.jsx'
-import InMotion from './components/InMotion.jsx'
 import AboutMe from './components/AboutMe.jsx'
 import Packages from './components/Packages.jsx'
 import BeyondWeddings from './components/BeyondWeddings.jsx'
@@ -49,7 +48,6 @@ export default function App() {
         <TwoPaths />
         <EveningTimeline />
         <SelectedWork />
-        <InMotion />
         <Packages />
         <BeyondWeddings />
         <Faq />
