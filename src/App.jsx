@@ -3,7 +3,6 @@ import GrainOverlay from './components/GrainOverlay.jsx'
 import Preloader from './components/Preloader.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
 import Hero from './components/Hero.jsx'
-import Marquee from './components/Marquee.jsx'
 import WhyWatercolour from './components/WhyWatercolour.jsx'
 import TwoPaths from './components/TwoPaths.jsx'
 import EveningTimeline from './components/EveningTimeline.jsx'
@@ -41,7 +40,6 @@ export default function App() {
 
       <main>
         <Hero revealed={revealed} />
-        <Marquee />
         <WhyWatercolour />
         <TwoPaths />
         <EveningTimeline />
