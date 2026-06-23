@@ -26,7 +26,7 @@ export default function SelectedWork() {
         </p>
       </div>
 
-      <div className="mt-[clamp(2.5rem,6vw,5rem)] grid grid-cols-12 gap-6">
+      <div className="mt-[clamp(2.5rem,6vw,5rem)] grid grid-cols-12 items-start gap-6">
         {WORK.pieces.map((piece, i) => (
           <Piece key={piece.ttl} piece={piece} index={i} />
         ))}
@@ -45,11 +45,14 @@ function Piece({ piece, index }) {
   })
   const y = useTransform(scrollYProgress, [0, 1], ['8%', '-8%'])
 
-  // Irregular column spans + vertical offsets per piece.
-  const layout = [
-    'col-span-12 sm:col-span-3',
-    'col-span-12 sm:col-span-2 sm:mt-9',
-    'col-span-12 sm:col-span-3 sm:-mt-4',
+  
+// Irregular column spans + vertical offsets per piece.
+// Mobile stacks normally; from sm and up, all three are forced into the same grid row.
+const layout = [
+  'col-span-12 sm:col-span-3 sm:col-start-1 sm:row-start-1 sm:mt-2',
+  'col-span-12 sm:col-span-2 sm:col-start-5 sm:row-start-1 sm:mt-9',
+  'col-span-12 sm:col-span-3 sm:col-start-8 sm:row-start-1 sm:-mt-4',
+
   ][index]
 
   return (
@@ -63,7 +66,7 @@ function Piece({ piece, index }) {
     >
       <motion.div
         style={parallax ? { y } : {}}
-        className="overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep max-w-[320px]"
+        className="mx-auto overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep max-w-[320px]"
       >
         <picture>
           <source srcSet={asset(piece.webp)} type="image/webp" />
