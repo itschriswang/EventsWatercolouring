@@ -46,7 +46,7 @@ export default function Hero({ revealed }) {
         animate={state}
         className="flex items-center justify-between font-mono text-[0.66rem] uppercase tracking-[0.3em] text-ink-soft"
       >
-        <span>Live wedding watercolour</span>
+        <span>Live wedding watercolour keepsakes</span>
         <span className="hidden sm:inline">Melbourne · Australia-wide</span>
       </motion.div>
 

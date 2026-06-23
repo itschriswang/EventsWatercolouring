@@ -5,7 +5,7 @@ import { SPRING } from '../lib/site.js'
  * Splits a headline into masked lines and reveals each unit (word or character)
  * with a staggered spring, rising from y:50. Each line sits in an
  * overflow-hidden mask. A single word can be flagged for display emphasis via
- * `emphasis` (rendered in terracotta accent colour).
+ * `emphasis` (rendered with `emphasisClassName`, defaulting to terracotta).
  *
  * Renders on scroll by default (whileInView); pass `playOnMount` to animate
  * immediately (used by the hero once the preloader hands over).
@@ -16,6 +16,7 @@ import { SPRING } from '../lib/site.js'
 export default function SplitText({
   lines = [],
   emphasis = null,
+  emphasisClassName = 'text-terracotta',
   unit = 'char',
   className = '',
   as: Tag = 'h2',
@@ -67,7 +68,7 @@ export default function SplitText({
                   const wordEl = (
                     <span
                       key={`w${li}-${wi}`}
-                      className={`inline-block${isWordEmph ? ' text-terracotta' : ''}`}
+                      className={`inline-block${isWordEmph ? ` ${emphasisClassName}` : ''}`}
                     >
                       {Array.from(word).map((ch, ci) => (
                         <motion.span
@@ -107,7 +108,7 @@ export default function SplitText({
                       key={wi}
                       variants={item}
                       aria-hidden="true"
-                      className={`inline-block${isWordEmph ? ' text-terracotta' : ''}`}
+                      className={`inline-block${isWordEmph ? ` ${emphasisClassName}` : ''}`}
                     >
                       {word}
                       {wi < arr.length - 1 ? ' ' : ''}

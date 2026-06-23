@@ -12,6 +12,7 @@ export const HERO = {
 
 export const MARQUEE = [
   'Live wedding watercolour',
+  'Individual guest portraits',
   'Painted by hand',
   'Pigment on cotton rag',
   'A keepsake to treasure',
