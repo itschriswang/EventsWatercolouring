@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
+import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING } from '../lib/site.js'
 
 /**
@@ -24,24 +25,37 @@ export default function SplitText({
   playOnMount = false,
 }) {
   const reduce = useReducedMotion()
+  // Touch/small devices (and reduced-motion) can't afford a spring per character
+  // — a long heading is dozens of simultaneous springs, which stutters on mobile.
+  // There we reveal the whole heading as one composited element instead.
+  const lite = reduce || !useHeavyFx()
   const MotionTag = motion(Tag)
   const normalise = s => s.toLowerCase().replace(/[^a-z]/g, '')
   const isPhrase = emphasis ? emphasis.includes(' ') : false
 
-  const container = {
-    hidden: {},
-    show: {
-      transition: {
-        staggerChildren: reduce ? 0 : unit === 'char' ? 0.02 : 0.05,
-        delayChildren: delay,
-      },
-    },
-  }
+  const container = lite
+    ? {
+        hidden: { opacity: 0, y: reduce ? 0 : 16 },
+        show: { opacity: 1, y: 0, transition: { ...SPRING, delay } },
+      }
+    : {
+        hidden: {},
+        show: {
+          transition: {
+            staggerChildren: unit === 'char' ? 0.02 : 0.05,
+            delayChildren: delay,
+          },
+        },
+      }
 
-  const item = {
-    hidden: reduce ? { opacity: 0 } : { y: 50, opacity: 0 },
-    show: { y: 0, opacity: 1, transition: SPRING },
-  }
+  // In lite mode the units are static (the container does the single reveal);
+  // otherwise each unit springs up from y:50 on its own stagger.
+  const item = lite
+    ? undefined
+    : {
+        hidden: { y: 50, opacity: 0 },
+        show: { y: 0, opacity: 1, transition: SPRING },
+      }
 
   const animateProps = playOnMount
     ? { initial: 'hidden', animate: 'show' }

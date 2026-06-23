@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import Label from './Label.jsx'
+import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, asset } from '../lib/site.js'
 import { EVENING } from '../content.js'
 
@@ -10,6 +11,10 @@ import { EVENING } from '../content.js'
  */
 export default function EveningTimeline() {
   const reduce = useReducedMotion()
+  // On touch/small devices, the big overlay-blended numeral sits inside a beat
+  // that translates on reveal — re-compositing the blend every frame stutters.
+  // There we drop the blend modes and fade the beats in without a y translate.
+  const lite = reduce || !useHeavyFx()
 
   return (
     <section
@@ -21,7 +26,10 @@ export default function EveningTimeline() {
         src={asset('assets/art-bouquet_transparent.webp')}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute -right-[6vw] -top-[6vw] w-[34vw] max-w-[420px] opacity-20 mix-blend-soft-light"
+        className={
+          'pointer-events-none absolute -right-[6vw] -top-[6vw] w-[34vw] max-w-[420px] opacity-20' +
+          (lite ? '' : ' mix-blend-soft-light')
+        }
       />
 
       <div className="grid grid-cols-12 gap-x-8">
@@ -48,14 +56,17 @@ export default function EveningTimeline() {
             {EVENING.beats.map((beat, i) => (
               <motion.li
                 key={beat.no}
-                initial={{ opacity: 0, y: reduce ? 0 : 48 }}
+                initial={{ opacity: 0, y: lite ? 0 : 48 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-80px' }}
-                transition={{ ...SPRING, delay: reduce ? 0 : 0.05 }}
+                transition={lite ? { duration: 0.4 } : { ...SPRING, delay: 0.05 }}
                 className="relative border-t border-paper/20 py-9"
               >
                 <span
-                  className="pointer-events-none absolute right-0 top-4 font-display text-[clamp(4rem,9vw,8rem)] font-light leading-none text-paper opacity-20 mix-blend-overlay"
+                  className={
+                    'pointer-events-none absolute right-0 top-4 font-display text-[clamp(4rem,9vw,8rem)] font-light leading-none text-paper opacity-20' +
+                    (lite ? '' : ' mix-blend-overlay')
+                  }
                   aria-hidden="true"
                 >
                   {beat.no}
