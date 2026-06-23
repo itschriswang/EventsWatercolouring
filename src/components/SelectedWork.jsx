@@ -66,7 +66,7 @@ const layout = [
     >
       <motion.div
         style={parallax ? { y } : {}}
-        className="mx-auto overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep max-w-[320px]"
+        className="mx-auto overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep max-w-[400px]"
       >
         <picture>
           <source srcSet={asset(piece.webp)} type="image/webp" />
