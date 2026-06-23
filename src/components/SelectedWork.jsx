@@ -76,6 +76,14 @@ function MobileGallery() {
               />
             </picture>
           </div>
+          <figcaption className="mt-2.5">
+            <span className="block font-display text-[0.95rem] leading-tight text-ink">
+              {piece.ttl}
+            </span>
+            <span className="mt-1 block font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft">
+              {piece.meta}
+            </span>
+          </figcaption>
         </motion.figure>
       ))}
     </div>
