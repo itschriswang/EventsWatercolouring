@@ -63,7 +63,7 @@ function Piece({ piece, index }) {
     >
       <motion.div
         style={parallax ? { y } : {}}
-        className="overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep max-w-[520px]"
+        className="overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep max-w-[320px]"
       >
         <picture>
           <source srcSet={asset(piece.webp)} type="image/webp" />
