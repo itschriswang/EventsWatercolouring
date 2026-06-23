@@ -39,12 +39,12 @@ export default function EveningTimeline() {
             <Label fill="#F4EFE6" className="!text-paper/70">
               {EVENING.label}
             </Label>
-            <h2 className="mt-6 font-display text-[clamp(2.5rem,4vw,4.5rem)] font-light uppercase leading-[0.85] tracking-tight">
+            <h2 className="mt-3 font-display text-[clamp(2.5rem,4vw,4.5rem)] font-light uppercase leading-[0.85] tracking-tight">
               {EVENING.title[0]}
               <br />
               <em>{EVENING.title[1]}</em>
             </h2>
-            <p className="mt-8 max-w-md leading-relaxed text-paper/80">
+            <p className="mt-5 max-w-md leading-relaxed text-paper/80">
               {EVENING.lede}
             </p>
           </div>
