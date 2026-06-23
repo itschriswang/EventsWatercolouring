@@ -1,12 +1,15 @@
-import { useRef } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
-import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, asset } from '../lib/site.js'
 import { WORK } from '../content.js'
 
-/** Selected work — a three-piece gallery with irregular spans and parallax. */
+/**
+ * Selected work — a gallery wall driven entirely by `WORK.gallery` (see
+ * content.js). Wide screens lay the pieces out on a six-column grid where any
+ * `feature` piece fills a 2×2 block for focus; narrower screens flow the same
+ * pieces into a 2/3-column masonry.
+ */
 export default function SelectedWork() {
   return (
     <section id="work" className="relative w-full px-[5vw] py-[clamp(4rem,10vw,9rem)]">
@@ -26,112 +29,75 @@ export default function SelectedWork() {
         </p>
       </div>
 
-      {/* Desktop / tablet — the curated three-piece gallery. */}
-      <div className="mt-[clamp(2.5rem,6vw,5rem)] hidden grid-cols-12 gap-x-8 gap-y-10 sm:grid sm:items-start">
-        {WORK.pieces.map((piece, i) => (
-          <Piece key={piece.ttl} piece={piece} index={i} />
+      {/* Wide screens — a six-column wall; `feature` pieces fill a 2×2 block.
+          A 1vw gap with matching square rows keeps the blocks truly square,
+          and dense flow tucks the smaller pieces in around the features. */}
+      <div className="mt-[clamp(2.5rem,6vw,5rem)] hidden lg:grid lg:grid-cols-6 lg:auto-rows-[14.2vw] lg:gap-[1vw] lg:[grid-auto-flow:dense]">
+        {WORK.gallery.map((item, i) => (
+          <Tile
+            key={i}
+            item={item}
+            index={i}
+            className={item.feature ? 'col-span-2 row-span-2' : 'col-span-1 row-span-1'}
+          />
         ))}
       </div>
 
-      {/* Mobile — a fuller two-column masonry. Placeholder pieces (the real
-          images repeated) with every other tile a touch taller for emphasis. */}
-      <MobileGallery />
+      {/* Narrow / medium — a masonry wall (2 columns, then 3). Feature pieces
+          stand a touch taller for the same emphasis. */}
+      <div className="mt-[clamp(2rem,8vw,3rem)] columns-2 gap-3 sm:columns-3 lg:hidden">
+        {WORK.gallery.map((item, i) => (
+          <Tile
+            key={i}
+            item={item}
+            index={i}
+            masonry
+            imgClass={item.feature ? 'aspect-[3/4]' : 'aspect-[4/5]'}
+          />
+        ))}
+      </div>
     </section>
   )
 }
 
 /**
- * Mobile-only masonry gallery. Uses CSS columns so tiles of differing height
- * pack without row gaps; alternating tiles are slightly taller as emphasis.
- * The images repeat the three real studies as stand-ins for a fuller wall.
+ * A single gallery tile. In the wide grid the surrounding cell sets the size
+ * (so the image fills a square); in masonry the `imgClass` aspect sets it. The
+ * caption overlays the foot of the image so tiles stay flush in the grid.
  */
-function MobileGallery() {
+function Tile({ item, index, className = '', imgClass = '', masonry = false }) {
   const reduce = useReducedMotion()
-  // Repeat the real pieces to stand in for a fuller gallery wall.
-  const tiles = Array.from({ length: 8 }, (_, i) => WORK.pieces[i % WORK.pieces.length])
-
-  return (
-    <div className="mt-[clamp(2rem,8vw,3rem)] columns-2 gap-3 sm:hidden">
-      {tiles.map((piece, i) => (
-        <motion.figure
-          key={i}
-          initial={{ opacity: 0, y: reduce ? 0 : 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-40px' }}
-          transition={{ ...SPRING, delay: reduce ? 0 : (i % 4) * 0.06 }}
-          className="mb-3 break-inside-avoid"
-        >
-          <div className="overflow-hidden rounded-[1rem] border border-line bg-paper-deep">
-            <picture>
-              <source srcSet={asset(piece.webp)} type="image/webp" />
-              <img
-                src={asset(piece.src)}
-                alt={piece.alt}
-                loading="lazy"
-                // Every other tile a touch taller — a subtle emphasis rhythm.
-                className={
-                  'w-full object-cover ' +
-                  (i % 2 === 1 ? 'aspect-[3/4]' : 'aspect-[4/5]')
-                }
-              />
-            </picture>
-          </div>
-        </motion.figure>
-      ))}
-    </div>
-  )
-}
-
-function Piece({ piece, index }) {
-  const reduce = useReducedMotion()
-  const parallax = useHeavyFx() && !reduce
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start'],
-  })
-  const y = useTransform(scrollYProgress, [0, 1], ['8%', '-8%'])
-
-  
-// Irregular column spans + vertical offsets per piece.
-// Mobile stacks normally; from sm and up, all three are forced into the same grid row.
-
-
-const layout = [
-  'col-span-12 sm:col-span-5 sm:mt-2',
-  'col-span-12 sm:col-span-3 sm:mt-10',
-  'col-span-12 sm:col-span-4 sm:mt-0',
-]
-
-
 
   return (
     <motion.figure
-      ref={ref}
-      initial={{ opacity: 0, y: reduce ? 0 : 40 }}
+      initial={{ opacity: 0, y: reduce ? 0 : 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ ...SPRING, delay: reduce ? 0 : index * 0.08 }}
-      className={layout[index]}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ ...SPRING, delay: reduce ? 0 : (index % 6) * 0.05 }}
+      className={
+        'group relative overflow-hidden rounded-[1rem] border border-line bg-paper-deep ' +
+        (masonry ? 'mb-3 break-inside-avoid ' : '') +
+        className
+      }
     >
-      <motion.div
-        style={parallax ? { y } : {}}
-        className="overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep w-full"
-      >
-        <picture>
-          <source srcSet={asset(piece.webp)} type="image/webp" />
-          <img
-            src={asset(piece.src)}
-            alt={piece.alt}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.03]"
-          />
-        </picture>
-      </motion.div>
-      <figcaption className="mt-4 flex items-baseline justify-between">
-        <span className="font-display text-lg text-ink">{piece.ttl}</span>
-        <span className="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-ink-soft">
-          {piece.meta}
+      <picture>
+        <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
+        <img
+          src={asset(`assets/${item.img}.jpg`)}
+          alt={item.alt || item.ttl}
+          loading="lazy"
+          className={
+            'h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04] ' +
+            imgClass
+          }
+        />
+      </picture>
+      <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-ink/65 via-ink/20 to-transparent p-2.5 pt-9 sm:p-3 sm:pt-10">
+        <span className="font-display text-[0.95rem] leading-tight text-paper sm:text-base">
+          {item.ttl}
+        </span>
+        <span className="shrink-0 font-mono text-[0.5rem] uppercase tracking-[0.16em] text-paper/85 sm:text-[0.55rem]">
+          {item.meta}
         </span>
       </figcaption>
     </motion.figure>
