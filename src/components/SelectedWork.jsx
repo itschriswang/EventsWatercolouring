@@ -65,11 +65,11 @@ const layout = [
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ ...SPRING, delay: reduce ? 0 : index * 0.08 }}
-      className={layout}
+      className={layout[index]}
     >
       <motion.div
         style={parallax ? { y } : {}}
-        className="mx-auto overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep max-w-[420px]"
+        className="overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep w-full"
       >
         <picture>
           <source srcSet={asset(piece.webp)} type="image/webp" />
