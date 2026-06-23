@@ -26,7 +26,7 @@ export default function SelectedWork() {
         </p>
       </div>
 
-      <div className="mt-[clamp(2.5rem,6vw,5rem)] grid grid-cols-12 items-start gap-9">
+      <div className="mt-[clamp(2.5rem,6vw,5rem)] flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between sm:gap-12">
         {WORK.pieces.map((piece, i) => (
           <Piece key={piece.ttl} piece={piece} index={i} />
         ))}
@@ -48,12 +48,11 @@ function Piece({ piece, index }) {
   
 // Irregular column spans + vertical offsets per piece.
 // Mobile stacks normally; from sm and up, all three are forced into the same grid row.
-const layout = [
-  'col-span-12 sm:col-span-5 sm:col-start-1 sm:row-start-1 sm:mt-2',
-  'col-span-12 sm:col-span-3 sm:col-start-5 sm:row-start-1 sm:mt-9',
-  'col-span-12 sm:col-span-4 sm:col-start-8 sm:row-start-1 sm:-mt-1',
 
-  ][index]
+const layout = [
+  'w-full sm:w-[31%] sm:mt-2',
+  'w-full sm:w-[28%] sm:mt-10
+
 
   return (
     <motion.figure
@@ -66,7 +65,7 @@ const layout = [
     >
       <motion.div
         style={parallax ? { y } : {}}
-        className="mx-auto overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep max-w-[400px]"
+        className="mx-auto overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep max-w-[420px]"
       >
         <picture>
           <source srcSet={asset(piece.webp)} type="image/webp" />
