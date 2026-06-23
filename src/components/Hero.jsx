@@ -7,9 +7,10 @@ import { SPRING, SPRING_SOFT, asset, ENQUIRE_HREF } from '../lib/site.js'
 import { HERO } from '../content.js'
 
 /**
- * Sprawling, full-bleed asymmetric hero. Massive char-split headline layered
- * over and behind a floating bouquet painting and a small study card. The
- * entrance holds until the preloader hands over (`revealed`).
+ * Sprawling, full-bleed asymmetric hero. A char-split headline on the left,
+ * with two study cards stacked on the right — a bouquet painting layered
+ * behind the character study. The entrance holds until the preloader hands
+ * over (`revealed`).
  */
 export default function Hero({ revealed }) {
   const reduce = useReducedMotion()
@@ -51,22 +52,6 @@ export default function Hero({ revealed }) {
       </motion.div>
 
       <div className="relative mt-[clamp(2rem,5vw,4rem)] grid grid-cols-4 items-start gap-y-10 lg:grid-cols-12 lg:items-end lg:gap-x-8">
-        {/* Floating bouquet painting — sits behind the type, offset right */}
-        <motion.div
-          style={parallax ? { y: artY } : {}}
-          initial={{ opacity: 0, scale: 0.92 }}
-          animate={revealed ? { opacity: 1, scale: 1 } : { opacity: 0 }}
-          transition={{ ...SPRING_SOFT, delay: 0.5 }}
-          className="pointer-events-none absolute right-[-4vw] top-[-2vw] z-0 col-span-6 w-[46vw] max-w-[640px] sm:w-[40vw] lg:w-[28vw]"
-          aria-hidden="true"
-        >
-          <img
-            src={asset('assets/art-bouquet_transparent.webp')}
-            alt=""
-            className="h-auto w-full drop-shadow-[0_40px_60px_rgba(42,39,36,0.18)]"
-          />
-        </motion.div>
-
         {/* Headline + lede + actions — sits in the bottom-left column on wide
             screens, at a notably smaller display size. Kept first in the DOM so
             grid auto-placement seats it beside (not below) the study card, and
@@ -95,7 +80,11 @@ export default function Hero({ revealed }) {
               {HERO.lede}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-5">
-              <MagneticButton href={ENQUIRE_HREF}>Enquire</MagneticButton>
+              {/* Hidden on mobile so the artwork leads the landing view — the
+                  persistent bottom dock still carries the Enquire CTA there. */}
+              <span className="hidden sm:contents">
+                <MagneticButton href={ENQUIRE_HREF}>Enquire</MagneticButton>
+              </span>
               <a
                 href="#process"
                 className="font-mono text-xs uppercase tracking-[0.18em] text-ink underline-offset-8 transition-colors hover:text-terracotta hover:underline"
@@ -106,25 +95,52 @@ export default function Hero({ revealed }) {
           </motion.div>
         </div>
 
-        {/* Hero character study — its own prominent column on wide screens,
-            centred cleanly on mobile so it no longer floats off to one side. */}
-        <motion.figure
-          initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : 5 }}
-          animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : 3 } : { opacity: 0 }}
-          transition={{ ...SPRING_SOFT, delay: 0.9 }}
-          whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
-          className="relative z-10 col-span-4 col-start-1 mx-auto w-[78%] max-w-[320px] overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)] sm:w-[58%] lg:col-span-5 lg:col-start-8 lg:mx-0 lg:ml-auto lg:w-[88%] lg:max-w-none"
+        {/* Stacked study cards — the bouquet painting layered behind the
+            character study like two photos laid on top of each other. Centred
+            on mobile; pinned to the right column on wide screens. The wrapper's
+            width is set by the front (character) card; the bouquet is absolute
+            and peeks out from behind it. */}
+        <motion.div
+          style={parallax ? { y: artY } : {}}
+          className="relative z-10 col-span-4 col-start-1 mx-auto w-[74%] max-w-[300px] sm:w-[56%] lg:col-span-5 lg:col-start-8 lg:mx-0 lg:ml-auto lg:w-[82%] lg:max-w-none"
         >
-          <img
-            src={asset('assets/art-character-boy.webp')}
-            alt="A small watercolour character study at the palette."
-            className="h-full w-full object-cover lg:h-[52vh]"
-            loading="eager"
-          />
-          <figcaption className="bg-paper px-3 py-2 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
-            No. 001 — Cotton rag
-          </figcaption>
-        </motion.figure>
+          {/* Bouquet card — behind */}
+          <motion.figure
+            initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : -3 }}
+            animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : -7 } : { opacity: 0 }}
+            transition={{ ...SPRING_SOFT, delay: 0.78 }}
+            className="absolute -left-[8%] -top-[7%] z-0 w-[86%] origin-bottom-right overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)] lg:-left-[15%] lg:-top-[8%] lg:w-[84%]"
+          >
+            <img
+              src={asset('assets/art-bouquet.webp')}
+              alt="A watercolour bouquet study held to the light."
+              className="h-full w-full object-cover lg:h-[44vh]"
+              loading="eager"
+            />
+            <figcaption className="bg-paper px-3 py-2 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
+              No. 002 — Bouquet
+            </figcaption>
+          </motion.figure>
+
+          {/* Character study — in front */}
+          <motion.figure
+            initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : 5 }}
+            animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : 3 } : { opacity: 0 }}
+            transition={{ ...SPRING_SOFT, delay: 0.95 }}
+            whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
+            className="relative z-10 w-full overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)]"
+          >
+            <img
+              src={asset('assets/art-character-boy.webp')}
+              alt="A small watercolour character study at the palette."
+              className="h-full w-full object-cover lg:h-[52vh]"
+              loading="eager"
+            />
+            <figcaption className="bg-paper px-3 py-2 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
+              No. 001 — Cotton rag
+            </figcaption>
+          </motion.figure>
+        </motion.div>
       </div>
 
       {/* Scroll cue */}
