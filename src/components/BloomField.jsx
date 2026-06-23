@@ -28,6 +28,10 @@ export default function BloomField() {
   const reduce = useReducedMotion()
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const blooms = isDesktop ? BLOOMS_DESKTOP : BLOOMS_MOBILE
+  // On phones the slow drift is imperceptible but the per-frame recompositing of
+  // blurred, blended, fixed layers is the main scroll-jank source. Render the
+  // blooms statically there and lighten the blur (the dominant compositing cost).
+  const still = reduce || !isDesktop
 
   return (
     <div
@@ -42,15 +46,15 @@ export default function BloomField() {
             width: b.size ?? '42vmin',
             height: b.size ?? '42vmin',
             borderRadius: '50%',
-            filter: 'blur(46px)',
+            filter: isDesktop ? 'blur(46px)' : 'blur(26px)',
             mixBlendMode: 'multiply',
             opacity: b.opacity ?? 0.26,
-            willChange: reduce ? 'auto' : 'transform, opacity',
+            willChange: still ? 'auto' : 'transform, opacity',
             animationTimingFunction: ease,
             animationIterationCount: 'infinite',
             animationDirection: 'alternate',
             ...b.style,
-            ...(reduce ? { animationName: 'none' } : {}),
+            ...(still ? { animationName: 'none' } : {}),
           }}
         />
       ))}
