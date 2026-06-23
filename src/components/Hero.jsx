@@ -38,7 +38,7 @@ export default function Hero({ revealed }) {
     <section
       id="top"
       ref={ref}
-      className="relative w-full overflow-hidden px-[5vw] pb-[clamp(3rem,8vw,7rem)] pt-[clamp(1.5rem,4vw,3rem)]"
+      className="relative w-full overflow-hidden px-[5vw] pb-[clamp(3rem,8vw,7rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-2.5"
     >
       {/* Eyebrow row spanning the full width */}
       <motion.div
@@ -95,15 +95,15 @@ export default function Hero({ revealed }) {
             layered artworks. */}
         <motion.div
           style={parallax ? { y: artY } : {}}
-          className="relative z-10 col-span-4 col-start-1 lg:col-span-5 lg:col-start-8"
+          className="relative z-10 col-span-4 col-start-1 lg:col-span-5 lg:col-start-8 lg:mb-[9vh]"
         >
-          <div className="flex items-start gap-4 sm:block">
+          <div className="flex items-start gap-3 sm:block">
             {/* Mobile-only sub-text (the desktop copy lives under the headline). */}
             <motion.p
               variants={fade}
               initial="hidden"
               animate={state}
-              className="mt-1 w-[36%] shrink-0 text-[0.8rem] leading-relaxed text-ink-soft sm:hidden"
+              className="mt-1 w-[30%] shrink-0 text-[0.78rem] leading-relaxed text-ink-soft sm:hidden"
             >
               {HERO.lede}
             </motion.p>
@@ -117,12 +117,12 @@ export default function Hero({ revealed }) {
                 initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : -6 }}
                 animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : -6 } : { opacity: 0 }}
                 transition={{ ...SPRING_SOFT, delay: 0.8 }}
-                className="relative z-0 w-[52%] shrink-0 overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)]"
+                className="relative z-0 w-[60%] shrink-0 overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)] sm:w-[52%]"
               >
                 <img
                   src={asset('assets/art-bouquet.webp')}
                   alt="A watercolour bouquet study held to the light."
-                  className="h-full w-full object-cover lg:h-[38vh]"
+                  className="h-[30vh] w-full object-cover sm:h-auto lg:h-[38vh]"
                   loading="eager"
                 />
                 <figcaption className="bg-paper px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft sm:px-3 sm:py-2 sm:text-[0.6rem] sm:tracking-[0.2em]">
@@ -133,7 +133,7 @@ export default function Hero({ revealed }) {
               {/* Character — raised much higher, in front, overlapping. The
                   lift lives on this wrapper so the figure's hover transform
                   doesn't clobber it. */}
-              <div className="relative z-10 -ml-[14%] w-[54%] shrink-0 -translate-y-[30%]">
+              <div className="relative z-10 -ml-[16%] w-[62%] shrink-0 -translate-y-[18%] sm:-ml-[14%] sm:w-[54%] sm:-translate-y-[30%]">
                 <motion.figure
                   initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : 4 }}
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : 3 } : { opacity: 0 }}
@@ -144,7 +144,7 @@ export default function Hero({ revealed }) {
                   <img
                     src={asset('assets/art-character-boy.webp')}
                     alt="A small watercolour character study at the palette."
-                    className="h-full w-full object-cover lg:h-[42vh]"
+                    className="h-[34vh] w-full object-cover sm:h-auto lg:h-[42vh]"
                     loading="eager"
                   />
                   <figcaption className="bg-paper px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft sm:px-3 sm:py-2 sm:text-[0.6rem] sm:tracking-[0.2em]">
