@@ -181,7 +181,6 @@ export const PAINTER = {
   caption: 'Christopher Wang · Melbourne',
   body: [
     'I am Christopher. I grew up in Sydney and I am based in Melbourne now, and I have been painting in watercolour for more than ten years.',
-    'I trained as an architect and engineer before I came back to art, which is probably why I think about composition before anything else.',
     'Painting live at a wedding is the part I love most. A few minutes with each guest, a small portrait made by hand while the night carries on, and something real to take home at the end.',
   ],
   signature: 'Christopher',
