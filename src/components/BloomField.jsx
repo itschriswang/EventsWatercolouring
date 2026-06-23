@@ -5,12 +5,12 @@ const ease = 'cubic-bezier(.22,.61,.36,1)'
 
 // Desktop: soft halos peeking from the left/right content margins.
 const BLOOMS_DESKTOP = [
-  { style: { left: '-14vmin', top: '6%',  background: 'radial-gradient(circle at 40% 40%, #B5395B, transparent 68%)', animationName: 'bloom-drift1', animationDuration: '26s' } },
-  { style: { left: '-16vmin', top: '42%', background: 'radial-gradient(circle at 50% 50%, #6E7E4E, transparent 70%)', animationName: 'bloom-drift2', animationDuration: '34s' } },
-  { style: { left: '-12vmin', top: '74%', background: 'radial-gradient(circle at 45% 45%, #ED8A33, transparent 68%)', animationName: 'bloom-drift3', animationDuration: '30s' } },
-  { style: { right: '-14vmin', top: '12%', background: 'radial-gradient(circle at 60% 40%, #3A7F9D, transparent 70%)', animationName: 'bloom-drift2', animationDuration: '32s' } },
-  { style: { right: '-16vmin', top: '48%', background: 'radial-gradient(circle at 55% 55%, #C98B8C, transparent 70%)', animationName: 'bloom-drift3', animationDuration: '28s' } },
-  { style: { right: '-12vmin', top: '80%', background: 'radial-gradient(circle at 50% 45%, #C9A23A, transparent 68%)', animationName: 'bloom-drift1', animationDuration: '36s' } },
+  { style: { left: '-14vmin', top: '6%',  background: 'radial-gradient(circle at 40% 40%, #B5395B, transparent 68%)', animationName: 'bloom-drift1', animationDuration: '18s' } },
+  { style: { left: '-16vmin', top: '42%', background: 'radial-gradient(circle at 50% 50%, #6E7E4E, transparent 70%)', animationName: 'bloom-drift2', animationDuration: '23s' } },
+  { style: { left: '-12vmin', top: '74%', background: 'radial-gradient(circle at 45% 45%, #ED8A33, transparent 68%)', animationName: 'bloom-drift3', animationDuration: '20s' } },
+  { style: { right: '-14vmin', top: '12%', background: 'radial-gradient(circle at 60% 40%, #3A7F9D, transparent 70%)', animationName: 'bloom-drift2', animationDuration: '22s' } },
+  { style: { right: '-16vmin', top: '48%', background: 'radial-gradient(circle at 55% 55%, #C98B8C, transparent 70%)', animationName: 'bloom-drift3', animationDuration: '19s' } },
+  { style: { right: '-12vmin', top: '80%', background: 'radial-gradient(circle at 50% 45%, #C9A23A, transparent 68%)', animationName: 'bloom-drift1', animationDuration: '24s' } },
 ]
 
 // Mobile: same pigments, brought inward so they're actually visible on narrow
