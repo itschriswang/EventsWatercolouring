@@ -35,7 +35,7 @@ export default function EveningTimeline() {
       <div className="grid grid-cols-12 gap-x-8">
         {/* Sticky title rail */}
         <div className="col-span-12 lg:col-span-5">
-          <div className="lg:sticky lg:top-8 lg:h-fit">
+          <div className="lg:sticky lg:top-24 lg:h-fit">
             <Label fill="#F4EFE6" className="!text-paper/70">
               {EVENING.label}
             </Label>
