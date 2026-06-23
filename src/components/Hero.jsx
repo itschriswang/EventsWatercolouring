@@ -70,76 +70,90 @@ export default function Hero({ revealed }) {
             )}
           </motion.div>
 
+          {/* Sub-text + actions. On wide screens this sits under the headline;
+              on mobile the sub-text moves beside the artwork (below), so this
+              copy is desktop-only. */}
           <motion.div
             variants={fade}
             initial="hidden"
             animate={state}
-            className="mt-[clamp(1.5rem,3vw,2.5rem)]"
+            className="mt-[clamp(1.5rem,3vw,2.5rem)] hidden sm:block"
           >
             <p className="max-w-md text-[clamp(1rem,1.1vw,1.18rem)] leading-relaxed text-ink-soft">
               {HERO.lede}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-5">
-              {/* Hidden on mobile so the artwork leads the landing view — the
-                  persistent bottom dock still carries the Enquire CTA there. */}
-              <span className="hidden sm:contents">
-                <MagneticButton href={ENQUIRE_HREF}>Enquire</MagneticButton>
-              </span>
-              <a
-                href="#process"
-                className="font-mono text-xs uppercase tracking-[0.18em] text-ink underline-offset-8 transition-colors hover:text-terracotta hover:underline"
-              >
-                How it works
-              </a>
+              <MagneticButton href={ENQUIRE_HREF}>Enquire</MagneticButton>
             </div>
           </motion.div>
         </div>
 
-        {/* Stacked study cards — the bouquet painting layered behind the
-            character study like two photos laid on top of each other. Centred
-            on mobile; pinned to the right column on wide screens. The wrapper's
-            width is set by the front (character) card; the bouquet is absolute
-            and peeks out from behind it. */}
+        {/* Lower-right composition — two staggered study cards: the character
+            raised much higher and in front, the bouquet sitting lower and
+            slightly behind but still fully visible from the start. On mobile
+            this becomes a loose three-column row: the sub-text, then the two
+            layered artworks. */}
         <motion.div
           style={parallax ? { y: artY } : {}}
-          className="relative z-10 col-span-4 col-start-1 mx-auto w-[74%] max-w-[300px] sm:w-[56%] lg:col-span-5 lg:col-start-8 lg:mx-0 lg:ml-auto lg:w-[82%] lg:max-w-none"
+          className="relative z-10 col-span-4 col-start-1 lg:col-span-5 lg:col-start-8"
         >
-          {/* Bouquet card — behind */}
-          <motion.figure
-            initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : -3 }}
-            animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : -7 } : { opacity: 0 }}
-            transition={{ ...SPRING_SOFT, delay: 0.78 }}
-            className="absolute -left-[8%] -top-[7%] z-0 w-[86%] origin-bottom-right overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)] lg:-left-[15%] lg:-top-[8%] lg:w-[84%]"
-          >
-            <img
-              src={asset('assets/art-bouquet.webp')}
-              alt="A watercolour bouquet study held to the light."
-              className="h-full w-full object-cover lg:h-[44vh]"
-              loading="eager"
-            />
-            <figcaption className="bg-paper px-3 py-2 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
-              No. 002 — Bouquet
-            </figcaption>
-          </motion.figure>
+          <div className="flex items-start gap-4 sm:block">
+            {/* Mobile-only sub-text (the desktop copy lives under the headline). */}
+            <motion.p
+              variants={fade}
+              initial="hidden"
+              animate={state}
+              className="mt-1 w-[36%] shrink-0 text-[0.8rem] leading-relaxed text-ink-soft sm:hidden"
+            >
+              {HERO.lede}
+            </motion.p>
 
-          {/* Character study — in front */}
-          <motion.figure
-            initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : 5 }}
-            animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : 3 } : { opacity: 0 }}
-            transition={{ ...SPRING_SOFT, delay: 0.95 }}
-            whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
-            className="relative z-10 w-full overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)]"
-          >
-            <img
-              src={asset('assets/art-character-boy.webp')}
-              alt="A small watercolour character study at the palette."
-              className="h-full w-full object-cover lg:h-[52vh]"
-              loading="eager"
-            />
-            <figcaption className="bg-paper px-3 py-2 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
-              No. 001 — Cotton rag
-            </figcaption>
-          </motion.figure>
+            {/* Two layered artworks, bottom-aligned so the character can be
+                lifted well above the bouquet — staggered and overlapping, with
+                the bouquet sitting lower but still fully visible. */}
+            <div className="flex grow items-end justify-center sm:mx-auto sm:w-[92%] lg:mx-0 lg:w-full lg:justify-end">
+              {/* Bouquet — lower, slightly behind, still very visible */}
+              <motion.figure
+                initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : -6 }}
+                animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : -6 } : { opacity: 0 }}
+                transition={{ ...SPRING_SOFT, delay: 0.8 }}
+                className="relative z-0 w-[52%] shrink-0 overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)]"
+              >
+                <img
+                  src={asset('assets/art-bouquet.webp')}
+                  alt="A watercolour bouquet study held to the light."
+                  className="h-full w-full object-cover lg:h-[38vh]"
+                  loading="eager"
+                />
+                <figcaption className="bg-paper px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft sm:px-3 sm:py-2 sm:text-[0.6rem] sm:tracking-[0.2em]">
+                  No. 002 — Bouquet
+                </figcaption>
+              </motion.figure>
+
+              {/* Character — raised much higher, in front, overlapping. The
+                  lift lives on this wrapper so the figure's hover transform
+                  doesn't clobber it. */}
+              <div className="relative z-10 -ml-[14%] w-[54%] shrink-0 -translate-y-[30%]">
+                <motion.figure
+                  initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : 4 }}
+                  animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : 3 } : { opacity: 0 }}
+                  transition={{ ...SPRING_SOFT, delay: 0.95 }}
+                  whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
+                  className="overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)]"
+                >
+                  <img
+                    src={asset('assets/art-character-boy.webp')}
+                    alt="A small watercolour character study at the palette."
+                    className="h-full w-full object-cover lg:h-[42vh]"
+                    loading="eager"
+                  />
+                  <figcaption className="bg-paper px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft sm:px-3 sm:py-2 sm:text-[0.6rem] sm:tracking-[0.2em]">
+                    No. 001 — Cotton rag
+                  </figcaption>
+                </motion.figure>
+              </div>
+            </div>
+          </div>
         </motion.div>
       </div>
 
