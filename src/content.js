@@ -128,28 +128,23 @@ export const WORK = {
   title: ['Pigment on', 'cotton archival watercolour paper.'],
   emphasis: 'cotton rag.',
   note: 'Painted by hand on 300gsm A5 watercolour pads.',
-  pieces: [
-    {
-      src: 'assets/art-bouquet.jpg',
-      webp: 'assets/art-bouquet.webp',
-      alt: 'Watercolour study of a bridal bouquet, with rust ribbon, orange roses and forget-me-not blue, painted on cotton-rag paper',
-      ttl: 'The bouquet',
-      meta: 'Watercolour · A5',
-    },
-    {
-      src: 'assets/art-character-girl.jpg',
-      webp: 'assets/art-character-girl.webp',
-      alt: 'Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre',
-      ttl: 'Little character, in green',
-      meta: 'Studio study',
-    },
-    {
-      src: 'assets/art-character-boy.jpg',
-      webp: 'assets/art-character-boy.webp',
-      alt: "Small watercolour character portrait with the artist's palette alongside, in warm terracotta and ochre",
-      ttl: 'At the palette',
-      meta: 'Studio study',
-    },
+  // ── Gallery wall — simple to edit ─────────────────────────────────────────
+  // One entry per image. `img` is the asset base name; it loads both
+  // assets/<img>.webp and assets/<img>.jpg automatically, so you only name it
+  // once. Reorder entries to change placement. Set `feature: true` to make a
+  // piece fill a 2×2 block on wide screens (and stand taller on mobile).
+  // Add as many as you like — the layout flows to fit.
+  gallery: [
+    { img: 'art-bouquet',        ttl: 'The bouquet',          meta: 'Watercolour · A5', feature: true, alt: 'Watercolour study of a bridal bouquet, with rust ribbon, orange roses and forget-me-not blue, painted on cotton-rag paper' },
+    { img: 'art-character-girl', ttl: 'Little character, in green', meta: 'Studio study', alt: 'Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre' },
+    { img: 'art-character-boy',  ttl: 'At the palette',       meta: 'Studio study', alt: "Small watercolour character portrait with the artist's palette alongside, in warm terracotta and ochre" },
+    { img: 'art-bouquet',        ttl: 'Ribbon & rose',        meta: 'Watercolour · A5' },
+    { img: 'art-character-boy',  ttl: 'Warm ochre',           meta: 'Studio study' },
+    { img: 'art-character-girl', ttl: 'Olive & hat',          meta: 'Studio study', feature: true },
+    { img: 'art-character-boy',  ttl: 'On cotton rag',        meta: 'Watercolour · A5' },
+    { img: 'art-bouquet',        ttl: 'Forget-me-not',        meta: 'Watercolour · A5' },
+    { img: 'art-character-girl', ttl: 'Quiet study',          meta: 'Studio study' },
+    { img: 'art-character-boy',  ttl: 'Little portrait',      meta: 'Studio study' },
   ],
 }
 
