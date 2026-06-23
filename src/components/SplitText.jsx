@@ -24,6 +24,8 @@ export default function SplitText({
 }) {
   const reduce = useReducedMotion()
   const MotionTag = motion(Tag)
+  const normalise = s => s.toLowerCase().replace(/[^a-z]/g, '')
+  const isPhrase = emphasis ? emphasis.includes(' ') : false
 
   const container = {
     hidden: {},
@@ -52,15 +54,20 @@ export default function SplitText({
       aria-label={lines.join(' ')}
     >
       {lines.map((line, li) => {
-        const isEmph = emphasis && line.includes(emphasis)
+        const lineHasPhrase = isPhrase && line.toLowerCase().includes(emphasis.toLowerCase())
         return (
           <span key={li} className="block overflow-hidden pb-[0.08em]">
             {unit === 'char'
               ? line.split(' ').flatMap((word, wi, words) => {
+                  const isWordEmph = emphasis && (
+                    isPhrase
+                      ? lineHasPhrase
+                      : normalise(word) === normalise(emphasis)
+                  )
                   const wordEl = (
                     <span
                       key={`w${li}-${wi}`}
-                      className={`inline-block${isEmph ? ' text-terracotta' : ''}`}
+                      className={`inline-block${isWordEmph ? ' text-terracotta' : ''}`}
                     >
                       {Array.from(word).map((ch, ci) => (
                         <motion.span
@@ -89,17 +96,24 @@ export default function SplitText({
                   }
                   return [wordEl]
                 })
-              : line.split(' ').map((word, wi, arr) => (
-                  <motion.span
-                    key={wi}
-                    variants={item}
-                    aria-hidden="true"
-                    className="inline-block"
-                  >
-                    {word}
-                    {wi < arr.length - 1 ? ' ' : ''}
-                  </motion.span>
-                ))}
+              : line.split(' ').map((word, wi, arr) => {
+                  const isWordEmph = emphasis && (
+                    isPhrase
+                      ? lineHasPhrase
+                      : normalise(word) === normalise(emphasis)
+                  )
+                  return (
+                    <motion.span
+                      key={wi}
+                      variants={item}
+                      aria-hidden="true"
+                      className={`inline-block${isWordEmph ? ' text-terracotta' : ''}`}
+                    >
+                      {word}
+                      {wi < arr.length - 1 ? ' ' : ''}
+                    </motion.span>
+                  )
+                })}
           </span>
         )
       })}

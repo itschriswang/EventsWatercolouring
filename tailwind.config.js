@@ -25,7 +25,7 @@ export default {
         wine: '#6C2A3E',
       },
       fontFamily: {
-        display: ['Unbounded', 'system-ui', 'sans-serif'],
+        display: ['Oswald', 'system-ui', 'sans-serif'],
         body: ['"DM Sans"', 'system-ui', 'sans-serif'],
         mono: ['"Space Mono"', 'ui-monospace', 'monospace'],
       },
