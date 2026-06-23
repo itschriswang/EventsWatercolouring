@@ -12,13 +12,9 @@ export default function TwoPaths() {
       id="process"
       className="relative w-full overflow-hidden bg-lime px-[5vw] py-[clamp(4rem,10vw,9rem)] text-ink"
     >
-      {/* Gradient blends from the paper section above into ink, softening the transition */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-0 h-40 bg-gradient-to-b from-paper to-transparent"
-        aria-hidden="true"
-      />
+      
       <div className="relative z-10 flex flex-col gap-4">
-        <Label fill="#E4889c" className="!text-ink/60">
+        <Label fill="#A4502F" className="!text-ink/60">
           {PATHS.label}
         </Label>
         <SplitText
@@ -55,10 +51,10 @@ export default function TwoPaths() {
                 <li key={si} className="flex gap-5">
                   <span className="mt-1 font-mono text-sm text-blush">{si + 1}</span>
                   <span>
-                    <b className="block font-display text-lg font-normal text-paper">
+                    <b className="block font-display text-lg font-normal text-ink">
                       {s.b}
                     </b>
-                    <span className="mt-1 block max-w-md text-sm leading-relaxed text-paper/65">
+                    <span className="mt-1 block max-w-md text-sm leading-relaxed text-ink/65">
                       {s.t}
                     </span>
                   </span>
