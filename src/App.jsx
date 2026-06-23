@@ -3,6 +3,7 @@ import GrainOverlay from './components/GrainOverlay.jsx'
 import BloomField from './components/BloomField.jsx'
 import Preloader from './components/Preloader.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
+import MobileNav from './components/MobileNav.jsx'
 import Hero from './components/Hero.jsx'
 import WhyWatercolour from './components/WhyWatercolour.jsx'
 import TwoPaths from './components/TwoPaths.jsx'
@@ -39,8 +40,9 @@ export default function App() {
       <Preloader onDone={() => setRevealed(true)} />
 
       <SiteHeader revealed={revealed} />
+      <MobileNav revealed={revealed} />
 
-      <main>
+      <main className="pb-28 md:pb-0">
         <Hero revealed={revealed} />
         <WhyWatercolour />
         <TwoPaths />
