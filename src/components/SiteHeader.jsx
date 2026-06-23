@@ -38,7 +38,7 @@ function NavLink({ href, label, isActive }) {
   )
 }
 
-export default function SiteHeader({ revealed }) {
+export default function SiteHeader({ revealed, className = '' }) {
   const [scrolled, setScrolled] = useState(false)
   const [active, setActive] = useState(null)
 
@@ -73,7 +73,7 @@ export default function SiteHeader({ revealed }) {
       animate={revealed ? { y: 0, opacity: 1 } : { y: -80, opacity: 0 }}
       transition={{ ...SPRING, delay: 0.25 }}
       // hidden on mobile — MobileNav owns small screens
-      className="hidden md:block sticky top-0 z-40"
+      className={`hidden md:block sticky top-0 z-50 ${className}`}
       style={{
         background: scrolled ? 'rgba(244,239,230,0.97)' : 'rgba(244,239,230,0.74)',
         backdropFilter: 'blur(18px) saturate(1.7)',
