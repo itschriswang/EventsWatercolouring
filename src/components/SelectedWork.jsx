@@ -26,7 +26,7 @@ export default function SelectedWork() {
         </p>
       </div>
 
-      <div className="mt-[clamp(2.5rem,6vw,5rem)] flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between sm:gap-12">
+      <div className="mt-[clamp(2.5rem,6vw,5rem)] grid grid-cols-12 gap-x-8 gap-y-10 sm:items-start">
         {WORK.pieces.map((piece, i) => (
           <Piece key={piece.ttl} piece={piece} index={i} />
         ))}
