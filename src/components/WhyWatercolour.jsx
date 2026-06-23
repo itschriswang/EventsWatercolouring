@@ -8,7 +8,7 @@ export default function WhyWatercolour() {
   const reduce = useReducedMotion()
 
   return (
-    <section id="why" className="relative w-full px-[5vw] py-[clamp(4rem,10vw,9rem)]">
+    <section id="why" className="relative w-full px-[5vw] py-[clamp(2.25rem,5.5vw,5rem)]">
       <Label>{WHY.label}</Label>
 
       <motion.p
