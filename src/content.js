@@ -1,102 +1,101 @@
-// All site copy in one place. Reproduced verbatim from legacy/index.html
-// (the user's own refined, non-plagiarised text), except `evening` whose
-// prose is reworded/enriched from the "Additional Content to Consider" source.
+// All site copy in one place. Written in Christopher's own voice: plain,
+// warm and direct, Australian English, no em dashes. Edit here and every
+// section updates.
 
 export const HERO = {
   lines: ['Painted', 'live, while', 'you celebrate.'],
   emphasis: 'live',
   linesMobile: ['Painted', 'live,', 'while you', 'celebrate.'],
   emphasisMobile: 'live,',
-  lede: 'I set up at your reception and paint as the night moves. A selected number of your guests leave with a small keepsake of their own, and the two of you with one portrait painted on the night, all in pigment on cotton-rag paper.',
+  lede: 'I set up at your reception and paint while the party carries on. A set number of your guests go home with their own small portrait, and you get one of the two of you, painted that night. Every piece is real watercolour on cotton paper.',
 }
 
 export const MARQUEE = [
   'Live wedding watercolour',
-  'Individual guest portraits',
+  'Portraits of your guests',
   'Painted by hand',
-  'Pigment on cotton rag',
-  'A keepsake to treasure',
+  'Real watercolour on cotton paper',
+  'A keepsake to take home',
 ]
 
 export const WHY = {
   label: 'Why live watercolour',
-  lede: 'Live entertainment and a hand-painted keepsake for every guest all in one evening.',
+  lede: 'Entertainment for the room and a hand-painted keepsake for your guests, all in one evening.',
   notes: [
     {
       no: '01',
-      title: 'A quiet centre of the room',
-      body: 'Guests drift over to watch a portrait find its shape. The table becomes a gentle gathering point, and a talking point that lasts long after the night.',
+      title: 'Something to gather around',
+      body: 'Guests wander over to watch a portrait happen. The table turns into a spot people gather, and something they keep talking about long after the night is over.',
     },
     {
       no: '02',
-      title: 'Made by hand, in the moment',
-      body: 'Not a print or a photo off a phone. Each piece is an original painted in the room, on the day, carrying the feeling of your wedding while it happens.',
+      title: 'Made by hand, on the day',
+      body: 'Every piece is an original watercolour, painted right there in the room while the day is happening around it. Each one is one of a kind.',
     },
     {
       no: '03',
       title: 'Something to keep',
-      body: 'Many of your guests leave with a small painting of their own, and the two of you with a portrait made while the day is still unfolding. Painted on archival cotton-rag paper, it is made to last.',
+      body: 'A good number of your guests go home with a small painting of their own, and you keep a portrait of the two of you, painted while the day is still going. It is on archival cotton paper, so it lasts.',
     },
   ],
 }
 
-// "How the evening unfolds" — reworded and enriched from the additional content.
 export const EVENING = {
   label: 'On the night',
-  title: ['How the evening', 'unfolds.'],
-  emphasis: 'unfolds.',
-  lede: 'The first thing I paint is the two of you on A4, while the energy is fresh. It is bigger and more detailed, the one you will want to frame. Then the night takes over.',
+  title: ['How the evening', 'runs.'],
+  emphasis: 'runs.',
+  lede: 'The first thing I paint is the two of you, on A4, while everything is fresh. It is the bigger, more detailed one, the piece you will probably want to frame. After that I work through your guests.',
   beats: [
     {
       no: '01',
-      title: 'Quietly set up',
-      body: 'I slip in about fifteen minutes ahead and lay everything out, brushes, paper and pigment already in their places. There is nothing for you to arrange and nothing for you to think about.',
+      title: 'I set up',
+      body: 'I get there about fifteen minutes early and set up before I start. You do not have to organise anything.',
     },
     {
       no: '02',
       title: 'No need to pose',
-      body: 'Your guests carry on with the celebration, uninterrupted. A quick photo is taken and a name noted, gently and in passing, so no one has to stop or sit still for me.',
+      body: 'Your guests keep enjoying the night. Someone takes a quick photo and notes their name as they pass, so nobody has to stop or sit still for me.',
     },
     {
       no: '03',
-      title: 'The painting begins',
-      body: 'Each piece takes around five to ten minutes. As the first finished portraits appear a quiet buzz starts to spread, and guests drift over to watch the next one come to life.',
+      title: 'I start painting',
+      body: 'Each piece takes about five to ten minutes. Once the first few are done, word gets around and guests start coming over to watch the next one.',
     },
     {
       no: '04',
       title: 'Sleeved to take home',
-      body: 'Every painting slides into a clear protective sleeve, ready to travel home safely, just as the champagne starts to flow a little more freely.',
+      body: 'Every painting goes into a clear sleeve so it gets home in one piece, right about when the champagne starts flowing a little more freely.',
     },
     {
       no: '05',
-      title: 'A guaranteed number',
-      body: 'I commit to a minimum of 10 pieces per hour. Anyone not reached on the night is finished in the studio and posted to you to hand on — so the number you book is the number you get.',
+      title: 'A number you can count on',
+      body: 'I commit to at least 10 pieces an hour. Anyone I do not get to on the night, I finish in the studio afterwards and post to you to pass on. The number you book is the number you get.',
     },
   ],
 }
 
 export const PATHS = {
   label: 'How it works',
-  title: ['Two ways in.', 'Both unhurried.'],
-  emphasis: 'Both unhurried.',
+  title: ['Two ways', 'to work with me.'],
+  emphasis: 'to work with me.',
   items: [
     {
       no: 'Path 01',
       title: 'Live on the day',
-      sub: 'I come to your wedding and paint as it happens.',
+      sub: 'I come to your wedding and paint on the day.',
       art: 'assets/art-bouquet.webp',
       steps: [
         {
-          b: 'We shape the day together',
-          t: 'We start from one base package and build it around your wedding: how long I paint, roughly how many guests, and any extras. A deposit holds your date.',
+          b: 'We plan it together',
+          t: 'We start from one base package and build it around your day: how long I paint, roughly how many guests, and any extras. A deposit holds your date.',
         },
         {
           b: 'I paint through the night',
-          t: 'I arrive early and set up quietly, then paint a selected number of your guests as the celebration carries on around them. No posing, no interruption.',
+          t: 'I arrive early, set up, then paint a set number of your guests while the party carries on. Nobody has to pose or sit for me.',
         },
         {
-          b: 'Keepsakes to take home',
-          t: 'The guests I paint leave with a small portrait of their own, sleeved and ready to travel. Your couple portrait is painted on the night and left with you.',
+          b: 'Everyone takes one home',
+          t: 'The guests I paint go home with their own small portrait, sleeved and ready to travel. Your couple portrait is painted on the night and stays with you.',
         },
       ],
     },
@@ -108,15 +107,15 @@ export const PATHS = {
       steps: [
         {
           b: 'Send me your photos',
-          t: 'A few well-lit, high-resolution images that look like you. I will help you choose the one to paint from.',
+          t: 'A few clear, high-resolution photos that look like you. I will help you pick the one to paint from.',
         },
         {
           b: 'I paint in the studio',
-          t: 'I work from your images on archival cotton watercolour paper, building the portrait by hand over the weeks that follow.',
+          t: 'I work from your photos on archival cotton paper, building the portrait by hand over the following weeks.',
         },
         {
           b: 'It arrives within four weeks',
-          t: 'Your finished watercolour is delivered with a high-resolution scan for your records.',
+          t: 'Your finished watercolour arrives within four weeks, with a high-resolution scan for your records.',
         },
       ],
     },
@@ -125,9 +124,9 @@ export const PATHS = {
 
 export const WORK = {
   label: 'Selected work',
-  title: ['Pigment on', 'cotton archival watercolour paper.'],
-  emphasis: 'cotton rag.',
-  note: 'Painted by hand on 300gsm A5 watercolour pads.',
+  title: ['Real watercolour, on', 'cotton paper.'],
+  emphasis: 'cotton paper.',
+  note: 'Painted by hand on 300gsm A5 cotton paper.',
   // ── Gallery wall — simple to edit ─────────────────────────────────────────
   // One entry per image. `img` is the asset base name; it loads both
   // assets/<img>.webp and assets/<img>.jpg automatically, so you only name it
@@ -135,13 +134,13 @@ export const WORK = {
   // piece fill a 2×2 block on wide screens (and stand taller on mobile).
   // Add as many as you like — the layout flows to fit.
   gallery: [
-    { img: 'art-bouquet',        ttl: 'The bouquet',          meta: 'Watercolour · A5', feature: true, alt: 'Watercolour study of a bridal bouquet, with rust ribbon, orange roses and forget-me-not blue, painted on cotton-rag paper' },
+    { img: 'art-bouquet',        ttl: 'The bouquet',          meta: 'Watercolour · A5', feature: true, alt: 'Watercolour study of a bridal bouquet, with rust ribbon, orange roses and forget-me-not blue, painted on cotton paper' },
     { img: 'art-character-girl', ttl: 'Little character, in green', meta: 'Studio study', alt: 'Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre' },
     { img: 'art-character-boy',  ttl: 'At the palette',       meta: 'Studio study', alt: "Small watercolour character portrait with the artist's palette alongside, in warm terracotta and ochre" },
     { img: 'art-bouquet',        ttl: 'Ribbon & rose',        meta: 'Watercolour · A5' },
     { img: 'art-character-boy',  ttl: 'Warm ochre',           meta: 'Studio study' },
     { img: 'art-character-girl', ttl: 'Olive & hat',          meta: 'Studio study', feature: true },
-    { img: 'art-character-boy',  ttl: 'On cotton rag',        meta: 'Watercolour · A5' },
+    { img: 'art-character-boy',  ttl: 'On cotton paper',      meta: 'Watercolour · A5' },
     { img: 'art-bouquet',        ttl: 'Forget-me-not',        meta: 'Watercolour · A5' },
     { img: 'art-character-girl', ttl: 'Quiet study',          meta: 'Studio study' },
     { img: 'art-character-boy',  ttl: 'Little portrait',      meta: 'Studio study' },
@@ -152,7 +151,7 @@ export const MOTION = {
   label: 'In motion',
   title: ['Watch a piece', 'come together.'],
   emphasis: 'come together.',
-  body: 'A couple of short films of the paint going down. Between weddings I also paint little character portraits, in the soft, wistful spirit of the art-toy world. It keeps my hand loose and my eye on character.',
+  body: 'A couple of short clips of the paint going down. Between weddings I paint small character portraits too, somewhere in the world of art toys. It keeps my hand loose and my eye sharp.',
   films: [
     {
       src: 'assets/reel-painting-1.mp4',
@@ -175,46 +174,48 @@ export const MOTION = {
 
 export const PAINTER = {
   label: 'The painter',
-  title: ['The hand', 'behind the brush.'],
-  emphasis: 'behind the brush.',
+  title: ['A bit', 'about me.'],
+  emphasis: 'about me.',
   portrait: 'assets/portrait-christopher.jpg',
   portraitWebp: 'assets/portrait-christopher.webp',
+  caption: 'Christopher Wang · Melbourne',
   body: [
-    'I am Christopher, a Sydney-born artist now based in Melbourne, who fell in love with watercolour over a decade ago.',
-    'Painting live at a wedding is the truest test of that, and the part I love most. A few quiet minutes with each guest, a small portrait made by hand while the night carries on around us, and something real to take home at the end of it.',
+    'I am Christopher. I grew up in Sydney and I am based in Melbourne now, and I have been painting in watercolour for more than ten years.',
+    'I trained as an architect and engineer before I came back to art, which is probably why I think about composition before anything else.',
+    'Painting live at a wedding is the part I love most. A few minutes with each guest, a small portrait made by hand while the night carries on, and something real to take home at the end.',
   ],
-  
+  signature: 'Christopher',
 }
 
 export const PACKAGES = {
   label: 'Packages',
-  title: ['One base package,', 'shaped around your day.'],
-  emphasis: 'shaped around your day.',
+  title: ['One base package,', 'built around your day.'],
+  emphasis: 'built around your day.',
   intro:
-    'Everything is painted at your wedding on 300gsm cotton paper, with a couple portrait painted on the night and left with you.',
+    'Everything is painted at your wedding on 300gsm cotton paper, including a portrait of the two of you, done on the night and left with you.',
   base: {
     title: 'Live on the day',
-    note: 'The base package, painted through your reception.',
+    note: 'The base package, painted across your reception.',
     priceSmall: 'From',
     price: '$1,000',
     facts: ['3 hours live', '30 keepsakes', '~30 guests'],
     bullets: [
-      'Live guest keepsakes, A5 archival cotton paper',
-      'A couple portrait, painted on the night and left with you',
-      'Each piece sleeved, ready to take home',
+      'Guest portraits painted live, A5 on archival cotton paper',
+      'A portrait of the two of you, painted on the night and left with you',
+      'Every piece sleeved and ready to take home',
       'Travel within about 1.5 hours of the Melbourne CBD included',
     ],
   },
   baseNote:
-    'Want longer, more guests, or a portrait from photographs instead? We build it from the base. Some pieces have a set price, others I quote for your day, so just tell me what you have in mind.',
+    'Want more hours, more guests, or a portrait from photos instead? We build it up from the base. Some add-ons have a set price, others I quote for your day. Just tell me what you are after.',
   included: {
     title: 'Included as standard',
-    sub: 'Everything below comes with the base package. You provide one table (around 100 × 60 cm, at seated height, with a front-facing chair able to tuck underneath) and a chair for me. Everything else I bring.',
+    sub: 'Everything below comes with the base package. You provide a table (around 100 by 60cm, at seated height, with a front-facing chair that tucks underneath) and a chair for me. I bring the rest.',
     items: [
       'All drawing and painting materials',
-      'Premium 300gsm achival watercolour paper',
+      'Premium 300gsm archival watercolour paper',
       'Sealable clear sleeves for every piece',
-      'Live painting through your reception',
+      'Live painting across your reception',
       'Set-up about 15 minutes before I start',
       'Public liability insurance',
       'Travel within about 1.5 hours of the Melbourne CBD',
@@ -224,33 +225,33 @@ export const PACKAGES = {
   addons: [
     {
       h: 'After-Event Service',
-      p: 'Any shortfall against the guaranteed minimum is finished in the studio and posted to you to hand on. Additional guests beyond the guaranteed count can also be added at this rate.',
+      p: 'Anyone I do not reach on the night gets finished in the studio and posted to you to pass on. You can also add guests beyond the booked number at this rate.',
       tag: '$30 / guest',
       small: 'From',
     },
     {
       h: 'Family portrait, A3',
-      p: 'The two of you with your immediate family, painted larger on A3 from photographs you provide after the day.',
+      p: 'You and your immediate family, painted larger on A3 from photos you send after the day.',
       tag: '$500',
     },
     {
       h: 'Bridal party, A3',
-      p: 'A group portrait of the bridal party on A3, commemorating the people closest to you on the day.',
+      p: 'A group portrait of the bridal party on A3, the people closest to you on the day.',
       tag: '$500',
     },
     {
       h: 'Spot illustrations',
-      p: 'Small paintings of the details: the venue, the cake, glasses raised, quiet corners of the night.',
+      p: 'Small paintings of the details: the venue, the cake, a glass raised, a corner of the room.',
       tag: '$120 / each',
     },
     {
       h: 'Extra live hours',
-      p: 'Stay longer through the reception, for more of the night and more guests painted.',
+      p: 'I stay longer across the reception, so more of your guests get painted.',
       tag: 'On enquiry',
     },
     {
       h: 'Studio commission',
-      p: 'A portrait from your photographs, before or after the wedding, within about four weeks.',
+      p: 'A portrait from your photos, before or after the wedding, ready in about four weeks.',
       tag: 'On enquiry',
     },
     {
@@ -260,19 +261,19 @@ export const PACKAGES = {
     },
     {
       h: 'Travel further afield',
-      p: 'Regional Victoria and destination weddings beyond metropolitan Melbourne, gladly discussed.',
+      p: 'Regional Victoria and destination weddings further out. Happy to talk it through.',
       tag: 'On enquiry',
     },
     {
       h: 'Wedding bouquet illustration',
-      p: 'Your bouquet in full bloom, painted from photographs after the day. A floral keepsake on A3 cotton-rag paper; A2 available on request.',
+      p: 'Your bouquet painted from photos after the day, on A3 cotton paper. A2 on request.',
       tag: '$550',
       small: 'A3 from',
       extra: '· A2 on enquiry',
     },
   ],
   licence:
-    'A note on style. My work is an interpretation, not a literal likeness, and my style keeps evolving, so no two pieces are exact replicas. Booking assumes you are happy with that creative freedom. A 50% deposit holds your date, with the balance due two weeks before the day.',
+    'A note on style. What I paint is my interpretation, not a photo-exact likeness, and my style keeps changing, so no two pieces are the same. Booking means you are happy with that. A 50% deposit holds your date, and the balance is due two weeks before.',
 }
 
 export const BEYOND = {
@@ -280,22 +281,22 @@ export const BEYOND = {
   title: ['The same hand,', 'for any room.'],
   emphasis: 'for any room.',
   intro:
-    'Live painting is just as at home away from a wedding. I work across Melbourne and Australia-wide, turning a few hours into keepsakes guests carry out the door.',
+    'Live painting works just as well away from a wedding. I take it across Melbourne and Australia-wide, turning a few hours into something every guest walks out with.',
   cards: [
     {
       tag: 'Brand activations',
-      title: 'A drawcard that lingers',
-      body: 'Live portraits give people a reason to stop, watch and stay. Each guest leaves with a branded keepsake rather than another giveaway destined for the bin.',
+      title: 'A reason to stop and stay',
+      body: 'Live portraits give people something to watch and a reason to hang around. Everyone leaves with a branded piece they actually keep, not another giveaway headed for the bin.',
     },
     {
       tag: 'Corporate events',
-      title: 'Memorable, not corporate',
-      body: 'Galas, launches and end-of-year nights. A quiet, elegant alternative to a photo booth that suits a considered room.',
+      title: 'Not your usual photo booth',
+      body: 'For galas, launches and end-of-year nights. A quieter, more interesting alternative to a photo booth for a room that cares how things look.',
     },
     {
       tag: 'Private celebrations',
       title: 'Milestones worth keeping',
-      body: 'Birthdays, anniversaries and engagements. Smaller, warmer gatherings where guests go home with a small painting of their own.',
+      body: 'Birthdays, anniversaries, engagements. Smaller, warmer gatherings where everyone goes home with a small painting of their own.',
     },
   ],
 }
@@ -306,59 +307,59 @@ export const FAQ = {
   items: [
     {
       q: 'How far ahead should we book?',
-      a: 'I am taking bookings up to about two months out for now, so reach out with your date and I will let you know what I have open. Earlier is always welcome, as I only take a limited number of weddings.',
+      a: 'Right now I am booking up to about two months out, so send me your date and I will tell you what is open. Earlier is always welcome, since I only take a limited number of weddings.',
     },
     {
       q: 'Do you paint live, or from photographs?',
-      a: 'Both. The base package has me at your wedding, painting live through the reception, and we build on it with add-ons to suit your day. If you would rather a studio commission from your own photographs, before or after the day, I am glad to do that too, priced on enquiry.',
+      a: 'Both. The base package has me at your wedding painting live through the reception, and we add to it from there. If you would rather a studio commission from your own photos, before or after the day, I do those too, priced on enquiry.',
     },
     {
       q: 'How long do you paint on the day?',
-      a: 'Three hours in the base package, and longer if you add hours, up to about five, usually through the reception with short breaks built in. I pace myself rather than paint flat out, so every piece stays as considered as the first.',
+      a: 'Three hours in the base package, up to about five if you add hours, usually across the reception with short breaks. I pace myself instead of painting flat out, so the last piece gets the same care as the first.',
     },
     {
       q: 'How many guests can you paint?',
-      a: 'I work to a minimum of 10 pieces per hour. For a three-hour booking that is at least 30 keepsakes. Any I do not reach on the night are finished in the studio and posted to you to hand on, so no guest misses out.',
+      a: 'At least 10 pieces an hour, so a three-hour booking is 30 portraits or more. Anyone I do not get to on the night, I finish in the studio and post to you to pass on, so no guest misses out.',
     },
     {
       q: 'What materials do you use?',
-      a: 'Professional watercolours on archival 300gsm A5 cotton paper, with lightfast pigments that hold their colour for decades when cared for. Everything is made to last.',
+      a: 'Professional watercolours on archival 300gsm A5 cotton paper. The pigments are lightfast, so the colour holds for decades if you look after it.',
     },
     {
       q: 'When do we receive the finished work?',
-      a: 'Guest keepsakes are finished on the night and go home with your guests. Your couple portrait is painted on the night too and left with you as I finish. Studio commissions from photographs arrive within four weeks.',
+      a: 'Guest portraits are done on the night and go home with your guests. Your couple portrait is painted that night too and left with you. Studio commissions from photos arrive within four weeks.',
     },
     {
       q: 'Do you travel?',
-      a: 'Travel is included for venues within about 1.5 hours of the Melbourne CBD. Anywhere further, including regional Victoria and destination weddings, I am glad to discuss, with travel quoted on enquiry. Just include your venue and I will let you know.',
+      a: 'Travel is included for venues within about 1.5 hours of the Melbourne CBD. Further out, including regional Victoria and destination weddings, I am happy to discuss it and quote travel on enquiry. Just tell me your venue.',
     },
     {
       q: 'Do you frame the work?',
-      a: 'I do not frame pieces. Everything comes to you on beautiful cotton-rag paper, sleeved and ready for a framer you love. I am happy to suggest framers if that helps.',
+      a: 'I do not frame the work. It comes to you on cotton paper, sleeved and ready for a framer you like. Happy to recommend a few if that helps.',
     },
     {
       q: 'Do we get a digital copy?',
-      a: 'Yes. Every couple receives a high-resolution scan of their portrait to keep and reprint, for thank-you cards and the like. If you would like a file licensed specifically for stationery, just ask.',
+      a: 'Yes. Every couple gets a high-resolution scan of their portrait to keep and reprint, handy for thank-you cards. If you want a file licensed for stationery, just ask.',
     },
     {
       q: 'How do we secure our date?',
-      a: 'A 50% deposit holds your date, with the balance due two weeks before the wedding. I only confirm a booking once the deposit is received, so your date is yours from that point.',
+      a: 'A 50% deposit holds your date, with the balance due two weeks before the wedding. I only confirm once the deposit is in, and then the date is yours.',
     },
     {
       q: 'What if we need to postpone or cancel?',
-      a: 'Weddings move, and I understand that. Cancel more than two months ahead and your deposit is refunded in full. More than two weeks ahead, half the deposit is refunded. Within two weeks of the day, the deposit is non-refundable, as it reserves time I turn away other couples to hold. If you would rather postpone, your deposit transfers to a new date subject to my availability. Full terms are set out in your booking agreement.',
+      a: 'Weddings move, and I get that. Cancel more than two months out and you get the full deposit back. More than two weeks out, you get half. Within two weeks of the day the deposit is non-refundable, since it holds time I have turned other couples away for. If you would rather postpone, your deposit moves to a new date if I am free. Full terms are in your booking agreement.',
     },
     {
       q: 'What do you need from us on the day?',
-      a: 'Very little. One table around 100 by 60cm at seated height with room for a front-facing chair underneath, one chair, and somewhere I can stand for a short break each hour. I bring everything else. Light refreshments are always welcome but never expected.',
+      a: 'Not much. A table around 100 by 60cm at seated height with room for a front-facing chair underneath, a chair, and a bit of space to stand for a short break each hour. I bring everything else. A drink or a bite is always welcome but never expected.',
     },
     {
       q: 'Do you paint events other than weddings?',
-      a: 'Yes. Alongside weddings I take on brand activations, corporate events and private celebrations across Melbourne and Australia-wide. The format flexes to the room, so tell me what you have in mind and I will shape it to suit.',
+      a: 'Yes. As well as weddings I do brand activations, corporate events and private parties across Melbourne and Australia-wide. It bends to fit the room, so tell me what you have in mind.',
     },
     {
       q: 'How should we send photos for a commission?',
-      a: 'The clearer the photographs, the better the portrait. Send a few well-lit, high-resolution images that show your faces clearly, and let me know which one feels most like you. I will guide you from there.',
+      a: 'The clearer the photos, the better the portrait. Send a few well-lit, high-resolution shots where your faces are clear, and tell me which one feels most like you. I will take it from there.',
     },
   ],
 }
@@ -368,7 +369,7 @@ export const ENQUIRY = {
   title: ['Tell me about', 'your day.'],
   emphasis: 'your day.',
   intro:
-    'A few details to start. I read and reply to every enquiry myself, usually within a few days.',
+    'Just a few details to start. I read and answer every enquiry myself, usually within a few days.',
   packageOptions: [
     'Live on the day (base package)',
     'Live on the day, with add-ons',
@@ -380,7 +381,7 @@ export const ENQUIRY = {
   ],
   confirm: {
     title: 'Thank you.',
-    body: 'Your enquiry is with me. I will read it properly and write back soon, usually within a few days.',
+    body: 'Your message is with me. I will read it properly and write back soon, usually within a few days.',
   },
 }
 
