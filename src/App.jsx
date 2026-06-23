@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import GrainOverlay from './components/GrainOverlay.jsx'
+import BloomField from './components/BloomField.jsx'
 import Preloader from './components/Preloader.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
 import Hero from './components/Hero.jsx'
@@ -33,6 +34,7 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-paper">
+      <BloomField />
       <GrainOverlay />
       <Preloader onDone={() => setRevealed(true)} />
 
