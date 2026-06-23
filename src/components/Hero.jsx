@@ -50,7 +50,7 @@ export default function Hero({ revealed }) {
         <span className="hidden sm:inline">Melbourne · Australia-wide</span>
       </motion.div>
 
-      <div className="relative mt-[clamp(2rem,5vw,4rem)] grid grid-cols-4 items-start gap-y-10 lg:min-h-[62vh] lg:grid-cols-12 lg:items-end lg:gap-x-8">
+      <div className="relative mt-[clamp(2rem,5vw,4rem)] grid grid-cols-4 items-start gap-y-10 lg:grid-cols-12 lg:items-end lg:gap-x-8">
         {/* Floating bouquet painting — sits behind the type, offset right */}
         <motion.div
           style={parallax ? { y: artY } : {}}
@@ -67,29 +67,11 @@ export default function Hero({ revealed }) {
           />
         </motion.div>
 
-        {/* Hero character study — its own prominent column on wide screens,
-            centred cleanly on mobile so it no longer floats off to one side. */}
-        <motion.figure
-          initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : 5 }}
-          animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : 3 } : { opacity: 0 }}
-          transition={{ ...SPRING_SOFT, delay: 0.9 }}
-          whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
-          className="relative z-10 order-2 col-span-4 col-start-1 mx-auto w-[78%] max-w-[320px] overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)] sm:w-[58%] lg:order-none lg:col-span-5 lg:col-start-8 lg:mx-0 lg:ml-auto lg:w-[92%] lg:max-w-none lg:self-center"
-        >
-          <img
-            src={asset('assets/art-character-boy.webp')}
-            alt="A small watercolour character study at the palette."
-            className="h-full w-full object-cover"
-            loading="eager"
-          />
-          <figcaption className="bg-paper px-3 py-2 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
-            No. 001 — Cotton rag
-          </figcaption>
-        </motion.figure>
-
-        {/* Headline + lede + actions — anchored to the bottom-left on wide
-            screens, with a notably smaller display size there. */}
-        <div className="relative z-10 order-1 col-span-4 col-start-1 lg:order-none lg:col-span-7 lg:col-start-1">
+        {/* Headline + lede + actions — sits in the bottom-left column on wide
+            screens, at a notably smaller display size. Kept first in the DOM so
+            grid auto-placement seats it beside (not below) the study card, and
+            so it leads the stack on mobile. */}
+        <div className="relative z-10 col-span-4 col-start-1 lg:col-span-7 lg:col-start-1">
           <motion.div style={parallax ? { y: copyY } : {}}>
             {revealed && (
               <SplitText
@@ -123,6 +105,26 @@ export default function Hero({ revealed }) {
             </div>
           </motion.div>
         </div>
+
+        {/* Hero character study — its own prominent column on wide screens,
+            centred cleanly on mobile so it no longer floats off to one side. */}
+        <motion.figure
+          initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : 5 }}
+          animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : 3 } : { opacity: 0 }}
+          transition={{ ...SPRING_SOFT, delay: 0.9 }}
+          whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
+          className="relative z-10 col-span-4 col-start-1 mx-auto w-[78%] max-w-[320px] overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)] sm:w-[58%] lg:col-span-5 lg:col-start-8 lg:mx-0 lg:ml-auto lg:w-[88%] lg:max-w-none"
+        >
+          <img
+            src={asset('assets/art-character-boy.webp')}
+            alt="A small watercolour character study at the palette."
+            className="h-full w-full object-cover lg:h-[52vh]"
+            loading="eager"
+          />
+          <figcaption className="bg-paper px-3 py-2 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
+            No. 001 — Cotton rag
+          </figcaption>
+        </motion.figure>
       </div>
 
       {/* Scroll cue */}
