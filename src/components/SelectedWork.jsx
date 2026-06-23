@@ -47,9 +47,9 @@ function Piece({ piece, index }) {
 
   // Irregular column spans + vertical offsets per piece.
   const layout = [
-    'col-span-12 sm:col-span-5',
-    'col-span-12 sm:col-span-4 sm:mt-16',
-    'col-span-12 sm:col-span-5 sm:col-start-4 sm:-mt-8',
+    'col-span-12 sm:col-span-3',
+    'col-span-12 sm:col-span-2 sm:mt-9',
+    'col-span-12 sm:col-span-3 sm:col-start-2 sm:-mt-4',
   ][index]
 
   return (
