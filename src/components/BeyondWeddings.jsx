@@ -11,7 +11,7 @@ export default function BeyondWeddings() {
   return (
     <section
       id="beyond"
-      className="relative w-full overflow-hidden bg-teal px-[5vw] py-[clamp(4rem,10vw,9rem)] text-paper"
+      className="relative w-full overflow-hidden bg-blush px-[5vw] py-[clamp(4rem,10vw,9rem)] text-paper"
     >
       <img
         src={asset('assets/art-bouquet_transparent.webp')}
