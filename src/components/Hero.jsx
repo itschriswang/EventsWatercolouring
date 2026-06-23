@@ -115,7 +115,7 @@ export default function Hero({ revealed }) {
               {/* Bouquet — lower, slightly behind, still very visible. The
                   mobile drop lives on this wrapper so the figure's entrance
                   transform doesn't clobber it. */}
-              <div className="relative z-0 w-[56%] shrink-0 translate-y-[25%] sm:w-[52%] sm:translate-y-0">
+              <div className="relative z-0 w-[56%] shrink-0 translate-y-[25%] sm:w-[52%] sm:translate-y-0 sm:-ml-[8%] lg:-ml-[10%]">
                 <motion.figure
                   initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : -6 }}
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : -6 } : { opacity: 0 }}
