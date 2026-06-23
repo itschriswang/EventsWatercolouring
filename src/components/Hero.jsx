@@ -125,7 +125,7 @@ export default function Hero({ revealed }) {
                   <img
                     src={asset('assets/art-bouquet.webp')}
                     alt="A watercolour bouquet study held to the light."
-                    className="aspect-[4/3] w-full object-cover sm:aspect-auto sm:h-auto lg:h-[38vh]"
+                    className="aspect-[3/4] w-full object-cover sm:aspect-auto sm:h-auto lg:h-[38vh]"
                     loading="eager"
                   />
                   <figcaption className="bg-paper px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft sm:px-3 sm:py-2 sm:text-[0.6rem] sm:tracking-[0.2em]">
@@ -148,7 +148,7 @@ export default function Hero({ revealed }) {
                   <img
                     src={asset('assets/art-character-boy.webp')}
                     alt="A small watercolour character study at the palette."
-                    className="aspect-[4/3] w-full object-cover sm:aspect-auto sm:h-auto lg:h-[42vh]"
+                    className="aspect-[3/4] w-full object-cover sm:aspect-auto sm:h-auto lg:h-[42vh]"
                     loading="eager"
                   />
                   <figcaption className="bg-paper px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft sm:px-3 sm:py-2 sm:text-[0.6rem] sm:tracking-[0.2em]">
