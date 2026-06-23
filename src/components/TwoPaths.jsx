@@ -10,11 +10,11 @@ export default function TwoPaths() {
   return (
     <section
       id="process"
-      className="relative w-full overflow-hidden bg-lime px-[5vw] py-[clamp(4rem,10vw,9rem)] text-ink"
+      className="relative w-full overflow-hidden bg-sage px-[5vw] py-[clamp(4rem,10vw,9rem)] text-ink"
     >
       
       <div className="relative z-10 flex flex-col gap-4">
-        <Label fill="#A4502F" className="!text-ink/60">
+        <Label fill="#F4EFE6" className="!text-ink/60">
           {PATHS.label}
         </Label>
         <SplitText
@@ -49,7 +49,7 @@ export default function TwoPaths() {
             <ol className="mt-8 flex flex-col gap-6 border-t border-ink/15 pt-8">
               {path.steps.map((s, si) => (
                 <li key={si} className="flex gap-5">
-                  <span className="mt-1 font-mono text-sm text-blush">{si + 1}</span>
+                  <span className="mt-1 font-mono text-sm text-paper">{si + 1}</span>
                   <span>
                     <b className="block font-display text-lg font-normal text-ink">
                       {s.b}
