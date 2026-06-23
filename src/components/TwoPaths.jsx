@@ -9,6 +9,7 @@ import {
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
 import { SPRING, asset } from '../lib/site.js'
+import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { PATHS } from '../content.js'
 
 /**
@@ -18,6 +19,7 @@ import { PATHS } from '../content.js'
  */
 export default function TwoPaths() {
   const reduce = useReducedMotion()
+  const heavyFx = useHeavyFx()
   const sectionRef = useRef(null)
   const [active, setActive] = useState(null) // index of hovered path, or null
 
@@ -38,10 +40,15 @@ export default function TwoPaths() {
     <section
       id="process"
       ref={sectionRef}
-      onMouseMove={reduce ? undefined : handleMove}
+      onMouseMove={reduce || !heavyFx ? undefined : handleMove}
       className="relative w-full overflow-hidden bg-ink px-[5vw] py-[clamp(4rem,10vw,9rem)] text-paper"
     >
-      <div className="flex flex-col gap-4">
+      {/* Gradient blends from the paper section above into ink, softening the transition */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 z-0 h-40 bg-gradient-to-b from-paper to-transparent"
+        aria-hidden="true"
+      />
+      <div className="relative z-10 flex flex-col gap-4">
         <Label fill="#AEBF56" className="!text-paper/60">
           {PATHS.label}
         </Label>
@@ -54,7 +61,7 @@ export default function TwoPaths() {
         />
       </div>
 
-      <div className="mt-[clamp(2.5rem,6vw,5rem)] grid grid-cols-12 gap-x-8 gap-y-16">
+      <div className="relative z-10 mt-[clamp(2.5rem,6vw,5rem)] grid grid-cols-12 gap-x-8 gap-y-16">
         {PATHS.items.map((path, i) => (
           <motion.article
             key={path.no}
@@ -62,8 +69,8 @@ export default function TwoPaths() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}
             transition={{ ...SPRING, delay: reduce ? 0 : i * 0.12 }}
-            onMouseEnter={() => setActive(i)}
-            onMouseLeave={() => setActive((cur) => (cur === i ? null : cur))}
+            onMouseEnter={heavyFx ? () => setActive(i) : undefined}
+            onMouseLeave={heavyFx ? () => setActive((cur) => (cur === i ? null : cur)) : undefined}
             className={
               'col-span-12 lg:col-span-6 ' + (i === 1 ? 'lg:mt-24' : '')
             }
@@ -95,8 +102,8 @@ export default function TwoPaths() {
         ))}
       </div>
 
-      {/* Cursor portal — floating masked preview that tracks the mouse */}
-      {!reduce && (
+      {/* Cursor portal — floating masked preview that tracks the mouse, desktop only */}
+      {!reduce && heavyFx && (
         <motion.div
           className="pointer-events-none absolute left-0 top-0 z-20 -ml-[140px] -mt-[170px] h-[340px] w-[280px] overflow-hidden rounded-[1.2rem] shadow-2xl"
           style={{ x: px, y: py }}
