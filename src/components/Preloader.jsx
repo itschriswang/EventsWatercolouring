@@ -63,13 +63,11 @@ export default function Preloader({ onDone }) {
             animate={
               reduce
                 ? {}
-                : bloom
-                  ? { scale: 7, opacity: 0.92 }
-                  : { scale: [1, 1.06, 1], y: [0, -10, 0], rotate: [0, 4, 0] }
+                : { scale: [1, 1.06, 1], y: [0, -10, 0], rotate: [0, 4, 0] }
             }
             transition={
-              bloom
-                ? { ...SPRING_SOFT, duration: 0.9 }
+              reduce
+                ? undefined
                 : { duration: 6, repeat: Infinity, ease: 'easeInOut' }
             }
           >
@@ -122,10 +120,6 @@ function Bloom({ active, reduce }) {
         if (reduce) {
           animate = { x: `${b.x}%`, y: `${b.y}%`, scale: b.s }
           transition = { duration: 0.4 }
-        } else if (active) {
-          // Swell and spread apart, feeding the clip-path dissolve.
-          animate = { x: `${b.x * 1.7}%`, y: `${b.y * 1.7}%`, scale: b.s * 1.35, opacity: 0.95 }
-          transition = { ...SPRING_SOFT, duration: 0.9 }
         } else {
           // Continuous organic wander + breathe.
           animate = {
