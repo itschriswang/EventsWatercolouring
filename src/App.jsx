@@ -45,11 +45,11 @@ export default function App() {
       <main className="relative z-10 pb-28 md:pb-0">
         <Hero revealed={revealed} />
         <WhyWatercolour />
+        <AboutMe />
         <TwoPaths />
         <EveningTimeline />
         <SelectedWork />
         <InMotion />
-        <AboutMe />
         <Packages />
         <BeyondWeddings />
         <Faq />
