@@ -2,7 +2,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion
 import { useRef } from 'react'
 import SplitText from './SplitText.jsx'
 import MagneticButton from './MagneticButton.jsx'
-import { useHeavyFx } from '../hooks/useMediaQuery.js'
+import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset, ENQUIRE_HREF } from '../lib/site.js'
 import { HERO } from '../content.js'
 
@@ -17,6 +17,7 @@ export default function Hero({ revealed }) {
   // desktops; touch devices render the art statically to stay smooth.
   const heavyFx = useHeavyFx()
   const parallax = heavyFx && !reduce
+  const isMobile = useMediaQuery('(max-width: 639px)')
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -76,12 +77,8 @@ export default function Hero({ revealed }) {
               as="h1"
               unit="char"
               playOnMount
-              lines={
-                window.innerWidth < 640
-                  ? ['PAINTED', 'LIVE,', 'WHILE YOU', 'CELEBRATE.']
-                  : HERO.lines
-              }
-              emphasis={HERO.emphasis}
+              lines={isMobile ? HERO.linesMobile : HERO.lines}
+              emphasis={isMobile ? HERO.emphasisMobile : HERO.emphasis}
               className="display-xl text-ink"
             />
           )}
