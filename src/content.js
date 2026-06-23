@@ -215,7 +215,7 @@ export const PACKAGES = {
     note: 'The base package, painted across your reception.',
     priceSmall: 'From',
     price: '$1,000',
-    facts: ['3 hours live', '30 keepsakes', '~30 guests'],
+    facts: ['3 hours live', '30 keepsakes', '~60 guests'],
     bullets: [
       'Guest portraits painted live, A5 on archival cotton paper',
       'A portrait of the two of you, painted on the night and left with you',
