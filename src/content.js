@@ -17,7 +17,7 @@ export const MARQUEE = [
 
 export const WHY = {
   label: 'Why live watercolour',
-  lede: 'Entertainment, a photo booth and a keepsake, all in one evening.',
+  lede: 'Live entertainment and a hand-painted keepsake for every guest — all in one evening.',
   notes: [
     {
       no: '01',
