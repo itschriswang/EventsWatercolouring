@@ -10,7 +10,7 @@ export default function TwoPaths() {
   return (
     <section
       id="process"
-      className="relative w-full overflow-hidden bg-magenta px-[5vw] py-[clamp(4rem,10vw,9rem)] text-paper"
+      className="relative w-full overflow-hidden bg-wine px-[5vw] py-[clamp(4rem,10vw,9rem)] text-paper"
     >
       
       <div className="relative z-10 flex flex-col gap-4">
