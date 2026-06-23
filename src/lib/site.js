@@ -13,5 +13,11 @@ export const asset = (path) =>
 // Where the "Enquire" actions point in-page.
 export const ENQUIRE_HREF = '#enquiry'
 
-// Placeholder enquiry address, carried over verbatim from the legacy copy.
+// Placeholder enquiry address — swap for your real address before launch.
 export const EMAIL = 'hello@example.com'
+
+// Formspree endpoint that receives enquiry submissions. Create a free form at
+// https://formspree.io, then paste its endpoint here (it looks like
+// https://formspree.io/f/abcdwxyz). Until a real id is set, the form falls
+// back to opening the visitor's email client with the enquiry pre-filled.
+export const FORMSPREE_ENDPOINT = 'https://formspree.io/f/your-form-id'
