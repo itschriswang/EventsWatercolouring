@@ -4,11 +4,14 @@ import { SPRING } from '../lib/site.js'
 /**
  * Splits a headline into masked lines and reveals each unit (word or character)
  * with a staggered spring, rising from y:50. Each line sits in an
- * overflow-hidden mask. A single word can be flagged for the display italic via
- * `emphasis`.
+ * overflow-hidden mask. A single word can be flagged for display emphasis via
+ * `emphasis` (rendered in terracotta accent colour).
  *
  * Renders on scroll by default (whileInView); pass `playOnMount` to animate
  * immediately (used by the hero once the preloader hands over).
+ *
+ * In char mode, each word's characters are wrapped in an inline-block container
+ * so the browser never breaks a word mid-character across lines.
  */
 export default function SplitText({
   lines = [],
@@ -53,18 +56,39 @@ export default function SplitText({
         return (
           <span key={li} className="block overflow-hidden pb-[0.08em]">
             {unit === 'char'
-              ? Array.from(line).map((ch, ci) => (
-                  <motion.span
-                    key={ci}
-                    variants={item}
-                    aria-hidden="true"
-                    className={
-                      'inline-block whitespace-pre ' + (isEmph ? 'italic' : '')
-                    }
-                  >
-                    {ch}
-                  </motion.span>
-                ))
+              ? line.split(' ').flatMap((word, wi, words) => {
+                  const wordEl = (
+                    <span
+                      key={`w${li}-${wi}`}
+                      className={`inline-block${isEmph ? ' text-terracotta' : ''}`}
+                    >
+                      {Array.from(word).map((ch, ci) => (
+                        <motion.span
+                          key={ci}
+                          variants={item}
+                          aria-hidden="true"
+                          className="inline-block"
+                        >
+                          {ch}
+                        </motion.span>
+                      ))}
+                    </span>
+                  )
+                  if (wi < words.length - 1) {
+                    return [
+                      wordEl,
+                      <motion.span
+                        key={`sp${li}-${wi}`}
+                        variants={item}
+                        aria-hidden="true"
+                        className="inline-block whitespace-pre"
+                      >
+                        {' '}
+                      </motion.span>,
+                    ]
+                  }
+                  return [wordEl]
+                })
               : line.split(' ').map((word, wi, arr) => (
                   <motion.span
                     key={wi}
@@ -73,7 +97,7 @@ export default function SplitText({
                     className="inline-block"
                   >
                     {word}
-                    {wi < arr.length - 1 ? ' ' : ''}
+                    {wi < arr.length - 1 ? ' ' : ''}
                   </motion.span>
                 ))}
           </span>
