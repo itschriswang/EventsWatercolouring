@@ -76,7 +76,11 @@ export default function Hero({ revealed }) {
               as="h1"
               unit="char"
               playOnMount
-              lines={HERO.lines}
+              lines={
+                window.innerWidth < 640
+                  ? ['PAINTED', 'LIVE,', 'WHILE YOU', 'CELEBRATE.']
+                  : HERO.lines
+              }
               emphasis={HERO.emphasis}
               className="display-xl text-ink"
             />
