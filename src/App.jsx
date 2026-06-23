@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import GrainOverlay from './components/GrainOverlay.jsx'
+import BloomField from './components/BloomField.jsx'
 import Preloader from './components/Preloader.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
 import Hero from './components/Hero.jsx'
-import Marquee from './components/Marquee.jsx'
 import WhyWatercolour from './components/WhyWatercolour.jsx'
 import TwoPaths from './components/TwoPaths.jsx'
 import EveningTimeline from './components/EveningTimeline.jsx'
@@ -34,6 +34,7 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-paper">
+      <BloomField />
       <GrainOverlay />
       <Preloader onDone={() => setRevealed(true)} />
 
@@ -41,7 +42,6 @@ export default function App() {
 
       <main>
         <Hero revealed={revealed} />
-        <Marquee />
         <WhyWatercolour />
         <TwoPaths />
         <EveningTimeline />

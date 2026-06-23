@@ -193,7 +193,7 @@ export const PACKAGES = {
   title: ['One base package,', 'shaped around your day.'],
   emphasis: 'shaped around your day.',
   intro:
-    'Everything is painted at your wedding on 300gsm cotton-rag paper, with a couple portrait painted on the night and left with you, and high-resolution scans of every piece.',
+    'Everything is painted at your wedding on 300gsm cotton-rag paper, with a couple portrait painted on the night and left with you.',
   base: {
     title: 'Live on the day',
     note: 'The base package, painted through your reception.',
@@ -204,7 +204,6 @@ export const PACKAGES = {
       'Live guest keepsakes, A5 cotton rag',
       'A couple portrait, painted on the night and left with you',
       'Each piece sleeved, ready to take home',
-      'High-resolution scans of every piece',
       'Travel within about 1.5 hours of the Melbourne CBD included',
     ],
   },
