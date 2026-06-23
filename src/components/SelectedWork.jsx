@@ -49,9 +49,9 @@ function Piece({ piece, index }) {
 // Irregular column spans + vertical offsets per piece.
 // Mobile stacks normally; from sm and up, all three are forced into the same grid row.
 const layout = [
-  'col-span-12 sm:col-span-3 sm:col-start-1 sm:row-start-1 sm:mt-2',
-  'col-span-12 sm:col-span-2 sm:col-start-5 sm:row-start-1 sm:mt-9',
-  'col-span-12 sm:col-span-3 sm:col-start-8 sm:row-start-1 sm:-mt-4',
+  'col-span-12 sm:col-span-5 sm:col-start-1 sm:row-start-1 sm:mt-2',
+  'col-span-12 sm:col-span-3 sm:col-start-5 sm:row-start-1 sm:mt-9',
+  'col-span-12 sm:col-span-4 sm:col-start-8 sm:row-start-1 sm:-mt-1',
 
   ][index]
 
