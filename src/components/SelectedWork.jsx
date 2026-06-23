@@ -6,9 +6,9 @@ import { WORK } from '../content.js'
 
 /**
  * Selected work — a gallery wall driven entirely by `WORK.gallery` (see
- * content.js). Wide screens lay the pieces out on a six-column grid where any
- * `feature` piece fills a 2×2 block for focus; narrower screens flow the same
- * pieces into a 2/3-column masonry.
+ * content.js). Every tile is a 3:4 portrait with its caption below. Wide
+ * screens lay the pieces on a six-column grid where any `feature` piece fills a
+ * larger 2-wide focus block; narrower screens flow into a 2/3-column masonry.
  */
 export default function SelectedWork() {
   return (
@@ -29,10 +29,11 @@ export default function SelectedWork() {
         </p>
       </div>
 
-      {/* Wide screens — a six-column wall; `feature` pieces fill a 2×2 block.
-          A 1vw gap with matching square rows keeps the blocks truly square,
-          and dense flow tucks the smaller pieces in around the features. */}
-      <div className="mt-[clamp(2.5rem,6vw,5rem)] hidden lg:grid lg:grid-cols-6 lg:auto-rows-[14.2vw] lg:gap-[1vw] lg:[grid-auto-flow:dense]">
+      {/* Wide screens — a six-column wall of 3:4 portraits. `feature` pieces
+          fill a larger 2-wide focus block (still 3:4); dense flow tucks the
+          rest in around them. The cell height is tuned so the image card holds
+          a 3:4 ratio with the caption sitting just below it. */}
+      <div className="mt-[clamp(2.5rem,6vw,5rem)] hidden lg:grid lg:grid-cols-6 lg:auto-rows-[21vw] lg:gap-x-[1.4vw] lg:gap-y-6 lg:[grid-auto-flow:dense]">
         {WORK.gallery.map((item, i) => (
           <Tile
             key={i}
@@ -43,17 +44,10 @@ export default function SelectedWork() {
         ))}
       </div>
 
-      {/* Narrow / medium — a masonry wall (2 columns, then 3). Feature pieces
-          stand a touch taller for the same emphasis. */}
+      {/* Narrow / medium — a masonry wall (2 columns, then 3). */}
       <div className="mt-[clamp(2rem,8vw,3rem)] columns-2 gap-3 sm:columns-3 lg:hidden">
         {WORK.gallery.map((item, i) => (
-          <Tile
-            key={i}
-            item={item}
-            index={i}
-            masonry
-            imgClass={item.feature ? 'aspect-[3/4]' : 'aspect-[4/5]'}
-          />
+          <Tile key={i} item={item} index={i} masonry />
         ))}
       </div>
     </section>
@@ -61,11 +55,12 @@ export default function SelectedWork() {
 }
 
 /**
- * A single gallery tile. In the wide grid the surrounding cell sets the size
- * (so the image fills a square); in masonry the `imgClass` aspect sets it. The
- * caption overlays the foot of the image so tiles stay flush in the grid.
+ * A single gallery tile: a 3:4 image card with the caption beneath it. In the
+ * wide grid the surrounding cell sets the height, so the image fills it
+ * (object-cover) while the caption sits at the foot; in masonry the image keeps
+ * an explicit 3:4 aspect.
  */
-function Tile({ item, index, className = '', imgClass = '', masonry = false }) {
+function Tile({ item, index, className = '', masonry = false }) {
   const reduce = useReducedMotion()
 
   return (
@@ -75,28 +70,32 @@ function Tile({ item, index, className = '', imgClass = '', masonry = false }) {
       viewport={{ once: true, margin: '-40px' }}
       transition={{ ...SPRING, delay: reduce ? 0 : (index % 6) * 0.05 }}
       className={
-        'group relative overflow-hidden rounded-[1rem] border border-line bg-paper-deep ' +
-        (masonry ? 'mb-3 break-inside-avoid ' : '') +
+        'group flex flex-col ' +
+        (masonry ? 'mb-6 break-inside-avoid ' : '') +
         className
       }
     >
-      <picture>
-        <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
-        <img
-          src={asset(`assets/${item.img}.jpg`)}
-          alt={item.alt || item.ttl}
-          loading="lazy"
-          className={
-            'h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04] ' +
-            imgClass
-          }
-        />
-      </picture>
-      <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-ink/65 via-ink/20 to-transparent p-2.5 pt-9 sm:p-3 sm:pt-10">
-        <span className="font-display text-[0.95rem] leading-tight text-paper sm:text-base">
+      <div
+        className={
+          'relative overflow-hidden rounded-[1rem] border border-line bg-paper-deep ' +
+          (masonry ? 'aspect-[3/4]' : 'min-h-0 flex-1')
+        }
+      >
+        <picture>
+          <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
+          <img
+            src={asset(`assets/${item.img}.jpg`)}
+            alt={item.alt || item.ttl}
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+          />
+        </picture>
+      </div>
+      <figcaption className="mt-2.5">
+        <span className="block font-display text-[0.95rem] leading-tight text-ink">
           {item.ttl}
         </span>
-        <span className="shrink-0 font-mono text-[0.5rem] uppercase tracking-[0.16em] text-paper/85 sm:text-[0.55rem]">
+        <span className="mt-0.5 block font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft">
           {item.meta}
         </span>
       </figcaption>
