@@ -73,7 +73,7 @@ export default function Preloader({ onDone }) {
                 : { duration: 6, repeat: Infinity, ease: 'easeInOut' }
             }
           >
-            <Bloom active={bloom} />
+            <Bloom active={bloom} reduce={reduce} />
           </motion.div>
 
           <div className="mt-10 flex flex-col items-center gap-4 text-center">
@@ -97,36 +97,67 @@ export default function Preloader({ onDone }) {
   )
 }
 
-/** Layered pigment bloom — overlapping multiply circles that breathe. */
-function Bloom({ active }) {
+/**
+ * Layered pigment bloom — overlapping multiply circles. Each blob drifts,
+ * breathes and re-scales on its own infinite loop (unique duration + phase),
+ * so the pigment keeps bleeding for the whole load rather than springing once
+ * and freezing. On `active` (load complete) they push outward and swell into
+ * the dissolve. Static for reduced-motion users.
+ */
+function Bloom({ active, reduce }) {
+  // dx/dy = wander amplitude (%), dur = loop length (s). Desynced on purpose.
   const blobs = [
-    { c: '#B5395B', x: 0, y: 0, s: 1 },
-    { c: '#ED8A33', x: -22, y: 14, s: 0.78 },
-    { c: '#3A7F9D', x: 20, y: 18, s: 0.7 },
-    { c: '#AEBF56', x: 14, y: -20, s: 0.6 },
-    { c: '#E4889C', x: -16, y: -16, s: 0.66 },
+    { c: '#B5395B', x: 0,   y: 0,   s: 1,    dx: 5,  dy: 6,  dur: 5.2 },
+    { c: '#ED8A33', x: -22, y: 14,  s: 0.78, dx: 7,  dy: -5, dur: 6.4 },
+    { c: '#3A7F9D', x: 20,  y: 18,  s: 0.7,  dx: -6, dy: 6,  dur: 7.1 },
+    { c: '#AEBF56', x: 14,  y: -20, s: 0.6,  dx: 6,  dy: -7, dur: 5.8 },
+    { c: '#E4889C', x: -16, y: -16, s: 0.66, dx: -7, dy: 5,  dur: 6.9 },
   ]
   return (
     <div className="relative h-full w-full">
-      {blobs.map((b, i) => (
-        <motion.span
-          key={i}
-          className="absolute inset-0 m-auto rounded-full mix-blend-multiply"
-          style={{
-            width: '62%',
-            height: '62%',
-            backgroundColor: b.c,
-            filter: 'blur(2px)',
-          }}
-          animate={{
-            x: `${b.x}%`,
-            y: `${b.y}%`,
-            scale: active ? b.s * 1.3 : b.s,
-          }}
-          transition={{ ...SPRING, delay: i * 0.04 }}
-        />
-      ))}
-      <span className="absolute inset-0 m-auto h-3 w-3 rounded-full bg-paper/70 blur-[2px]" />
+      {blobs.map((b, i) => {
+        let animate
+        let transition
+
+        if (reduce) {
+          animate = { x: `${b.x}%`, y: `${b.y}%`, scale: b.s }
+          transition = { duration: 0.4 }
+        } else if (active) {
+          // Swell and spread apart, feeding the clip-path dissolve.
+          animate = { x: `${b.x * 1.7}%`, y: `${b.y * 1.7}%`, scale: b.s * 1.35, opacity: 0.95 }
+          transition = { ...SPRING_SOFT, duration: 0.9 }
+        } else {
+          // Continuous organic wander + breathe.
+          animate = {
+            x: [`${b.x}%`, `${b.x + b.dx}%`, `${b.x - b.dx * 0.6}%`, `${b.x}%`],
+            y: [`${b.y}%`, `${b.y + b.dy}%`, `${b.y - b.dy * 0.6}%`, `${b.y}%`],
+            scale: [b.s, b.s * 1.12, b.s * 0.93, b.s],
+          }
+          transition = { duration: b.dur, repeat: Infinity, ease: 'easeInOut', delay: i * 0.15 }
+        }
+
+        return (
+          <motion.span
+            key={i}
+            className="absolute inset-0 m-auto rounded-full mix-blend-multiply"
+            style={{
+              width: '62%',
+              height: '62%',
+              backgroundColor: b.c,
+              filter: 'blur(2px)',
+              willChange: reduce ? 'auto' : 'transform',
+            }}
+            animate={animate}
+            transition={transition}
+          />
+        )
+      })}
+      {/* Soft paper highlight at the centre, gently pulsing with the bloom. */}
+      <motion.span
+        className="absolute inset-0 m-auto h-3 w-3 rounded-full bg-paper/70 blur-[2px]"
+        animate={reduce || active ? {} : { scale: [1, 1.5, 1], opacity: [0.7, 0.45, 0.7] }}
+        transition={reduce || active ? undefined : { duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+      />
     </div>
   )
 }

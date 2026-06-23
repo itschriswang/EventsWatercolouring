@@ -25,9 +25,13 @@ export default {
         wine: '#6C2A3E',
       },
       fontFamily: {
-        display: ['Oswald', 'system-ui', 'sans-serif'],
-        body: ['"DM Sans"', 'system-ui', 'sans-serif'],
-        mono: ['"Space Mono"', 'ui-monospace', 'monospace'],
+        // Headings — Instrument Sans. Body + all UI text — Plus Jakarta Sans.
+        // `mono` keeps its name as the small-label slot but now points at
+        // Jakarta too, so the site reads as a clean two-font system; the
+        // labels hold their identity through uppercase + wide tracking.
+        display: ['"Instrument Sans"', 'system-ui', 'sans-serif'],
+        body: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        mono: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {
         tightest: '-0.04em',
