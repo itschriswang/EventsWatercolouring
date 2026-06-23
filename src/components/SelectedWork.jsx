@@ -49,7 +49,7 @@ function Piece({ piece, index }) {
   const layout = [
     'col-span-12 sm:col-span-3',
     'col-span-12 sm:col-span-2 sm:mt-9',
-    'col-span-12 sm:col-span-3 sm:col-start-2 sm:-mt-4',
+    'col-span-12 sm:col-span-3 sm:-mt-4',
   ][index]
 
   return (
