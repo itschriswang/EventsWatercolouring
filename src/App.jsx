@@ -39,10 +39,10 @@ export default function App() {
       <GrainOverlay />
       <Preloader onDone={() => setRevealed(true)} />
 
-      <SiteHeader revealed={revealed} />
-      <MobileNav revealed={revealed} />
+      <SiteHeader className="relative z-20" />
+      <MobileNav className="relative z-20" />
 
-      <main className="pb-28 md:pb-0">
+      <main className="relative z-10 pb-28 md:pb-0">
         <Hero revealed={revealed} />
         <WhyWatercolour />
         <TwoPaths />
