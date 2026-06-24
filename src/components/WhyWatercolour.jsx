@@ -8,7 +8,7 @@ export default function WhyWatercolour() {
   const reduce = useReducedMotion()
 
   return (
-    <section id="why" className="relative w-full px-[5vw] py-[clamp(2.25rem,5.5vw,5rem)]">
+    <section id="why" className="relative w-full px-[5vw] py-[clamp(3rem,8vw,7rem)]">
       <Label gradient={['#6E8CA8', '#C2613C']}>{WHY.label}</Label>
 
       <motion.p

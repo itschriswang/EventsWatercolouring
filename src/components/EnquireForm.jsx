@@ -75,7 +75,7 @@ export default function EnquireForm() {
   }
 
   return (
-    <section id="enquiry" className="relative w-full px-[5vw] py-[clamp(4rem,10vw,9rem)]">
+    <section id="enquiry" className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)]">
       <div className="grid grid-cols-12 gap-x-8 gap-y-12">
         <div className="col-span-12 lg:col-span-4">
           <Label>{ENQUIRY.label}</Label>
