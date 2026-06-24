@@ -146,7 +146,7 @@ export const WORK = {
     { img: 'art-bouquet',        ttl: 'The bouquet',          meta: 'Watercolour · A5', feature: true, alt: 'Watercolour study of a bridal bouquet, with rust ribbon, orange roses and forget-me-not blue, painted on cotton-rag paper' },
     {
       testimonial: true,
-      feature: true,
+      wide: true,
       quote:
         'Christopher painted us from our photographs after the wedding, and it has become the piece everyone stops at in our home. Our only regret is not having him there on the night — honestly, it is the reason this whole thing exists.',
       author: 'Clare & William',
