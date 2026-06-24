@@ -24,14 +24,15 @@ export default function AboutMe() {
       ref={ref}
       className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)]"
     >
-      <div className="grid grid-cols-12 items-center gap-x-8 gap-y-12">
-        {/* Asymmetric framed portrait */}
+      <div className="grid grid-cols-12 items-center gap-x-8 gap-y-12 lg:items-start">
+        {/* Asymmetric framed portrait — sits on the right, dropped to roughly
+            mid-title so it balances the taller bio column beside it. */}
         <motion.figure
           initial={{ opacity: 0, y: reduce ? 0 : 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={SPRING}
-          className="col-span-12 sm:col-span-6 lg:col-span-5 lg:col-start-1"
+          className="col-span-12 sm:col-span-6 sm:col-start-7 lg:col-span-5 lg:col-start-8 lg:mt-20"
         >
           <div className="relative mx-auto max-w-sm sm:max-w-none">
             {/* offset accent frame */}
@@ -57,7 +58,7 @@ export default function AboutMe() {
         </motion.figure>
 
         {/* Bio */}
-        <div className="col-span-12 sm:col-span-6 lg:col-span-6 lg:col-start-7">
+        <div className="col-span-12 sm:col-span-6 sm:col-start-1 lg:col-span-6 lg:col-start-1">
           <Label gradient={['#6E8CA8', '#C2613C']}>{PAINTER.label}</Label>
           <SplitText
             as="h2"
