@@ -14,6 +14,12 @@ export default function BeyondWeddings() {
       className="relative w-full overflow-hidden bg-rose px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper"
     >
       <img
+        src={asset('assets/20260624_040026247_iOS.png')}
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-[6vw] -left-[5vw] w-[32vw] max-w-[400px] opacity-25 mix-blend-screen"
+      />
+      <img
         src={asset('assets/20260624_040040289_iOS.png')}
         alt=""
         aria-hidden="true"
