@@ -403,7 +403,7 @@ export const FOOTER = {
     { href: '#beyond', label: 'Beyond weddings' },
     { href: '#faq', label: 'Questions' },
   ],
-  instagram: 'https://www.instagram.com/christopherwangpaints',
+  instagram: 'https://www.instagram.com/chriswangstudio',
 }
 
 export const NAV = [
