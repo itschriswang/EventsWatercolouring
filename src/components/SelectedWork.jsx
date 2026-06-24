@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
@@ -21,18 +21,31 @@ const hideOnError = (e) => {
  * masonry. Tapping a painting opens it in a lightbox.
  */
 export default function SelectedWork() {
-  // The painting currently enlarged in the lightbox (null when closed).
-  const [active, setActive] = useState(null)
+  // The openable paintings (testimonials are not enlargeable). The lightbox
+  // walks this list, so navigation skips quote cards automatically.
+  const paintings = WORK.gallery.filter((g) => !g.testimonial)
+
+  // Index of the painting currently enlarged in the lightbox (null when closed).
+  const [activeIndex, setActiveIndex] = useState(null)
+  const open = activeIndex != null
+
+  // Stable handlers so navigating between pieces doesn't churn the focus trap.
+  const close = useCallback(() => setActiveIndex(null), [])
+  // Step through the wall, wrapping at either end.
+  const navigate = useCallback(
+    (dir) => setActiveIndex((i) => (i + dir + paintings.length) % paintings.length),
+    [paintings.length],
+  )
 
   // Lock background scroll while the lightbox is open. Escape, focus trapping
   // and focus restoration are handled by useFocusTrap inside the Lightbox.
   useEffect(() => {
-    if (!active) return
+    if (!open) return
     document.body.style.overflow = 'hidden'
     return () => {
       document.body.style.overflow = ''
     }
-  }, [active])
+  }, [open])
 
   return (
     <section id="work" className="relative w-full px-[5vw] py-[clamp(3rem,7vw,7rem)]">
@@ -70,7 +83,7 @@ export default function SelectedWork() {
               key={i}
               item={item}
               index={i}
-              onOpen={item.testimonial ? undefined : () => setActive(item)}
+              onOpen={item.testimonial ? undefined : () => setActiveIndex(paintings.indexOf(item))}
               className={
                 item.feature ? 'col-span-2 row-span-2'
                 : item.wide  ? 'col-span-2 row-span-1'
@@ -87,14 +100,19 @@ export default function SelectedWork() {
               key={i}
               item={item}
               index={i}
-              onOpen={item.testimonial ? undefined : () => setActive(item)}
+              onOpen={item.testimonial ? undefined : () => setActiveIndex(paintings.indexOf(item))}
               masonry
             />
           ))}
         </div>
       </div>
 
-      <Lightbox item={active} onClose={() => setActive(null)} />
+      <Lightbox
+        items={paintings}
+        index={activeIndex}
+        onClose={close}
+        onNavigate={navigate}
+      />
     </section>
   )
 }
@@ -136,7 +154,10 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
           aria-label={`Enlarge ${item.ttl}`}
           className={
             cardShape +
-            ' block w-full cursor-zoom-in bg-paper-deep text-left outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-paper'
+            ' block w-full cursor-zoom-in bg-paper-deep text-left outline-none' +
+            ' transition-[transform,box-shadow] duration-500 ease-organic' +
+            ' group-hover:-translate-y-1 group-hover:shadow-[0_18px_42px_-26px_rgba(42,39,36,0.5)]' +
+            ' focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-paper'
           }
         >
           <picture>
@@ -203,14 +224,51 @@ function Testimonial({ item, compact = false, masonry = false }) {
   )
 }
 
+// A circular control matching the lightbox's close button — used for the
+// prev/next arrows. Stops propagation so it never reaches the backdrop's close.
+function NavControl({ label, onClick, className, children }) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={(e) => {
+        e.stopPropagation()
+        onClick()
+      }}
+      className={
+        'absolute top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center ' +
+        'rounded-full border border-paper/30 text-2xl text-paper transition-colors hover:bg-paper/10 ' +
+        className
+      }
+    >
+      {children}
+    </button>
+  )
+}
+
 /**
  * Lightbox — an overlay that grows the selected painting to fill the screen.
- * Closes on backdrop click, the close button, or Escape (handled by the
- * parent). Honours reduced-motion by skipping the scale-in.
+ * Walks the gallery with the on-screen arrows or the ← / → keys; closes on
+ * backdrop click, the close button, or Escape. The image crossfades between
+ * pieces. Honours reduced-motion by skipping the scale-in and crossfade.
  */
-function Lightbox({ item, onClose }) {
+function Lightbox({ items, index, onClose, onNavigate }) {
   const reduce = useReducedMotion()
-  const trapRef = useFocusTrap(!!item, onClose)
+  const open = index != null
+  const item = open ? items[index] : null
+  const trapRef = useFocusTrap(open, onClose)
+  const many = items.length > 1
+
+  // Left / right arrow keys walk the wall while the lightbox is open.
+  useEffect(() => {
+    if (!open || !many) return
+    const onKey = (e) => {
+      if (e.key === 'ArrowLeft') onNavigate(-1)
+      else if (e.key === 'ArrowRight') onNavigate(1)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, many, onNavigate])
 
   return (
     <AnimatePresence>
@@ -233,10 +291,21 @@ function Lightbox({ item, onClose }) {
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full border border-paper/30 text-2xl text-paper transition-colors hover:bg-paper/10"
+            className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-paper/30 text-2xl text-paper transition-colors hover:bg-paper/10"
           >
             ×
           </button>
+
+          {many && (
+            <>
+              <NavControl label="Previous piece" onClick={() => onNavigate(-1)} className="left-3 sm:left-5">
+                ‹
+              </NavControl>
+              <NavControl label="Next piece" onClick={() => onNavigate(1)} className="right-3 sm:right-5">
+                ›
+              </NavControl>
+            </>
+          )}
 
           <motion.figure
             onClick={(e) => e.stopPropagation()}
@@ -246,19 +315,35 @@ function Lightbox({ item, onClose }) {
             transition={SPRING_SOFT}
             className="flex max-h-full max-w-5xl flex-col items-center"
           >
-            <picture>
-              <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
-              <img
-                src={asset(`assets/${item.img}.jpg`)}
-                alt={item.alt || item.ttl}
-                onError={hideOnError}
-                className="max-h-[80vh] w-auto rounded-[1rem] object-contain shadow-2xl"
-              />
-            </picture>
+            {/* Keyed by index so the image crossfades as you move along the wall. */}
+            <AnimatePresence mode="wait">
+              <motion.picture
+                key={index}
+                initial={reduce ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={reduce ? { opacity: 1 } : { opacity: 0 }}
+                transition={{ duration: 0.22 }}
+                className="block"
+              >
+                <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
+                <img
+                  src={asset(`assets/${item.img}.jpg`)}
+                  alt={item.alt || item.ttl}
+                  onError={hideOnError}
+                  className="max-h-[80vh] w-auto rounded-[1rem] object-contain shadow-2xl"
+                />
+              </motion.picture>
+            </AnimatePresence>
             <figcaption className="mt-4 text-center">
               <span className="block font-display text-lg text-paper">{item.ttl}</span>
               <span className="mt-0.5 block font-mono text-[0.6rem] uppercase tracking-[0.18em] text-paper/60">
                 {item.meta}
+                {many && (
+                  <span className="text-paper/40">
+                    {'  ·  '}
+                    {String(index + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}
+                  </span>
+                )}
               </span>
             </figcaption>
           </motion.figure>

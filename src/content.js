@@ -389,6 +389,7 @@ export const ENQUIRY = {
   confirm: {
     title: 'Thank you.',
     body: 'Your message is with me. I will read it properly and write back soon, usually within a few days.',
+    sign: 'Christopher',
   },
 }
 
