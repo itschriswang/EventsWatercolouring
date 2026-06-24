@@ -1,19 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Watercolour star">
   <defs>
     <!-- Pigment wash: washed-out lighter centre blooming into deeper, pooled edges.
-         Colours sampled from the site palette (cornflower / teal / rose / magenta). -->
+         Colours sampled from the site palette (blush pink → orange → terracotta). -->
     <radialGradient id="wash" cx="42%" cy="38%" r="72%">
-      <stop offset="0%"  stop-color="#9FB7CC" />
-      <stop offset="38%" stop-color="#6E8CA8" />
-      <stop offset="72%" stop-color="#3A7F9D" />
-      <stop offset="100%" stop-color="#2C6982" />
+      <stop offset="0%"  stop-color="#F6C7A6" />
+      <stop offset="36%" stop-color="#E4889C" />
+      <stop offset="72%" stop-color="#ED8A33" />
+      <stop offset="100%" stop-color="#C2613C" />
     </radialGradient>
 
-    <!-- A second pigment that bleeds in from one petal, the way two washes meet. -->
-    <radialGradient id="bleed" cx="70%" cy="74%" r="60%">
-      <stop offset="0%"  stop-color="#C98B8C" stop-opacity="0.85" />
-      <stop offset="55%" stop-color="#B5395B" stop-opacity="0.45" />
-      <stop offset="100%" stop-color="#B5395B" stop-opacity="0" />
+    <!-- A second pigment that bleeds in from one petal, the way two washes meet:
+         a green wash (lime → sage) pooling into the lower point. -->
+    <radialGradient id="bleed" cx="68%" cy="76%" r="62%">
+      <stop offset="0%"  stop-color="#AEBF56" stop-opacity="0.9" />
+      <stop offset="55%" stop-color="#6E7E4E" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#6E7E4E" stop-opacity="0" />
     </radialGradient>
 
     <!-- Organic, bleeding edges: warp the shape with low-frequency noise. -->
@@ -43,7 +44,7 @@
   </defs>
 
   <!-- 1. Bleeding halo of pigment spreading into the page. -->
-  <use href="#star" fill="#3A7F9D" opacity="0.28" filter="url(#halo)" />
+  <use href="#star" fill="#ED8A33" opacity="0.28" filter="url(#halo)" />
 
   <!-- 2. Main wash with warped, organic watercolour edges. -->
   <g filter="url(#bleed-edge)">
@@ -51,7 +52,7 @@
     <!-- second colour blooming in -->
     <use href="#star" fill="url(#bleed)" />
     <!-- pooled, darker pigment rim where the wash dries at the edge -->
-    <use href="#star" fill="none" stroke="#234E63" stroke-width="1.1" opacity="0.55"
+    <use href="#star" fill="none" stroke="#A4502F" stroke-width="1.1" opacity="0.55"
       filter="url(#halo)" />
   </g>
 
