@@ -15,9 +15,14 @@ import { ENQUIRY } from '../content.js'
 const mailtoFor = (data) => {
   const body = [
     `Name: ${data.name}`,
-    data.partner && `Partner: ${data.partner}`,
+    data.phone && `Phone: ${data.phone}`,
     `Email: ${data.email}`,
-    data.date && `Date: ${data.date}`,
+    data.contactMethod && `Preferred contact: ${data.contactMethod}`,
+    data.date
+      ? `Date: ${data.date}`
+      : data.date_unknown
+      ? 'Date: Not sure yet'
+      : null,,
     data.venue && `Venue: ${data.venue}`,
     data.package && `Looking for: ${data.package}`,
     '',
@@ -40,6 +45,7 @@ export default function EnquireForm() {
   const reduce = useReducedMotion()
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
+  const [notSureDate, setNotSureDate] = useState(false)
   const [error, setError] = useState('')
   // Neutral, non-error guidance (e.g. when we hand off to the email client).
   const [notice, setNotice] = useState('')
@@ -183,9 +189,40 @@ export default function EnquireForm() {
                 </label>
 
                 <Field name="name" label="Your name" required autoComplete="name" />
-                <Field name="partner" label="Your partner’s name" autoComplete="off" />
+                <Field
+                  name="phone"
+                  label="Phone number"
+                  type="tel"
+                  autoComplete="tel"
+                  placeholder="e.g. 0400 000 000"
+                />
                 <Field name="email" label="Email" type="email" required autoComplete="email" />
-                <Field name="date" label="Wedding date" type="date" />
+                <div className="flex flex-col">
+                  <label
+                    htmlFor="f-date"
+                    className="mb-2 font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft"
+                  >
+                    Wedding date
+                  </label>
+                
+                  <input
+                    id="f-date"
+                    name="date"
+                    type="date"
+                    className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors focus:border-terracotta disabled:opacity-40"
+                    disabled={notSureDate}
+                  />
+                
+                  <label className="mt-3 inline-flex items-center gap-2 text-sm text-ink-soft">
+                    <input
+                      type="checkbox"
+                      name="date_unknown"
+                      onChange={(e) => setNotSureDate(e.target.checked)}
+                      className="accent-terracotta"
+                    />
+                    Not sure yet
+                  </label>
+                </div>
                 <Field name="venue" label="Venue or city" placeholder="e.g. Melbourne" />
 
                 <div className="flex flex-col">
@@ -215,6 +252,25 @@ export default function EnquireForm() {
                     placeholder="Tell me a little about the day, and the people who matter most."
                     className="resize-none border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft/60 focus:border-terracotta"
                   />
+                </div>
+                
+                <div className="flex flex-col sm:col-span-2">
+                  <label className="mb-2 font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
+                    Preferred contact method
+                  </label>
+                  <div className="flex gap-6">
+                    {['Email', 'Phone'].map((method) => (
+                      <label key={method} className="flex items-center gap-2 text-ink">
+                        <input
+                          type="radio"
+                          name="contactMethod"
+                          value={method}
+                          className="accent-terracotta"
+                        />
+                        <span className="text-sm">{method}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="flex flex-col gap-3 sm:col-span-2">
