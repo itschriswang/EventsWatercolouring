@@ -146,6 +146,6 @@ function Bloom({ active, reduce }) {
           />
         )
       })}
-
+    </div>
   )
 }
