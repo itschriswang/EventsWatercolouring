@@ -14,7 +14,7 @@ export const asset = (path) =>
 export const ENQUIRE_HREF = '#enquiry'
 
 // Placeholder enquiry address — swap for your real address before launch.
-export const EMAIL = 'info@chriswangstudio.com'
+export const EMAIL = 'create@chriswangstudio.com'
 
 // Formspree endpoint that receives enquiry submissions. Create a free form at
 // https://formspree.io, then paste its endpoint here (it looks like
