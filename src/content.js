@@ -4,7 +4,7 @@
 
 export const HERO = {
   lines: ['Painted', 'live, while', 'you celebrate.'],
-  emphasis: 'live',
+  emphasis: ['Painted', 'live'],
   linesMobile: ['Painted', 'live,', 'while you', 'celebrate.'],
   emphasisMobile: 'live,',
   lede: 'I set up at your reception and paint while the party carries on. A set number of your guests go home with their own small portrait, and you get one of the two of you, painted that night. Every piece is real watercolour on cotton paper.',
