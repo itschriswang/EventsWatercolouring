@@ -345,10 +345,6 @@ export const FAQ = {
       a: 'I do not frame the work. It comes to you on cotton paper, sleeved and ready for a frame.',
     },
     {
-      q: 'Do we get a digital copy?',
-      a: 'Yes. Every couple gets a high-resolution scan of their portrait to keep and reprint, handy for thank-you cards. If you want a file licensed for stationery, just ask.',
-    },
-    {
       q: 'How do we secure our date?',
       a: 'A 50% deposit holds your date, with the balance due two weeks before the wedding. I only confirm once the deposit is in, and then the date is yours.',
     },
