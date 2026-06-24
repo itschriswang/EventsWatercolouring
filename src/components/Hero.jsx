@@ -83,7 +83,14 @@ export default function Hero({ revealed }) {
               {HERO.lede}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-5">
-              <MagneticButton href={ENQUIRE_HREF}>Enquire</MagneticButton>
+              <MagneticButton href={ENQUIRE_HREF}>Enquire about your date</MagneticButton>
+              <a
+                href="#work"
+                className="group inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ink-soft transition-colors hover:text-terracotta"
+              >
+                See the work
+                <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">→</span>
+              </a>
             </div>
           </motion.div>
         </div>

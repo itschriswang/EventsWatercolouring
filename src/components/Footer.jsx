@@ -19,7 +19,7 @@ export default function Footer() {
           className="display-lg max-w-[18ch]"
         />
         <MagneticButton href={ENQUIRE_HREF} variant="paper">
-          Enquire
+          Enquire about your date
         </MagneticButton>
       </div>
 

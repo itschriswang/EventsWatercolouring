@@ -267,7 +267,7 @@ function NavSheet({ onClose }) {
           whileTap={{ scale: 0.96 }}
           transition={{ duration: 0.26, ease: EASE }}
         >
-          Enquire about your day
+          Enquire about your date
         </motion.a>
       </div>
     </motion.div>
