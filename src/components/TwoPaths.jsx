@@ -14,7 +14,7 @@ export default function TwoPaths() {
     >
       
       <div className="relative z-10 flex flex-col gap-4">
-        <Label fill="#F4EFE6" className="!text-paper/60">
+        <Label gradient={['#C9A23A', '#F4EFE6']} className="!text-paper/60">
           {PATHS.label}
         </Label>
         <SplitText

@@ -61,7 +61,7 @@ export default function AboutMe() {
 
         {/* Bio */}
         <div className="col-span-12 sm:col-span-6 lg:col-span-6 lg:col-start-7">
-          <Label>{PAINTER.label}</Label>
+          <Label gradient={['#6E8CA8', '#C2613C']}>{PAINTER.label}</Label>
           <SplitText
             as="h2"
             unit="char"

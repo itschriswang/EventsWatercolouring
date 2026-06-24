@@ -21,7 +21,7 @@ export default function Packages() {
 
   return (
     <section id="offerings" className="relative w-full px-[5vw] py-[clamp(4rem,10vw,9rem)]">
-      <Label>{PACKAGES.label}</Label>
+      <Label gradient={['#6E8CA8', '#C2613C']}>{PACKAGES.label}</Label>
       <SplitText
         as="h2"
         unit="char"
@@ -67,7 +67,7 @@ export default function Packages() {
           <ul className="mt-7 flex flex-1 flex-col gap-3 border-t border-line pt-7 text-sm text-ink/85">
             {PACKAGES.base.bullets.map((b) => (
               <li key={b} className="flex gap-3">
-                <Drop className="mt-0.5 h-4 w-auto shrink-0" />
+                <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#6E8CA8', '#C2613C']} />
                 {b}
               </li>
             ))}
@@ -91,7 +91,7 @@ export default function Packages() {
           <ul className="mt-6 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
             {PACKAGES.included.items.map((item) => (
               <li key={item} className="flex gap-3 text-sm text-ink/85">
-                <Drop className="mt-0.5 h-4 w-auto shrink-0" fill="#7E8B62" />
+                <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#7E8B62', '#AEBF56']} />
                 {item}
               </li>
             ))}
