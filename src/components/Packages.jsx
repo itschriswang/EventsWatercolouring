@@ -20,7 +20,7 @@ export default function Packages() {
   })
 
   return (
-    <section id="offerings" className="relative w-full px-[5vw] py-[clamp(4rem,10vw,9rem)]">
+    <section id="offerings" className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)]">
       <Label gradient={['#6E8CA8', '#C2613C']}>{PACKAGES.label}</Label>
       <SplitText
         as="h2"

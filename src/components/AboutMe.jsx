@@ -22,7 +22,7 @@ export default function AboutMe() {
     <section
       id="painter"
       ref={ref}
-      className="relative w-full px-[5vw] py-[clamp(4rem,10vw,9rem)]"
+      className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)]"
     >
       <div className="grid grid-cols-12 items-center gap-x-8 gap-y-12">
         {/* Asymmetric framed portrait */}

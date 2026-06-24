@@ -9,7 +9,7 @@ export default function Footer() {
   const reduce = useReducedMotion()
 
   return (
-    <footer className="relative w-full overflow-hidden bg-ink px-[5vw] py-[clamp(4rem,10vw,8rem)] text-paper">
+    <footer className="relative w-full overflow-hidden bg-ink px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper">
       <div className="flex flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">
         <SplitText
           as="p"

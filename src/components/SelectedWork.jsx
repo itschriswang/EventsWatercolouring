@@ -30,61 +30,63 @@ export default function SelectedWork() {
   }, [active])
 
   return (
-    <section id="work" className="relative w-full px-[5vw] py-[clamp(4rem,10vw,9rem)]">
-      <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <Label gradient={['#6E8CA8', '#C2613C']}>{WORK.label}</Label>
-          <SplitText
-            as="h2"
-            unit="char"
-            lines={WORK.title}
-            emphasis={WORK.emphasis}
-            className="display-lg mt-5 text-ink"
-          />
-        </div>
-        <div className="max-w-xs">
-          <p className="font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
-            {WORK.note}
-          </p>
-          {WORK.zoomHint && (
-            <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-terracotta">
-              {WORK.zoomHint}
+    <section id="work" className="relative w-full px-[5vw] py-[clamp(3rem,7vw,7rem)]">
+      <div className="mx-auto max-w-[88rem]">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <Label gradient={['#6E8CA8', '#C2613C']}>{WORK.label}</Label>
+            <SplitText
+              as="h2"
+              unit="char"
+              lines={WORK.title}
+              emphasis={WORK.emphasis}
+              className="display-lg mt-5 text-ink"
+            />
+          </div>
+          <div className="max-w-xs">
+            <p className="font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
+              {WORK.note}
             </p>
-          )}
+            {WORK.zoomHint && (
+              <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-terracotta">
+                {WORK.zoomHint}
+              </p>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Wide screens — a six-column wall of 3:4 portraits. `feature` pieces
-          fill a larger 2-wide focus block (still 3:4); dense flow tucks the
-          rest in around them. The cell height is tuned so the image card holds
-          a 3:4 ratio with the caption sitting just below it. */}
-      <div className="mt-[clamp(2.5rem,6vw,5rem)] hidden lg:grid lg:grid-cols-6 lg:auto-rows-[21vw] lg:gap-x-[1.4vw] lg:gap-y-6 lg:[grid-auto-flow:dense]">
-        {WORK.gallery.map((item, i) => (
-          <Tile
-            key={i}
-            item={item}
-            index={i}
-            onOpen={item.testimonial ? undefined : () => setActive(item)}
-            className={
-              item.feature ? 'col-span-2 row-span-2'
-              : item.wide  ? 'col-span-2 row-span-1'
-              :               'col-span-1 row-span-1'
-            }
-          />
-        ))}
-      </div>
+        {/* Wide screens — a six-column wall of 3:4 portraits. `feature` pieces
+            fill a larger 2-wide focus block; dense flow tucks the rest in around
+            them. Row height is capped so tiles stay a sensible size on very wide
+            screens. */}
+        <div className="mt-[clamp(2rem,4vw,3.5rem)] hidden lg:grid lg:grid-cols-6 lg:auto-rows-[16vw] 2xl:auto-rows-[14rem] lg:gap-x-[1.4vw] lg:gap-y-5 lg:[grid-auto-flow:dense]">
+          {WORK.gallery.map((item, i) => (
+            <Tile
+              key={i}
+              item={item}
+              index={i}
+              onOpen={item.testimonial ? undefined : () => setActive(item)}
+              className={
+                item.feature ? 'col-span-2 row-span-2'
+                : item.wide  ? 'col-span-2 row-span-1'
+                :               'col-span-1 row-span-1'
+              }
+            />
+          ))}
+        </div>
 
-      {/* Narrow / medium — a masonry wall (2 columns, then 3). */}
-      <div className="mt-[clamp(2rem,8vw,3rem)] columns-2 gap-3 sm:columns-3 lg:hidden">
-        {WORK.gallery.map((item, i) => (
-          <Tile
-            key={i}
-            item={item}
-            index={i}
-            onOpen={item.testimonial ? undefined : () => setActive(item)}
-            masonry
-          />
-        ))}
+        {/* Narrow / medium — a masonry wall (2 columns, then 3). */}
+        <div className="mt-[clamp(2rem,8vw,3rem)] columns-2 gap-3 sm:columns-3 lg:hidden">
+          {WORK.gallery.map((item, i) => (
+            <Tile
+              key={i}
+              item={item}
+              index={i}
+              onOpen={item.testimonial ? undefined : () => setActive(item)}
+              masonry
+            />
+          ))}
+        </div>
       </div>
 
       <Lightbox item={active} onClose={() => setActive(null)} />
@@ -164,14 +166,14 @@ function Testimonial({ item, compact = false, masonry = false }) {
     <blockquote
       className={
         'flex h-full flex-col justify-between p-[clamp(1.25rem,2vw,2rem)] ' +
-        (masonry ? 'gap-1' : compact ? 'gap-2' : 'gap-4')
+        (masonry ? 'gap-1' : compact ? 'gap-3' : 'gap-4')
       }
     >
       <span
         aria-hidden="true"
         className={
           'font-display leading-none text-terracotta/60 ' +
-          (masonry ? 'text-xl' : compact ? 'text-3xl' : 'text-5xl')
+          (masonry ? 'text-xl' : compact ? 'text-5xl' : 'text-5xl')
         }
       >
         &ldquo;
@@ -182,13 +184,13 @@ function Testimonial({ item, compact = false, masonry = false }) {
           (masonry
             ? 'text-[clamp(0.6rem,1.4vw,0.75rem)]'
             : compact
-            ? 'text-[clamp(0.75rem,1.05vw,1rem)]'
+            ? 'text-[clamp(0.9rem,1.5vw,1.35rem)]'
             : 'text-[clamp(0.95rem,1.4vw,1.4rem)]')
         }
       >
         {item.quote}
       </p>
-      <footer className="font-mono text-[0.6rem] uppercase tracking-[0.18em] text-ink-soft">
+      <footer className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-ink-soft">
         {item.author} · {item.detail}
       </footer>
     </blockquote>
