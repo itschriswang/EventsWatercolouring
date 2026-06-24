@@ -33,7 +33,7 @@ export default function AboutMe() {
           transition={SPRING}
           className="col-span-12 sm:col-span-6 lg:col-span-5 lg:col-start-1"
         >
-          <div className="relative">
+          <div className="relative mx-auto max-w-sm sm:max-w-none">
             {/* offset accent frame */}
             <div
               aria-hidden="true"
@@ -53,9 +53,6 @@ export default function AboutMe() {
                 />
               </picture>
             </motion.div>
-            <figcaption className="mt-3 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-ink-soft">
-              {PAINTER.caption}
-            </figcaption>
           </div>
         </motion.figure>
 
