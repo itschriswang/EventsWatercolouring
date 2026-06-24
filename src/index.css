@@ -89,6 +89,17 @@
   html {
     scroll-behavior: auto;
   }
+
+  /* Safety net for any CSS animation/transition not already gated in JS
+     (the bloom-field keyframes, hover transitions, etc.). */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Watercolour bloom-field — soft pigment halos drifting in the margins */

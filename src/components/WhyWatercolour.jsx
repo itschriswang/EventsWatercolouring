@@ -9,6 +9,9 @@ export default function WhyWatercolour() {
 
   return (
     <section id="why" className="relative w-full px-[5vw] py-[clamp(3rem,8vw,7rem)]">
+      {/* Visually the eyebrow + italic lede read as this section's heading; this
+          keeps the document outline correct (an h2 before the note h3s). */}
+      <h2 className="sr-only">{WHY.label}</h2>
       <Label gradient={['#6E8CA8', '#C2613C']}>{WHY.label}</Label>
 
       <motion.p
@@ -36,7 +39,7 @@ export default function WhyWatercolour() {
               (i === 1 ? 'lg:mt-16' : i === 2 ? 'lg:mt-8' : '')
             }
           >
-            <span className="font-mono text-sm text-terracotta">{n.no}</span>
+            <span className="font-mono text-sm text-rust">{n.no}</span>
             <h3 className="mt-4 font-display text-[clamp(1.4rem,2vw,2rem)] font-light leading-tight text-ink">
               {n.title}
             </h3>
