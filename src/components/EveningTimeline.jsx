@@ -23,12 +23,12 @@ export default function EveningTimeline() {
     >
       {/* faint bouquet cut, top-right */}
       <img
-        src={asset('assets/art-bouquet_transparent.webp')}
+        src={asset('assets/20260624_040026247_iOS.png')}
         alt=""
         aria-hidden="true"
         className={
           'pointer-events-none absolute -right-[6vw] -top-[6vw] w-[34vw] max-w-[420px] opacity-20' +
-          (lite ? '' : ' mix-blend-soft-light')
+          (lite ? '' : ' mix-blend-screen')
         }
       />
 
