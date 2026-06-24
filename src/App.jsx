@@ -15,6 +15,7 @@ import BeyondWeddings from './components/BeyondWeddings.jsx'
 import Faq from './components/Faq.jsx'
 import EnquireForm from './components/EnquireForm.jsx'
 import Footer from './components/Footer.jsx'
+import StudioFrog from './components/StudioFrog.jsx'
 
 /**
  * Live wedding watercolour — a full-bleed, immersive editorial single page.
@@ -57,6 +58,7 @@ export default function App() {
       </main>
 
       <Footer />
+      <StudioFrog />
     </div>
   )
 }
