@@ -146,12 +146,6 @@ function Bloom({ active, reduce }) {
           />
         )
       })}
-      {/* Soft paper highlight at the centre, gently pulsing with the bloom. */}
-      <motion.span
-        className="absolute inset-0 m-auto h-3 w-3 rounded-full bg-paper/70 blur-[2px]"
-        animate={reduce || active ? {} : { scale: [1, 1.5, 1], opacity: [0.7, 0.45, 0.7] }}
-        transition={reduce || active ? undefined : { duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
-      />
-    </div>
+
   )
 }
