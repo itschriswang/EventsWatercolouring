@@ -214,7 +214,7 @@ export const PACKAGES = {
     title: 'Live on the day',
     note: 'The base package, painted across your reception.',
     priceSmall: 'From',
-    price: '$1,000',
+    price: '$850',
     facts: ['3 hours live', '30 keepsakes', '~60 guests'],
     bullets: [
       'Guest portraits painted live, A5 on archival cotton paper',
@@ -241,24 +241,20 @@ export const PACKAGES = {
     {
       h: 'After-Event Service',
       p: 'Anyone I do not reach on the night gets finished in the studio and posted to you to pass on. You can also add guests beyond the booked number at this rate.',
-      tag: '$30 / guest',
+      tag: 'On enquiry/ per additional artwork',
       small: 'From',
     },
     {
       h: 'Family portrait, A3',
       p: 'You and your immediate family, painted larger on A3 from photos you send after the day.',
-      tag: '$500',
+      tag: '$400',
     },
     {
       h: 'Bridal party, A3',
       p: 'A group portrait of the bridal party on A3, the people closest to you on the day.',
-      tag: '$500',
+      tag: '$400',
     },
-    {
-      h: 'Spot illustrations',
-      p: 'Small paintings of the details: the venue, the cake, a glass raised, a corner of the room.',
-      tag: '$120 / each',
-    },
+
     {
       h: 'Extra live hours',
       p: 'I stay longer across the reception, so more of your guests get painted.',
@@ -282,7 +278,7 @@ export const PACKAGES = {
     {
       h: 'Wedding bouquet illustration',
       p: 'Your bouquet painted from photos after the day, on A3 cotton paper. A2 on request.',
-      tag: '$550',
+      tag: '$500',
       small: 'A3 from',
       extra: '· A2 on enquiry',
     },
