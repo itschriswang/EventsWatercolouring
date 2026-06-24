@@ -2,8 +2,15 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
+import useFocusTrap from '../hooks/useFocusTrap.js'
 import { SPRING, SPRING_SOFT, asset } from '../lib/site.js'
 import { WORK } from '../content.js'
+
+// Graceful fallback when an image fails to load: hide the broken <img> so the
+// paper-toned card and its caption remain instead of a broken-image glyph.
+const hideOnError = (e) => {
+  e.currentTarget.style.display = 'none'
+}
 
 /**
  * Selected work — a gallery wall driven entirely by `WORK.gallery` (see
@@ -17,14 +24,12 @@ export default function SelectedWork() {
   // The painting currently enlarged in the lightbox (null when closed).
   const [active, setActive] = useState(null)
 
-  // Close the lightbox on Escape, and lock background scroll while it is open.
+  // Lock background scroll while the lightbox is open. Escape, focus trapping
+  // and focus restoration are handled by useFocusTrap inside the Lightbox.
   useEffect(() => {
     if (!active) return
-    const onKey = (e) => e.key === 'Escape' && setActive(null)
-    window.addEventListener('keydown', onKey)
     document.body.style.overflow = 'hidden'
     return () => {
-      window.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
     }
   }, [active])
@@ -48,7 +53,7 @@ export default function SelectedWork() {
               {WORK.note}
             </p>
             {WORK.zoomHint && (
-              <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-terracotta">
+              <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-rust">
                 {WORK.zoomHint}
               </p>
             )}
@@ -140,6 +145,7 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
               src={asset(`assets/${item.img}.jpg`)}
               alt={item.alt || item.ttl}
               loading="lazy"
+              onError={hideOnError}
               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
             />
           </picture>
@@ -204,12 +210,15 @@ function Testimonial({ item, compact = false, masonry = false }) {
  */
 function Lightbox({ item, onClose }) {
   const reduce = useReducedMotion()
+  const trapRef = useFocusTrap(!!item, onClose)
 
   return (
     <AnimatePresence>
       {item && (
         <motion.div
           key="lightbox"
+          ref={trapRef}
+          tabIndex={-1}
           role="dialog"
           aria-modal="true"
           aria-label={item.ttl}
@@ -242,6 +251,7 @@ function Lightbox({ item, onClose }) {
               <img
                 src={asset(`assets/${item.img}.jpg`)}
                 alt={item.alt || item.ttl}
+                onError={hideOnError}
                 className="max-h-[80vh] w-auto rounded-[1rem] object-contain shadow-2xl"
               />
             </picture>

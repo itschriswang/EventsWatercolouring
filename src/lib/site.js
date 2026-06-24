@@ -21,3 +21,12 @@ export const EMAIL = 'hello@example.com'
 // https://formspree.io/f/abcdwxyz). Until a real id is set, the form falls
 // back to opening the visitor's email client with the enquiry pre-filled.
 export const FORMSPREE_ENDPOINT = 'https://formspree.io/f/your-form-id'
+
+// True once a real Formspree endpoint has been set (i.e. the placeholder id is
+// gone). The form uses this to decide whether it can confirm a real send.
+export const FORMSPREE_READY = !FORMSPREE_ENDPOINT.includes('your-form-id')
+
+// Lightweight email shape check — enough to catch typos before submit without
+// rejecting valid-but-unusual addresses.
+export const isValidEmail = (value = '') =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())

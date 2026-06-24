@@ -1,6 +1,7 @@
 import { motion, AnimatePresence, useDragControls } from 'framer-motion'
 import { useState } from 'react'
 import { ENQUIRE_HREF } from '../lib/site.js'
+import useFocusTrap from '../hooks/useFocusTrap.js'
 import { FOOTER } from '../content.js'
 
 // ─── Inline SVG icons — no external dependency ───────────────────────────────
@@ -151,9 +152,13 @@ function NavSheet({ onClose }) {
   // dragControls restricts drag initiation to the handle only — the nav list
   // can then scroll freely without accidentally triggering the dismiss gesture.
   const dragControls = useDragControls()
+  // Trap focus while the sheet is open, close on Escape, restore focus on close.
+  const trapRef = useFocusTrap(true, onClose)
 
   return (
     <motion.div
+      ref={trapRef}
+      tabIndex={-1}
       role="dialog"
       aria-modal="true"
       aria-label="Site navigation"
