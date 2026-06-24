@@ -104,9 +104,7 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
 
   const cardShape =
     'relative overflow-hidden rounded-[1rem] border border-line ' +
-    (masonry
-      ? item.testimonial ? 'min-h-[12rem]' : 'aspect-[3/4]'
-      : 'min-h-0 flex-1')
+    (masonry ? 'aspect-[3/4]' : 'min-h-0 flex-1')
 
   return (
     <motion.figure
@@ -117,13 +115,12 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
       className={
         'group flex flex-col ' +
         (masonry ? 'mb-6 break-inside-avoid ' : '') +
-        (masonry && item.testimonial ? '[column-span:all] ' : '') +
         className
       }
     >
       {item.testimonial ? (
         <div className={cardShape + ' bg-paper-deep'}>
-          <Testimonial item={item} compact={!masonry && !!item.wide} />
+          <Testimonial item={item} compact={!!item.wide} masonry={masonry} />
         </div>
       ) : (
         <button
@@ -160,20 +157,21 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
 }
 
 /** The quote card body — fills the card shape and scales its type to fit.
- *  `compact` is true for wide (2-col, 1-row) tiles where vertical space is halved. */
-function Testimonial({ item, compact = false }) {
+ *  `compact` is true for wide (2-col, 1-row) tiles where vertical space is halved.
+ *  `masonry` squeezes the open-quote mark and tightens the gap so the text fits the half-width 3:4 card. */
+function Testimonial({ item, compact = false, masonry = false }) {
   return (
     <blockquote
       className={
         'flex h-full flex-col justify-between p-[clamp(1.25rem,2vw,2rem)] ' +
-        (compact ? 'gap-2' : 'gap-4')
+        (masonry ? 'gap-1' : compact ? 'gap-2' : 'gap-4')
       }
     >
       <span
         aria-hidden="true"
         className={
           'font-display leading-none text-terracotta/60 ' +
-          (compact ? 'text-3xl' : 'text-5xl')
+          (masonry ? 'text-xl' : compact ? 'text-3xl' : 'text-5xl')
         }
       >
         &ldquo;
@@ -181,7 +179,9 @@ function Testimonial({ item, compact = false }) {
       <p
         className={
           'font-display font-light leading-snug text-ink ' +
-          (compact
+          (masonry
+            ? 'text-[clamp(0.6rem,1.4vw,0.75rem)]'
+            : compact
             ? 'text-[clamp(0.75rem,1.05vw,1rem)]'
             : 'text-[clamp(0.95rem,1.4vw,1.4rem)]')
         }
