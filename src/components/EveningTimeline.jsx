@@ -64,7 +64,7 @@ export default function EveningTimeline() {
               >
                 <span
                   className={
-                    'pointer-events-none absolute right-0 top-4 font-display text-[clamp(4rem,9vw,8rem)] font-light leading-none text-paper opacity-20' +
+                    'pointer-events-none absolute right-0 top-4 font-display text-[clamp(4rem,9vw,8rem)] font-light leading-none text-paper opacity-20 tabular-nums' +
                     (lite ? '' : ' mix-blend-overlay')
                   }
                   aria-hidden="true"
