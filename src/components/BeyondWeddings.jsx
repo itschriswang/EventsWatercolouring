@@ -20,7 +20,7 @@ export default function BeyondWeddings() {
         className="pointer-events-none absolute -bottom-[6vw] -left-[5vw] w-[32vw] max-w-[400px] opacity-20 mix-blend-soft-light"
       />
 
-      <Label fill="#F4EFE6" className="!text-paper/70">
+      <Label gradient={['#F4EFE6', '#E4889C']} className="!text-paper/70">
         {BEYOND.label}
       </Label>
       <SplitText

@@ -33,7 +33,7 @@ export default function SelectedWork() {
     <section id="work" className="relative w-full px-[5vw] py-[clamp(4rem,10vw,9rem)]">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <Label>{WORK.label}</Label>
+          <Label gradient={['#6E8CA8', '#C2613C']}>{WORK.label}</Label>
           <SplitText
             as="h2"
             unit="char"
@@ -167,13 +167,13 @@ function Testimonial({ item, compact = false }) {
       }
     >
       <span
-        aria-hidden=”true”
+        aria-hidden="true"
         className={
           'font-display leading-none text-terracotta/60 ' +
           (compact ? 'text-3xl' : 'text-5xl')
         }
       >
-        “
+        &ldquo;
       </span>
       <p
         className={
@@ -185,7 +185,7 @@ function Testimonial({ item, compact = false }) {
       >
         {item.quote}
       </p>
-      <footer className=”font-mono text-[0.6rem] uppercase tracking-[0.18em] text-ink-soft”>
+      <footer className="font-mono text-[0.6rem] uppercase tracking-[0.18em] text-ink-soft">
         {item.author} · {item.detail}
       </footer>
     </blockquote>
