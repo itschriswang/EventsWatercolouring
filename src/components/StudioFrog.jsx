@@ -92,7 +92,7 @@ export default function StudioFrog() {
       >
         {/* Idle bob — gentle float independent of the hop translation above */}
         <motion.img
-          src={asset('assets/20260312_231343000_iOS.png')}
+          src={asset('assets/studio-frog.png')}
           alt=""
           className="w-20 mix-blend-multiply"
           style={{ filter: reduce ? undefined : 'url(#frog-shimmer)' }}
