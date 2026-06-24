@@ -124,9 +124,6 @@ export const PATHS = {
 
 export const WORK = {
   label: 'Selected work',
-  title: ['Pigment on', 'cotton archival watercolour paper.'],
-  emphasis: 'cotton rag.',
-  note: 'Painted by hand on 300gsm A5 watercolour pads.',
   zoomHint: 'Tap any piece to enlarge.',
   title: ['Real watercolour, on', 'cotton paper.'],
   emphasis: 'cotton paper.',
@@ -215,7 +212,7 @@ export const PACKAGES = {
     note: 'The base package, painted across your reception.',
     priceSmall: 'From',
     price: '$850',
-    facts: ['3 hours live', '30 keepsakes', '~60 guests'],
+    facts: ['3 hours live', '30 keepsakes', 'suits ~60 guests'],
     bullets: [
       'Guest portraits painted live, A5 on archival cotton paper',
       'A portrait of the two of you, painted on the night and left with you',
@@ -239,10 +236,9 @@ export const PACKAGES = {
   addonsHead: { title: 'Add-ons', note: 'Priced on enquiry' },
   addons: [
     {
-      h: 'After-Event Service',
+      h: 'Guests I finish afterwards',
       p: 'Anyone I do not reach on the night gets finished in the studio and posted to you to pass on. You can also add guests beyond the booked number at this rate.',
-      tag: 'On enquiry/ per additional artwork',
-      small: 'From',
+      tag: 'Per portrait · on enquiry',
     },
     {
       h: 'Family portrait, A3',

@@ -50,6 +50,7 @@ export default function AboutMe() {
                   src={asset(PAINTER.portrait)}
                   alt="Christopher Wang, the painter."
                   loading="lazy"
+                  onError={(e) => (e.currentTarget.style.display = 'none')}
                   className="h-full w-full object-cover"
                 />
               </picture>
@@ -76,7 +77,7 @@ export default function AboutMe() {
             {PAINTER.signature}
           </p>
           <div className="mt-8">
-            <MagneticButton href={ENQUIRE_HREF}>Enquire</MagneticButton>
+            <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
           </div>
         </div>
       </div>

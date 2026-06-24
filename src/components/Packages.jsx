@@ -73,7 +73,7 @@ export default function Packages() {
             ))}
           </ul>
           <div className="mt-8">
-            <MagneticButton href={ENQUIRE_HREF}>Enquire</MagneticButton>
+            <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
           </div>
         </motion.article>
 
@@ -127,10 +127,10 @@ export default function Packages() {
             }
           >
             <div className="flex items-start justify-between gap-4">
-              <h4 className="font-display text-xl font-normal text-ink">{a.h}</h4>
+              <h4 className="font-display text-xl font-normal text-ink [overflow-wrap:anywhere]">{a.h}</h4>
             </div>
             <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-soft">{a.p}</p>
-            <p className="mt-5 font-mono text-sm text-terracotta">
+            <p className="mt-5 font-mono text-sm text-rust">
               {a.small && (
                 <span className="mr-1 text-[0.6rem] uppercase tracking-[0.15em] text-ink-soft">
                   {a.small}

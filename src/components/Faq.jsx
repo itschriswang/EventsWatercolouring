@@ -31,7 +31,9 @@ export default function Faq() {
                   <h3>
                     <button
                       type="button"
+                      id={`faq-q-${i}`}
                       aria-expanded={isOpen}
+                      aria-controls={`faq-a-${i}`}
                       onClick={() => setOpen(isOpen ? null : i)}
                       className="flex w-full items-center justify-between gap-6 py-6 text-left transition-colors hover:text-terracotta"
                     >
@@ -51,6 +53,9 @@ export default function Faq() {
                   <AnimatePresence initial={false}>
                     {isOpen && (
                       <motion.div
+                        id={`faq-a-${i}`}
+                        role="region"
+                        aria-labelledby={`faq-q-${i}`}
                         initial={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
                         animate={reduce ? { opacity: 1 } : { height: 'auto', opacity: 1 }}
                         exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}

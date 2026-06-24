@@ -1,7 +1,13 @@
 import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label from './Label.jsx'
-import { SPRING, EMAIL, FORMSPREE_ENDPOINT } from '../lib/site.js'
+import {
+  SPRING,
+  EMAIL,
+  FORMSPREE_ENDPOINT,
+  FORMSPREE_READY,
+  isValidEmail,
+} from '../lib/site.js'
 import { ENQUIRY } from '../content.js'
 
 // Compose a mailto: link from the enquiry fields — used as a graceful fallback
@@ -35,22 +41,40 @@ export default function EnquireForm() {
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState('')
+  // Neutral, non-error guidance (e.g. when we hand off to the email client).
+  const [notice, setNotice] = useState('')
+
+  // Focus the first field that failed validation so keyboard and screen-reader
+  // users land on the problem instead of hunting for it.
+  const focusField = (form, name) => form?.elements?.[name]?.focus?.()
 
   const onSubmit = async (e) => {
     e.preventDefault()
     const form = e.currentTarget
     if (form._gotcha.value) return // honeypot tripped
     const data = Object.fromEntries(new FormData(form).entries())
-    if (!data.name?.trim() || !data.email?.trim()) {
-      setError('Please add your name and email so I can reply.')
+
+    setNotice('')
+    if (!data.name?.trim()) {
+      setError('Please add your name so I know who I am writing back to.')
+      focusField(form, 'name')
+      return
+    }
+    if (!data.email?.trim() || !isValidEmail(data.email)) {
+      setError('That email looks off — please check it, like name@example.com.')
+      focusField(form, 'email')
       return
     }
     setError('')
 
-    // Fall back to a mailto when no real Formspree id has been set yet.
-    if (FORMSPREE_ENDPOINT.includes('your-form-id')) {
+    // No real Formspree id set yet: hand the enquiry to the visitor's email
+    // client. We can't confirm it actually sent, so we DON'T show the success
+    // state — we guide them instead.
+    if (!FORMSPREE_READY) {
       window.location.href = mailtoFor(data)
-      setSent(true)
+      setNotice(
+        `Opening your email app so you can send this straight to me. If nothing happens, email ${EMAIL} directly.`,
+      )
       return
     }
 
@@ -62,11 +86,12 @@ export default function EnquireForm() {
         body: new FormData(form),
       })
       if (!res.ok) throw new Error('Bad response')
+      // Only now, on a confirmed send, do we show the thank-you.
       setSent(true)
     } catch {
       // Network or server error — let them reach me by email instead.
       setError(
-        'Something went wrong sending that. Please email me directly and I will reply.',
+        `Something went wrong sending that. Please email me directly at ${EMAIL} and I will reply.`,
       )
       window.location.href = mailtoFor(data)
     } finally {
@@ -171,6 +196,11 @@ export default function EnquireForm() {
                   {error && (
                     <p role="alert" className="font-mono text-xs text-rust">
                       {error}
+                    </p>
+                  )}
+                  {notice && !error && (
+                    <p role="status" className="max-w-md font-mono text-xs leading-relaxed text-ink-soft">
+                      {notice}
                     </p>
                   )}
                 </div>
