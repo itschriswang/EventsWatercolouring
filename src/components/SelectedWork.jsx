@@ -104,8 +104,9 @@ export default function SelectedWork() {
 function Tile({ item, index, className = '', masonry = false, onOpen }) {
   const reduce = useReducedMotion()
 
+  const bgClass = item.dark ? 'bg-ink' : 'bg-paper-deep'
   const cardShape =
-    'relative overflow-hidden rounded-[1rem] border border-line ' +
+    `relative overflow-hidden rounded-[1rem] border border-line ${bgClass} ` +
     (masonry ? 'aspect-[3/4]' : 'min-h-0 flex-1')
 
   return (
@@ -131,18 +132,27 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
           aria-label={`Enlarge ${item.ttl}`}
           className={
             cardShape +
-            ' block w-full cursor-zoom-in bg-paper-deep text-left outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-paper'
+            ' block w-full cursor-zoom-in text-left outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-paper'
           }
         >
-          <picture>
-            <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
+          {item.src ? (
             <img
-              src={asset(`assets/${item.img}.jpg`)}
+              src={asset(item.src)}
               alt={item.alt || item.ttl}
               loading="lazy"
               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
             />
-          </picture>
+          ) : (
+            <picture>
+              <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
+              <img
+                src={asset(`assets/${item.img}.jpg`)}
+                alt={item.alt || item.ttl}
+                loading="lazy"
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+              />
+            </picture>
+          )}
         </button>
       )}
 
@@ -237,14 +247,22 @@ function Lightbox({ item, onClose }) {
             transition={SPRING_SOFT}
             className="flex max-h-full max-w-5xl flex-col items-center"
           >
-            <picture>
-              <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
+            {item.src ? (
               <img
-                src={asset(`assets/${item.img}.jpg`)}
+                src={asset(item.src)}
                 alt={item.alt || item.ttl}
                 className="max-h-[80vh] w-auto rounded-[1rem] object-contain shadow-2xl"
               />
-            </picture>
+            ) : (
+              <picture>
+                <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
+                <img
+                  src={asset(`assets/${item.img}.jpg`)}
+                  alt={item.alt || item.ttl}
+                  className="max-h-[80vh] w-auto rounded-[1rem] object-contain shadow-2xl"
+                />
+              </picture>
+            )}
             <figcaption className="mt-4 text-center">
               <span className="block font-display text-lg text-paper">{item.ttl}</span>
               <span className="mt-0.5 block font-mono text-[0.6rem] uppercase tracking-[0.18em] text-paper/60">

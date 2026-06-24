@@ -14,10 +14,10 @@ export default function BeyondWeddings() {
       className="relative w-full overflow-hidden bg-rose px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper"
     >
       <img
-        src={asset('assets/art-bouquet_transparent.webp')}
+        src={asset('assets/20260624_040040289_iOS.png')}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-[6vw] -left-[5vw] w-[32vw] max-w-[400px] opacity-20 mix-blend-soft-light"
+        className="pointer-events-none absolute -bottom-[6vw] -right-[5vw] w-[38vw] max-w-[460px] opacity-30 mix-blend-screen"
       />
 
       <Label gradient={['#F4EFE6', '#E4889C']} className="!text-paper/70">
