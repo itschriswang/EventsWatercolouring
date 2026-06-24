@@ -29,7 +29,7 @@ export default function EveningTimeline() {
         className="pointer-events-none absolute inset-0 overflow-hidden"
       >
         <img
-          src={asset('assets/20260624_040026247_iOS.png')}
+          src={asset('assets/bloom-accent-1.png')}
           alt=""
           className={
             'absolute -right-[6vw] -top-[6vw] w-[34vw] max-w-[420px] opacity-20' +
