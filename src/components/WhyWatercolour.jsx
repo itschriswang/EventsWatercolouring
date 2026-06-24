@@ -9,7 +9,7 @@ export default function WhyWatercolour() {
 
   return (
     <section id="why" className="relative w-full px-[5vw] py-[clamp(2.25rem,5.5vw,5rem)]">
-      <Label>{WHY.label}</Label>
+      <Label gradient={['#6E8CA8', '#C2613C']}>{WHY.label}</Label>
 
       <motion.p
         initial={{ opacity: 0, y: reduce ? 0 : 24 }}

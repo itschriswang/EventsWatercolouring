@@ -36,7 +36,7 @@ export default function EveningTimeline() {
         {/* Sticky title rail */}
         <div className="col-span-12 lg:col-span-5">
           <div className="lg:sticky lg:top-24 lg:h-fit">
-            <Label fill="#F4EFE6" className="!text-paper/70">
+            <Label gradient={['#C9A23A', '#F4EFE6']} className="!text-paper/70">
               {EVENING.label}
             </Label>
             <h2 className="mt-1 font-display text-[clamp(2.5rem,4vw,4.5rem)] font-light uppercase leading-[0.85] tracking-tight">
