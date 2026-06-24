@@ -83,7 +83,7 @@ export default function Hero({ revealed }) {
               {HERO.lede}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-5">
-              <MagneticButton href={ENQUIRE_HREF}>Enquire</MagneticButton>
+              <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
             </div>
           </motion.div>
         </div>
@@ -122,12 +122,16 @@ export default function Hero({ revealed }) {
                   transition={{ ...SPRING_SOFT, delay: 0.8 }}
                   className="overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)]"
                 >
-                  <img
-                    src={asset('assets/art-bouquet.webp')}
-                    alt="A watercolour bouquet study held to the light."
-                    className="aspect-[4/5] w-full object-cover sm:aspect-auto sm:h-auto lg:h-[38vh]"
-                    loading="eager"
-                  />
+                  <picture>
+                    <source srcSet={asset('assets/art-bouquet.webp')} type="image/webp" />
+                    <img
+                      src={asset('assets/art-bouquet.jpg')}
+                      alt="A watercolour bouquet study held to the light."
+                      className="aspect-[4/5] w-full object-cover sm:aspect-auto sm:h-auto lg:h-[38vh]"
+                      loading="eager"
+                      onError={(e) => (e.currentTarget.style.display = 'none')}
+                    />
+                  </picture>
                   <figcaption className="bg-paper px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft sm:px-3 sm:py-2 sm:text-[0.6rem] sm:tracking-[0.2em]">
                     No. 002 · Bouquet
                   </figcaption>
@@ -145,12 +149,16 @@ export default function Hero({ revealed }) {
                   whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
                   className="overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)]"
                 >
-                  <img
-                    src={asset('assets/art-character-boy.webp')}
-                    alt="A small watercolour character study at the palette."
-                    className="aspect-[4/5] w-full object-cover sm:aspect-auto sm:h-auto lg:h-[42vh]"
-                    loading="eager"
-                  />
+                  <picture>
+                    <source srcSet={asset('assets/art-character-boy.webp')} type="image/webp" />
+                    <img
+                      src={asset('assets/art-character-boy.jpg')}
+                      alt="A small watercolour character study at the palette."
+                      className="aspect-[4/5] w-full object-cover sm:aspect-auto sm:h-auto lg:h-[42vh]"
+                      loading="eager"
+                      onError={(e) => (e.currentTarget.style.display = 'none')}
+                    />
+                  </picture>
                   <figcaption className="bg-paper px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft sm:px-3 sm:py-2 sm:text-[0.6rem] sm:tracking-[0.2em]">
                     No. 001 · Cotton paper
                   </figcaption>
