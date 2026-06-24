@@ -95,7 +95,7 @@ export default function Hero({ revealed }) {
             layered artworks. */}
         <motion.div
           style={parallax ? { y: artY } : {}}
-          className="relative z-10 col-span-4 col-start-1 lg:col-span-5 lg:col-start-8 lg:mb-[15vh]"
+          className="relative z-10 col-span-4 col-start-1 lg:col-span-5 lg:col-start-8 lg:mb-[4vh]"
         >
           <div className="flex items-start gap-3 sm:block">
             {/* Mobile-only sub-text (the desktop copy lives under the headline). */}
@@ -115,7 +115,7 @@ export default function Hero({ revealed }) {
               {/* Bouquet — lower, slightly behind, still very visible. The
                   mobile drop lives on this wrapper so the figure's entrance
                   transform doesn't clobber it. */}
-              <div className="relative z-0 w-[56%] shrink-0 translate-x-[6%] translate-y-[32%] sm:w-[52%] sm:translate-y-0 sm:-ml-[8%] lg:-ml-[10%]">
+              <div className="relative z-0 w-[56%] shrink-0 translate-x-[6%] translate-y-[32%] sm:translate-x-0 sm:w-[52%] sm:translate-y-0 sm:-ml-[8%] lg:-ml-[10%]">
                 <motion.figure
                   initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : -6 }}
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : -6 } : { opacity: 0 }}
@@ -125,7 +125,7 @@ export default function Hero({ revealed }) {
                   <img
                     src={asset('assets/art-bouquet.webp')}
                     alt="A watercolour bouquet study held to the light."
-                    className="aspect-[3/4] w-full object-cover sm:aspect-auto sm:h-auto lg:h-[38vh]"
+                    className="aspect-[4/5] w-full object-cover sm:aspect-auto sm:h-auto lg:h-[38vh]"
                     loading="eager"
                   />
                   <figcaption className="bg-paper px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft sm:px-3 sm:py-2 sm:text-[0.6rem] sm:tracking-[0.2em]">
@@ -137,7 +137,7 @@ export default function Hero({ revealed }) {
               {/* Character — raised much higher, in front, overlapping. The
                   lift lives on this wrapper so the figure's hover transform
                   doesn't clobber it. */}
-              <div className="relative z-10 -ml-[12%] w-[58%] shrink-0 -translate-y-[10%] sm:-ml-[14%] sm:w-[54%] sm:-translate-y-[30%]">
+              <div className="relative z-10 -ml-[12%] w-[58%] shrink-0 -translate-y-[10%] sm:-ml-[14%] sm:w-[54%] sm:-translate-y-[30%] lg:translate-y-0">
                 <motion.figure
                   initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : 4 }}
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : 3 } : { opacity: 0 }}
@@ -148,7 +148,7 @@ export default function Hero({ revealed }) {
                   <img
                     src={asset('assets/art-character-boy.webp')}
                     alt="A small watercolour character study at the palette."
-                    className="aspect-[3/4] w-full object-cover sm:aspect-auto sm:h-auto lg:h-[42vh]"
+                    className="aspect-[4/5] w-full object-cover sm:aspect-auto sm:h-auto lg:h-[42vh]"
                     loading="eager"
                   />
                   <figcaption className="bg-paper px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft sm:px-3 sm:py-2 sm:text-[0.6rem] sm:tracking-[0.2em]">
