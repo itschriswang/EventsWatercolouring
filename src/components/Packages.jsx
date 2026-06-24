@@ -73,7 +73,7 @@ export default function Packages() {
             ))}
           </ul>
           <div className="mt-8">
-            <MagneticButton href={ENQUIRE_HREF}>Enquire</MagneticButton>
+            <MagneticButton href={ENQUIRE_HREF}>Enquire about your date</MagneticButton>
           </div>
         </motion.article>
 
