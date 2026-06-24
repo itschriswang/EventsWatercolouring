@@ -54,7 +54,7 @@ export const EVENING = {
     {
       no: '02',
       title: 'No need to pose',
-      body: 'Your guests keep enjoying the night. Someone takes a quick photo and notes their name as they pass, so nobody has to stop or sit still for me.',
+      body: 'Your guests keep enjoying the night. I take a quick photo and note their name as they pass, so nobody has to stop or sit still for me.',
     },
     {
       no: '03',
@@ -162,30 +162,7 @@ export const WORK = {
   ],
 }
 
-export const MOTION = {
-  label: 'In motion',
-  title: ['Watch a piece', 'come together.'],
-  emphasis: 'come together.',
-  body: 'A couple of short clips of the paint going down. Between weddings I paint small character portraits too, somewhere in the world of art toys. It keeps my hand loose and my eye sharp.',
-  films: [
-    {
-      src: 'assets/reel-painting-1.mp4',
-      poster: 'assets/reel-painting-1.webp',
-      caption: 'Painting in progress',
-    },
-    {
-      src: 'assets/reel-painting-2.mp4',
-      poster: 'assets/reel-painting-2.webp',
-      caption: 'Laying in the wash',
-    },
-  ],
-  instagram: [
-    'https://www.instagram.com/reel/DUzCi-LEvAc/',
-    'https://www.instagram.com/reel/DU38HYjk_T1/',
-    'https://www.instagram.com/reel/DU9hsOjiOXt/',
-    'https://www.instagram.com/reel/DVQIr0KiJql/',
-  ],
-}
+
 
 export const PAINTER = {
   label: 'The painter',
