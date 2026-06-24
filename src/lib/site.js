@@ -6,7 +6,7 @@ export const SPRING = { type: 'spring', stiffness: 100, damping: 20 }
 export const SPRING_SOFT = { type: 'spring', stiffness: 70, damping: 18 }
 
 // Resolve a /public asset against Vite's configured base path so URLs
-// stay correct under the GitHub Pages sub-path (/EventsWatercolouring/).
+// stay correct regardless of where the site is served from.
 export const asset = (path) =>
   `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
 
