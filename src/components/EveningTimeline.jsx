@@ -19,18 +19,24 @@ export default function EveningTimeline() {
   return (
     <section
       id="night"
-      className="relative w-full overflow-hidden bg-rust px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper"
+      className="relative w-full bg-rust px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper"
     >
-      {/* faint bouquet cut, top-right */}
-      <img
-        src={asset('assets/20260624_040026247_iOS.png')}
-        alt=""
+      {/* faint bouquet cut, top-right. Clipped by its own wrapper rather than
+          the section: putting overflow-hidden on the <section> would make it a
+          scroll container and silently break the sticky title rail below. */}
+      <div
         aria-hidden="true"
-        className={
-          'pointer-events-none absolute -right-[6vw] -top-[6vw] w-[34vw] max-w-[420px] opacity-20' +
-          (lite ? '' : ' mix-blend-screen')
-        }
-      />
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
+        <img
+          src={asset('assets/20260624_040026247_iOS.png')}
+          alt=""
+          className={
+            'absolute -right-[6vw] -top-[6vw] w-[34vw] max-w-[420px] opacity-20' +
+            (lite ? '' : ' mix-blend-screen')
+          }
+        />
+      </div>
 
       <div className="grid grid-cols-12 gap-x-8">
         {/* Sticky title rail */}
