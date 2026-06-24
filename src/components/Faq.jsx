@@ -15,7 +15,7 @@ export default function Faq() {
       <div className="grid grid-cols-12 gap-x-8">
         <div className="col-span-12 lg:col-span-4">
           <div className="lg:sticky lg:top-24 lg:h-fit">
-            <Label>{FAQ.label}</Label>
+            <Label gradient={['#6E8CA8', '#C2613C']}>{FAQ.label}</Label>
             <h2 className="mt-5 font-display text-[clamp(2rem,4vw,3.5rem)] font-light uppercase leading-[0.9] tracking-tight text-ink">
               {FAQ.title}
             </h2>
@@ -44,7 +44,7 @@ export default function Faq() {
                         className="shrink-0"
                         aria-hidden="true"
                       >
-                        <Drop className="h-5 w-auto" />
+                        <Drop className="h-5 w-auto" gradient={['#6E8CA8', '#C2613C']} />
                       </motion.span>
                     </button>
                   </h3>
