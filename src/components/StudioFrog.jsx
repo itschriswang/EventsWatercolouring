@@ -78,6 +78,7 @@ export default function StudioFrog() {
       {/* Paper shelf: light surface for mix-blend-multiply + spring + entrance wiggle */}
       <motion.div
         className="pointer-events-auto cursor-pointer rounded-t-2xl bg-paper px-3 pt-2 shadow-[0_-4px_20px_rgba(42,39,36,0.12)]"
+        initial={{ y: '60%' }}
         animate={{
           y: isUp ? '0%' : '60%',
           rotate: isUp ? [0, -5, 4, -2, 0] : 0,
