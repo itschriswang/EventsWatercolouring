@@ -233,7 +233,7 @@ export const PACKAGES = {
       'Live painting across your reception',
       'Set-up about 15 minutes before I start',
       'Public liability insurance',
-      'Travel within about 1.5 hours of the Melbourne CBD',
+      'Travel within about 1.5 hours of Melbourne or Sydney metro',
     ],
   },
   addonsHead: { title: 'Add-ons', note: 'Priced on enquiry' },
@@ -346,7 +346,7 @@ export const FAQ = {
     },
     {
       q: 'Do you travel?',
-      a: 'Travel is included for venues within about 1.5 hours of the Melbourne CBD. Further out, including regional Victoria and destination weddings, I am happy to discuss it and quote travel on enquiry. Just tell me your venue.',
+      a: 'Travel is included for venues within about 1.5 hours of Melbourne or Sydney metro. Further out, including regional Victoria, regional NSW, and destination weddings, I am happy to discuss it and quote travel on enquiry. Just tell me your venue.',
     },
     {
       q: 'Do you frame the work?',
