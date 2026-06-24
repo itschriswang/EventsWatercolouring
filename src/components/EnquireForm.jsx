@@ -22,7 +22,7 @@ const mailtoFor = (data) => {
       ? `Date: ${data.date}`
       : data.date_unknown
       ? 'Date: Not sure yet'
-      : null,,
+      : null,
     data.venue && `Venue: ${data.venue}`,
     data.package && `Looking for: ${data.package}`,
     '',
@@ -197,31 +197,22 @@ export default function EnquireForm() {
                   placeholder="e.g. 0400 000 000"
                 />
                 <Field name="email" label="Email" type="email" required autoComplete="email" />
-                <div className="flex flex-col">
+                <div className="flex flex-col sm:col-span-2">
                   <label
-                    htmlFor="f-date"
+                    htmlFor="f-contactMethod"
                     className="mb-2 font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft"
                   >
-                    Wedding date
+                    Preferred contact
                   </label>
-                
-                  <input
-                    id="f-date"
-                    name="date"
-                    type="date"
-                    className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors focus:border-terracotta disabled:opacity-40"
-                    disabled={notSureDate}
-                  />
-                
-                  <label className="mt-3 inline-flex items-center gap-2 text-sm text-ink-soft">
-                    <input
-                      type="checkbox"
-                      name="date_unknown"
-                      onChange={(e) => setNotSureDate(e.target.checked)}
-                      className="accent-terracotta"
-                    />
-                    Not sure yet
-                  </label>
+                  <select
+                    id="f-contactMethod"
+                    name="contactMethod"
+                    className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors focus:border-terracotta"
+                  >
+                    <option value="">Preferred contact</option>
+                    <option>Email</option>
+                    <option>Phone</option>
+                  </select>
                 </div>
                 <Field name="venue" label="Venue or city" placeholder="e.g. Melbourne" />
 
