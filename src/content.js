@@ -229,7 +229,7 @@ export const PACKAGES = {
     items: [
       'All drawing and painting materials',
       'Premium 300gsm archival watercolour paper',
-      'Sealable clear sleeves for every piece',
+      'Clear sleeves for each piece',
       'Live painting across your reception',
       'Set-up about 15 minutes before I start',
       'Public liability insurance',
