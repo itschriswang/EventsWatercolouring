@@ -104,7 +104,9 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
 
   const cardShape =
     'relative overflow-hidden rounded-[1rem] border border-line ' +
-    (masonry ? 'aspect-[3/4]' : 'min-h-0 flex-1')
+    (masonry
+      ? item.testimonial ? 'min-h-[12rem]' : 'aspect-[3/4]'
+      : 'min-h-0 flex-1')
 
   return (
     <motion.figure
@@ -115,12 +117,13 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
       className={
         'group flex flex-col ' +
         (masonry ? 'mb-6 break-inside-avoid ' : '') +
+        (masonry && item.testimonial ? '[column-span:all] ' : '') +
         className
       }
     >
       {item.testimonial ? (
         <div className={cardShape + ' bg-paper-deep'}>
-          <Testimonial item={item} compact={!!item.wide} />
+          <Testimonial item={item} compact={!masonry && !!item.wide} />
         </div>
       ) : (
         <button
