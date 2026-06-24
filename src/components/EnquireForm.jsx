@@ -126,14 +126,47 @@ export default function EnquireForm() {
                 initial={{ opacity: 0, y: reduce ? 0 : 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={SPRING}
-                className="border border-line bg-paper-deep/40 p-10"
+                className="relative overflow-hidden border border-line bg-paper-deep/40 p-10"
               >
-                <h3 className="font-display text-3xl font-light text-ink">
+                {/* Two pigment washes bloom into the paper as the note settles,
+                    like a wet mark drying. Decorative; static under reduced-motion. */}
+                {[
+                  { c: '#C2613C', pos: '-right-12 -top-12 h-52 w-52', d: 0 },
+                  { c: '#6E8CA8', pos: '-right-2 top-10 h-32 w-32', d: 0.18 },
+                ].map((b, i) => (
+                  <motion.span
+                    key={i}
+                    aria-hidden="true"
+                    initial={reduce ? { opacity: 0.14 } : { opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 0.14, scale: 1 }}
+                    transition={
+                      reduce
+                        ? { duration: 0 }
+                        : { duration: 1.5, delay: b.d, ease: [0.22, 0.61, 0.36, 1] }
+                    }
+                    className={`pointer-events-none absolute ${b.pos} rounded-full mix-blend-multiply`}
+                    style={{
+                      background: `radial-gradient(circle at 50% 50%, ${b.c}, transparent 68%)`,
+                      filter: 'blur(28px)',
+                    }}
+                  />
+                ))}
+                <h3 className="relative font-display text-3xl font-light text-ink">
                   {ENQUIRY.confirm.title}
                 </h3>
-                <p className="mt-3 max-w-md leading-relaxed text-ink-soft">
+                <p className="relative mt-3 max-w-md leading-relaxed text-ink-soft">
                   {ENQUIRY.confirm.body}
                 </p>
+                {ENQUIRY.confirm.sign && (
+                  <motion.p
+                    initial={{ opacity: 0, y: reduce ? 0 : 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={reduce ? { duration: 0 } : { ...SPRING, delay: 0.45 }}
+                    className="relative mt-6 font-display text-3xl italic text-terracotta"
+                  >
+                    {ENQUIRY.confirm.sign}
+                  </motion.p>
+                )}
               </motion.div>
             ) : (
               <motion.form
