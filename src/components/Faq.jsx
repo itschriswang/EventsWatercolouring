@@ -11,7 +11,7 @@ export default function Faq() {
   const reduce = useReducedMotion()
 
   return (
-    <section id="faq" className="relative w-full px-[5vw] py-[clamp(4rem,10vw,9rem)]">
+    <section id="faq" className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)]">
       <div className="grid grid-cols-12 gap-x-8">
         <div className="col-span-12 lg:col-span-4">
           <div className="lg:sticky lg:top-24 lg:h-fit">

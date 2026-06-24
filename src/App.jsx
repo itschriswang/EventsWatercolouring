@@ -43,8 +43,10 @@ export default function App() {
 
       <main className="relative z-10 pb-28 md:pb-0">
         <Hero revealed={revealed} />
-        <WhyWatercolour />
-        <AboutMe />
+        <div className="lg:grid lg:grid-cols-2 lg:items-start lg:divide-x lg:divide-line">
+          <WhyWatercolour />
+          <AboutMe />
+        </div>
         <TwoPaths />
         <EveningTimeline />
         <SelectedWork />

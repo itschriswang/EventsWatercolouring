@@ -19,7 +19,7 @@ export default function EveningTimeline() {
   return (
     <section
       id="night"
-      className="relative w-full overflow-hidden bg-rust px-[5vw] py-[clamp(4rem,10vw,9rem)] text-paper"
+      className="relative w-full overflow-hidden bg-rust px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper"
     >
       {/* faint bouquet cut, top-right */}
       <img
