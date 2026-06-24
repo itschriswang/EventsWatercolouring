@@ -21,12 +21,11 @@ export default function StudioFrog() {
         studio visitor
       </motion.p>
 
-      <motion.img
-        src={asset('assets/20260312_231343000_iOS.png')}
-        alt=""
-        className="pointer-events-auto w-20 mix-blend-multiply"
-        initial={{ y: '72%' }}
-        animate={{ y: hovered ? '0%' : '72%' }}
+      {/* Paper shelf: keeps the blend context light regardless of what scrolls behind */}
+      <motion.div
+        className="pointer-events-auto cursor-pointer rounded-t-2xl bg-paper px-3 pt-2 shadow-[0_-4px_20px_rgba(42,39,36,0.12)]"
+        initial={{ y: '60%' }}
+        animate={{ y: hovered ? '0%' : '60%' }}
         transition={
           reduce
             ? { duration: 0 }
@@ -34,7 +33,13 @@ export default function StudioFrog() {
         }
         onHoverStart={() => setHovered(true)}
         onHoverEnd={() => setHovered(false)}
-      />
+      >
+        <img
+          src={asset('assets/20260312_231343000_iOS.png')}
+          alt=""
+          className="w-20 mix-blend-multiply"
+        />
+      </motion.div>
     </div>
   )
 }
