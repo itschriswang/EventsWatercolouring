@@ -165,15 +165,15 @@ function Testimonial({ item, compact = false, masonry = false }) {
   return (
     <blockquote
       className={
-        'flex h-full flex-col justify-between p-[clamp(1.25rem,2vw,2rem)] ' +
-        (masonry ? 'gap-1' : compact ? 'gap-3' : 'gap-4')
+        'flex h-full flex-col justify-start p-[clamp(1.25rem,2vw,2rem)] ' +
+        (masonry ? 'gap-1' : compact ? 'gap-2' : 'gap-3')
       }
     >
       <span
         aria-hidden="true"
         className={
           'font-display leading-none text-terracotta/60 ' +
-          (masonry ? 'text-xl' : compact ? 'text-5xl' : 'text-5xl')
+          (masonry ? 'text-xl' : compact ? 'text-4xl' : 'text-5xl')
         }
       >
         &ldquo;
