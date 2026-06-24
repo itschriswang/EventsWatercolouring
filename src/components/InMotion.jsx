@@ -9,7 +9,7 @@ export default function InMotion() {
   const reduce = useReducedMotion()
 
   return (
-    <section id="studio" className="relative w-full px-[5vw] py-[clamp(4rem,10vw,9rem)]">
+    <section id="studio" className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)]">
       <Label>{MOTION.label}</Label>
       <div className="mt-5 grid grid-cols-12 items-end gap-x-8 gap-y-6">
         <SplitText
