@@ -69,7 +69,7 @@ export default function EveningTimeline() {
                 className="relative border-t border-paper/20 py-9"
               >
                 <span
-                  className="pointer-events-none absolute right-0 top-4 font-display text-[clamp(4rem,9vw,8rem)] font-light leading-none text-paper opacity-20 tabular-nums"
+                  className="pointer-events-none absolute right-0 top-4 font-display text-[clamp(4rem,9vw,8rem)] font-light leading-none text-paper/50 tabular-nums"
                   aria-hidden="true"
                 >
                   {beat.no}
