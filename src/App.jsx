@@ -15,6 +15,7 @@ import BeyondWeddings from './components/BeyondWeddings.jsx'
 import Faq from './components/Faq.jsx'
 import EnquireForm from './components/EnquireForm.jsx'
 import Footer from './components/Footer.jsx'
+import { asset } from './lib/site.js'
 
 /**
  * Live wedding watercolour — a full-bleed, immersive editorial single page.
@@ -46,6 +47,12 @@ export default function App() {
         <div className="relative overflow-visible lg:grid lg:grid-cols-2 lg:items-start lg:divide-x lg:divide-line">
           <WhyWatercolour />
           <AboutMe />
+          <img
+            src={asset('assets/bloom-accent-2.png')}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute bottom-0 right-0 z-20 w-[19rem] sm:w-[22rem] lg:w-[28rem]"
+          />
         </div>
         <TwoPaths />
         <EveningTimeline />
