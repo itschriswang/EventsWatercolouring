@@ -69,7 +69,7 @@ export const EVENING = {
     {
       no: '05',
       title: 'A number you can count on',
-      body: 'I commit to at least 10 pieces an hour. Anyone I do not get to on the night, I finish in the studio afterwards and post to you to pass on. The number you book is the number you get.',
+      body: 'I commit to at least 9 pieces an hour. Anyone I do not get to on the night, I finish in the studio afterwards and post to you to pass on. The number you book is the number you get.',
     },
   ],
 }
