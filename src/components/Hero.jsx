@@ -51,12 +51,12 @@ export default function Hero({ revealed }) {
           style={{
             right: '-8vmin',
             bottom: '8vmin',
-            width: '43vmin',
+            width: '53vmin',
             height: '63vmin',
             background: 'radial-gradient(circle at 55% 55%, #aebf56, transparent 65%)',
             filter: 'blur(60px)',
             opacity: 0.32,
-            mixBlendMode: 'multiply',
+            mixBlendMode: 'hard-light',
             WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
             maskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
           }}
@@ -71,7 +71,7 @@ export default function Hero({ revealed }) {
             height: '53vmin',
             background: 'radial-gradient(circle at 55% 55%, #e4889c, transparent 65%)',
             filter: 'blur(60px)',
-            opacity: 0.42,
+            opacity: 0.32,
             mixBlendMode: 'hard-light',
             WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
             maskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
