@@ -49,9 +49,9 @@ export default function Hero({ revealed }) {
         <div
           className="absolute rounded-full"
           style={{
-            right: '-12vmin',
-            bottom: '-2vmin',
-            width: '63vmin',
+            right: '-8vmin',
+            bottom: '0vmin',
+            width: '43vmin',
             height: '63vmin',
             background: 'radial-gradient(circle at 55% 55%, #aebf56, transparent 65%)',
             filter: 'blur(60px)',
@@ -65,14 +65,14 @@ export default function Hero({ revealed }) {
         <div
           className="absolute rounded-full"
           style={{
-            right: '-12vmin',
+            right: '-18vmin',
             bottom: '-14vmin',
             width: '63vmin',
-            height: '63vmin',
-            background: 'radial-gradient(circle at 55% 55%, #6e8ca8, transparent 65%)',
+            height: '53vmin',
+            background: 'radial-gradient(circle at 55% 55%, #e4889c, transparent 65%)',
             filter: 'blur(60px)',
-            opacity: 0.32,
-            mixBlendMode: 'multiply',
+            opacity: 0.42,
+            mixBlendMode: 'hard-light',
             WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
             maskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
           }}
