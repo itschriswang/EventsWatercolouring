@@ -36,6 +36,10 @@ export default function Hero({ revealed }) {
 
   return (
     <section
+      id="top"
+      ref={ref}
+      className="relative w-full overflow-hidden px-[5vw] pb-[clamp(3rem,8vw,7rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-8"
+    >
       {/* Local hero bloom — bottom-right, behind artwork */}
       <div
         aria-hidden="true"
