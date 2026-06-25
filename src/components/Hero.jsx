@@ -166,7 +166,7 @@ export default function Hero({ revealed }) {
                     <img
                       src={asset('assets/art-bouquet.jpg')}
                       alt="A watercolour bouquet study held to the light."
-                      className="aspect-[4/5] w-full object-cover sm:h-[clamp(220px,28vh,340px)] sm:aspect-auto lg:h-[38vh]"
+                      className="aspect-[4/5] w-full object-cover sm:h-[clamp(160px,18vh,260px)] sm:aspect-auto lg:h-[38vh]"
                       loading="eager"
                       onError={(e) => (e.currentTarget.style.display = 'none')}
                     />
@@ -193,7 +193,7 @@ export default function Hero({ revealed }) {
                     <img
                       src={asset('assets/art-character-boy.jpg')}
                       alt="A small watercolour character study at the palette."
-                      className="aspect-[4/5] w-full object-cover sm:h-[clamp(240px,30vh,380px)] sm:aspect-auto lg:h-[42vh]"
+                      className="aspect-[4/5] w-full object-cover sm:h-[clamp(175px,20vh,280px)] sm:aspect-auto lg:h-[42vh]"
                       loading="eager"
                       onError={(e) => (e.currentTarget.style.display = 'none')}
                     />
