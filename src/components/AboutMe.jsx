@@ -22,7 +22,7 @@ export default function AboutMe() {
     <section
       id="painter"
       ref={ref}
-      className="relative w-full overflow-x-clip px-[5vw] pt-[clamp(4rem,8vw,7rem)]"
+      className="relative w-full overflow-visble px-[5vw] pt-[clamp(4rem,8vw,7rem)]"
     >
       <div className="relative pb-[clamp(5rem,10vw,8rem)]">
         <div className="grid grid-cols-12 items-start gap-x-8 gap-y-8">
