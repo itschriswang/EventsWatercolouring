@@ -22,19 +22,30 @@ export default function AboutMe() {
     <section
       id="painter"
       ref={ref}
-      className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)]"
+      className="relative w-full overflow-hidden px-[5vw] py-[clamp(4rem,8vw,7rem)]"
     >
-      <div className="grid grid-cols-12 items-center gap-x-8 gap-y-12 lg:items-start">
-        {/* Asymmetric framed portrait — sits on the right, dropped to roughly
-            mid-title so it balances the taller bio column beside it. */}
+      <div className="grid grid-cols-12 items-start gap-x-8 gap-y-8">
+        {/* Title: label + heading — left side */}
+        <div className="col-span-12 sm:col-span-6 sm:col-start-1 lg:col-span-6 lg:col-start-1">
+          <Label gradient={['#6E8CA8', '#C2613C']}>{PAINTER.label}</Label>
+          <SplitText
+            as="h2"
+            unit="char"
+            lines={PAINTER.title}
+            emphasis={PAINTER.emphasis}
+            className="display-lg mt-5 text-ink"
+          />
+        </div>
+
+        {/* Portrait — right side, top aligned near the "me" line */}
         <motion.figure
           initial={{ opacity: 0, y: reduce ? 0 : 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={SPRING}
-          className="col-span-12 sm:col-span-6 sm:col-start-7 lg:col-span-5 lg:col-start-8 lg:mt-20"
+          className="col-span-12 sm:col-span-6 sm:col-start-7 lg:col-span-6 lg:col-start-7 lg:mt-16"
         >
-          <div className="relative mx-auto max-w-sm sm:max-w-none">
+          <div className="relative">
             {/* offset accent frame */}
             <div
               aria-hidden="true"
@@ -58,17 +69,9 @@ export default function AboutMe() {
           </div>
         </motion.figure>
 
-        {/* Bio */}
-        <div className="col-span-12 sm:col-span-6 sm:col-start-1 lg:col-span-6 lg:col-start-1">
-          <Label gradient={['#6E8CA8', '#C2613C']}>{PAINTER.label}</Label>
-          <SplitText
-            as="h2"
-            unit="char"
-            lines={PAINTER.title}
-            emphasis={PAINTER.emphasis}
-            className="display-lg mt-5 text-ink"
-          />
-          <div className="mt-8 flex max-w-lg flex-col gap-5 text-[clamp(1rem,1.1vw,1.15rem)] leading-relaxed text-ink-soft">
+        {/* Bio — full width spanning the whole section below title + portrait */}
+        <div className="col-span-12">
+          <div className="flex flex-col gap-5 text-[clamp(1rem,1.1vw,1.15rem)] leading-relaxed text-ink-soft">
             {PAINTER.body.map((p, i) => (
               <p key={i}>{p}</p>
             ))}
@@ -81,6 +84,14 @@ export default function AboutMe() {
           </div>
         </div>
       </div>
+
+      {/* Dove painting — bottom-right corner decoration */}
+      <img
+        src={asset('assets/bloom-accent-2.png')}
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 right-0 w-48"
+      />
     </section>
   )
 }
