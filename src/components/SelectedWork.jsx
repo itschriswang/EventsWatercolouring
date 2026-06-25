@@ -193,7 +193,7 @@ function Testimonial({ item, compact = false, masonry = false }) {
     <blockquote
       className={
         'flex h-full flex-col justify-start p-[clamp(1.25rem,2vw,2rem)] ' +
-        (masonry ? 'gap-1' : compact ? 'gap-2' : 'gap-3')
+        (masonry ? 'gap-0.5' : compact ? 'gap-1' : 'gap-2')
       }
     >
       <span
