@@ -46,7 +46,6 @@ export default function EnquireForm() {
   const reduce = useReducedMotion()
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
-  const [notSureDate, setNotSureDate] = useState(false)
   const [error, setError] = useState('')
   // Neutral, non-error guidance (e.g. when we hand off to the email client).
   const [notice, setNotice] = useState('')
@@ -210,14 +209,14 @@ export default function EnquireForm() {
                     htmlFor="f-contactMethod"
                     className="mb-2 font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft"
                   >
-                    Preferred contact
+                    Preferred contact method
                   </label>
                   <select
                     id="f-contactMethod"
                     name="contactMethod"
                     className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors focus:border-terracotta"
                   >
-                    <option value="">Preferred contact</option>
+                    <option value="">Choose one</option>
                     <option>Email</option>
                     <option>Phone</option>
                   </select>
@@ -255,20 +254,23 @@ export default function EnquireForm() {
                 
                 <div className="flex flex-col sm:col-span-2">
                   <label className="mb-2 font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
-                    Preferred contact method
+                    Wedding date
                   </label>
-                  <div className="flex gap-6">
-                    {['Email', 'Phone'].map((method) => (
-                      <label key={method} className="flex items-center gap-2 text-ink">
-                        <input
-                          type="radio"
-                          name="contactMethod"
-                          value={method}
-                          className="accent-terracotta"
-                        />
-                        <span className="text-sm">{method}</span>
-                      </label>
-                    ))}
+                  <div className="flex flex-col gap-3">
+                    <input
+                      type="date"
+                      name="date"
+                      className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors focus:border-terracotta"
+                    />
+                    <label className="flex items-center gap-2 text-sm text-ink">
+                      <input
+                        type="checkbox"
+                        name="date_unknown"
+                        value="true"
+                        className="accent-terracotta"
+                      />
+                      <span>Not sure yet</span>
+                    </label>
                   </div>
                 </div>
 
