@@ -49,7 +49,7 @@ export const EVENING = {
     {
       no: '01',
       title: 'I set up',
-      body: 'I get there about fifteen minutes early and set up before I start. You do not have to organise anything.',
+      body: 'I get there about fifteen minutes early and set up before I start. You do not need to organise much beyond a table and chair for me.',
     },
     {
       no: '02',
@@ -69,7 +69,7 @@ export const EVENING = {
     {
       no: '05',
       title: 'A number you can count on',
-      body: 'I commit to at least 9 pieces an hour. Anyone I do not get to on the night, I finish in the studio afterwards and post to you to pass on. The number you book is the number you get.',
+      body: 'I aim for around 9 pieces an hour. The number you book is the number I plan for, and anyone I do not reach on the night, I finish in the studio afterwards and post to you.',
     },
   ],
 }
@@ -87,15 +87,15 @@ export const PATHS = {
       steps: [
         {
           b: 'We plan it together',
-          t: 'We start from one base package and build it around your day: how long I paint, roughly how many guests, and any extras. A deposit holds your date.',
+          t: 'We start from one base package and build it around your day: how long I paint, roughly how many guests, and any extras. A retainer holds your date.',
         },
         {
           b: 'I paint through the night',
           t: 'I arrive early, set up, then paint a set number of your guests while the party carries on. Nobody has to pose or sit for me.',
         },
         {
-          b: 'Everyone takes one home',
-          t: 'The guests I paint go home with their own small portrait, sleeved and ready to travel. Your couple portrait is painted on the night and stays with you.',
+          b: 'Guest get to take home a special memory',
+          t: 'The guests I paint go home with their own small portrait, sleeved and ready to travel. Your couple portrait is painted on the night and stays with you. Feel free to let me know of any VIPs I should get around to on the night.',
         },
       ],
     },
@@ -114,8 +114,8 @@ export const PATHS = {
           t: 'I work from your photos on archival cotton paper, building the portrait by hand over the following weeks.',
         },
         {
-          b: 'It arrives within four weeks',
-          t: 'Your finished watercolour arrives within four weeks, with a high-resolution scan for your records.',
+          b: 'It arrives in around four weeks',
+          t: 'Your finished watercolour usually arrives within about four weeks.',
         },
       ],
     },
@@ -257,7 +257,7 @@ export const PACKAGES = {
     },
   ],
   licence:
-    'A note on style. What I paint is my interpretation, not a photo-exact likeness, and my style keeps changing, so no two pieces are the same. Booking means you are happy with that. A 50% deposit holds your date, and the balance is due two weeks before.',
+    'A note on style. What I paint is my interpretation, not a photo-exact likeness, and my style evolves over time, so no two pieces are the same. Booking means you are comfortable with that approach and my style. A 50% retainer holds your date, with the balance due two weeks before your big day.',
 }
 
 export const BEYOND = {
@@ -311,7 +311,7 @@ export const FAQ = {
     },
     {
       q: 'When do we receive the finished work?',
-      a: 'Guest portraits are done on the night and go home with your guests. Your couple portrait is painted that night too and left with you. Studio commissions from photos arrive within four weeks.',
+      a: 'Guest portraits are done on the night and go home with your guests. Your couple portrait is painted that night too and left with you. Studio commissions from photos usually arrive within four weeks.',
     },
     {
       q: 'Do you travel?',
@@ -323,11 +323,11 @@ export const FAQ = {
     },
     {
       q: 'How do we secure our date?',
-      a: 'A 50% deposit holds your date, with the balance due two weeks before the wedding. I only confirm once the deposit is in, and then the date is yours.',
+      a: 'A 50% retainer holds your date, with the balance due two weeks before your big day. I only confirm once the retainer is in, and then the date is yours.',
     },
     {
       q: 'What if we need to postpone or cancel?',
-      a: 'Weddings move, and I get that. Cancel more than two months out and you get the full deposit back. More than two weeks out, you get half. Within two weeks of the day the deposit is non-refundable, since it holds time I have turned other couples away for. If you would rather postpone, your deposit moves to a new date if I am free. Full terms are in your booking agreement.',
+      a: 'Weddings move, and I get that. If you need to cancel or postpone, just let me know as early as you can. I try to be fair and reasonable, and the details depend on timing and whether I am able to rebook the date. Full terms sit in your booking agreement.',
     },
     {
       q: 'What do you need from us on the day?',
