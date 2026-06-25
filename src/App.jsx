@@ -44,7 +44,7 @@ export default function App() {
 
       <main className="relative z-10 pb-28 md:pb-0">
         <Hero revealed={revealed} />
-        <div className="relative overflow-visible lg:grid lg:grid-cols-2 lg:items-start lg:divide-x lg:divide-line">
+        <div className="relative overflow-visible lg:grid lg:grid-cols-2 lg:items-start lg:divide-x lg:divide-transparent">
           <WhyWatercolour />
           <AboutMe />
           <img
