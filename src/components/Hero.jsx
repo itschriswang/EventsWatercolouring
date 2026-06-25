@@ -38,24 +38,43 @@ export default function Hero({ revealed }) {
     <section
       id="top"
       ref={ref}
-      className="relative w-full overflow-hidden px-[5vw] pb-[clamp(3rem,8vw,7rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-8"
+      className="relative w-full px-[5vw] pb-[clamp(3rem,8vw,7rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-8"
     >
       {/* Local hero bloom — bottom-right, behind artwork */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        className="pointer-events-none absolute inset-0 z-0 overflow-visible"
       >
+        {/* Lime bloom layer behind */}
         <div
           className="absolute rounded-full"
           style={{
-            right: '-18vmin',
-            bottom: '-14vmin',
-            width: '60vmin',
-            height: '60vmin',
-            background: 'radial-gradient(circle at 55% 55%, #B5395B, transparent 65%)',
+            right: '-12vmin',
+            bottom: '-2vmin',
+            width: '63vmin',
+            height: '63vmin',
+            background: 'radial-gradient(circle at 55% 55%, #aebf56, transparent 65%)',
             filter: 'blur(60px)',
             opacity: 0.32,
             mixBlendMode: 'multiply',
+            WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
+            maskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
+          }}
+        />
+        {/* Cornflower bloom layer in front */}
+        <div
+          className="absolute rounded-full"
+          style={{
+            right: '-12vmin',
+            bottom: '-14vmin',
+            width: '63vmin',
+            height: '63vmin',
+            background: 'radial-gradient(circle at 55% 55%, #6e8ca8, transparent 65%)',
+            filter: 'blur(60px)',
+            opacity: 0.32,
+            mixBlendMode: 'multiply',
+            WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
+            maskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
           }}
         />
       </div>
