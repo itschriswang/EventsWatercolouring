@@ -50,7 +50,7 @@ export default function Hero({ revealed }) {
           className="absolute rounded-full"
           style={{
             right: '-8vmin',
-            bottom: '0vmin',
+            bottom: '8vmin',
             width: '43vmin',
             height: '63vmin',
             background: 'radial-gradient(circle at 55% 55%, #aebf56, transparent 65%)',
@@ -66,7 +66,7 @@ export default function Hero({ revealed }) {
           className="absolute rounded-full"
           style={{
             right: '-18vmin',
-            bottom: '-14vmin',
+            bottom: '0vmin',
             width: '63vmin',
             height: '53vmin',
             background: 'radial-gradient(circle at 55% 55%, #e4889c, transparent 65%)',
