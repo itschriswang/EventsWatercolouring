@@ -7,6 +7,7 @@ import {
   FORMSPREE_ENDPOINT,
   FORMSPREE_READY,
   isValidEmail,
+  asset,
 } from '../lib/site.js'
 import { ENQUIRY } from '../content.js'
 
@@ -106,7 +107,14 @@ export default function EnquireForm() {
   }
 
   return (
-    <section id="enquiry" className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)]">
+    <section id="enquiry" className="relative w-full overflow-hidden px-[5vw] py-[clamp(4rem,8vw,7rem)]">
+      {/* Frog watercolour — bottom-right corner of the enquiry section */}
+      <img
+        src={asset('assets/studio-frog.png')}
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 left-6 w-28 mix-blend-multiply"
+      />
       <div className="grid grid-cols-12 gap-x-8 gap-y-12">
         <div className="col-span-12 lg:col-span-4">
           <Label>{ENQUIRY.label}</Label>
