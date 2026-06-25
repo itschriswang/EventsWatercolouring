@@ -24,7 +24,7 @@ export default function AboutMe() {
       ref={ref}
       className="relative w-full overflow-visible px-[5vw] pt-[clamp(4rem,8vw,7rem)]"
     >
-      <div className="pb-[clamp(5rem,10vw,8rem)]">
+      <div className="relative pb-[clamp(5rem,10vw,8rem)]">
         <div className="grid grid-cols-12 items-start gap-x-8 gap-y-8">
           {/* Left column: title + bio + signature + CTA */}
           <div className="col-span-12 sm:col-span-6 sm:col-start-1 lg:col-span-6 lg:col-start-1">
