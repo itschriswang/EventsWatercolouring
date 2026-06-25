@@ -94,7 +94,7 @@ export const PATHS = {
           t: 'I arrive early, set up, then paint a set number of your guests while the party carries on. Nobody has to pose or sit for me.',
         },
         {
-          b: 'Guest get to take home a special memory',
+          b: 'Guests get to take home a special memory',
           t: 'The guests I paint go home with their own small portrait, sleeved and ready to travel. Your couple portrait is painted on the night and stays with you. Feel free to let me know of any VIPs I should get around to on the night.',
         },
       ],
