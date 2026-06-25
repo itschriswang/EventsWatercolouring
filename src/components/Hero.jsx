@@ -48,11 +48,11 @@ export default function Hero({ revealed }) {
         <div
           className="absolute rounded-full"
           style={{
-            right: '-18vmin',
+            right: '-12vmin',
             bottom: '-14vmin',
-            width: '60vmin',
-            height: '60vmin',
-            background: 'radial-gradient(circle at 55% 55%, #B5395B, transparent 65%)',
+            width: '63vmin',
+            height: '63vmin',
+            background: 'radial-gradient(circle at 55% 55%, #6e8ca8, transparent 65%)',
             filter: 'blur(60px)',
             opacity: 0.32,
             mixBlendMode: 'multiply',
