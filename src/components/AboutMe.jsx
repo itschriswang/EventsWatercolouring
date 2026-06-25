@@ -25,7 +25,7 @@ export default function AboutMe() {
       className="relative w-full overflow-hidden px-[5vw] py-[clamp(4rem,8vw,7rem)]"
     >
       <div className="grid grid-cols-12 items-start gap-x-8 gap-y-8">
-        {/* Title: label + heading — left side */}
+        {/* Left column: title + bio + signature + CTA */}
         <div className="col-span-12 sm:col-span-6 sm:col-start-1 lg:col-span-6 lg:col-start-1">
           <Label gradient={['#6E8CA8', '#C2613C']}>{PAINTER.label}</Label>
           <SplitText
@@ -35,9 +35,20 @@ export default function AboutMe() {
             emphasis={PAINTER.emphasis}
             className="display-lg mt-5 text-ink"
           />
+          <div className="mt-8 flex flex-col gap-5 text-[clamp(1rem,1.1vw,1.15rem)] leading-relaxed text-ink-soft">
+            {PAINTER.body.map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+          </div>
+          <p className="mt-6 font-display text-4xl italic text-terracotta">
+            {PAINTER.signature}
+          </p>
+          <div className="mt-8">
+            <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
+          </div>
         </div>
 
-        {/* Portrait — right side, top aligned near the "me" line */}
+        {/* Right column: portrait, top aligned near the "me" line */}
         <motion.figure
           initial={{ opacity: 0, y: reduce ? 0 : 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -68,21 +79,6 @@ export default function AboutMe() {
             </motion.div>
           </div>
         </motion.figure>
-
-        {/* Bio — full width spanning the whole section below title + portrait */}
-        <div className="col-span-12">
-          <div className="flex flex-col gap-5 text-[clamp(1rem,1.1vw,1.15rem)] leading-relaxed text-ink-soft">
-            {PAINTER.body.map((p, i) => (
-              <p key={i}>{p}</p>
-            ))}
-          </div>
-          <p className="mt-6 font-display text-4xl italic text-terracotta">
-            {PAINTER.signature}
-          </p>
-          <div className="mt-8">
-            <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
-          </div>
-        </div>
       </div>
 
       {/* Dove painting — bottom-right corner decoration */}
