@@ -86,7 +86,7 @@ export default function AboutMe() {
         src={asset('assets/bloom-accent-2.png')}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-20 right-[-2rem] sm:right-0 w-[19rem] sm:w-[22rem] lg:w-[28rem]"
+        className="pointer-events-none absolute -bottom-20 right-0 w-[19rem] sm:w-[22rem] lg:w-[28rem]"
       />
     </section>
   )
