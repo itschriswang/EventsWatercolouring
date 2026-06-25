@@ -24,7 +24,7 @@ export default function AboutMe() {
       ref={ref}
       className="relative w-full overflow-visible px-[5vw] pt-[clamp(4rem,8vw,7rem)]"
     >
-      
+      <div className="pb-[clamp(5rem,10vw,8rem)]">
         <div className="grid grid-cols-12 items-start gap-x-8 gap-y-8">
           {/* Left column: title + bio + signature + CTA */}
           <div className="col-span-12 sm:col-span-6 sm:col-start-1 lg:col-span-6 lg:col-start-1">
@@ -81,15 +81,16 @@ export default function AboutMe() {
             </div>
           </motion.figure>
         </div>
-      
-
-      {/* Dove painting — bottom-right corner decoration */}
-      <img
+        <img
         src={asset('assets/bloom-accent-2.png')}
         alt=""
         aria-hidden="true"
         className="pointer-events-none absolute bottom-0 right-0 w-[19rem] sm:w-[22rem] lg:w-[28rem]"
       />
+      </div>
+
+      {/* Dove painting — bottom-right corner decoration */}
+      
     </section>
   )
 }
