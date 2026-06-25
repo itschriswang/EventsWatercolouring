@@ -13,7 +13,7 @@ export default function MagneticButton({
   variant = 'ink',
 }) {
   const reduce = useReducedMotion()
-  const { ref, style } = useMagnetic({ radius: 45, strength: 0.5 })
+
 
   const palette =
     variant === 'paper'
@@ -22,9 +22,9 @@ export default function MagneticButton({
 
   return (
     <motion.a
-      ref={ref}
+      
       href={href}
-      style={style}
+      
       whileHover="hover"
       whileTap={{ scale: 0.96 }}
       className={
