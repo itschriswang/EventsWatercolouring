@@ -113,7 +113,7 @@ export default function EnquireForm() {
         src={asset('assets/studio-frog.png')}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 right-6 w-28 mix-blend-multiply"
+        className="pointer-events-none absolute bottom-0 left-6 w-28 mix-blend-multiply"
       />
       <div className="grid grid-cols-12 gap-x-8 gap-y-12">
         <div className="col-span-12 lg:col-span-4">
