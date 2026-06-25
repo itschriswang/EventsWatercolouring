@@ -44,7 +44,7 @@ export const EVENING = {
   label: 'On the night',
   title: ['How the evening', 'runs.'],
   emphasis: 'runs.',
-  lede: 'The first thing I paint is the two of you, on A4, while everything is fresh. It is the bigger, more detailed one, the piece you will probably want to frame. After that I work through your guests.',
+  lede: 'The first thing I paint is the two of you, while everything is fresh. After that I work through your guests.',
   beats: [
     {
       no: '01',
