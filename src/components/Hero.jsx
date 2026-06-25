@@ -38,8 +38,8 @@ export default function Hero({ revealed }) {
     <section
       id="top"
       ref={ref}
-      className="relative w-full px-[5vw] pb-[clamp(3rem,8vw,7rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-8"
-    >
+      className="relative w-full overflow-x-clip px-[5vw] pb-[clamp(3rem,8vw,7rem)] pt-[clamp(1.5rem,4vw,3rem) lg:pt-8"
+        >
       {/* Local hero bloom — bottom-right, behind artwork */}
       <div
         aria-hidden="true"
