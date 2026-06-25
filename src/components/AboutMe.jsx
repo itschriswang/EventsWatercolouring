@@ -22,7 +22,7 @@ export default function AboutMe() {
     <section
       id="painter"
       ref={ref}
-      className="relative w-full overflow-hidden px-[5vw] py-[clamp(4rem,8vw,7rem)]"
+      className="relative w-full overflow-visible px-[5vw] py-[clamp(4rem,8vw,7rem)]"
     >
       <div className="grid grid-cols-12 items-start gap-x-8 gap-y-8">
         {/* Left column: title + bio + signature + CTA */}
@@ -86,7 +86,7 @@ export default function AboutMe() {
         src={asset('assets/bloom-accent-2.png')}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 right-0 w-48"
+        className="pointer-events-none absolute -bottom-20 right-0 w-[28rem] lg:w-[32rem]"
       />
     </section>
   )
