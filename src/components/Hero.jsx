@@ -48,7 +48,7 @@ export default function Hero({ revealed }) {
         className="flex items-center justify-between font-mono text-[0.66rem] uppercase tracking-[0.3em] text-ink-soft"
       >
         <span>Live wedding watercolour keepsakes</span>
-        <span className="hidden sm:inline">Melbourne · Australia-wide</span>
+        <span className="hidden sm:inline">Melbourne · Sydney</span>
       </motion.div>
 
       <div className="relative mt-[clamp(2rem,5vw,4rem)] grid grid-cols-4 items-start gap-y-10 lg:grid-cols-12 lg:items-end lg:gap-x-8">
