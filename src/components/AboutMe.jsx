@@ -82,10 +82,10 @@ export default function AboutMe() {
           </motion.figure>
         </div>
         <img
-        src={asset('assets/bloom-accent-2.png')}
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 right-[-5vw] 0 w-[19rem] sm:w-[22rem] lg:w-[28rem]"
+          src={asset('assets/bloom-accent-2.png')}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-0 right-[-5vw] w-[19rem] sm:w-[22rem] lg:w-[28rem]"
         />
         
       </div>
