@@ -94,7 +94,7 @@ export default function SelectedWork() {
         </div>
 
         {/* Narrow / medium — a masonry wall (2 columns, then 3). */}
-        <div className="mt-[clamp(2rem,8vw,3rem)] columns-2 gap-3 md:columns-3 lg:hidden">
+        <div className="mt-[clamp(2rem,8vw,3rem)] columns-2 gap-3 sm:columns-3 lg:hidden">
           {WORK.gallery.map((item, i) => (
             <Tile
               key={i}
@@ -180,6 +180,16 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
           </span>
           <span className="mt-0.5 block font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft">
             {item.meta}
+          </span>
+        </figcaption>
+      )}
+      {item.testimonial && (
+        <figcaption className="mt-2.5">
+          <span className="block font-display text-[0.95rem] leading-tight text-ink">
+            {item.author}
+          </span>
+          <span className="mt-0.5 block font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft">
+            {item.detail}
           </span>
         </figcaption>
       )}
