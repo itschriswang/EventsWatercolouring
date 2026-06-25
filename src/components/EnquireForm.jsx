@@ -127,7 +127,7 @@ export default function EnquireForm() {
             src={asset('assets/art-bouquet_transparent.webp')}
             alt=""
             aria-hidden="true"
-            className="pointer-events-none mt-10 hidden w-76 opacity-90 [transform:scaleX(-1)] lg:block"
+            className="pointer-events-none mt-10 hidden w-70 opacity-90 [transform:scaleX(-1)] lg:block"
           />
         </div>
 
