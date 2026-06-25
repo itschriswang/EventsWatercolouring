@@ -45,6 +45,23 @@ export default function Hero({ revealed }) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0 overflow-visible"
       >
+        {/* Lime bloom layer behind */}
+        <div
+          className="absolute rounded-full"
+          style={{
+            right: '-12vmin',
+            bottom: '-2vmin',
+            width: '63vmin',
+            height: '63vmin',
+            background: 'radial-gradient(circle at 55% 55%, #aebf56, transparent 65%)',
+            filter: 'blur(60px)',
+            opacity: 0.32,
+            mixBlendMode: 'multiply',
+            WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
+            maskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
+          }}
+        />
+        {/* Cornflower bloom layer in front */}
         <div
           className="absolute rounded-full"
           style={{
