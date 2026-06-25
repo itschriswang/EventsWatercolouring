@@ -40,7 +40,7 @@ export default function MagneticButton({
         aria-hidden="true"
       />
       <motion.span
-        variants={{ hover: reduce ? {} : { skewX: -6, letterSpacing: '0.32em' } }}
+        variants={{ hover: reduce ? {} : { skewX: -6} }}
         transition={SPRING}
         className="inline-block"
       >
