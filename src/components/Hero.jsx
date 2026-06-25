@@ -43,7 +43,7 @@ export default function Hero({ revealed }) {
       {/* Local hero bloom — bottom-right, behind artwork */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        className="pointer-events-none absolute inset-0 z-0 overflow-visible"
       >
         <div
           className="absolute rounded-full"
@@ -56,6 +56,8 @@ export default function Hero({ revealed }) {
             filter: 'blur(60px)',
             opacity: 0.32,
             mixBlendMode: 'multiply',
+            WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
+            maskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
           }}
         />
       </div>
