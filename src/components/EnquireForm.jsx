@@ -107,16 +107,9 @@ export default function EnquireForm() {
   }
 
   return (
-    <section id="enquiry" className="relative w-full overflow-hidden px-[5vw] py-[clamp(4rem,8vw,7rem)]">
-      {/* Frog watercolour — bottom-right corner of the enquiry section */}
-      <img
-        src={asset('assets/studio-frog.png')}
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 left-6 w-28 mix-blend-multiply"
-      />
+    <section id="enquiry" className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)]">
       <div className="grid grid-cols-12 gap-x-8 gap-y-12">
-        <div className="col-span-12 lg:col-span-4">
+        <div className="relative col-span-12 lg:col-span-4">
           <Label>{ENQUIRY.label}</Label>
           <h2 className="mt-5 font-display text-[clamp(2.25rem,5vw,4rem)] font-light uppercase leading-[0.9] tracking-tight text-ink">
             {ENQUIRY.title[0]}
@@ -130,6 +123,13 @@ export default function EnquireForm() {
               {EMAIL}
             </a>
           </p>
+          {/* Bouquet — flipped, beneath the heading, widescreen only */}
+          <img
+            src={asset('assets/art-bouquet_transparent.webp')}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none mt-10 hidden w-64 opacity-90 [transform:scaleX(-1)] lg:block"
+          />
         </div>
 
         <div className="col-span-12 lg:col-span-7 lg:col-start-6">
