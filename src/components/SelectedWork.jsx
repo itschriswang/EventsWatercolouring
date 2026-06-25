@@ -173,14 +173,26 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
         </button>
       )}
 
-      <figcaption className="mt-2.5">
-        <span className="block font-display text-[0.95rem] leading-tight text-ink">
-          {item.testimonial ? item.author : item.ttl}
-        </span>
-        <span className="mt-0.5 block font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft">
-          {item.testimonial ? item.detail : item.meta}
-        </span>
-      </figcaption>
+      {!item.testimonial && (
+        <figcaption className="mt-2.5">
+          <span className="block font-display text-[0.95rem] leading-tight text-ink">
+            {item.ttl}
+          </span>
+          <span className="mt-0.5 block font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft">
+            {item.meta}
+          </span>
+        </figcaption>
+      )}
+      {item.testimonial && (
+        <figcaption className="mt-2.5">
+          <span className="block font-display text-[0.95rem] leading-tight text-ink">
+            {item.author}
+          </span>
+          <span className="mt-0.5 block font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft">
+            {item.detail}
+          </span>
+        </figcaption>
+      )}
     </motion.figure>
   )
 }
