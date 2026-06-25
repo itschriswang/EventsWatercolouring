@@ -31,7 +31,11 @@ export default function SplitText({
   const lite = reduce || !useHeavyFx()
   const MotionTag = motion(Tag)
   const normalise = s => s.toLowerCase().replace(/[^a-z]/g, '')
-  const isPhrase = emphasis ? emphasis.includes(' ') : false
+  // Accept a single string or an array of strings for multi-word emphasis.
+  const emphasisList = emphasis
+    ? (Array.isArray(emphasis) ? emphasis : [emphasis])
+    : []
+  const isPhrase = emphasisList.some(e => e.includes(' '))
 
   const container = lite
     ? {
@@ -69,15 +73,15 @@ export default function SplitText({
       aria-label={lines.join(' ')}
     >
       {lines.map((line, li) => {
-        const lineHasPhrase = isPhrase && line.toLowerCase().includes(emphasis.toLowerCase())
+        const lineHasPhrase = isPhrase && emphasisList.some(e => line.toLowerCase().includes(e.toLowerCase()))
         return (
           <span key={li} className="block overflow-hidden pb-[0.08em]">
             {unit === 'char'
               ? line.split(' ').flatMap((word, wi, words) => {
-                  const isWordEmph = emphasis && (
+                  const isWordEmph = emphasisList.length > 0 && (
                     isPhrase
                       ? lineHasPhrase
-                      : normalise(word) === normalise(emphasis)
+                      : emphasisList.some(e => normalise(word) === normalise(e))
                   )
                   const wordEl = (
                     <span
@@ -112,10 +116,10 @@ export default function SplitText({
                   return [wordEl]
                 })
               : line.split(' ').map((word, wi, arr) => {
-                  const isWordEmph = emphasis && (
+                  const isWordEmph = emphasisList.length > 0 && (
                     isPhrase
                       ? lineHasPhrase
-                      : normalise(word) === normalise(emphasis)
+                      : emphasisList.some(e => normalise(word) === normalise(e))
                   )
                   return (
                     <motion.span
