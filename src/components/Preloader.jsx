@@ -75,7 +75,7 @@ export default function Preloader({ onDone }) {
           </motion.div>
 
           <div className="mt-10 flex flex-col items-center gap-4 text-center">
-            <p className="eyebrow">Mixing pigment</p>
+            <p className="eyebrow">Getting set up for you</p>
             <div className="flex items-baseline gap-3">
               <span className="font-display text-5xl tabular-nums tracking-tighter text-ink">
                 {progress}
