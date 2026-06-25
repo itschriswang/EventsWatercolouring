@@ -175,7 +175,7 @@ export const PAINTER = {
     'I am Christopher. I grew up in Sydney and I am based in Melbourne now, and I have been painting in watercolour for more than ten years.',
     'Painting live at a wedding is the part I love most. A few minutes with each guest, a small portrait made by hand while the night carries on, and something real to take home at the end.',
   ],
-  signature: 'Christopher',
+  signature: '',
 }
 
 export const PACKAGES = {
@@ -265,7 +265,7 @@ export const BEYOND = {
   title: ['The same hand,', 'for any room.'],
   emphasis: 'for any room.',
   intro:
-    'Live painting works just as well away from a wedding. I take it across Melbourne and Australia-wide, turning a few hours into something every guest walks out with.',
+    'Live painting works just as well away from a wedding. I take it across Melbourne and Australia-wide, turning a few hours into something a guest walks out with.',
   cards: [
     {
       tag: 'Brand activations',

@@ -17,7 +17,7 @@ import { SPRING } from '../lib/site.js'
 export default function SplitText({
   lines = [],
   emphasis = null,
-  emphasisClassName = 'text-teal',
+  emphasisClassName = 'bg-gradient-to-r from-terracotta to-orange bg-clip-text text-transparent',
   unit = 'char',
   className = '',
   as: Tag = 'h2',
