@@ -48,7 +48,7 @@ export default function Hero({ revealed }) {
             bottom: '-14vmin',
             width: '60vmin',
             height: '60vmin',
-            background: 'radial-gradient(circle at 55% 55%, #000000, transparent 65%)',
+            background: 'radial-gradient(circle at 55% 55%, #B5395B, transparent 65%)',
             filter: 'blur(60px)',
             opacity: 0.32,
             mixBlendMode: 'multiply',
