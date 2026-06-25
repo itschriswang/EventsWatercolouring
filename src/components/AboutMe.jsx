@@ -41,9 +41,11 @@ export default function AboutMe() {
                 <p key={i}>{p}</p>
               ))}
             </div>
-            <p className="mt-6 font-display text-4xl italic text-terracotta">
-              {PAINTER.signature}
-            </p>
+            {PAINTER.signature && (
+              <p className="mt-6 font-display text-4xl italic text-terracotta">
+                {PAINTER.signature}
+              </p>
+            )}
             <div className="mt-8">
               <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
             </div>

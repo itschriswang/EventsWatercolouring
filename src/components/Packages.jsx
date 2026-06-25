@@ -46,7 +46,7 @@ export default function Packages() {
             <h3 className="font-display text-3xl font-light text-ink">
               {PACKAGES.base.title}
             </h3>
-            <p className="text-right font-display text-4xl leading-none text-ink">
+            <p className="text-right font-display text-4xl leading-none text-rust">
               <span className="block font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
                 {PACKAGES.base.priceSmall}
               </span>
