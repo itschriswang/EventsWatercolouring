@@ -36,6 +36,25 @@ export default function Hero({ revealed }) {
 
   return (
     <section
+      {/* Local hero bloom — bottom-right, behind artwork */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+      >
+        <div
+          className="absolute rounded-full"
+          style={{
+            right: '-18vmin',
+            bottom: '-14vmin',
+            width: '60vmin',
+            height: '60vmin',
+            background: 'radial-gradient(circle at 55% 55%, #C9A23A, transparent 65%)',
+            filter: 'blur(60px)',
+            opacity: 0.32,
+            mixBlendMode: 'multiply',
+          }}
+        />
+      </div>
       id="top"
       ref={ref}
       className="relative w-full overflow-hidden px-[5vw] pb-[clamp(3rem,8vw,7rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-8"
