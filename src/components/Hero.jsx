@@ -154,7 +154,7 @@ export default function Hero({ revealed }) {
               {/* Bouquet — lower, slightly behind, still very visible. The
                   mobile drop lives on this wrapper so the figure's entrance
                   transform doesn't clobber it. */}
-              <div className="relative z-0 w-[40%] shrink-0 translate-x-[6%] -translate-y-[15%] sm:translate-x-0 sm:w-[46%] lg:w-[52%] sm:translate-y-0 sm:-ml-[8%] lg:-ml-[10%] lg:-translate-x-[6%]  lg:-translate-y-[18%]">
+              <div className="relative z-0 w-[40%] shrink-0 translate-x-[6%] -translate-y-[10%] sm:translate-x-0 sm:w-[46%] lg:w-[52%] sm:translate-y-0 sm:-ml-[8%] lg:-ml-[10%] lg:-translate-x-[6%]  lg:-translate-y-[18%]">
                 <motion.figure
                   initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : -6 }}
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : -6 } : { opacity: 0 }}
@@ -180,7 +180,7 @@ export default function Hero({ revealed }) {
               {/* Character — raised much higher, in front, overlapping. The
                   lift lives on this wrapper so the figure's hover transform
                   doesn't clobber it. */}
-              <div className="relative z-10 -ml-[5%] w-[44%] shrink-0 -translate-y-[5%] sm:-ml-[10%] sm:w-[48%] lg:w-[54%] sm:-translate-y-[22%] lg:-translate-y-[28%]">
+              <div className="relative z-10 ml-[2%] w-[44%] shrink-0 -translate-y-[2%] sm:-ml-[10%] sm:w-[48%] lg:w-[54%] sm:-translate-y-[22%] lg:-translate-y-[28%]">
                 <motion.figure
                   initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : 4 }}
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : 3 } : { opacity: 0 }}
