@@ -205,7 +205,7 @@ function Testimonial({ item, compact = false, masonry = false }) {
     <blockquote
       className={
         'flex h-full flex-col justify-start p-[clamp(1.25rem,2vw,2rem)] ' +
-        (masonry ? 'gap-0.5' : compact ? 'gap-1' : 'gap-2')
+        (masonry ? 'gap-0' : compact ? 'gap-0.5' : 'gap-1')
       }
     >
       <span
@@ -229,9 +229,6 @@ function Testimonial({ item, compact = false, masonry = false }) {
       >
         {item.quote}
       </p>
-      <footer className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-ink-soft">
-        {item.author} · {item.detail}
-      </footer>
     </blockquote>
   )
 }
