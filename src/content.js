@@ -20,7 +20,7 @@ export const MARQUEE = [
 
 export const WHY = {
   label: 'Why live watercolour',
-  lede: 'Entertainment for the room and a hand-painted keepsake for your guests, all in one evening.',
+  lede: 'Entertainment for the room and a hand-painted keepsake for your guests, all in one evening. Whether it is your wedding, a corporate gala, or a private milestone, the idea stays the same.',
   notes: [
     {
       no: '01',
@@ -35,7 +35,7 @@ export const WHY = {
     {
       no: '03',
       title: 'Something to keep',
-      body: 'A good number of your guests go home with a small painting of their own, and you keep a portrait of the two of you, painted while the day is still going. It is on archival cotton paper, so it lasts.',
+      body: 'Guests go home with a small painting of their own, and you keep a portrait or memory painted while the day is still going. It is on archival cotton paper, so it lasts.',
     },
   ],
 }
@@ -183,7 +183,7 @@ export const PACKAGES = {
   title: ['One base package,', 'built around your day.'],
   emphasis: 'built around your day.',
   intro:
-    'Everything is painted at your wedding on 300gsm cotton paper, including a portrait of the two of you, done on the night and left with you.',
+    'Everything is painted live on 300gsm cotton paper. Whether it is your wedding, a corporate event, or a private celebration, the base package starts the same and builds from there.',
   base: {
     title: 'Live on the day',
     note: 'The base package, painted across your reception.',
@@ -262,10 +262,10 @@ export const PACKAGES = {
 
 export const BEYOND = {
   label: 'Beyond weddings',
-  title: ['The same hand,', 'for any room.'],
-  emphasis: 'for any room.',
+  title: ['For any room,', 'any occasion.'],
+  emphasis: 'any occasion.',
   intro:
-    'Live painting works just as well away from a wedding. I take it across Melbourne and Australia-wide, turning a few hours into something a guest walks out with.',
+    'Live painting works just as well away from a wedding. I take it across Melbourne and Australia-wide, turning a few hours into something a guest walks out with. Corporate galas, brand activations, private celebrations — whatever the room, the principle is the same: guests gather, you get keepsakes.',
   cards: [
     {
       tag: 'Brand activations',
