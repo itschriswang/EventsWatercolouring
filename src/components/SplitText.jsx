@@ -17,7 +17,7 @@ import { SPRING } from '../lib/site.js'
 export default function SplitText({
   lines = [],
   emphasis = null,
-  emphasisClassName = 'bg-gradient-to-r from-terracotta via-rose to-blush bg-clip-text text-transparent',
+  emphasisClassName = 'bg-gradient-to-r from-terracotta via-orange to-blush bg-clip-text text-transparent',
   unit = 'char',
   className = '',
   as: Tag = 'h2',
@@ -66,7 +66,7 @@ export default function SplitText({
     const endPercent = ((posInSpan + 1) / totalSpan) * 100
 
     return {
-      background: 'linear-gradient(to right, #C2613C, #C98B8C, #E4889C)',
+      background: 'linear-gradient(110deg, #C2613C, #ED8A33, #E4889C)',
       backgroundSize: `${totalSpan * 100}% 100%`,
       backgroundPosition: `${-posInSpan * 100}% 0`,
       WebkitBackgroundClip: 'text',
