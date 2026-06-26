@@ -217,9 +217,6 @@ function Testimonial({ item, compact = false, masonry = false }) {
       >
         {item.quote}
       </p>
-      <footer className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-ink-soft">
-        {item.author} · {item.detail}
-      </footer>
     </blockquote>
   )
 }
