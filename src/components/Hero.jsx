@@ -136,13 +136,13 @@ export default function Hero({ revealed }) {
           style={parallax ? { y: artY } : {}}
           className="relative z-10 col-span-4 col-start-1 lg:col-span-5 lg:col-start-8 lg:mb-[4vh]"
         >
-          <div className="flex items-start gap-3 sm:block">
+          <div className="flex flex-col sm:block gap-6 sm:gap-0">
             {/* Mobile-only sub-text (the desktop copy lives under the headline). */}
             <motion.p
               variants={fade}
               initial="hidden"
               animate={state}
-              className="mt-1 w-[30%] shrink-0 text-[0.78rem] leading-relaxed text-ink-soft sm:hidden"
+              className="mt-1 w-full sm:w-[30%] sm:shrink-0 text-[0.78rem] leading-relaxed text-ink-soft sm:hidden"
             >
               {HERO.lede}
             </motion.p>
