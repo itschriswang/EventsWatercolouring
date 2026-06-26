@@ -17,7 +17,7 @@ import { SPRING } from '../lib/site.js'
 export default function SplitText({
   lines = [],
   emphasis = null,
-  emphasisClassName = 'bg-gradient-to-r from-terracotta to-orange bg-clip-text text-transparent',
+  emphasisClassName = 'bg-gradient-to-r from-terracotta via-rose to-blush bg-clip-text text-transparent',
   unit = 'char',
   className = '',
   as: Tag = 'h2',
@@ -36,6 +36,34 @@ export default function SplitText({
     ? (Array.isArray(emphasis) ? emphasis : [emphasis])
     : []
   const isPhrase = emphasisList.some(e => e.includes(' '))
+
+  // Build a helper to check if a word should be emphasized
+  const isWordEmphasisized = (word) => {
+    if (emphasisList.length === 0) return false
+    return emphasisList.some(e => normalise(word) === normalise(e))
+  }
+
+  // Group consecutive emphasized words together
+  const groupEmphasisWords = (words) => {
+    const groups = []
+    let currentGroup = []
+
+    words.forEach((word, i) => {
+      if (isWordEmphasisized(word)) {
+        currentGroup.push({ word, index: i, isEmph: true })
+      } else {
+        if (currentGroup.length > 0) {
+          groups.push({ words: currentGroup, isGroup: true })
+          currentGroup = []
+        }
+        groups.push({ word, index: i, isEmph: false })
+      }
+    })
+    if (currentGroup.length > 0) {
+      groups.push({ words: currentGroup, isGroup: true })
+    }
+    return groups
+  }
 
   const container = lite
     ? {
@@ -74,21 +102,60 @@ export default function SplitText({
     >
       {lines.map((line, li) => {
         const lineHasPhrase = isPhrase && emphasisList.some(e => line.toLowerCase().includes(e.toLowerCase()))
+        const lineWords = line.split(' ')
+        const groupedWords = groupEmphasisWords(lineWords)
+
         return (
           <span key={li} className="block overflow-hidden pb-[0.08em]">
             {unit === 'char'
-              ? line.split(' ').flatMap((word, wi, words) => {
-                  const isWordEmph = emphasisList.length > 0 && (
-                    isPhrase
-                      ? lineHasPhrase
-                      : emphasisList.some(e => normalise(word) === normalise(e))
-                  )
-                  const wordEl = (
+              ? groupedWords.flatMap((group, gi) => {
+                  if (group.isGroup) {
+                    return [
+                      <span
+                        key={`g${li}-${gi}`}
+                        className={`inline-block ${emphasisClassName}`}
+                      >
+                        {group.words.flatMap((w, wi) => [
+                          ...Array.from(w.word).map((ch, ci) => (
+                            <motion.span
+                              key={`${gi}-${wi}-${ci}`}
+                              variants={item}
+                              aria-hidden="true"
+                              className="inline-block"
+                            >
+                              {ch}
+                            </motion.span>
+                          )),
+                          wi < group.words.length - 1 ? (
+                            <motion.span
+                              key={`space-${gi}-${wi}`}
+                              variants={item}
+                              aria-hidden="true"
+                              className="inline-block whitespace-pre"
+                            >
+                              {' '}
+                            </motion.span>
+                          ) : null,
+                        ])}
+                      </span>,
+                      gi < groupedWords.length - 1 ? (
+                        <motion.span
+                          key={`sp${li}-${gi}`}
+                          variants={item}
+                          aria-hidden="true"
+                          className="inline-block whitespace-pre"
+                        >
+                          {' '}
+                        </motion.span>
+                      ) : null,
+                    ]
+                  }
+                  return [
                     <span
-                      key={`w${li}-${wi}`}
-                      className={`inline-block${isWordEmph ? ` ${emphasisClassName}` : ''}`}
+                      key={`w${li}-${gi}`}
+                      className="inline-block"
                     >
-                      {Array.from(word).map((ch, ci) => (
+                      {Array.from(group.word).map((ch, ci) => (
                         <motion.span
                           key={ci}
                           variants={item}
@@ -98,40 +165,58 @@ export default function SplitText({
                           {ch}
                         </motion.span>
                       ))}
-                    </span>
-                  )
-                  if (wi < words.length - 1) {
-                    return [
-                      wordEl,
+                    </span>,
+                    gi < groupedWords.length - 1 ? (
                       <motion.span
-                        key={`sp${li}-${wi}`}
+                        key={`sp${li}-${gi}`}
                         variants={item}
                         aria-hidden="true"
                         className="inline-block whitespace-pre"
                       >
                         {' '}
+                      </motion.span>
+                    ) : null,
+                  ]
+                })
+              : groupedWords.flatMap((group, gi) => {
+                  if (group.isGroup) {
+                    return [
+                      <motion.span
+                        key={`g${li}-${gi}`}
+                        variants={item}
+                        aria-hidden="true"
+                        className={`inline-block ${emphasisClassName}`}
+                      >
+                        {group.words.map((w, wi) => (
+                          <span key={wi}>
+                            {w.word}
+                            {wi < group.words.length - 1 ? ' ' : ''}
+                          </span>
+                        ))}
                       </motion.span>,
+                      gi < groupedWords.length - 1 ? (
+                        <motion.span
+                          key={`sp${li}-${gi}`}
+                          variants={item}
+                          aria-hidden="true"
+                          className="inline-block whitespace-pre"
+                        >
+                          {' '}
+                        </motion.span>
+                      ) : null,
                     ]
                   }
-                  return [wordEl]
-                })
-              : line.split(' ').map((word, wi, arr) => {
-                  const isWordEmph = emphasisList.length > 0 && (
-                    isPhrase
-                      ? lineHasPhrase
-                      : emphasisList.some(e => normalise(word) === normalise(e))
-                  )
-                  return (
+                  return [
                     <motion.span
-                      key={wi}
+                      key={`w${li}-${gi}`}
                       variants={item}
                       aria-hidden="true"
-                      className={`inline-block${isWordEmph ? ` ${emphasisClassName}` : ''}`}
+                      className="inline-block"
                     >
-                      {word}
-                      {wi < arr.length - 1 ? ' ' : ''}
-                    </motion.span>
-                  )
+                      {group.word}
+                      {gi < groupedWords.length - 1 ? ' ' : ''}
+                    </motion.span>,
+                  ]
                 })}
           </span>
         )
