@@ -19,7 +19,7 @@ export default function WhyWatercolour() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-60px' }}
         transition={SPRING}
-        className="mt-8 max-w-[18ch] font-display text-[clamp(1.75rem,4vw,3.5rem)] font-light leading-[1.0] tracking-tight text-ink sm:max-w-[24ch]"
+        className="mt-8 max-w-[18ch] font-display text-[clamp(1.25rem,3vw,2.25rem)] font-light leading-[1.0] tracking-tight text-ink sm:max-w-[24ch]"
       >
         {beforeEmph(WHY.lede, 'all in one evening.')}
         <em className="text-terracotta">all in one evening.</em>
