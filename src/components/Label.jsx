@@ -42,9 +42,6 @@ export function Drop({ className = '', fill = '#6E8CA8', gradient }) {
           <path
             d="M 0,0 C -12,-4 -14,-24 0,-36 C 14,-24 12,-4 0,0 Z"
             fill={petalFill}
-            stroke="white"
-            strokeWidth="2"
-            strokeLinejoin="round"
             transform="rotate(128)"
           />
 
@@ -52,9 +49,6 @@ export function Drop({ className = '', fill = '#6E8CA8', gradient }) {
           <path
             d="M 0,0 C -12,-4 -14,-24 0,-36 C 14,-24 12,-4 0,0 Z"
             fill={petalFill}
-            stroke="white"
-            strokeWidth="2"
-            strokeLinejoin="round"
             transform="rotate(-128)"
           />
 
@@ -62,9 +56,6 @@ export function Drop({ className = '', fill = '#6E8CA8', gradient }) {
           <path
             d="M 0,0 C -12,-4 -14,-24 0,-36 C 14,-24 12,-4 0,0 Z"
             fill={petalFill}
-            stroke="white"
-            strokeWidth="2"
-            strokeLinejoin="round"
             transform="rotate(75)"
           />
 
@@ -72,9 +63,6 @@ export function Drop({ className = '', fill = '#6E8CA8', gradient }) {
           <path
             d="M 0,0 C -12,-4 -14,-24 0,-36 C 14,-24 12,-4 0,0 Z"
             fill={petalFill}
-            stroke="white"
-            strokeWidth="2"
-            strokeLinejoin="round"
             transform="rotate(-75)"
           />
 
@@ -82,9 +70,6 @@ export function Drop({ className = '', fill = '#6E8CA8', gradient }) {
           <path
             d="M 0,0 C -12,-4 -14,-24 0,-36 C 14,-24 12,-4 0,0 Z"
             fill={petalFill}
-            stroke="white"
-            strokeWidth="2"
-            strokeLinejoin="round"
             transform="rotate(0)"
           />
         </g>
@@ -99,7 +84,7 @@ export function Drop({ className = '', fill = '#6E8CA8', gradient }) {
 export default function Label({ children, className = '', fill, gradient }) {
   return (
     <span className={'eyebrow inline-flex items-center gap-2 ' + className}>
-      <Drop className="h-4 w-auto" fill={fill} gradient={gradient} />
+      <Drop className="h-6 w-auto" fill={fill} gradient={gradient} />
       {children}
     </span>
   )
