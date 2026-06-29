@@ -59,7 +59,7 @@ export default function SelectedWork() {
               unit="char"
               lines={WORK.title}
               emphasis={WORK.emphasis}
-              className="display-lg bleed-left mt-5 text-ink"
+              className="display-lg mt-5 text-ink"
             />
           </div>
           <div className="max-w-xs">
@@ -199,7 +199,7 @@ function Testimonial({ item, compact = false, masonry = false }) {
       </span>
       <p
         className={
-          'font-display font-light leading-snug text-ink ' +
+          'font-display font-normal leading-snug text-ink ' +
           (masonry
             ? 'text-[clamp(0.6rem,1.4vw,0.75rem)]'
             : compact

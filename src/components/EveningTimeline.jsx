@@ -45,7 +45,7 @@ export default function EveningTimeline() {
             <Label gradient={['#C9A23A', '#F4EFE6']} className="!text-paper/70">
               {EVENING.label}
             </Label>
-            <h2 className="mt-1 font-display text-[clamp(2.5rem,4vw,4.5rem)] font-light uppercase leading-[0.85] tracking-tight">
+            <h2 className="mt-1 font-display text-[clamp(2.5rem,4vw,4.5rem)] font-bold uppercase leading-[0.85] tracking-tight">
               {EVENING.title[0]}
               <br />
               <em>{EVENING.title[1]}</em>
@@ -103,7 +103,7 @@ export default function EveningTimeline() {
                   </div>
                   <h3
                     className={
-                      'mt-1 font-display text-[2rem] font-light leading-[0.95] ' +
+                      'mt-1 font-display text-[2rem] font-normal leading-[0.95] ' +
                       (numberLeft ? 'text-left' : 'text-right')
                     }
                   >
@@ -131,7 +131,7 @@ export default function EveningTimeline() {
                 >
                   {beat.no}
                 </span>
-                <h3 className="font-display text-[clamp(1.5rem,2.6vw,2.4rem)] font-light leading-tight">
+                <h3 className="font-display text-[clamp(1.5rem,2.6vw,2.4rem)] font-normal leading-tight">
                   {beat.title}
                 </h3>
                 <p className="mt-3 max-w-lg leading-relaxed text-paper/80">

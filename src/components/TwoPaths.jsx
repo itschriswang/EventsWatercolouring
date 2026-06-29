@@ -23,7 +23,7 @@ export default function TwoPaths() {
           lines={PATHS.title}
           emphasis={PATHS.emphasis}
           emphasisClassName="text-ochre"
-          className="display-lg bleed-left text-paper"
+          className="display-lg text-paper"
         />
       </div>
 
@@ -42,7 +42,7 @@ export default function TwoPaths() {
             <span className="font-mono text-xs uppercase tracking-[0.25em] text-paper/50">
               {path.no}
             </span>
-            <h3 className="mt-3 font-display text-[clamp(2rem,4.5vw,4rem)] font-light leading-[0.95] tracking-tight text-paper">
+            <h3 className="mt-3 font-display text-[clamp(2rem,4.5vw,4rem)] font-normal leading-[0.95] tracking-tight text-paper">
               {path.title}
             </h3>
             <p className="mt-3 max-w-md text-paper/70">{path.sub}</p>
