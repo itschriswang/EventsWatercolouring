@@ -4,7 +4,7 @@ import SplitText from './SplitText.jsx'
 import { Drop } from './Label.jsx'
 import MagneticButton from './MagneticButton.jsx'
 import { SPRING, ENQUIRE_HREF } from '../lib/site.js'
-import { PACKAGES, PATHS } from '../content.js'
+import { PACKAGES } from '../content.js'
 
 /**
  * Packages — one base package, an "included as standard" grid, and an irregular
@@ -35,22 +35,6 @@ export default function Packages() {
       >
         {PACKAGES.intro}
       </motion.p>
-
-      {/* Two paths — supplementary */}
-      <motion.div
-        {...reveal(2)}
-        className="mt-8 grid grid-cols-1 gap-4 border-t border-line pt-6 sm:grid-cols-2"
-      >
-        {PATHS.items.map((path) => (
-          <div key={path.no}>
-            <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
-              {path.no}
-            </span>
-            <p className="mt-1 font-display text-lg font-normal text-ink">{path.title}</p>
-            <p className="mt-1 text-sm leading-relaxed text-ink-soft">{path.sub}</p>
-          </div>
-        ))}
-      </motion.div>
 
       {/* ── Mobile: base package as an overlapping editorial pull-quote ──────
           The offer leads — the package name reads as display art, with the

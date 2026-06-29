@@ -1,20 +1,23 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import Label from './Label.jsx'
+import Label, { Drop } from './Label.jsx'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, asset } from '../lib/site.js'
 import { EVENING } from '../content.js'
 
 /**
- * "How the evening unfolds" — a sticky split-screen. A massive section title is
- * pinned on the left while the five beats scroll past on the right with
- * staggered reveals. Rust-drenched, with mix-blend numerals.
+ * "How the evening runs" — a sticky split-screen. A massive section title is
+ * pinned on the left while the beats run down the right as a vertical tracking
+ * timeline: a spine, numbered dots that fill as each beat scrolls into view
+ * (like watching a parcel move through its stops), and a destination marker on
+ * the final beat. Rust-drenched, single layout from phone to desktop so the
+ * two never drift apart.
  */
 export default function EveningTimeline() {
   const reduce = useReducedMotion()
-  // On touch/small devices, the big overlay-blended numeral sits inside a beat
-  // that translates on reveal — re-compositing the blend every frame stutters.
-  // There we drop the blend modes and fade the beats in without a y translate.
+  // On touch/small devices we keep the entrances simple: a fade with no y
+  // translate, and the dot fills on reveal rather than animating its ring.
   const lite = reduce || !useHeavyFx()
+  const beats = EVENING.beats
 
   return (
     <section
@@ -56,89 +59,70 @@ export default function EveningTimeline() {
           </div>
         </div>
 
-        {/* Scrolling beats */}
-        <div className="col-span-12 mt-16 lg:col-span-7 lg:mt-0">
-          {/* ── Mobile: asymmetric scatter ───────────────────────────────────
-              Each beat alternates sides — a giant numeral pinned to one edge
-              (allowed to bleed past the gutter), with the small description
-              pinned to the opposite side. Varying top offsets break the grid
-              so the eye travels diagonally down the page. */}
-          <ol className="flex flex-col gap-14 sm:gap-16 lg:hidden">
-            {EVENING.beats.map((beat, i) => {
-              const numberLeft = i % 2 === 0
-              // Hand-tuned vertical scatter so the column never reads as a list.
-              const offset = ['mt-0', 'mt-2', 'mt-0', 'mt-3', 'mt-1'][i] || 'mt-0'
+        {/* Tracking timeline — one layout, mobile through desktop. The spine
+            sits behind the dots; each step reveals on scroll and fills its dot,
+            so the eye reads top-to-bottom like a delivery tracker. */}
+        <div className="col-span-12 mt-12 lg:col-span-7 lg:mt-0">
+          <ol className="relative">
+            {/* Spine: a single line down the dot column. */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-6 left-[1.125rem] top-3 w-px bg-paper/25"
+            />
+            {beats.map((beat, i) => {
+              const isLast = i === beats.length - 1
               return (
                 <motion.li
                   key={beat.no}
-                  initial={{ opacity: 0, y: lite ? 0 : 40 }}
+                  initial={{ opacity: 0, y: lite ? 0 : 32 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-80px' }}
-                  transition={lite ? { duration: 0.4 } : { ...SPRING, delay: 0.05 }}
-                  className={'relative ' + offset}
+                  transition={
+                    lite ? { duration: 0.4 } : { ...SPRING, delay: 0.05 }
+                  }
+                  className="relative flex gap-5 pb-10 last:pb-0 sm:gap-6"
                 >
-                  <div
-                    className={
-                      'flex items-start justify-between gap-3 ' +
-                      (numberLeft ? '' : 'flex-row-reverse')
-                    }
+                  {/* Step marker. Each dot pops in as its beat reveals, so the
+                      column reads like a tracker filling in stop by stop; the
+                      final beat becomes a filled orchid — the destination. */}
+                  <motion.span
+                    initial={lite ? false : { scale: 0.4, opacity: 0 }}
+                    whileInView={{ scale: 1, opacity: 1 }}
+                    viewport={{ once: true, margin: '-90px' }}
+                    transition={lite ? { duration: 0.3 } : { ...SPRING, delay: 0.12 }}
+                    className="relative z-10 shrink-0"
+                    aria-hidden="true"
                   >
-                    <span
-                      className={
-                        'pointer-events-none block font-display text-[17vw] leading-[0.82] text-paper/50 tabular-nums ' +
-                        (numberLeft ? '-ml-[1vw]' : '-mr-[1vw]')
-                      }
-                      aria-hidden="true"
-                    >
-                      {beat.no}
-                    </span>
-                    <p
-                      className={
-                        'mt-3 w-[42%] shrink-0 text-[0.76rem] leading-relaxed text-paper/75 ' +
-                        (numberLeft ? 'text-right' : 'text-left')
-                      }
-                    >
+                    {isLast ? (
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_10px_rgba(42,39,36,0.25)]">
+                        <Drop
+                          className="h-5 w-auto"
+                          gradient={['#C2613C', '#A4502F']}
+                        />
+                      </span>
+                    ) : (
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-rust shadow-[0_2px_10px_rgba(42,39,36,0.2)]">
+                        {beat.no}
+                      </span>
+                    )}
+                  </motion.span>
+
+                  {/* Step card — minimal chrome so the column reads light. */}
+                  <motion.div
+                    whileHover={reduce ? {} : { y: -3 }}
+                    transition={SPRING}
+                    className="-mt-px flex-1 rounded-2xl bg-paper/[0.06] p-4 sm:p-5"
+                  >
+                    <h3 className="font-display text-[clamp(1.25rem,2.4vw,1.9rem)] font-normal leading-tight">
+                      {beat.title}
+                    </h3>
+                    <p className="mt-2 max-w-lg text-[0.95rem] leading-relaxed text-paper/80">
                       {beat.body}
                     </p>
-                  </div>
-                  <h3
-                    className={
-                      'mt-1 font-display text-[2rem] font-normal leading-[0.95] ' +
-                      (numberLeft ? 'text-left' : 'text-right')
-                    }
-                  >
-                    {beat.title}
-                  </h3>
+                  </motion.div>
                 </motion.li>
               )
             })}
-          </ol>
-
-          {/* ── Desktop: the original beat list (unchanged) ──────────────── */}
-          <ol className="hidden flex-col lg:flex">
-            {EVENING.beats.map((beat) => (
-              <motion.li
-                key={beat.no}
-                initial={{ opacity: 0, y: lite ? 0 : 48 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={lite ? { duration: 0.4 } : { ...SPRING, delay: 0.05 }}
-                className="relative border-t border-paper/20 py-9"
-              >
-                <span
-                  className="pointer-events-none absolute right-0 top-4 font-display text-[clamp(3rem,7vw,6rem)] leading-none text-paper/50 tabular-nums"
-                  aria-hidden="true"
-                >
-                  {beat.no}
-                </span>
-                <h3 className="font-display text-[clamp(1.5rem,2.6vw,2.4rem)] font-normal leading-tight">
-                  {beat.title}
-                </h3>
-                <p className="mt-3 max-w-lg leading-relaxed text-paper/80">
-                  {beat.body}
-                </p>
-              </motion.li>
-            ))}
           </ol>
         </div>
       </div>
