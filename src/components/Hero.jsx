@@ -150,7 +150,7 @@ export default function Hero({ revealed }) {
             {/* Two layered artworks, bottom-aligned so the character can be
                 lifted well above the bouquet — staggered and overlapping, with
                 the bouquet sitting lower but still fully visible. */}
-            <div className="flex items-end justify-center sm:grow sm:mx-auto sm:w-[92%] lg:mx-0 lg:w-full lg:justify-end">
+            <div className="-mr-[5vw] flex items-end justify-end sm:mr-0 sm:grow sm:mx-auto sm:w-[92%] sm:justify-center lg:mx-0 lg:w-full lg:justify-end">
               {/* Bouquet — lower, slightly behind, still very visible. The
                   mobile drop lives on this wrapper so the figure's entrance
                   transform doesn't clobber it. */}
