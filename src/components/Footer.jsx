@@ -9,6 +9,15 @@ export default function Footer() {
 
   return (
     <footer className="relative w-full overflow-hidden bg-ink px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 70% 60% at 90% 5%, rgba(194,97,60,0.10) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 50% 40% at 5% 95%, rgba(110,140,168,0.08) 0%, transparent 50%)',
+        }}
+      />
       <div className="flex flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">
         <SplitText
           as="p"

@@ -13,6 +13,15 @@ export default function BeyondWeddings() {
       id="beyond"
       className="relative w-full overflow-hidden bg-rose px-[5vw] pt-[clamp(3.5rem,7vw,6rem)] pb-[clamp(5rem,11vw,10rem)] text-paper"
     >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 65% 55% at 5% 8%, rgba(181,57,91,0.18) 0%, transparent 60%), ' +
+            'radial-gradient(ellipse 55% 45% at 95% 92%, rgba(108,42,62,0.25) 0%, transparent 55%)',
+        }}
+      />
       <img
         src={asset('assets/bloom-accent-1.png')}
         alt=""
