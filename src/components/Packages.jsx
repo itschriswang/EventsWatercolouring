@@ -37,25 +37,28 @@ export default function Packages() {
       </motion.p>
 
       {/* ── Mobile: base package as an overlapping editorial pull-quote ──────
-          The price reads as oversized display art; a solid ink-bordered card
-          slides up to overlap it, carrying the facts, inclusions and CTA. */}
+          The offer leads — the package name reads as display art, with the
+          price kept as a quiet, confident detail rather than the loudest thing
+          on the page. A solid ink-bordered card slides up to overlap it. */}
       <div className="relative mt-[clamp(2rem,8vw,3rem)] lg:hidden">
-        <motion.div {...reveal()} className="relative z-10 pl-1">
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.25em] text-ink-soft">
-            One base package — {PACKAGES.base.priceSmall.toLowerCase()}
-          </span>
-          <p className="-ml-[0.5vw] font-display text-[42vw] font-light leading-[0.7] tracking-tight text-ink">
-            {PACKAGES.base.price}
+        <motion.div {...reveal()} className="relative z-10 max-w-[20rem] pl-1">
+          <p className="font-display text-[clamp(2.4rem,11vw,3.4rem)] font-light leading-[0.95] text-ink">
+            {PACKAGES.base.title}
+          </p>
+          <p className="mt-3 flex items-baseline gap-2">
+            <span className="font-mono text-[0.6rem] uppercase tracking-[0.25em] text-ink-soft">
+              {PACKAGES.base.priceSmall}
+            </span>
+            <span className="font-display text-[1.7rem] font-light leading-none text-ink">
+              {PACKAGES.base.price}
+            </span>
           </p>
         </motion.div>
         <motion.div
           {...reveal(1)}
-          className="relative z-20 -mt-[4vw] ml-6 border-2 border-ink bg-paper p-6 shadow-[0_24px_50px_-30px_rgba(42,39,36,0.6)]"
+          className="relative z-20 -mt-[1vw] ml-6 border-2 border-ink bg-paper p-6 shadow-[0_24px_50px_-30px_rgba(42,39,36,0.6)]"
         >
-          <h3 className="font-display text-2xl font-light text-ink">
-            {PACKAGES.base.title}
-          </h3>
-          <p className="mt-1 text-sm text-ink-soft">{PACKAGES.base.note}</p>
+          <p className="text-sm text-ink-soft">{PACKAGES.base.note}</p>
           <div className="mt-5 flex flex-wrap gap-2">
             {PACKAGES.base.facts.map((f) => (
               <span
