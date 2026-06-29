@@ -2,8 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
 import { Drop } from './Label.jsx'
-import MagneticButton from './MagneticButton.jsx'
-import { SPRING, ENQUIRE_HREF } from '../lib/site.js'
+import { SPRING } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 
 /**
@@ -48,8 +47,8 @@ export default function Packages() {
       {/* ── Mobile: base package as an overlapping editorial pull-quote ──────
           The offer leads — the package name reads as display art, with the
           price kept as a quiet, confident detail rather than the loudest thing
-          on the page. A solid ink-bordered card slides up to overlap it. */}
-      <div className="relative mt-[clamp(2rem,8vw,3rem)] lg:hidden">
+          on the page. A glass card slides up to overlap it. */}
+      <div className="relative mt-[clamp(3.5rem,12vw,5rem)] lg:hidden">
         <motion.div {...reveal()} className="relative z-10 max-w-[20rem] pl-1">
           <p className="font-display text-[clamp(2.4rem,11vw,3.4rem)] font-bold leading-[0.95] text-ink">
             {PACKAGES.base.title}
@@ -65,20 +64,25 @@ export default function Packages() {
         </motion.div>
         <motion.div
           {...reveal(1)}
-          className="relative z-20 -mt-[1vw] max-w-[calc(100vw-5vw*2)] overflow-hidden border-2 border-ink bg-paper p-6 shadow-[0_24px_50px_-30px_rgba(150,85,43,0.42)]"
+          className="relative z-20 mt-4 max-w-[calc(100vw-5vw*2)] overflow-hidden rounded-2xl border border-line/60 p-6 shadow-[0_24px_50px_-20px_rgba(150,85,43,0.28)]"
+          style={{
+            background: 'rgba(244,239,230,0.72)',
+            backdropFilter: 'blur(18px) saturate(1.6)',
+            WebkitBackdropFilter: 'blur(18px) saturate(1.6)',
+          }}
         >
           <p className="text-sm text-ink-soft">{PACKAGES.base.note}</p>
           <div className="mt-5 flex flex-wrap gap-2">
             {PACKAGES.base.facts.map((f) => (
               <span
                 key={f}
-                className="border border-line px-3 py-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-ink-soft"
+                className="border border-line/70 px-3 py-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-ink-soft"
               >
                 {f}
               </span>
             ))}
           </div>
-          <ul className="mt-6 flex flex-col gap-3 border-t border-line pt-6 text-sm text-ink/85">
+          <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
             {PACKAGES.base.bullets.map((b) => (
               <li key={b} className="flex gap-3">
                 <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#6E8CA8', '#C2613C']} />
@@ -86,9 +90,6 @@ export default function Packages() {
               </li>
             ))}
           </ul>
-          <div className="mt-7">
-            <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
-          </div>
         </motion.div>
       </div>
 
@@ -96,7 +97,12 @@ export default function Packages() {
         {/* Base package card — desktop only; mobile uses the pull-quote above. */}
         <motion.article
           {...reveal()}
-          className="col-span-12 hidden flex-col border-2 border-ink bg-paper p-8 lg:col-span-5 lg:flex"
+          className="col-span-12 hidden flex-col overflow-hidden rounded-2xl border border-line/60 p-8 shadow-[0_24px_50px_-20px_rgba(150,85,43,0.22)] lg:col-span-5 lg:flex"
+          style={{
+            background: 'rgba(244,239,230,0.72)',
+            backdropFilter: 'blur(18px) saturate(1.6)',
+            WebkitBackdropFilter: 'blur(18px) saturate(1.6)',
+          }}
         >
           <div className="flex items-baseline justify-between gap-4">
             <h3 className="font-display text-3xl font-normal text-ink">
@@ -116,13 +122,13 @@ export default function Packages() {
             {PACKAGES.base.facts.map((f) => (
               <span
                 key={f}
-                className="border border-line px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.15em] text-ink-soft"
+                className="border border-line/70 px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.15em] text-ink-soft"
               >
                 {f}
               </span>
             ))}
           </div>
-          <ul className="mt-7 flex flex-1 flex-col gap-3 border-t border-line pt-7 text-sm text-ink/85">
+          <ul className="mt-7 flex flex-1 flex-col gap-3 border-t border-line/60 pt-7 text-sm text-ink/85">
             {PACKAGES.base.bullets.map((b) => (
               <li key={b} className="flex gap-3">
                 <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#6E8CA8', '#C2613C']} />
@@ -130,9 +136,6 @@ export default function Packages() {
               </li>
             ))}
           </ul>
-          <div className="mt-8">
-            <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
-          </div>
         </motion.article>
 
         {/* Included as standard */}
