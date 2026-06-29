@@ -66,7 +66,7 @@ export default function BeyondWeddings() {
             <span className="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-paper/60">
               {card.tag}
             </span>
-            <h3 className="mt-4 font-display text-[clamp(1.4rem,2vw,2rem)] font-light leading-tight">
+            <h3 className="mt-4 font-display text-[clamp(1.4rem,2vw,2rem)] font-normal leading-tight">
               {card.title}
             </h3>
             <p className="mt-3 leading-relaxed text-paper/80">{card.body}</p>
