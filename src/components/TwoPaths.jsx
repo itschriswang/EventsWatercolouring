@@ -42,7 +42,7 @@ export default function TwoPaths() {
             <span className="font-mono text-xs uppercase tracking-[0.25em] text-paper/50">
               {path.no}
             </span>
-            <h3 className="mt-3 font-display text-[clamp(2rem,4.5vw,4rem)] font-normal leading-[0.95] tracking-tight text-paper">
+            <h3 className="mt-3 font-zt-oskon text-[clamp(2rem,4.5vw,4rem)] font-normal leading-[0.95] tracking-tight text-paper">
               {path.title}
             </h3>
             <p className="mt-3 max-w-md text-paper/70">{path.sub}</p>
@@ -52,7 +52,7 @@ export default function TwoPaths() {
                 <li key={si} className="flex gap-5">
                   <span className="mt-1 font-mono text-sm text-paper">{si + 1}</span>
                   <span>
-                    <b className="block font-display text-lg font-normal text-paper">
+                    <b className="block font-zt-oskon text-lg font-normal text-paper">
                       {s.b}
                     </b>
                     <span className="mt-1 block max-w-md text-sm leading-relaxed text-paper/65">

@@ -119,7 +119,7 @@ export default function EnquireForm() {
       <div className="grid grid-cols-12 gap-x-8 gap-y-12">
         <div className="relative col-span-12 lg:col-span-4">
           <Label>{ENQUIRY.label}</Label>
-          <h2 className="mt-5 font-display text-[clamp(2.25rem,5vw,4rem)] font-bold uppercase leading-[0.9] tracking-tight text-ink">
+          <h2 className="mt-5 font-zt-oskon text-[clamp(2.25rem,5vw,4rem)] font-normal uppercase leading-[0.9] tracking-tight text-ink">
             {ENQUIRY.title[0]}
             <br />
             <em className="text-terracotta">{ENQUIRY.title[1]}</em>
@@ -173,7 +173,7 @@ export default function EnquireForm() {
                     }}
                   />
                 ))}
-                <h3 className="relative font-display text-3xl font-normal text-ink">
+                <h3 className="relative font-zt-oskon text-3xl font-normal text-ink">
                   {ENQUIRY.confirm.title}
                 </h3>
                 <p className="relative mt-3 max-w-md leading-relaxed text-ink-soft">
@@ -184,7 +184,7 @@ export default function EnquireForm() {
                     initial={{ opacity: 0, y: reduce ? 0 : 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={reduce ? { duration: 0 } : { ...SPRING, delay: 0.45 }}
-                    className="relative mt-6 font-display text-3xl italic text-terracotta"
+                    className="relative mt-6 font-zt-oskon text-3xl italic text-terracotta"
                   >
                     {ENQUIRY.confirm.sign}
                   </motion.p>
