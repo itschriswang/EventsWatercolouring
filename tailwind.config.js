@@ -26,13 +26,15 @@ export default {
       },
       fontFamily: {
         // Three-role editorial system:
-        //  display — Playfair Display, the bold editorial serif for hero/section headers.
-        //  body    — Manrope, the neutral, legible narrative voice.
-        //  mono    — Space Mono, the rigid "blueprint" for UI/logistics
-        //            (numbering, pricing, micro-labels), always set uppercase.
+        //  display  — Sora, the bold editorial sans for hero/section headers.
+        //  body     — Manrope, the neutral, legible narrative voice.
+        //  mono     — Space Mono, the rigid "blueprint" for UI/logistics
+        //             (numbering, pricing, micro-labels), always set uppercase.
+        //  zt-oskon — ZT Bros Oskon 90s, used on key price totals only.
         display: ['"Sora"', 'Georgia', 'serif'],
         body: ['"Manrope"', 'system-ui', 'sans-serif'],
         mono: ['"Space Mono"', 'ui-monospace', 'monospace'],
+        'zt-oskon': ['"ZT Oskon 90s"', 'Georgia', 'serif'],
       },
       letterSpacing: {
         tightest: '-0.04em',

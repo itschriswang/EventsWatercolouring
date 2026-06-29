@@ -57,7 +57,7 @@ export default function Packages() {
             <span className="font-mono text-[0.6rem] uppercase tracking-[0.25em] text-ink-soft">
               {PACKAGES.base.priceSmall}
             </span>
-            <span className="font-display text-[1.4rem] leading-none text-ink">
+            <span className="font-zt-oskon text-[1.4rem] leading-none text-ink">
               {PACKAGES.base.price}
             </span>
           </p>
@@ -112,7 +112,7 @@ export default function Packages() {
               <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
                 {PACKAGES.base.priceSmall}{' '}
               </span>
-              <span className="font-display text-3xl leading-none text-ink">
+              <span className="font-zt-oskon text-3xl leading-none text-ink">
                 {PACKAGES.base.price}
               </span>
             </p>
@@ -196,15 +196,17 @@ export default function Packages() {
               <h4 className="font-display text-xl font-normal text-ink [overflow-wrap:anywhere]">{a.h}</h4>
             </div>
             <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-soft">{a.p}</p>
-            <p className="mt-5 font-mono text-sm text-rust">
+            <p className="mt-5 text-sm text-rust">
               {a.small && (
-                <span className="mr-1 text-[0.6rem] uppercase tracking-[0.15em] text-ink-soft">
+                <span className="mr-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-ink-soft">
                   {a.small}
                 </span>
               )}
-              {a.tag}
+              <span className={a.tag.startsWith('$') ? 'font-zt-oskon' : 'font-mono'}>
+                {a.tag}
+              </span>
               {a.extra && (
-                <span className="ml-1 text-[0.6rem] uppercase tracking-[0.15em] text-ink-soft">
+                <span className="ml-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-ink-soft">
                   {a.extra}
                 </span>
               )}
