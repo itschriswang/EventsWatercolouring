@@ -20,7 +20,16 @@ export default function Packages() {
   })
 
   return (
-    <section id="offerings" className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)]">
+    <section id="offerings" className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(5rem,10vw,9rem)]">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 65% 50% at 88% 8%, rgba(194,97,60,0.07) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 55% 45% at 12% 92%, rgba(110,140,168,0.06) 0%, transparent 55%)',
+        }}
+      />
       <Label gradient={['#6E8CA8', '#C2613C']}>{PACKAGES.label}</Label>
       <SplitText
         as="h2"
@@ -56,7 +65,7 @@ export default function Packages() {
         </motion.div>
         <motion.div
           {...reveal(1)}
-          className="relative z-20 -mt-[1vw] max-w-[calc(100vw-5vw*2)] overflow-hidden border-2 border-ink bg-paper p-6 shadow-[0_24px_50px_-30px_rgba(42,39,36,0.6)]"
+          className="relative z-20 -mt-[1vw] max-w-[calc(100vw-5vw*2)] overflow-hidden border-2 border-ink bg-paper p-6 shadow-[0_24px_50px_-30px_rgba(150,85,43,0.42)]"
         >
           <p className="text-sm text-ink-soft">{PACKAGES.base.note}</p>
           <div className="mt-5 flex flex-wrap gap-2">

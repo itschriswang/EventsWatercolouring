@@ -157,7 +157,7 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
             cardShape +
             ' block w-full cursor-zoom-in bg-paper-deep text-left outline-none' +
             ' transition-[transform,box-shadow] duration-500 ease-organic' +
-            ' group-hover:-translate-y-1 group-hover:shadow-[0_18px_42px_-26px_rgba(42,39,36,0.5)]' +
+            ' group-hover:-translate-y-1 group-hover:shadow-[0_18px_42px_-26px_rgba(150,85,43,0.28)]' +
             ' focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-paper'
           }
         >

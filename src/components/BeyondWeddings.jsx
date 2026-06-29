@@ -11,7 +11,7 @@ export default function BeyondWeddings() {
   return (
     <section
       id="beyond"
-      className="relative w-full overflow-hidden bg-rose px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper"
+      className="relative w-full overflow-hidden bg-rose px-[5vw] pt-[clamp(3.5rem,7vw,6rem)] pb-[clamp(5rem,11vw,10rem)] text-paper"
     >
       <img
         src={asset('assets/bloom-accent-1.png')}
@@ -56,14 +56,17 @@ export default function BeyondWeddings() {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ ...SPRING, delay: reduce ? 0 : i * 0.1 }}
             whileHover={reduce ? {} : { y: -8 }}
-            className={
+            className={[
               // Lighter chrome than a bordered box: a soft rounded panel so the
               // three cards read as a set, not stacked outlines. backdrop-blur
-              // is costly to recompute while scrolling on mobile, so enable it
-              // only from md up over a faint solid fill below that.
-              'col-span-12 flex flex-col rounded-2xl bg-paper/[0.07] p-7 md:bg-paper/[0.05] md:backdrop-blur-sm sm:col-span-6 lg:col-span-4 ' +
-              (i === 1 ? 'lg:mt-10' : i === 2 ? 'lg:mt-5' : '')
-            }
+              // is costly on mobile, so enable it only from md up over a faint fill.
+              'col-span-12 flex flex-col rounded-2xl bg-paper/[0.07] p-7 md:bg-paper/[0.05] md:backdrop-blur-sm sm:col-span-6',
+              // Asymmetric widths + dramatic vertical drop so the three cards
+              // read as a cascading staircase, not three equal siblings.
+              i === 0 ? 'lg:col-span-4'
+              : i === 1 ? 'lg:col-span-5 lg:mt-24'
+              : 'lg:col-span-3 lg:mt-10',
+            ].join(' ')}
           >
             <Drop
               className="h-5 w-5 self-start"
