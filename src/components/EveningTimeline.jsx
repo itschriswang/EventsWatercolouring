@@ -57,9 +57,66 @@ export default function EveningTimeline() {
         </div>
 
         {/* Scrolling beats */}
-        <div className="col-span-12 mt-14 lg:col-span-7 lg:mt-0">
-          <ol className="flex flex-col">
-            {EVENING.beats.map((beat, i) => (
+        <div className="col-span-12 mt-16 lg:col-span-7 lg:mt-0">
+          {/* ── Mobile: asymmetric scatter ───────────────────────────────────
+              Each beat alternates sides — a giant numeral pinned to one edge
+              (allowed to bleed past the gutter), with the small description
+              pinned to the opposite side. Varying top offsets break the grid
+              so the eye travels diagonally down the page. */}
+          <ol className="flex flex-col gap-14 sm:gap-16 lg:hidden">
+            {EVENING.beats.map((beat, i) => {
+              const numberLeft = i % 2 === 0
+              // Hand-tuned vertical scatter so the column never reads as a list.
+              const offset = ['mt-0', 'mt-2', 'mt-0', 'mt-3', 'mt-1'][i] || 'mt-0'
+              return (
+                <motion.li
+                  key={beat.no}
+                  initial={{ opacity: 0, y: lite ? 0 : 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={lite ? { duration: 0.4 } : { ...SPRING, delay: 0.05 }}
+                  className={'relative ' + offset}
+                >
+                  <div
+                    className={
+                      'flex items-start justify-between gap-3 ' +
+                      (numberLeft ? '' : 'flex-row-reverse')
+                    }
+                  >
+                    <span
+                      className={
+                        'pointer-events-none block font-display text-[26vw] font-light leading-[0.78] text-paper/45 tabular-nums ' +
+                        (numberLeft ? '-ml-[1.5vw]' : '-mr-[1.5vw]')
+                      }
+                      aria-hidden="true"
+                    >
+                      {beat.no}
+                    </span>
+                    <p
+                      className={
+                        'mt-3 w-[42%] shrink-0 text-[0.76rem] leading-relaxed text-paper/75 ' +
+                        (numberLeft ? 'text-right' : 'text-left')
+                      }
+                    >
+                      {beat.body}
+                    </p>
+                  </div>
+                  <h3
+                    className={
+                      'mt-1 font-display text-[2rem] font-light leading-[0.95] ' +
+                      (numberLeft ? 'text-left' : 'text-right')
+                    }
+                  >
+                    {beat.title}
+                  </h3>
+                </motion.li>
+              )
+            })}
+          </ol>
+
+          {/* ── Desktop: the original beat list (unchanged) ──────────────── */}
+          <ol className="hidden flex-col lg:flex">
+            {EVENING.beats.map((beat) => (
               <motion.li
                 key={beat.no}
                 initial={{ opacity: 0, y: lite ? 0 : 48 }}
