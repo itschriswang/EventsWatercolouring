@@ -96,7 +96,7 @@ export default function Hero({ revealed }) {
             col-start, so DOM order is free). On mobile it is ordered BELOW the
             artwork, so the big headline lands low on the screen with the images
             stacked above it — the editorial hero arrangement. */}
-        <div className="relative z-10 order-2 mt-14 sm:mt-0 lg:order-none lg:col-span-7 lg:col-start-1">
+        <div className="relative z-10 order-2 mt-[min(3.5rem,5dvh)] sm:mt-0 lg:order-none lg:col-span-7 lg:col-start-1">
           <motion.div style={parallax ? { y: copyY } : {}}>
             {revealed && (
               <SplitText
@@ -165,7 +165,7 @@ export default function Hero({ revealed }) {
                     <img
                       src={asset('assets/art-bouquet.jpg')}
                       alt="A watercolour bouquet study held to the light."
-                      className="aspect-[4/5] w-full object-cover sm:h-[clamp(160px,18vh,260px)] sm:aspect-auto lg:h-[38vh]"
+                      className="aspect-[4/5] w-full object-cover max-h-[36dvh] [@media(max-height:500px)]:max-h-[22dvh] sm:max-h-none sm:h-[clamp(160px,18vh,260px)] sm:aspect-auto lg:h-[38vh]"
                       loading="eager"
                       onError={(e) => (e.currentTarget.style.display = 'none')}
                     />
@@ -192,7 +192,7 @@ export default function Hero({ revealed }) {
                     <img
                       src={asset('assets/art-character-boy.jpg')}
                       alt="A small watercolour character study at the palette."
-                      className="aspect-[4/5] w-full object-cover sm:h-[clamp(175px,20vh,280px)] sm:aspect-auto lg:h-[42vh]"
+                      className="aspect-[4/5] w-full object-cover max-h-[36dvh] [@media(max-height:500px)]:max-h-[22dvh] sm:max-h-none sm:h-[clamp(175px,20vh,280px)] sm:aspect-auto lg:h-[42vh]"
                       loading="eager"
                       onError={(e) => (e.currentTarget.style.display = 'none')}
                     />
