@@ -1,64 +1,113 @@
 import { motion, useReducedMotion } from 'framer-motion'
+import { useEffect, useId, useMemo, useState } from 'react'
 import { MARQUEE } from '../content.js'
+
+// Build a 2-tile asymmetric wave path in screen pixel coords.
+// Both endpoints share the same y (mid) with horizontal tangents,
+// guaranteeing C1 continuity where tiles meet — seamless loop.
+// Crest at ~26% width (early), trough at ~72% (late), matching the
+// original ribbon's character.
+function buildPath(vw, h) {
+  const mid = h / 2
+  const amp = h * 0.22
+  const top = mid - amp
+  const bot = mid + amp
+  const tile = (ox) => [
+    `C${ox + vw * 0.06},${mid} ${ox + vw * 0.13},${top} ${ox + vw * 0.26},${top}`,
+    `C${ox + vw * 0.38},${top} ${ox + vw * 0.46},${mid} ${ox + vw * 0.50},${mid}`,
+    `C${ox + vw * 0.58},${mid} ${ox + vw * 0.62},${bot} ${ox + vw * 0.72},${bot}`,
+    `C${ox + vw * 0.86},${bot} ${ox + vw * 0.94},${mid} ${ox + vw},${mid}`,
+  ].join(' ')
+  return `M0,${mid} ${tile(0)} ${tile(vw)}`
+}
 
 export default function Marquee() {
   const reduce = useReducedMotion()
-  const phrase = MARQUEE
 
-  const Track = () => (
-    <div className="flex shrink-0 items-center" aria-hidden="true">
-      {phrase.map((p, i) => (
-        <span key={i} className="flex items-center">
-          <span className="px-8 font-display text-[clamp(2rem,6vw,5rem)] font-bold uppercase tracking-tight text-paper">
-            {p}
-          </span>
-          <span className="text-terracotta text-[clamp(1.5rem,4vw,3rem)]">✦</span>
-        </span>
-      ))}
-    </div>
+  // Sanitise useId output → valid XML id (no colons)
+  const rawId = useId()
+  const pathId = `m${rawId.replace(/[^a-z0-9]/gi, '')}`
+
+  const [vw, setVw] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth : 1440
+  )
+
+  useEffect(() => {
+    const onResize = () => setVw(window.innerWidth)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  // Section height scales with viewport: 100 px min (mobile) → 200 px max (desktop)
+  const h = Math.max(100, Math.min(vw * 0.14, 200))
+  // Font size mirrors original clamp(2rem, 6vw, 5rem)
+  const fontSize = Math.max(32, Math.min(vw * 0.06, 80))
+  const path = useMemo(() => buildPath(vw, h), [vw, h])
+
+  // Repeated phrase + bullet nodes; 4 repeats ensures the full 2-tile path
+  // always has text even at the widest viewports.
+  const textNodes = useMemo(
+    () =>
+      Array.from({ length: 4 }, (_, rep) =>
+        MARQUEE.flatMap((phrase, i) => [
+          <tspan key={`${rep}t${i}`} fill="#2A2724">
+            {phrase.toUpperCase()}{'  '}
+          </tspan>,
+          <tspan key={`${rep}b${i}`} fill="#C2613C">
+            {'✦  '}
+          </tspan>,
+        ])
+      ).flat(),
+    []
   )
 
   return (
     <section
       aria-label="Live wedding watercolour"
-      className="relative"
-      style={{ height: '200px' }}
+      className="relative overflow-hidden"
+      style={{ height: h }}
     >
       {/*
-        Asymmetric ink ribbon:
-        Top edge  — sharp crest early (~24% width), lazy trough late (~69% width),
-                    ribbon sits lower on the left than the right.
-        Bottom edge — phase-shifted right so ribbon thickness swells at the trough
-                    (drippy underside) and narrows at the crest.
+        Single SVG, 2× viewport wide.
+        Animation: slide left by exactly one viewport width → seamless loop
+        because both tiles are identical (key={vw} restarts on resize).
       */}
-      <svg
-        className="pointer-events-none absolute inset-0 h-full w-full"
-        viewBox="0 0 1440 200"
-        preserveAspectRatio="none"
+      <motion.svg
+        key={vw}
+        viewBox={`0 0 ${2 * vw} ${h}`}
+        width={2 * vw}
+        height={h}
+        className="absolute top-0 left-0"
+        animate={reduce ? {} : { x: [0, -vw] }}
+        transition={{ duration: 26, ease: 'linear', repeat: Infinity }}
         aria-hidden="true"
       >
-        <path
-          d="M 0,42
-             C 200,8 400,6 540,42
-             C 720,75 1250,72 1440,35
-             L 1440,158
-             C 1200,200 750,200 560,160
-             C 360,126 160,122 0,160 Z"
-          fill="#2A2724"
-        />
-      </svg>
+        <defs>
+          <path id={pathId} d={path} />
+        </defs>
 
-      {/* Scrolling text sits at the vertical centre of the section */}
-      <div className="absolute inset-0 flex items-center overflow-hidden">
-        <motion.div
-          className="flex w-max flex-nowrap"
-          animate={reduce ? {} : { x: ['0%', '-50%'] }}
-          transition={{ duration: 26, ease: 'linear', repeat: Infinity }}
+        {/* Single-weight ink line — the "path not a shape" */}
+        <use
+          href={`#${pathId}`}
+          fill="none"
+          stroke="#2A2724"
+          strokeWidth={1.5}
+          strokeOpacity={0.18}
+        />
+
+        {/* Marquee text flowing along the wave */}
+        <text
+          fontSize={fontSize}
+          fontFamily="Sora, sans-serif"
+          fontWeight="700"
+          dominantBaseline="middle"
+          style={{ letterSpacing: '-0.025em' }}
         >
-          <Track />
-          <Track />
-        </motion.div>
-      </div>
+          <textPath href={`#${pathId}`}>
+            {textNodes}
+          </textPath>
+        </text>
+      </motion.svg>
     </section>
   )
 }
