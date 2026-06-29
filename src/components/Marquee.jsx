@@ -22,22 +22,28 @@ export default function Marquee() {
     <section
       aria-label="Live wedding watercolour"
       className="relative"
-      style={{ height: '180px' }}
+      style={{ height: '200px' }}
     >
       {/*
-        Wavy ink ribbon — an SVG path that arcs across the page.
-        preserveAspectRatio="none" stretches it to fill any viewport width
-        so the wave always spans the full screen.
+        Asymmetric ink ribbon:
+        Top edge  — sharp crest early (~24% width), lazy trough late (~69% width),
+                    ribbon sits lower on the left than the right.
+        Bottom edge — phase-shifted right so ribbon thickness swells at the trough
+                    (drippy underside) and narrows at the crest.
       */}
       <svg
         className="pointer-events-none absolute inset-0 h-full w-full"
-        viewBox="0 0 1440 180"
+        viewBox="0 0 1440 200"
         preserveAspectRatio="none"
         aria-hidden="true"
       >
         <path
-          d="M 0,35 C 240,0 480,0 720,35 C 960,70 1200,70 1440,35
-             L 1440,145 C 1200,180 960,180 720,145 C 480,110 240,110 0,145 Z"
+          d="M 0,42
+             C 200,8 400,6 540,42
+             C 720,75 1250,72 1440,35
+             L 1440,158
+             C 1200,200 750,200 560,160
+             C 360,126 160,122 0,160 Z"
           fill="#2A2724"
         />
       </svg>
