@@ -179,7 +179,7 @@ export default function Hero({ revealed }) {
               {/* Character — raised much higher, in front, overlapping. The
                   lift lives on this wrapper so the figure's hover transform
                   doesn't clobber it. */}
-              <div className="relative z-10 -ml-[5%] w-[54%] shrink-0 translate-y-[8%] sm:-ml-[10%] sm:w-[48%] lg:w-[54%] sm:-translate-y-[22%] lg:-translate-y-[28%]">
+              <div className="relative z-10 -ml-[5%] w-[54%] shrink-0 translate-y-[12%] sm:-ml-[10%] sm:w-[48%] lg:w-[54%] sm:-translate-y-[22%] lg:-translate-y-[28%]">
                 <motion.figure
                   initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : 4 }}
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : 3 } : { opacity: 0 }}
