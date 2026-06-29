@@ -33,6 +33,7 @@ export default function WhyWatercolour() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}
             transition={{ ...SPRING, delay: reduce ? 0 : i * 0.1 }}
+            whileHover={reduce ? {} : { y: -4 }}
             className={
               'col-span-12 sm:col-span-6 lg:col-span-4 ' +
               // Staggered vertical offsets for an organic, non-aligned grid.
