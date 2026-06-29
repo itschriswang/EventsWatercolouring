@@ -30,7 +30,7 @@ export default {
         //  body    — Manrope, the neutral, legible narrative voice.
         //  mono    — Space Mono, the rigid "blueprint" for UI/logistics
         //            (numbering, pricing, micro-labels), always set uppercase.
-        display: ['"Playfair Display"', 'Georgia', 'serif'],
+        display: ['"Sora"', 'Georgia', 'serif'],
         body: ['"Manrope"', 'system-ui', 'sans-serif'],
         mono: ['"Space Mono"', 'ui-monospace', 'monospace'],
       },
