@@ -8,7 +8,16 @@ export default function WhyWatercolour() {
   const reduce = useReducedMotion()
 
   return (
-    <section id="why" className="relative w-full px-[5vw] py-[clamp(3rem,8vw,7rem)]">
+    <section id="why" className="relative w-full px-[5vw] pt-[clamp(2.5rem,6vw,5rem)] pb-[clamp(4rem,10vw,9rem)]">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 60% 55% at 90% 5%, rgba(194,97,60,0.07) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 50% 50% at 8% 95%, rgba(110,140,168,0.06) 0%, transparent 55%)',
+        }}
+      />
       {/* Visually the eyebrow + italic lede read as this section's heading; this
           keeps the document outline correct (an h2 before the note h3s). */}
       <h2 className="sr-only">{WHY.label}</h2>
@@ -34,11 +43,12 @@ export default function WhyWatercolour() {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ ...SPRING, delay: reduce ? 0 : i * 0.1 }}
             whileHover={reduce ? {} : { y: -4 }}
-            className={
-              'col-span-12 sm:col-span-6 lg:col-span-4 ' +
-              // Staggered vertical offsets for an organic, non-aligned grid.
-              (i === 1 ? 'lg:mt-16' : i === 2 ? 'lg:mt-8' : '')
-            }
+            className={[
+              'col-span-12 sm:col-span-6',
+              // Zig-zag asymmetric layout: note 0 anchors top-left, note 1
+              // bridges right with a deep drop, note 2 reclaims the left wider.
+              ['lg:col-span-5', 'lg:col-span-5 lg:col-start-8 lg:mt-28', 'lg:col-span-7 lg:mt-16'][i],
+            ].join(' ')}
           >
             <span className="font-display text-sm text-rust">{n.no}</span>
             <h3 className="mt-4 font-display text-[clamp(1.4rem,2vw,2rem)] font-normal leading-tight text-ink">

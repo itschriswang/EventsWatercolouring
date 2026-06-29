@@ -85,8 +85,6 @@ export default function AboutMe() {
         </div>
       </div>
 
-      {/* Dove painting — bottom-right corner decoration */}
-      
     </section>
   )
 }

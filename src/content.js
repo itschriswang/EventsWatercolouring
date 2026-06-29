@@ -225,6 +225,36 @@ export const PACKAGES = {
     'A note on style. What I paint is my interpretation, not a photo-exact likeness, and my style evolves over time, so no two pieces are the same. Booking means you are comfortable with that approach and my style. A 50% retainer holds your date, with the balance due two weeks before your big day.',
 }
 
+export const PATHS = {
+  label: 'How it works',
+  title: ['Live on the day,', 'or after it.'],
+  emphasis: 'or after it.',
+  items: [
+    {
+      no: '01',
+      title: 'Live on the day',
+      sub: 'I paint your guests as they mingle — quick portraits in watercolour, handed over as the night unfolds.',
+      steps: [
+        { b: 'Book your date', t: 'A 50% retainer holds the date. Balance due two weeks before.' },
+        { b: 'I arrive early', t: 'Set-up takes about 15 minutes before the event starts.' },
+        { b: 'Paint and mingle', t: 'Guests pass by; I take a quick photo and paint them live.' },
+        { b: 'Keepsakes to go', t: 'Each finished portrait goes home with the guest on the night.' },
+      ],
+    },
+    {
+      no: '02',
+      title: 'From your photographs',
+      sub: 'A studio commission painted from photos before or after the event — ready in about four weeks.',
+      steps: [
+        { b: 'Share your photos', t: 'Send clear reference images after the booking is confirmed.' },
+        { b: 'I paint in the studio', t: 'Work begins once the references arrive.' },
+        { b: 'Review and approve', t: 'I send a photo of the finished piece before it is posted.' },
+        { b: 'Posted to you', t: 'Shipped flat in a protective sleeve, ready to frame.' },
+      ],
+    },
+  ],
+}
+
 export const BEYOND = {
   label: 'Beyond weddings',
   title: ['For any room,', 'any occasion.'],
