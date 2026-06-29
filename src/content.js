@@ -74,53 +74,6 @@ export const EVENING = {
   ],
 }
 
-export const PATHS = {
-  label: 'How it works',
-  title: ['Two ways', 'to work with me.'],
-  emphasis: 'to work with me.',
-  items: [
-    {
-      no: 'Path 01',
-      title: 'Live on the day',
-      sub: 'I come to your wedding and paint on the day.',
-      art: 'assets/art-bouquet.webp',
-      steps: [
-        {
-          b: 'We plan it together',
-          t: 'We start from one base package and build it around your day: how long I paint, roughly how many guests, and any extras. A retainer holds your date.',
-        },
-        {
-          b: 'I paint through the night',
-          t: 'I arrive early, set up, then paint a set number of your guests while the party carries on. Nobody has to pose or sit for me.',
-        },
-        {
-          b: 'Guests get to take home a special memory',
-          t: 'The guests I paint go home with their own small portrait, sleeved and ready to travel. Your couple portrait is painted on the night and stays with you. Feel free to let me know of any VIPs I should get around to on the night.',
-        },
-      ],
-    },
-    {
-      no: 'Path 02',
-      title: 'A studio commission',
-      sub: 'From your photographs, before or after the wedding.',
-      art: 'assets/art-character-girl.webp',
-      steps: [
-        {
-          b: 'Send me your photos',
-          t: 'A few clear, high-resolution photos that look like you. I will help you pick the one to paint from.',
-        },
-        {
-          b: 'I paint in the studio',
-          t: 'I work from your photos on archival cotton paper, building the portrait by hand over the following weeks.',
-        },
-        {
-          b: 'It arrives in around four weeks',
-          t: 'Your finished watercolour usually arrives within about four weeks.',
-        },
-      ],
-    },
-  ],
-}
 
 export const WORK = {
   label: 'Selected work',
@@ -196,19 +149,19 @@ export const PACKAGES = {
     'Everything is painted live on 300gsm cotton paper. Whether it is your wedding, a corporate event, or a private celebration, the base package starts the same and builds from there.',
   base: {
     title: 'Live on the day',
-    note: 'The base package, painted across your reception.',
+    note: 'The base package, painted across your event.',
     priceSmall: 'From',
     price: '$850',
     facts: ['3 hours live', '27 keepsakes'],
     bullets: [
       'Guest portraits painted live, A5 on archival cotton paper',
       'Each keepsake artwork can feature up to four guests',
-      'Nobody has to pose or sit — I take a quick photo as guests pass by',
-      'You and any VIPs are painted first — just let me know before the night',
+      'Nobody has to pose or sit. I take a quick photo as guests pass by',
+      'You and any VIPs are painted first, just let me know before the night',
     ],
   },
   baseNote:
-    'Want more hours, more guests, or a portrait from photos instead? We build it up from the base. Some add-ons have a set price, others I quote for your day. Just tell me what you are after.',
+    'Want more hours, more guests, or a portrait from photos instead? We build it up from the base. I am happy to produce material before and after the event in my studio too. Some add-ons have a set price, others I quote for your day. Just tell me what you are after.',
   included: {
     title: 'Included as standard',
     sub: 'Everything below comes with the base package. You provide a table (around 100 by 60cm, at seated height, with a front-facing chair that tucks underneath) and a chair for me. I bring the rest.',
@@ -216,7 +169,7 @@ export const PACKAGES = {
       'All drawing and painting materials',
       'Premium 300gsm archival watercolour paper',
       'Clear sleeves for each piece',
-      'Live painting across your reception',
+      'Live painting across your event',
       'Set-up about 15 minutes before I start',
       'Public liability insurance',
       'Travel within about an hour of Melbourne or Sydney metro',
@@ -242,7 +195,7 @@ export const PACKAGES = {
 
     {
       h: 'Extra live hours',
-      p: 'I stay longer across the reception, so more of your guests get painted.',
+      p: 'I stay longer across the event, so more of your guests get painted.',
       tag: 'On enquiry',
     },
     {
