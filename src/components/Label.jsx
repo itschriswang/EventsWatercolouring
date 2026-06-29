@@ -11,7 +11,6 @@ export function Drop({ className = '', fill = '#6E8CA8', gradient }) {
       className={className}
       viewBox="0 0 100 100"
       aria-hidden="true"
-      shapeRendering="crispEdges"
     >
       <defs>
         {gradient && (
@@ -20,11 +19,11 @@ export function Drop({ className = '', fill = '#6E8CA8', gradient }) {
             <stop offset="100%" stopColor={gradient[1]} />
           </linearGradient>
         )}
-        <mask id={maskId} shapeRendering="crispEdges">
-          <rect width="100" height="100" fill="white" />
+        <clipPath id={maskId}>
           <path
-            fill="black"
-            d="M 50,37
+            fillRule="evenodd"
+            d="M 0 0 H 100 V 100 H 0 Z
+               M 50,37
                C 53,37 54,41 54,45
                C 58,43 64,47 64,52
                C 64,58 59,59 55,57
@@ -34,10 +33,10 @@ export function Drop({ className = '', fill = '#6E8CA8', gradient }) {
                C 36,47 42,43 46,45
                C 46,41 47,37 50,37 Z"
           />
-        </mask>
+        </clipPath>
       </defs>
 
-      <g mask={`url(#${maskId})`}>
+      <g clipPath={`url(#${maskId})`}>
         <g transform="translate(50, 50)">
           {/* Lower right */}
           <path
