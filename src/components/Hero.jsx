@@ -88,7 +88,7 @@ export default function Hero({ revealed }) {
       >
         <span
           aria-hidden="true"
-          className="block h-px w-5 shrink-0 bg-ink-soft opacity-40"
+          className="block h-px w-5 shrink-0 bg-lime opacity-60"
         />
         <span className="font-mono text-[0.59rem] uppercase tracking-[0.26em] text-ink-soft">
           Live event watercolour keepsakes
@@ -213,7 +213,7 @@ export default function Hero({ revealed }) {
         className="mt-[clamp(2rem,5vw,4rem)] flex items-center gap-3 font-mono text-[0.62rem] uppercase tracking-[0.3em] text-ink-soft"
       >
         <motion.span
-          className="block h-8 w-px bg-ink-soft"
+          className="block h-8 w-px bg-lime"
           animate={reduce ? {} : { scaleY: [0.4, 1, 0.4] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
           style={{ originY: 0 }}

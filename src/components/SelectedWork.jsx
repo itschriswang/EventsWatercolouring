@@ -53,7 +53,7 @@ export default function SelectedWork() {
       <div className="mx-auto max-w-[88rem]">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <Label gradient={['#6E8CA8', '#C2613C']}>{WORK.label}</Label>
+            <Label gradient={['#7E8B62', '#AEBF56']}>{WORK.label}</Label>
             <SplitText
               as="h2"
               unit="char"
