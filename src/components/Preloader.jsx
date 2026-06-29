@@ -77,10 +77,10 @@ export default function Preloader({ onDone }) {
           <div className="mt-10 flex flex-col items-center gap-4 text-center">
             <p className="eyebrow">Getting set up for you</p>
             <div className="flex items-baseline gap-3">
-              <span className="font-display text-5xl tabular-nums tracking-tighter text-ink">
+              <span className="num-wide text-5xl tabular-nums text-ink">
                 {progress}
               </span>
-              <span className="font-display text-xs text-ink-soft">/ 100</span>
+              <span className="num-wide text-xs text-ink-soft">/ 100</span>
             </div>
             <div className="h-px w-48 overflow-hidden bg-line">
               <motion.div

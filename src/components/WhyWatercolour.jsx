@@ -50,8 +50,8 @@ export default function WhyWatercolour() {
               ['lg:col-span-5', 'lg:col-span-5 lg:col-start-8 lg:mt-28', 'lg:col-span-7 lg:mt-16'][i],
             ].join(' ')}
           >
-            <span className="font-display text-sm text-rust">{n.no}</span>
-            <h3 className="mt-4 font-display text-[clamp(1.4rem,2vw,2rem)] font-normal leading-tight text-ink">
+            <span className="num-wide text-sm text-rust">{n.no}</span>
+            <h3 className="mt-4 font-zt-oskon text-[clamp(1.4rem,2vw,2rem)] font-normal leading-tight text-ink">
               {n.title}
             </h3>
             <p className="mt-3 max-w-sm leading-relaxed text-ink-soft">{n.body}</p>
