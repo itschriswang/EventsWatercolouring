@@ -72,7 +72,7 @@ export default function Packages() {
         </motion.div>
         <motion.div
           {...reveal(1)}
-          className="relative z-20 -mt-[1vw] ml-6 border-2 border-ink bg-paper p-6 shadow-[0_24px_50px_-30px_rgba(42,39,36,0.6)]"
+          className="relative z-20 -mt-[1vw] max-w-[calc(100vw-5vw*2)] overflow-hidden border-2 border-ink bg-paper p-6 shadow-[0_24px_50px_-30px_rgba(42,39,36,0.6)]"
         >
           <p className="text-sm text-ink-soft">{PACKAGES.base.note}</p>
           <div className="mt-5 flex flex-wrap gap-2">
