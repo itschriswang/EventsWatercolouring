@@ -2,9 +2,8 @@ import { useRef } from 'react'
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
-import MagneticButton from './MagneticButton.jsx'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
-import { SPRING, asset, ENQUIRE_HREF } from '../lib/site.js'
+import { SPRING, asset } from '../lib/site.js'
 import { PAINTER } from '../content.js'
 
 /** "The painter" — bio set against an asymmetric framed portrait. */
@@ -46,9 +45,6 @@ export default function AboutMe() {
                 {PAINTER.signature}
               </p>
             )}
-            <div className="mt-8">
-              <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
-            </div>
           </div>
   
           {/* Right column: portrait, top aligned near the "me" line */}
