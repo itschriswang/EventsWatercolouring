@@ -163,7 +163,7 @@ export const WORK = {
     { img: 'art-couple-blush',   ttl: 'Blush & black tie',    meta: 'Watercolour · A5', alt: 'Watercolour portrait of a couple, the bride in a blush off-shoulder gown beside a groom in a black suit and glasses' },
     { img: 'art-character-boy',  ttl: 'At the palette',       meta: 'Studio study', alt: "Small watercolour character portrait with the artist's palette alongside, in warm terracotta and ochre" },
     { img: 'art-bouquet',        ttl: 'Ribbon & rose',        meta: 'Watercolour · A5' },
-    { img: 'art-character-boy',  ttl: 'Warm ochre',           meta: 'Studio study' },
+    { img: 'art-character-boy2',  ttl: 'Warm ochre',           meta: 'Studio study' },
     { img: 'art-character-girl', ttl: 'Olive & hat',          meta: 'Studio study', feature: true },
     { img: 'art-character-boy',  ttl: 'On cotton paper',      meta: 'Watercolour · A5' },
     { img: 'art-bouquet',        ttl: 'Forget-me-not',        meta: 'Watercolour · A5' },
