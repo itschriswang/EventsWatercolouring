@@ -96,7 +96,7 @@ export default function Hero({ revealed }) {
             col-start, so DOM order is free). On mobile it is ordered BELOW the
             artwork, so the big headline lands low on the screen with the images
             stacked above it — the editorial hero arrangement. */}
-        <div className="relative z-10 order-2 lg:order-none lg:col-span-7 lg:col-start-1">
+        <div className="relative z-10 order-2 mt-14 sm:mt-0 lg:order-none lg:col-span-7 lg:col-start-1">
           <motion.div style={parallax ? { y: copyY } : {}}>
             {revealed && (
               <SplitText
