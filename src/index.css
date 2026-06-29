@@ -11,6 +11,8 @@
   body {
     margin: 0;
     background-color: theme('colors.paper');
+    background-image: radial-gradient(theme('colors.line') 0.5px, transparent 0.5px);
+    background-size: 4px 4px;
     color: theme('colors.ink');
     font-family: theme('fontFamily.body');
     font-weight: 400;
