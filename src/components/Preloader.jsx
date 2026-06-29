@@ -77,7 +77,7 @@ export default function Preloader({ onDone }) {
           <div className="mt-10 flex flex-col items-center gap-4 text-center">
             <p className="eyebrow">Getting set up for you</p>
             <div className="flex items-baseline gap-3">
-              <span className="font-display text-5xl tabular-nums tracking-tighter text-ink">
+              <span className="font-mono text-5xl tabular-nums tracking-tighter text-ink">
                 {progress}
               </span>
               <span className="font-mono text-xs text-ink-soft">/ 100</span>

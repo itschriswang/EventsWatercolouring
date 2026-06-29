@@ -58,7 +58,7 @@ export default function SelectedWork() {
               unit="char"
               lines={WORK.title}
               emphasis={WORK.emphasis}
-              className="display-lg mt-5 text-ink"
+              className="display-lg bleed-left mt-5 text-ink"
             />
           </div>
           <div className="max-w-xs">
