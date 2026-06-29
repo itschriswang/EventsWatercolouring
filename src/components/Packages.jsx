@@ -50,7 +50,7 @@ export default function Packages() {
           on the page. A glass card slides up to overlap it. */}
       <div className="relative mt-[clamp(3.5rem,12vw,5rem)] lg:hidden">
         <motion.div {...reveal()} className="relative z-10 max-w-[20rem] pl-1">
-          <p className="font-display text-[clamp(2.4rem,11vw,3.4rem)] font-bold leading-[0.95] text-ink">
+          <p className="font-zt-oskon text-[clamp(2.4rem,11vw,3.4rem)] font-normal leading-[0.95] text-ink">
             {PACKAGES.base.title}
           </p>
           <p className="mt-3 flex items-baseline gap-2">
@@ -105,7 +105,7 @@ export default function Packages() {
           }}
         >
           <div className="flex items-baseline justify-between gap-4">
-            <h3 className="font-display text-3xl font-normal text-ink">
+            <h3 className="font-zt-oskon text-3xl font-normal text-ink">
               {PACKAGES.base.title}
             </h3>
             <p className="shrink-0 text-right">
@@ -148,7 +148,7 @@ export default function Packages() {
             WebkitBackdropFilter: 'blur(18px) saturate(1.6)',
           }}
         >
-          <h3 className="font-display text-2xl font-normal text-ink">
+          <h3 className="font-zt-oskon text-2xl font-normal text-ink">
             {PACKAGES.included.title}
           </h3>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-soft">
@@ -171,7 +171,7 @@ export default function Packages() {
 
       {/* Add-ons */}
       <div className="mt-[clamp(3rem,7vw,5rem)] flex items-baseline justify-between border-b border-ink pb-4">
-        <h3 className="font-display text-[clamp(1.6rem,3vw,2.5rem)] font-bold uppercase tracking-tight text-ink">
+        <h3 className="font-zt-oskon text-[clamp(1.6rem,3vw,2.5rem)] font-normal uppercase tracking-tight text-ink">
           {PACKAGES.addonsHead.title}
         </h3>
         <span className="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-ink-soft">
@@ -193,18 +193,20 @@ export default function Packages() {
             }
           >
             <div className="flex items-start justify-between gap-4">
-              <h4 className="font-display text-xl font-normal text-ink [overflow-wrap:anywhere]">{a.h}</h4>
+              <h4 className="font-zt-oskon text-xl font-normal text-ink [overflow-wrap:anywhere]">{a.h}</h4>
             </div>
             <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-soft">{a.p}</p>
-            <p className="mt-5 font-mono text-sm text-rust">
+            <p className="mt-5 text-sm text-rust">
               {a.small && (
-                <span className="mr-1 text-[0.6rem] uppercase tracking-[0.15em] text-ink-soft">
+                <span className="mr-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-ink-soft">
                   {a.small}
                 </span>
               )}
-              {a.tag}
+              <span className={a.tag.startsWith('$') ? 'font-display' : 'font-mono'}>
+                {a.tag}
+              </span>
               {a.extra && (
-                <span className="ml-1 text-[0.6rem] uppercase tracking-[0.15em] text-ink-soft">
+                <span className="ml-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-ink-soft">
                   {a.extra}
                 </span>
               )}

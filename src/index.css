@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'ZT Oskon 90s';
+  src: url('/fonts/ZTBrosOskon90s-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ZT Oskon 90s';
+  src: url('/fonts/ZTBrosOskon90s-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Epoch';
+  src: url('/fonts/Epoch.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
@@ -36,8 +60,8 @@
   /* Fluid display type — raw clamp() so headers behave as graphic art,
      not as rigid Tailwind steps. Tight leading + negative tracking. */
   .display-xl {
-    font-family: theme('fontFamily.display');
-    font-weight: 800;
+    font-family: theme('fontFamily.zt-oskon');
+    font-weight: 400;
     font-size: clamp(2.25rem, 6vw, 6rem);
     line-height: 0.95;
     letter-spacing: -0.01em;
@@ -45,8 +69,8 @@
   }
 
   .display-lg {
-    font-family: theme('fontFamily.display');
-    font-weight: 800;
+    font-family: theme('fontFamily.zt-oskon');
+    font-weight: 400;
     font-size: clamp(2rem, 4vw, 4rem);
     line-height: 0.95;
     letter-spacing: -0.01em;
@@ -54,8 +78,8 @@
   }
 
   .display-md {
-    font-family: theme('fontFamily.display');
-    font-weight: 700;
+    font-family: theme('fontFamily.zt-oskon');
+    font-weight: 400;
     font-size: clamp(1.5rem, 3.5vw, 3rem);
     line-height: 0.98;
     letter-spacing: -0.01em;
@@ -91,6 +115,13 @@
      with `pl-[5vw]` on inner copy to keep the narrative aligned to the grid. */
   .bleed-left {
     margin-left: -5vw;
+  }
+
+  /* Wide-tracked Sora for standalone numerals — gives numeric displays a
+     generous, editorial feel without changing the font itself. */
+  .num-wide {
+    font-family: theme('fontFamily.display');
+    letter-spacing: 0.06em;
   }
 }
 
