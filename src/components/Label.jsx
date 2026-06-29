@@ -1,8 +1,10 @@
 import { useId } from 'react'
 
-export function Drop({ className = '', fill = '#6E8CA8' }) {
+export function Drop({ className = '', fill = '#6E8CA8', gradient }) {
   const uid = useId()
   const maskId = `orchid-mask-${uid.replace(/:/g, '')}`
+  const gradId = `orchid-grad-${uid.replace(/:/g, '')}`
+  const petalFill = gradient ? `url(#${gradId})` : fill
 
   return (
     <svg
@@ -11,6 +13,12 @@ export function Drop({ className = '', fill = '#6E8CA8' }) {
       aria-hidden="true"
     >
       <defs>
+        {gradient && (
+          <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor={gradient[0]} />
+            <stop offset="100%" stopColor={gradient[1]} />
+          </linearGradient>
+        )}
         <mask id={maskId}>
           <rect width="100" height="100" fill="white" />
           <path
@@ -33,7 +41,7 @@ export function Drop({ className = '', fill = '#6E8CA8' }) {
           {/* Lower right */}
           <path
             d="M 0,0 C -12,-4 -14,-24 0,-36 C 14,-24 12,-4 0,0 Z"
-            fill={fill}
+            fill={petalFill}
             stroke="white"
             strokeWidth="2"
             strokeLinejoin="round"
@@ -43,7 +51,7 @@ export function Drop({ className = '', fill = '#6E8CA8' }) {
           {/* Lower left */}
           <path
             d="M 0,0 C -12,-4 -14,-24 0,-36 C 14,-24 12,-4 0,0 Z"
-            fill={fill}
+            fill={petalFill}
             stroke="white"
             strokeWidth="2"
             strokeLinejoin="round"
@@ -53,7 +61,7 @@ export function Drop({ className = '', fill = '#6E8CA8' }) {
           {/* Upper right */}
           <path
             d="M 0,0 C -12,-4 -14,-24 0,-36 C 14,-24 12,-4 0,0 Z"
-            fill={fill}
+            fill={petalFill}
             stroke="white"
             strokeWidth="2"
             strokeLinejoin="round"
@@ -63,7 +71,7 @@ export function Drop({ className = '', fill = '#6E8CA8' }) {
           {/* Upper left */}
           <path
             d="M 0,0 C -12,-4 -14,-24 0,-36 C 14,-24 12,-4 0,0 Z"
-            fill={fill}
+            fill={petalFill}
             stroke="white"
             strokeWidth="2"
             strokeLinejoin="round"
@@ -73,7 +81,7 @@ export function Drop({ className = '', fill = '#6E8CA8' }) {
           {/* Top */}
           <path
             d="M 0,0 C -12,-4 -14,-24 0,-36 C 14,-24 12,-4 0,0 Z"
-            fill={fill}
+            fill={petalFill}
             stroke="white"
             strokeWidth="2"
             strokeLinejoin="round"
@@ -82,5 +90,14 @@ export function Drop({ className = '', fill = '#6E8CA8' }) {
         </g>
       </g>
     </svg>
+  )
+}
+
+export default function Label({ children, className = '', fill, gradient }) {
+  return (
+    <span className={'eyebrow inline-flex items-center gap-2 ' + className}>
+      <Drop className="h-4 w-auto" fill={fill} gradient={gradient} />
+      {children}
+    </span>
   )
 }
