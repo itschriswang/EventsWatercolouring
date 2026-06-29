@@ -203,6 +203,8 @@ export const PACKAGES = {
     bullets: [
       'Guest portraits painted live, A5 on archival cotton paper',
       'Each keepsake artwork can feature up to four guests',
+      'Nobody has to pose or sit — I take a quick photo as guests pass by',
+      'You and any VIPs are painted first — just let me know before the night',
     ],
   },
   baseNote:
@@ -385,7 +387,6 @@ export const FOOTER = {
     { href: '#night', label: 'On the night' },
     { href: '#work', label: 'The work' },
     { href: '#painter', label: 'The painter' },
-    { href: '#process', label: 'How it works' },
     { href: '#offerings', label: 'Packages' },
     { href: '#beyond', label: 'Beyond weddings' },
     { href: '#faq', label: 'Questions' },
@@ -395,7 +396,6 @@ export const FOOTER = {
 
 export const NAV = [
   { href: '#why', label: 'Why' },
-  { href: '#process', label: 'How it works' },
   { href: '#offerings', label: 'Packages' },
   { href: '#faq', label: 'Questions' },
 ]

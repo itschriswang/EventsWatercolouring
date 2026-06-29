@@ -6,7 +6,6 @@ import SiteHeader from './components/SiteHeader.jsx'
 import MobileNav from './components/MobileNav.jsx'
 import Hero from './components/Hero.jsx'
 import WhyWatercolour from './components/WhyWatercolour.jsx'
-import TwoPaths from './components/TwoPaths.jsx'
 import EveningTimeline from './components/EveningTimeline.jsx'
 import SelectedWork from './components/SelectedWork.jsx'
 import AboutMe from './components/AboutMe.jsx'
@@ -54,7 +53,6 @@ export default function App() {
             className="pointer-events-none absolute bottom-0 right-0 z-20 w-[19rem] sm:w-[22rem] lg:w-[28rem]"
           />
         </div>
-        <TwoPaths />
         <EveningTimeline />
         <SelectedWork />
         <Packages />
