@@ -7,55 +7,43 @@ export default function Marquee() {
 
   const Track = () => (
     <div className="flex shrink-0 items-center" aria-hidden="true">
-      {phrase.map((p, pi) => (
-        <span key={pi} className="flex items-center">
-          <span className="flex px-8 font-display text-[clamp(2rem,6vw,5rem)] font-bold uppercase tracking-tight text-paper">
-            {[...p].map((char, ci) => (
-              <motion.span
-                key={ci}
-                style={{ display: 'inline-block' }}
-                animate={reduce ? {} : { y: [0, -9, 0] }}
-                transition={{
-                  duration: 1.6,
-                  ease: 'easeInOut',
-                  repeat: Infinity,
-                  delay: (pi * 0.4 + ci * 0.07),
-                }}
-              >
-                {char === ' ' ? ' ' : char}
-              </motion.span>
-            ))}
+      {phrase.map((p, i) => (
+        <span key={i} className="flex items-center">
+          <span className="px-8 font-display text-[clamp(2rem,6vw,5rem)] font-bold uppercase tracking-tight text-paper">
+            {p}
           </span>
-          <motion.span
-            className="text-terracotta text-[clamp(1.5rem,4vw,3rem)]"
-            animate={reduce ? {} : { rotate: [0, 360] }}
-            transition={{ duration: 8, ease: 'linear', repeat: Infinity }}
-            aria-hidden="true"
-          >
-            ✦
-          </motion.span>
+          <span className="text-terracotta text-[clamp(1.5rem,4vw,3rem)]">✦</span>
         </span>
       ))}
     </div>
   )
 
   return (
-    <section aria-label="Live wedding watercolour" className="relative bg-ink">
-      {/* Top wavy edge — paper-coloured mask creates the illusion of a wavy band border */}
+    <section
+      aria-label="Live wedding watercolour"
+      className="relative"
+      style={{ height: '180px' }}
+    >
+      {/*
+        Wavy ink ribbon — an SVG path that arcs across the page.
+        preserveAspectRatio="none" stretches it to fill any viewport width
+        so the wave always spans the full screen.
+      */}
       <svg
-        viewBox="0 0 1440 44"
-        className="block w-full"
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        viewBox="0 0 1440 180"
         preserveAspectRatio="none"
         aria-hidden="true"
       >
         <path
-          d="M0,0 L1440,0 L1440,28 C1260,12 1080,44 900,28 C720,12 540,44 360,28 C180,12 0,40 0,28 Z"
-          fill="#F4EFE6"
+          d="M 0,35 C 240,0 480,0 720,35 C 960,70 1200,70 1440,35
+             L 1440,145 C 1200,180 960,180 720,145 C 480,110 240,110 0,145 Z"
+          fill="#2A2724"
         />
       </svg>
 
-      {/* Scrolling band */}
-      <div className="overflow-hidden py-5">
+      {/* Scrolling text sits at the vertical centre of the section */}
+      <div className="absolute inset-0 flex items-center overflow-hidden">
         <motion.div
           className="flex w-max flex-nowrap"
           animate={reduce ? {} : { x: ['0%', '-50%'] }}
@@ -65,19 +53,6 @@ export default function Marquee() {
           <Track />
         </motion.div>
       </div>
-
-      {/* Bottom wavy edge */}
-      <svg
-        viewBox="0 0 1440 44"
-        className="block w-full"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <path
-          d="M0,44 L1440,44 L1440,16 C1260,32 1080,0 900,16 C720,32 540,0 360,16 C180,32 0,4 0,16 Z"
-          fill="#F4EFE6"
-        />
-      </svg>
     </section>
   )
 }
