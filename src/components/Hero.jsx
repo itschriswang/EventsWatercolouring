@@ -84,7 +84,7 @@ export default function Hero({ revealed }) {
         variants={fade}
         initial="hidden"
         animate={state}
-        className="flex items-center justify-between font-mono text-[0.66rem] uppercase tracking-[0.3em] text-ink-soft"
+        className="hidden sm:flex items-center justify-between font-mono text-[0.66rem] uppercase tracking-[0.3em] text-ink-soft"
       >
         <span>Live event watercolour keepsakes</span>
         <span className="hidden sm:inline">Melbourne · Sydney</span>
@@ -109,13 +109,23 @@ export default function Hero({ revealed }) {
               />
             )}
           </motion.div>
+          
+          {/* Mobile eyebrow — sits directly under the headline */}
+          <motion.div
+            variants={fade}
+            initial="hidden"
+            animate={state}
+            className="mt-3 flex flex-col items-center text-center font-mono text-[0.62rem] uppercase tracking-[0.26em] text-ink-soft sm:hidden"
+          >
+            <span>Live event watercolour keepsakes</span>
+          </motion.div>
 
           {/* Sub-text + actions sit directly under the headline on every size. */}
           <motion.div
             variants={fade}
             initial="hidden"
             animate={state}
-            className="mt-6 block sm:mt-[clamp(1.5rem,3vw,2.5rem)]"
+            className="mt-5 block sm:mt-[clamp(1.5rem,3vw,2.5rem)]"
           >
             <p className="max-w-md text-[0.92rem] leading-relaxed text-ink-soft sm:text-[clamp(1rem,1.1vw,1.18rem)]">
               {HERO.lede}
@@ -139,7 +149,7 @@ export default function Hero({ revealed }) {
             {/* Two layered artworks, bottom-aligned so the character can be
                 lifted well above the bouquet — staggered and overlapping, with
                 the bouquet sitting lower but still fully visible. */}
-            <div className="-mr-[5vw] flex items-end justify-end sm:mr-0 sm:grow sm:mx-auto sm:w-[92%] sm:justify-center lg:mx-0 lg:w-full lg:justify-end">
+            <div className="mx-auto flex w-full max-w-[24rem] items-end justify-center gap-7 px-2 sm:mr-0 sm:grow sm:mx-auto sm:w-[92%] sm:max-w-none sm:gap-0 sm:px-0 lg:mx-0 lg:w-full lg:justify-end">
               {/* Bouquet — lower, slightly behind, still very visible. The
                   mobile drop lives on this wrapper so the figure's entrance
                   transform doesn't clobber it. */}
