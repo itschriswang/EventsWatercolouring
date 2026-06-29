@@ -11,7 +11,16 @@ export default function Faq() {
   const reduce = useReducedMotion()
 
   return (
-    <section id="faq" className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)]">
+    <section id="faq" className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(5.5rem,11vw,10rem)]">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 60% 50% at 92% 6%, rgba(201,162,58,0.06) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 55% 45% at 10% 88%, rgba(110,140,168,0.05) 0%, transparent 55%)',
+        }}
+      />
       <div className="grid grid-cols-12 gap-x-8">
         <div className="col-span-12 lg:col-span-4">
           <div className="lg:sticky lg:top-24 lg:h-fit">

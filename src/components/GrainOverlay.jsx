@@ -17,7 +17,7 @@ export default function GrainOverlay() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-[60] opacity-[0.035] mix-blend-multiply"
+      className="pointer-events-none fixed inset-0 z-[60] opacity-[0.05] mix-blend-multiply"
     >
       <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
         <filter id="paperNoise">
