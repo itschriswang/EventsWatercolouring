@@ -42,7 +42,7 @@ export default function Packages() {
           on the page. A solid ink-bordered card slides up to overlap it. */}
       <div className="relative mt-[clamp(2rem,8vw,3rem)] lg:hidden">
         <motion.div {...reveal()} className="relative z-10 max-w-[20rem] pl-1">
-          <p className="font-display text-[clamp(2.4rem,11vw,3.4rem)] font-light leading-[0.95] text-ink">
+          <p className="font-display text-[clamp(2.4rem,11vw,3.4rem)] font-bold leading-[0.95] text-ink">
             {PACKAGES.base.title}
           </p>
           <p className="mt-3 flex items-baseline gap-2">
@@ -90,7 +90,7 @@ export default function Packages() {
           className="col-span-12 hidden flex-col border-2 border-ink bg-paper p-8 lg:col-span-5 lg:flex"
         >
           <div className="flex items-start justify-between">
-            <h3 className="font-display text-3xl font-light text-ink">
+            <h3 className="font-display text-3xl font-normal text-ink">
               {PACKAGES.base.title}
             </h3>
             <p className="text-right font-mono text-3xl leading-none text-ink sm:text-3xl md:text-4xl">
@@ -129,7 +129,7 @@ export default function Packages() {
           {...reveal(1)}
           className="col-span-12 flex flex-col border border-line bg-paper-deep/40 p-8 lg:col-span-7"
         >
-          <h3 className="font-display text-2xl font-light text-ink">
+          <h3 className="font-display text-2xl font-normal text-ink">
             {PACKAGES.included.title}
           </h3>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-soft">
@@ -152,7 +152,7 @@ export default function Packages() {
 
       {/* Add-ons */}
       <div className="mt-[clamp(3rem,7vw,5rem)] flex items-baseline justify-between border-b border-ink pb-4">
-        <h3 className="font-display text-[clamp(1.6rem,3vw,2.5rem)] font-light uppercase tracking-tight text-ink">
+        <h3 className="font-display text-[clamp(1.6rem,3vw,2.5rem)] font-bold uppercase tracking-tight text-ink">
           {PACKAGES.addonsHead.title}
         </h3>
         <span className="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-ink-soft">

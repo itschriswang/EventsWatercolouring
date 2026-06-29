@@ -16,7 +16,7 @@ export default function Faq() {
         <div className="col-span-12 lg:col-span-4">
           <div className="lg:sticky lg:top-24 lg:h-fit">
             <Label gradient={['#6E8CA8', '#C2613C']}>{FAQ.label}</Label>
-            <h2 className="mt-5 font-display text-[clamp(2rem,4vw,3.5rem)] font-light uppercase leading-[0.9] tracking-tight text-ink">
+            <h2 className="mt-5 font-display text-[clamp(2rem,4vw,3.5rem)] font-bold uppercase leading-[0.9] tracking-tight text-ink">
               {FAQ.title}
             </h2>
           </div>
@@ -37,7 +37,7 @@ export default function Faq() {
                       onClick={() => setOpen(isOpen ? null : i)}
                       className="flex w-full items-center justify-between gap-6 py-6 text-left transition-colors hover:text-terracotta"
                     >
-                      <span className="font-display text-[clamp(1.15rem,1.8vw,1.6rem)] font-light leading-snug text-ink">
+                      <span className="font-display text-[clamp(1.15rem,1.8vw,1.6rem)] font-normal leading-snug text-ink">
                         {item.q}
                       </span>
                       <motion.span
