@@ -76,7 +76,7 @@ export default function Packages() {
             {PACKAGES.base.facts.map((f) => (
               <span
                 key={f}
-                className="border border-line/70 px-3 py-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-ink-soft"
+                className="border border-lime/40 px-3 py-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-sage"
               >
                 {f}
               </span>
@@ -122,7 +122,7 @@ export default function Packages() {
             {PACKAGES.base.facts.map((f) => (
               <span
                 key={f}
-                className="border border-line/70 px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.15em] text-ink-soft"
+                className="border border-lime/40 px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.15em] text-sage"
               >
                 {f}
               </span>
