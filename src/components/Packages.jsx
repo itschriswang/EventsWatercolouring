@@ -36,11 +36,58 @@ export default function Packages() {
         {PACKAGES.intro}
       </motion.p>
 
+      {/* ── Mobile: base package as an overlapping editorial pull-quote ──────
+          The offer leads — the package name reads as display art, with the
+          price kept as a quiet, confident detail rather than the loudest thing
+          on the page. A solid ink-bordered card slides up to overlap it. */}
+      <div className="relative mt-[clamp(2rem,8vw,3rem)] lg:hidden">
+        <motion.div {...reveal()} className="relative z-10 max-w-[20rem] pl-1">
+          <p className="font-display text-[clamp(2.4rem,11vw,3.4rem)] font-light leading-[0.95] text-ink">
+            {PACKAGES.base.title}
+          </p>
+          <p className="mt-3 flex items-baseline gap-2">
+            <span className="font-mono text-[0.6rem] uppercase tracking-[0.25em] text-ink-soft">
+              {PACKAGES.base.priceSmall}
+            </span>
+            <span className="font-mono text-[1.4rem] leading-none text-ink">
+              {PACKAGES.base.price}
+            </span>
+          </p>
+        </motion.div>
+        <motion.div
+          {...reveal(1)}
+          className="relative z-20 -mt-[1vw] ml-6 border-2 border-ink bg-paper p-6 shadow-[0_24px_50px_-30px_rgba(42,39,36,0.6)]"
+        >
+          <p className="text-sm text-ink-soft">{PACKAGES.base.note}</p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {PACKAGES.base.facts.map((f) => (
+              <span
+                key={f}
+                className="border border-line px-3 py-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-ink-soft"
+              >
+                {f}
+              </span>
+            ))}
+          </div>
+          <ul className="mt-6 flex flex-col gap-3 border-t border-line pt-6 text-sm text-ink/85">
+            {PACKAGES.base.bullets.map((b) => (
+              <li key={b} className="flex gap-3">
+                <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#6E8CA8', '#C2613C']} />
+                {b}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-7">
+            <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
+          </div>
+        </motion.div>
+      </div>
+
       <div className="mt-[clamp(2.5rem,6vw,4rem)] grid grid-cols-12 gap-8">
-        {/* Base package card */}
+        {/* Base package card — desktop only; mobile uses the pull-quote above. */}
         <motion.article
           {...reveal()}
-          className="col-span-12 flex flex-col border-2 border-ink bg-paper p-8 lg:col-span-5"
+          className="col-span-12 hidden flex-col border-2 border-ink bg-paper p-8 lg:col-span-5 lg:flex"
         >
           <div className="flex items-start justify-between">
             <h3 className="font-display text-3xl font-light text-ink">
