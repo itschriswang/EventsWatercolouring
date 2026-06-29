@@ -11,6 +11,7 @@ export function Drop({ className = '', fill = '#6E8CA8', gradient }) {
       className={className}
       viewBox="0 0 100 100"
       aria-hidden="true"
+      shapeRendering="crispEdges"
     >
       <defs>
         {gradient && (
@@ -19,7 +20,7 @@ export function Drop({ className = '', fill = '#6E8CA8', gradient }) {
             <stop offset="100%" stopColor={gradient[1]} />
           </linearGradient>
         )}
-        <mask id={maskId}>
+        <mask id={maskId} shapeRendering="crispEdges">
           <rect width="100" height="100" fill="white" />
           <path
             fill="black"
@@ -40,35 +41,35 @@ export function Drop({ className = '', fill = '#6E8CA8', gradient }) {
         <g transform="translate(50, 50)">
           {/* Lower right */}
           <path
-            d="M 0,0 C -12,-4 -14,-24 0,-36 C 14,-24 12,-4 0,0 Z"
+            d="M 0,0 C -12,-4 -14,-24 -2,-35 C 0,-36 2,-35 0,-36 C 14,-24 12,-4 0,0 Z"
             fill={petalFill}
             transform="rotate(128)"
           />
 
           {/* Lower left */}
           <path
-            d="M 0,0 C -12,-4 -14,-24 0,-36 C 14,-24 12,-4 0,0 Z"
+            d="M 0,0 C -12,-4 -14,-24 -2,-35 C 0,-36 2,-35 0,-36 C 14,-24 12,-4 0,0 Z"
             fill={petalFill}
             transform="rotate(-128)"
           />
 
           {/* Upper right */}
           <path
-            d="M 0,0 C -12,-4 -14,-24 0,-36 C 14,-24 12,-4 0,0 Z"
+            d="M 0,0 C -12,-4 -14,-24 -2,-35 C 0,-36 2,-35 0,-36 C 14,-24 12,-4 0,0 Z"
             fill={petalFill}
             transform="rotate(75)"
           />
 
           {/* Upper left */}
           <path
-            d="M 0,0 C -12,-4 -14,-24 0,-36 C 14,-24 12,-4 0,0 Z"
+            d="M 0,0 C -12,-4 -14,-24 -2,-35 C 0,-36 2,-35 0,-36 C 14,-24 12,-4 0,0 Z"
             fill={petalFill}
             transform="rotate(-75)"
           />
 
           {/* Top */}
           <path
-            d="M 0,0 C -12,-4 -14,-24 0,-36 C 14,-24 12,-4 0,0 Z"
+            d="M 0,0 C -12,-4 -14,-24 -2,-35 C 0,-36 2,-35 0,-36 C 14,-24 12,-4 0,0 Z"
             fill={petalFill}
             transform="rotate(0)"
           />
