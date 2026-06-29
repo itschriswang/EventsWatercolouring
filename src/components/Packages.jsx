@@ -4,7 +4,7 @@ import SplitText from './SplitText.jsx'
 import { Drop } from './Label.jsx'
 import MagneticButton from './MagneticButton.jsx'
 import { SPRING, ENQUIRE_HREF } from '../lib/site.js'
-import { PACKAGES } from '../content.js'
+import { PACKAGES, PATHS } from '../content.js'
 
 /**
  * Packages — one base package, an "included as standard" grid, and an irregular
@@ -36,6 +36,22 @@ export default function Packages() {
         {PACKAGES.intro}
       </motion.p>
 
+      {/* Two paths — supplementary */}
+      <motion.div
+        {...reveal(2)}
+        className="mt-8 grid grid-cols-1 gap-4 border-t border-line pt-6 sm:grid-cols-2"
+      >
+        {PATHS.items.map((path) => (
+          <div key={path.no}>
+            <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
+              {path.no}
+            </span>
+            <p className="mt-1 font-display text-lg font-normal text-ink">{path.title}</p>
+            <p className="mt-1 text-sm leading-relaxed text-ink-soft">{path.sub}</p>
+          </div>
+        ))}
+      </motion.div>
+
       {/* ── Mobile: base package as an overlapping editorial pull-quote ──────
           The offer leads — the package name reads as display art, with the
           price kept as a quiet, confident detail rather than the loudest thing
@@ -49,7 +65,7 @@ export default function Packages() {
             <span className="font-mono text-[0.6rem] uppercase tracking-[0.25em] text-ink-soft">
               {PACKAGES.base.priceSmall}
             </span>
-            <span className="font-mono text-[1.4rem] leading-none text-ink">
+            <span className="font-display text-[1.4rem] leading-none text-ink">
               {PACKAGES.base.price}
             </span>
           </p>
@@ -89,15 +105,17 @@ export default function Packages() {
           {...reveal()}
           className="col-span-12 hidden flex-col border-2 border-ink bg-paper p-8 lg:col-span-5 lg:flex"
         >
-          <div className="flex items-start justify-between">
+          <div className="flex items-baseline justify-between gap-4">
             <h3 className="font-display text-3xl font-normal text-ink">
               {PACKAGES.base.title}
             </h3>
-            <p className="text-right font-mono text-3xl leading-none text-ink sm:text-3xl md:text-4xl">
-              <span className="block font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
-                {PACKAGES.base.priceSmall}
+            <p className="shrink-0 text-right">
+              <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
+                {PACKAGES.base.priceSmall}{' '}
               </span>
-              {PACKAGES.base.price}
+              <span className="font-display text-3xl leading-none text-ink">
+                {PACKAGES.base.price}
+              </span>
             </p>
           </div>
           <p className="mt-2 text-sm text-ink-soft">{PACKAGES.base.note}</p>

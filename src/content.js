@@ -385,7 +385,6 @@ export const FOOTER = {
     { href: '#night', label: 'On the night' },
     { href: '#work', label: 'The work' },
     { href: '#painter', label: 'The painter' },
-    { href: '#process', label: 'How it works' },
     { href: '#offerings', label: 'Packages' },
     { href: '#beyond', label: 'Beyond weddings' },
     { href: '#faq', label: 'Questions' },
@@ -395,7 +394,6 @@ export const FOOTER = {
 
 export const NAV = [
   { href: '#why', label: 'Why' },
-  { href: '#process', label: 'How it works' },
   { href: '#offerings', label: 'Packages' },
   { href: '#faq', label: 'Questions' },
 ]
