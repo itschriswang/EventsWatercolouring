@@ -50,7 +50,7 @@ export default function TwoPaths() {
             <ol className="mt-8 flex flex-col gap-6 border-t border-paper/15 pt-8">
               {path.steps.map((s, si) => (
                 <li key={si} className="flex gap-5">
-                  <span className="mt-1 font-mono text-sm text-paper">{si + 1}</span>
+                  <span className="mt-1 font-mono text-sm text-lime">{si + 1}</span>
                   <span>
                     <b className="block font-zt-oskon text-lg font-normal text-paper">
                       {s.b}

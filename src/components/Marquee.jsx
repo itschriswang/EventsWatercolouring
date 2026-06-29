@@ -53,7 +53,7 @@ export default function Marquee() {
           <tspan key={`${rep}t${i}`} fill="#2A2724">
             {phrase.toUpperCase()}{'  '}
           </tspan>,
-          <tspan key={`${rep}b${i}`} fill="#C2613C">
+          <tspan key={`${rep}b${i}`} fill={i % 2 === 0 ? '#C2613C' : '#AEBF56'}>
             {'✦  '}
           </tspan>,
         ])
