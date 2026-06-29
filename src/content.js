@@ -135,22 +135,32 @@ export const WORK = {
   // piece fill a 2×2 block on wide screens (and stand taller on mobile).
   // Add as many as you like — the layout flows to fit.
   //
+  // The wall shows no captions — `ttl`, `meta` and `alt` are still worth filling
+  // in: they label the lightbox and read out to screen readers.
+  //
+  // Most pieces are upright (3:4). A landscape-orientation painting reads badly
+  // in a portrait tile, so flag it `landscape: true` and it takes the same wide
+  // 2×1 block a testimonial uses — letterbox shape, no awkward crop.
+  //
   // A testimonial slots into the wall like any other tile — give it
   // `testimonial: true` with `quote`, `author` and `detail` instead of `img`.
-  // It takes the same card shape as the paintings (a 2×2 feature reads best
-  // for a quote; drop `feature` to make it a single tile).
+  // The attribution sits inside the quote card. `feature: true` gives a longer
+  // quote the room it needs (a 2×2 block); use `wide: true` instead for a short
+  // one-liner in a 2×1 block.
   gallery: [
     { img: 'art-bouquet',        ttl: 'The bouquet',          meta: 'Watercolour · A5', feature: true, alt: 'Watercolour study of a bridal bouquet, with rust ribbon, orange roses and forget-me-not blue, painted on cotton-rag paper' },
     {
       testimonial: true,
-      wide: true,
+      feature: true,
       quote:
         'Christopher painted us from our photographs after the wedding, and it has become the piece everyone stops at in our home. Our only regret is not having him there on the night — honestly, it is the reason this whole thing exists.',
       author: 'Clare & William',
       detail: 'Post-wedding commission',
     },
-    { img: 'art-bouquet',        ttl: 'The bouquet',          meta: 'Watercolour · A5', feature: true, alt: 'Watercolour study of a bridal bouquet, with rust ribbon, orange roses and forget-me-not blue, painted on cotton paper' },
+    { img: 'art-couple-vows',    ttl: 'The vows',             meta: 'Watercolour · A5', landscape: true, alt: 'Landscape watercolour of a bride in a white gown and a groom in a navy tuxedo holding hands among scattered confetti' },
+    { img: 'art-couple-sage',    ttl: 'The pair, in sage',    meta: 'Watercolour · A5', alt: 'Watercolour portrait of a couple, the bride in a sage-green off-shoulder gown beside a groom in a soft brown jacket' },
     { img: 'art-character-girl', ttl: 'Little character, in green', meta: 'Studio study', alt: 'Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre' },
+    { img: 'art-couple-blush',   ttl: 'Blush & black tie',    meta: 'Watercolour · A5', alt: 'Watercolour portrait of a couple, the bride in a blush off-shoulder gown beside a groom in a black suit and glasses' },
     { img: 'art-character-boy',  ttl: 'At the palette',       meta: 'Studio study', alt: "Small watercolour character portrait with the artist's palette alongside, in warm terracotta and ochre" },
     { img: 'art-bouquet',        ttl: 'Ribbon & rose',        meta: 'Watercolour · A5' },
     { img: 'art-character-boy',  ttl: 'Warm ochre',           meta: 'Studio study' },
