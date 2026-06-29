@@ -84,3 +84,17 @@ export function Drop({ className = '', fill = '#6E8CA8' }) {
     </svg>
   )
 }
+
+/** Section eyebrow: an orchid glyph + a mono, wide-tracked uppercase label.
+ *  The drop is a solid colour now (the gradient prop was retired). `gradient`
+ *  is still accepted from existing callers — we take its first stop as the
+ *  fill — so no call site needs to change. */
+export default function Label({ children, className = '', fill, gradient }) {
+  const dropFill = fill ?? (gradient && gradient[0])
+  return (
+    <span className={'eyebrow inline-flex items-center gap-2 ' + className}>
+      <Drop className="h-4 w-auto" fill={dropFill} />
+      {children}
+    </span>
+  )
+}
