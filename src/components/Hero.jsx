@@ -6,16 +6,8 @@ import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset, ENQUIRE_HREF } from '../lib/site.js'
 import { HERO } from '../content.js'
 
-/**
- * Sprawling, full-bleed asymmetric hero. A char-split headline on the left,
- * with two study cards stacked on the right — a bouquet painting layered
- * behind the character study. The entrance holds until the preloader hands
- * over (`revealed`).
- */
 export default function Hero({ revealed }) {
   const reduce = useReducedMotion()
-  // Scroll-linked parallax is only worth its per-frame cost on capable
-  // desktops; touch devices render the art statically to stay smooth.
   const heavyFx = useHeavyFx()
   const parallax = heavyFx && !reduce
   const isMobile = useMediaQuery('(max-width: 639px)')
@@ -24,7 +16,6 @@ export default function Hero({ revealed }) {
     target: ref,
     offset: ['start start', 'end start'],
   })
-  // Parallax: art drifts slower than the page (ratio ~0.15+).
   const artY = useTransform(scrollYProgress, [0, 1], ['0%', '24%'])
   const copyY = useTransform(scrollYProgress, [0, 1], ['0%', '-8%'])
 
@@ -38,14 +29,13 @@ export default function Hero({ revealed }) {
     <section
       id="top"
       ref={ref}
-      className="relative w-full overflow-x-clip px-[5vw] pb-[clamp(3rem,8vw,7rem)] pt-[clamp(1.5rem,4vw,3rem) lg:pt-8"
-        >
+      className="relative w-full overflow-x-clip px-[5vw] pb-[clamp(3rem,8vw,7rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-8"
+    >
       {/* Local hero bloom — bottom-right, behind artwork */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0 overflow-visible"
       >
-        {/* Lime bloom layer behind */}
         <div
           className="absolute rounded-full"
           style={{
@@ -61,7 +51,6 @@ export default function Hero({ revealed }) {
             maskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
           }}
         />
-        {/* Cornflower bloom layer in front */}
         <div
           className="absolute rounded-full"
           style={{
@@ -79,7 +68,7 @@ export default function Hero({ revealed }) {
         />
       </div>
 
-      {/* Eyebrow row spanning the full width */}
+      {/* Desktop eyebrow row */}
       <motion.div
         variants={fade}
         initial="hidden"
@@ -87,16 +76,29 @@ export default function Hero({ revealed }) {
         className="hidden sm:flex items-center justify-between font-mono text-[0.66rem] uppercase tracking-[0.3em] text-ink-soft"
       >
         <span>Live event watercolour keepsakes</span>
-        <span className="hidden sm:inline">Melbourne · Sydney</span>
+        <span>Melbourne · Sydney</span>
       </motion.div>
 
-      <div className="relative mt-[clamp(2rem,5vw,4rem)] flex flex-col gap-y-[clamp(2.5rem,9vw,4rem)] lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-8 lg:gap-y-0">
-        {/* Headline + lede + actions — on wide screens this sits in the
-            bottom-left column beside the study card (placement fixed by
-            col-start, so DOM order is free). On mobile it is ordered BELOW the
-            artwork, so the big headline lands low on the screen with the images
-            stacked above it — the editorial hero arrangement. */}
-        <div className="relative z-10 order-2 mt-[min(3.5rem,5dvh)] sm:mt-0 lg:order-none lg:col-span-7 lg:col-start-1">
+      {/* Mobile eyebrow — context-first, above the artwork */}
+      <motion.div
+        variants={fade}
+        initial="hidden"
+        animate={state}
+        className="sm:hidden mb-5 flex items-center gap-3"
+      >
+        <span
+          aria-hidden="true"
+          className="block h-px w-5 shrink-0 bg-ink-soft opacity-40"
+        />
+        <span className="font-mono text-[0.59rem] uppercase tracking-[0.26em] text-ink-soft">
+          Live event watercolour keepsakes
+        </span>
+      </motion.div>
+
+      <div className="relative mt-1 sm:mt-[clamp(2rem,5vw,4rem)] flex flex-col gap-y-[clamp(2.5rem,9vw,4rem)] lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-8 lg:gap-y-0">
+
+        {/* Headline + lede + actions */}
+        <div className="relative z-10 order-2 mt-[min(2.5rem,4dvh)] sm:mt-0 lg:order-none lg:col-span-7 lg:col-start-1">
           <motion.div style={parallax ? { y: copyY } : {}}>
             {revealed && (
               <SplitText
@@ -105,29 +107,18 @@ export default function Hero({ revealed }) {
                 playOnMount
                 lines={isMobile ? HERO.linesMobile : HERO.lines}
                 emphasis={isMobile ? HERO.emphasisMobile : HERO.emphasis}
-                className="display-xl text-ink [font-size:clamp(2.6rem,12.5vw,4.25rem)] lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)]"
+                className="display-xl text-ink [font-size:clamp(2.75rem,13vw,4.5rem)] lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)]"
               />
             )}
           </motion.div>
-          
-          {/* Mobile eyebrow — sits directly under the headline */}
-          <motion.div
-            variants={fade}
-            initial="hidden"
-            animate={state}
-            className="mt-3 flex flex-col items-center text-center font-mono text-[0.62rem] uppercase tracking-[0.26em] text-ink-soft sm:hidden"
-          >
-            <span>Live event watercolour keepsakes</span>
-          </motion.div>
 
-          {/* Sub-text + actions sit directly under the headline on every size. */}
           <motion.div
             variants={fade}
             initial="hidden"
             animate={state}
-            className="mt-5 block sm:mt-[clamp(1.5rem,3vw,2.5rem)]"
+            className="mt-6 block sm:mt-[clamp(1.5rem,3vw,2.5rem)]"
           >
-            <p className="max-w-md text-[0.92rem] leading-relaxed text-ink-soft sm:text-[clamp(1rem,1.1vw,1.18rem)]">
+            <p className="max-w-[33ch] text-[0.93rem] leading-relaxed text-ink-soft sm:max-w-md sm:text-[clamp(1rem,1.1vw,1.18rem)]">
               {HERO.lede}
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-5 sm:mt-8">
@@ -136,72 +127,79 @@ export default function Hero({ revealed }) {
           </motion.div>
         </div>
 
-        {/* Lower-right composition — two staggered study cards: the character
-            raised much higher and in front, the bouquet sitting lower and
-            slightly behind but still fully visible from the start. On mobile
-            this becomes a loose three-column row: the sub-text, then the two
-            layered artworks. */}
+        {/* Artwork cluster — two staggered study cards */}
         <motion.div
           style={parallax ? { y: artY } : {}}
           className="relative z-10 order-1 lg:order-none lg:col-span-5 lg:col-start-8 lg:mb-[4vh]"
         >
           <div className="flex flex-col sm:block gap-6 sm:gap-0">
-            {/* Two layered artworks, bottom-aligned so the character can be
-                lifted well above the bouquet — staggered and overlapping, with
-                the bouquet sitting lower but still fully visible. */}
-            <div className="mx-auto flex w-full max-w-[24rem] items-end justify-center gap-7 px-2 sm:mr-0 sm:grow sm:mx-auto sm:w-[92%] sm:max-w-none sm:gap-0 sm:px-0 lg:mx-0 lg:w-full lg:justify-end">
-              {/* Bouquet — lower, slightly behind, still very visible. The
-                  mobile drop lives on this wrapper so the figure's entrance
-                  transform doesn't clobber it. */}
-              <div className="relative z-0 w-[49%] shrink-0 translate-x-[6%] -translate-y-[10%] sm:translate-x-0 sm:w-[46%] lg:w-[52%] sm:translate-y-0 sm:-ml-[8%] lg:-ml-[10%] lg:-translate-x-[6%]  lg:-translate-y-[18%]">
+            <div className="mx-auto flex w-full max-w-[26rem] items-end px-2 sm:mr-0 sm:grow sm:mx-auto sm:w-[92%] sm:max-w-none sm:px-0 lg:mx-0 lg:w-full lg:justify-end">
+
+              {/* Bouquet — primary card, grounded anchor */}
+              <div className="relative z-0 w-[54%] shrink-0 translate-x-[2%] sm:translate-x-0 sm:w-[46%] lg:w-[52%] sm:translate-y-0 sm:-ml-[8%] lg:-ml-[10%] lg:-translate-x-[6%] lg:-translate-y-[18%]">
                 <motion.figure
-                  initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : -6 }}
+                  initial={{ opacity: 0, y: reduce ? 0 : 55, rotate: reduce ? 0 : -6 }}
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : -6 } : { opacity: 0 }}
                   transition={{ ...SPRING_SOFT, delay: 0.8 }}
-                  className="overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(150,85,43,0.28)]"
+                  className="overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(150,85,43,0.26),0_6px_16px_-6px_rgba(150,85,43,0.10)]"
                 >
                   <picture>
                     <source srcSet={asset('assets/art-bouquet.webp')} type="image/webp" />
                     <img
                       src={asset('assets/art-bouquet.jpg')}
                       alt="A watercolour bouquet study held to the light."
-                      className="aspect-[4/5] w-full object-cover max-h-[36dvh] [@media(max-height:500px)]:max-h-[22dvh] sm:max-h-none sm:h-[clamp(160px,18vh,260px)] sm:aspect-auto lg:h-[38vh]"
+                      className="aspect-[4/5] w-full object-cover max-h-[40dvh] [@media(max-height:500px)]:max-h-[22dvh] sm:max-h-none sm:h-[clamp(160px,18vh,260px)] sm:aspect-auto lg:h-[38vh]"
                       loading="eager"
                       onError={(e) => (e.currentTarget.style.display = 'none')}
                     />
                   </picture>
-                  <figcaption className="bg-paper px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft sm:px-3 sm:py-2 sm:text-[0.6rem] sm:tracking-[0.2em]">
+                  <figcaption className="bg-paper px-3 py-2 font-mono text-[0.54rem] uppercase tracking-[0.18em] text-ink-soft">
                     No. 002 · Bouquet
                   </figcaption>
                 </motion.figure>
               </div>
 
-              {/* Character — raised much higher, in front, overlapping. The
-                  lift lives on this wrapper so the figure's hover transform
-                  doesn't clobber it. */}
-              <div className="relative z-10 -ml-[5%] w-[54%] shrink-0 translate-y-[12%] sm:-ml-[10%] sm:w-[48%] lg:w-[54%] sm:-translate-y-[22%] lg:-translate-y-[28%]">
+              {/* Character — accent card, smaller, floats high */}
+              <div className="relative z-10 -ml-[10%] w-[46%] shrink-0 -translate-y-[14%] sm:-ml-[10%] sm:w-[48%] lg:w-[54%] sm:-translate-y-[22%] lg:-translate-y-[28%]">
                 <motion.figure
                   initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : 4 }}
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : 3 } : { opacity: 0 }}
                   transition={{ ...SPRING_SOFT, delay: 0.95 }}
                   whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
-                  className="overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(150,85,43,0.28)]"
+                  className="overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(150,85,43,0.26),0_6px_16px_-6px_rgba(150,85,43,0.10)]"
                 >
                   <picture>
                     <source srcSet={asset('assets/art-character-boy.webp')} type="image/webp" />
                     <img
                       src={asset('assets/art-character-boy.jpg')}
                       alt="A small watercolour character study at the palette."
-                      className="aspect-[4/5] w-full object-cover max-h-[36dvh] [@media(max-height:500px)]:max-h-[22dvh] sm:max-h-none sm:h-[clamp(175px,20vh,280px)] sm:aspect-auto lg:h-[42vh]"
+                      className="aspect-[4/5] w-full object-cover max-h-[34dvh] [@media(max-height:500px)]:max-h-[20dvh] sm:max-h-none sm:h-[clamp(175px,20vh,280px)] sm:aspect-auto lg:h-[42vh]"
                       loading="eager"
                       onError={(e) => (e.currentTarget.style.display = 'none')}
                     />
                   </picture>
-                  <figcaption className="bg-paper px-2.5 py-1.5 font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft sm:px-3 sm:py-2 sm:text-[0.6rem] sm:tracking-[0.2em]">
+                  <figcaption className="bg-paper px-3 py-2 font-mono text-[0.54rem] uppercase tracking-[0.18em] text-ink-soft">
                     No. 001 · Cotton paper
                   </figcaption>
                 </motion.figure>
               </div>
+
+              {/* Vertical location tag — editorial punctuation, mobile only */}
+              <motion.div
+                variants={fade}
+                initial="hidden"
+                animate={state}
+                aria-hidden="true"
+                className="sm:hidden absolute right-0 top-1/2 -translate-y-1/2 translate-x-[80%]"
+              >
+                <span
+                  className="font-mono text-[0.48rem] uppercase tracking-[0.28em] text-ink-soft opacity-45"
+                  style={{ writingMode: 'vertical-rl' }}
+                >
+                  Melbourne · Sydney
+                </span>
+              </motion.div>
+
             </div>
           </div>
         </motion.div>
