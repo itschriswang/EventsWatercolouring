@@ -141,7 +141,12 @@ export default function Packages() {
         {/* Included as standard */}
         <motion.div
           {...reveal(1)}
-          className="col-span-12 flex flex-col border border-line bg-paper-deep/40 p-8 lg:col-span-7"
+          className="col-span-12 flex flex-col overflow-hidden rounded-2xl border border-line/60 p-8 shadow-[0_24px_50px_-20px_rgba(150,85,43,0.22)] lg:col-span-7"
+          style={{
+            background: 'rgba(244,239,230,0.72)',
+            backdropFilter: 'blur(18px) saturate(1.6)',
+            WebkitBackdropFilter: 'blur(18px) saturate(1.6)',
+          }}
         >
           <h3 className="font-display text-2xl font-normal text-ink">
             {PACKAGES.included.title}
