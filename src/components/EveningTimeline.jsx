@@ -85,7 +85,7 @@ export default function EveningTimeline() {
                   >
                     <span
                       className={
-                        'pointer-events-none block font-mono text-[17vw] leading-[0.82] text-paper/50 tabular-nums ' +
+                        'pointer-events-none block font-display text-[17vw] leading-[0.82] text-paper/50 tabular-nums ' +
                         (numberLeft ? '-ml-[1vw]' : '-mr-[1vw]')
                       }
                       aria-hidden="true"
@@ -126,7 +126,7 @@ export default function EveningTimeline() {
                 className="relative border-t border-paper/20 py-9"
               >
                 <span
-                  className="pointer-events-none absolute right-0 top-4 font-mono text-[clamp(3rem,7vw,6rem)] leading-none text-paper/50 tabular-nums"
+                  className="pointer-events-none absolute right-0 top-4 font-display text-[clamp(3rem,7vw,6rem)] leading-none text-paper/50 tabular-nums"
                   aria-hidden="true"
                 >
                   {beat.no}

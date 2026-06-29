@@ -63,12 +63,12 @@ export default function Preloader({ onDone }) {
             animate={
               reduce
                 ? {}
-                : { scale: [1, 1.06, 1], y: [0, -10, 0], rotate: [0, 4, 0] }
+                : { scale: [1, 1.05, 1.09, 1.02, 1.07, 1], y: [0, -8, -16, -3, -11, 0], rotate: [0, 2, -1, 4, -2, 0] }
             }
             transition={
               reduce
                 ? undefined
-                : { duration: 6, repeat: Infinity, ease: 'easeInOut' }
+                : { duration: 10, repeat: Infinity, ease: 'easeInOut' }
             }
           >
             <Bloom active={bloom} reduce={reduce} />
@@ -77,10 +77,10 @@ export default function Preloader({ onDone }) {
           <div className="mt-10 flex flex-col items-center gap-4 text-center">
             <p className="eyebrow">Getting set up for you</p>
             <div className="flex items-baseline gap-3">
-              <span className="font-mono text-5xl tabular-nums tracking-tighter text-ink">
+              <span className="font-display text-5xl tabular-nums tracking-tighter text-ink">
                 {progress}
               </span>
-              <span className="font-mono text-xs text-ink-soft">/ 100</span>
+              <span className="font-display text-xs text-ink-soft">/ 100</span>
             </div>
             <div className="h-px w-48 overflow-hidden bg-line">
               <motion.div
@@ -103,13 +103,13 @@ export default function Preloader({ onDone }) {
  * the dissolve. Static for reduced-motion users.
  */
 function Bloom({ active, reduce }) {
-  // dx/dy = wander amplitude (%), dur = loop length (s). Desynced on purpose.
+  // dx/dy = wander amplitude (%), dur = loop length (s), rot = max rotation (deg). Heavily desynced.
   const blobs = [
-    { c: '#B5395B', x: 0,   y: 0,   s: 1,    dx: 5,  dy: 6,  dur: 5.2 },
-    { c: '#ED8A33', x: -22, y: 14,  s: 0.78, dx: 7,  dy: -5, dur: 6.4 },
-    { c: '#3A7F9D', x: 20,  y: 18,  s: 0.7,  dx: -6, dy: 6,  dur: 7.1 },
-    { c: '#AEBF56', x: 14,  y: -20, s: 0.6,  dx: 6,  dy: -7, dur: 5.8 },
-    { c: '#E4889C', x: -16, y: -16, s: 0.66, dx: -7, dy: 5,  dur: 6.9 },
+    { c: '#B5395B', x: 0,   y: 0,   s: 1,    dx: 15,  dy: 12,  dur: 5.4, rot: 0   },
+    { c: '#ED8A33', x: -22, y: 14,  s: 0.78, dx: 17,  dy: -11, dur: 7.8, rot: 11  },
+    { c: '#3A7F9D', x: 20,  y: 18,  s: 0.7,  dx: -13, dy: 14,  dur: 9.3, rot: -8  },
+    { c: '#AEBF56', x: 14,  y: -20, s: 0.6,  dx: 12,  dy: -16, dur: 6.5, rot: 14  },
+    { c: '#E4889C', x: -16, y: -16, s: 0.66, dx: -16, dy: 11,  dur: 8.7, rot: -12 },
   ]
   return (
     <div className="relative h-full w-full">
@@ -121,13 +121,30 @@ function Bloom({ active, reduce }) {
           animate = { x: `${b.x}%`, y: `${b.y}%`, scale: b.s }
           transition = { duration: 0.4 }
         } else {
-          // Continuous organic wander + breathe.
+          // Six-waypoint wander so the path never feels like a simple ping-pong.
+          // Each axis uses a different phase offset, giving an unpredictable figure.
           animate = {
-            x: [`${b.x}%`, `${b.x + b.dx}%`, `${b.x - b.dx * 0.6}%`, `${b.x}%`],
-            y: [`${b.y}%`, `${b.y + b.dy}%`, `${b.y - b.dy * 0.6}%`, `${b.y}%`],
-            scale: [b.s, b.s * 1.12, b.s * 0.93, b.s],
+            x: [
+              `${b.x}%`,
+              `${b.x + b.dx}%`,
+              `${b.x + b.dx * 0.25}%`,
+              `${b.x - b.dx * 0.85}%`,
+              `${b.x - b.dx * 0.3}%`,
+              `${b.x}%`,
+            ],
+            y: [
+              `${b.y}%`,
+              `${b.y - b.dy * 0.45}%`,
+              `${b.y + b.dy}%`,
+              `${b.y + b.dy * 0.35}%`,
+              `${b.y - b.dy * 0.75}%`,
+              `${b.y}%`,
+            ],
+            scale: [b.s, b.s * 1.2, b.s * 0.86, b.s * 1.16, b.s * 0.92, b.s],
+            rotate: [0, b.rot, b.rot * 0.4, -b.rot * 0.65, b.rot * 0.25, 0],
           }
-          transition = { duration: b.dur, repeat: Infinity, ease: 'easeInOut', delay: i * 0.15 }
+          // Large per-blob delay gaps (0.9s apart) so they never sync up.
+          transition = { duration: b.dur, repeat: Infinity, ease: 'easeInOut', delay: i * 0.9 }
         }
 
         return (
