@@ -1,7 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import SplitText from './SplitText.jsx'
-import MagneticButton from './MagneticButton.jsx'
-import { ENQUIRE_HREF, EMAIL } from '../lib/site.js'
+import { EMAIL } from '../lib/site.js'
 import { FOOTER } from '../content.js'
 
 /** Closing CTA band — dark, full-bleed, with nav and signature. */
@@ -18,9 +17,6 @@ export default function Footer() {
           emphasis={FOOTER.emphasis}
           className="display-lg max-w-[18ch]"
         />
-        <MagneticButton href={ENQUIRE_HREF} variant="paper">
-          Enquire about your day
-        </MagneticButton>
       </div>
 
       <div className="mt-[clamp(3rem,7vw,6rem)] flex flex-col gap-8 border-t border-paper/15 pt-10 lg:flex-row lg:justify-between">
