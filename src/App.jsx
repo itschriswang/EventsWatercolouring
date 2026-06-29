@@ -12,7 +12,6 @@ import EveningTimeline from './components/EveningTimeline.jsx'
 import SelectedWork from './components/SelectedWork.jsx'
 import AboutMe from './components/AboutMe.jsx'
 import Packages from './components/Packages.jsx'
-import BeyondWeddings from './components/BeyondWeddings.jsx'
 import Faq from './components/Faq.jsx'
 import EnquireForm from './components/EnquireForm.jsx'
 import Footer from './components/Footer.jsx'
@@ -60,7 +59,6 @@ export default function App() {
         <EveningTimeline />
         <SelectedWork />
         <Packages />
-        <BeyondWeddings />
         <Faq />
         <EnquireForm />
       </main>
