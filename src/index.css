@@ -35,19 +35,19 @@
      not as rigid Tailwind steps. Tight leading + negative tracking. */
   .display-xl {
     font-family: theme('fontFamily.display');
-    font-weight: 700;
+    font-weight: 400;
     font-size: clamp(2.25rem, 6vw, 6rem);
-    line-height: 0.92;
-    letter-spacing: 0.04em;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
     text-transform: uppercase;
   }
 
   .display-lg {
     font-family: theme('fontFamily.display');
-    font-weight: 700;
+    font-weight: 400;
     font-size: clamp(2rem, 4vw, 4rem);
-    line-height: 0.94;
-    letter-spacing: 0.035em;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
     text-transform: uppercase;
   }
 
@@ -56,14 +56,14 @@
     font-weight: 400;
     font-size: clamp(1.5rem, 3.5vw, 3rem);
     line-height: 0.98;
-    letter-spacing: 0.02em;
+    letter-spacing: -0.01em;
   }
 
   .eyebrow {
     font-family: theme('fontFamily.mono');
-    font-size: 0.68rem;
+    font-size: 0.66rem;
     text-transform: uppercase;
-    letter-spacing: 0.3em;
+    letter-spacing: 0.18em;
     color: theme('colors.ink-soft');
   }
 }
@@ -82,6 +82,13 @@
   .bleed {
     width: 100%;
     padding-inline: 5vw;
+  }
+
+  /* Grid-break: pull a Goudy header out of the section's 5vw gutter so it
+     bleeds toward the screen edge, against the strict grid of the body. Pair
+     with `pl-[5vw]` on inner copy to keep the narrative aligned to the grid. */
+  .bleed-left {
+    margin-left: -5vw;
   }
 }
 

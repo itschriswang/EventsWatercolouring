@@ -25,13 +25,14 @@ export default {
         wine: '#6C2A3E',
       },
       fontFamily: {
-        // Headings — Instrument Sans. Body + all UI text — Plus Jakarta Sans.
-        // `mono` keeps its name as the small-label slot but now points at
-        // Jakarta too, so the site reads as a clean two-font system; the
-        // labels hold their identity through uppercase + wide tracking.
-        display: ['"Instrument Sans"', 'system-ui', 'sans-serif'],
-        body: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
-        mono: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        // Three-role editorial system:
+        //  display — Sorts Mill Goudy, the artistic hero/section headers.
+        //  body    — Manrope, the neutral, legible narrative voice.
+        //  mono    — Space Mono, the rigid "blueprint" for UI/logistics
+        //            (numbering, pricing, micro-labels), always set uppercase.
+        display: ['"Sorts Mill Goudy"', 'Georgia', 'serif'],
+        body: ['"Manrope"', 'system-ui', 'sans-serif'],
+        mono: ['"Space Mono"', 'ui-monospace', 'monospace'],
       },
       letterSpacing: {
         tightest: '-0.04em',
