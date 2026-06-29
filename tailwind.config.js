@@ -26,11 +26,11 @@ export default {
       },
       fontFamily: {
         // Three-role editorial system:
-        //  display — Sorts Mill Goudy, the artistic hero/section headers.
+        //  display — Playfair Display, the bold editorial serif for hero/section headers.
         //  body    — Manrope, the neutral, legible narrative voice.
         //  mono    — Space Mono, the rigid "blueprint" for UI/logistics
         //            (numbering, pricing, micro-labels), always set uppercase.
-        display: ['"Sorts Mill Goudy"', 'Georgia', 'serif'],
+        display: ['"Playfair Display"', 'Georgia', 'serif'],
         body: ['"Manrope"', 'system-ui', 'sans-serif'],
         mono: ['"Space Mono"', 'ui-monospace', 'monospace'],
       },

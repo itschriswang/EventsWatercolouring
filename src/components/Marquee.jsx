@@ -14,7 +14,7 @@ export default function Marquee() {
     <div className="flex shrink-0 items-center" aria-hidden="true">
       {phrase.map((p, i) => (
         <span key={i} className="flex items-center">
-          <span className="px-8 font-display text-[clamp(2rem,6vw,5rem)] font-light uppercase tracking-tight text-paper">
+          <span className="px-8 font-display text-[clamp(2rem,6vw,5rem)] font-bold uppercase tracking-tight text-paper">
             {p}
           </span>
           <span className="text-terracotta text-[clamp(1.5rem,4vw,3rem)]">✦</span>
