@@ -137,6 +137,7 @@ export const PAINTER = {
   body: [
     'I am Christopher. I grew up in Sydney and I am based in Melbourne now, and I have been painting in watercolour for more than ten years.',
     'Painting live at a wedding is the part I love most. A few minutes with each guest, a small portrait made by hand while the night carries on, and something real to take home at the end.',
+    'I travel across Melbourne and Australia-wide for weddings, corporate events, brand activations, and private celebrations.',
   ],
   signature: '',
 }
@@ -255,31 +256,6 @@ export const PATHS = {
   ],
 }
 
-export const BEYOND = {
-  label: 'Beyond weddings',
-  title: ['For any room,', 'any occasion.'],
-  emphasis: 'any occasion.',
-  intro:
-    'Live painting works just as well away from a wedding. I take it across Melbourne and Australia-wide, turning a few hours into something a guest walks out with. Corporate galas, brand activations, private celebrations — whatever the room, the principle is the same: guests gather, you get keepsakes.',
-  cards: [
-    {
-      tag: 'Brand activations',
-      title: 'A reason to stop and stay',
-      body: 'Live portraits give people something to watch and a reason to hang around. Everyone leaves with a branded piece they actually keep, not another giveaway headed for the bin.',
-    },
-    {
-      tag: 'Corporate events',
-      title: 'Not your usual photo booth',
-      body: 'For galas, launches and end-of-year nights. A quieter, more interesting alternative to a photo booth for a room that cares how things look.',
-    },
-    {
-      tag: 'Private celebrations',
-      title: 'Milestones worth keeping',
-      body: 'Birthdays, anniversaries, engagements. Smaller, warmer gatherings where everyone goes home with a small painting of their own.',
-    },
-  ],
-}
-
 export const FAQ = {
   label: 'Questions',
   title: 'The practical bits.',
@@ -371,7 +347,6 @@ export const FOOTER = {
     { href: '#work', label: 'The work' },
     { href: '#painter', label: 'The painter' },
     { href: '#offerings', label: 'Packages' },
-    { href: '#beyond', label: 'Beyond weddings' },
     { href: '#faq', label: 'Questions' },
   ],
   instagram: 'https://www.instagram.com/chriswangstudio',
