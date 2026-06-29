@@ -84,3 +84,16 @@ export function Drop({ className = '', fill = '#6E8CA8' }) {
     </svg>
   )
 }
+
+/** Section eyebrow: an orchid glyph + a Space Mono, wide-tracked uppercase
+ *  label. The pigment passed via `fill` (or the first stop of a legacy
+ *  `gradient` pair) tints the orchid so each section keeps its accent colour. */
+export default function Label({ children, className = '', fill, gradient }) {
+  const petal = fill ?? (Array.isArray(gradient) ? gradient[0] : undefined)
+  return (
+    <span className={'eyebrow inline-flex items-center gap-2 ' + className}>
+      <Drop className="h-4 w-auto" fill={petal} />
+      {children}
+    </span>
+  )
+}
