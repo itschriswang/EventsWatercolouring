@@ -338,7 +338,7 @@ function Lightbox({ items, index, onClose, onNavigate }) {
                   src={asset(`assets/${item.img}.jpg`)}
                   alt={item.alt || item.ttl}
                   onError={hideOnError}
-                  className="max-h-[80vh] w-auto rounded-[1rem] object-contain shadow-2xl"
+                  className="max-h-[80vh] w-auto rounded-[1rem] object-contain shadow-[0_28px_60px_-10px_rgba(0,0,0,0.65)]"
                 />
               </motion.picture>
             </AnimatePresence>

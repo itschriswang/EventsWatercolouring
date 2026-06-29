@@ -24,6 +24,15 @@ export default function EveningTimeline() {
       id="night"
       className="relative w-full bg-rust px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper"
     >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(201,162,58,0.14) 0%, transparent 60%), ' +
+            'radial-gradient(ellipse 60% 50% at 92% 90%, rgba(108,42,62,0.20) 0%, transparent 55%)',
+        }}
+      />
       {/* faint bouquet cut, top-right. Clipped by its own wrapper rather than
           the section: putting overflow-hidden on the <section> would make it a
           scroll container and silently break the sticky title rail below. */}
@@ -94,14 +103,14 @@ export default function EveningTimeline() {
                     aria-hidden="true"
                   >
                     {isLast ? (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_10px_rgba(42,39,36,0.25)]">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_12px_rgba(100,40,15,0.45)]">
                         <Drop
                           className="h-5 w-auto"
                           gradient={['#C2613C', '#A4502F']}
                         />
                       </span>
                     ) : (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-rust shadow-[0_2px_10px_rgba(42,39,36,0.2)]">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-rust shadow-[0_2px_12px_rgba(100,40,15,0.35)]">
                         {beat.no}
                       </span>
                     )}
