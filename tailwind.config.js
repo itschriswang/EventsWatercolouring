@@ -26,12 +26,13 @@ export default {
       },
       fontFamily: {
         // Three-role editorial system:
-        //  display  — Sora, the bold editorial sans for hero/section headers.
+        //  display  — Epoch, the new display/sentence sans (replaces Sora).
+        //             Used for numbers, prices, and sentence-length display text.
+        //             Sora kept as fallback for any chars outside Epoch's basic latin set.
         //  body     — Manrope, the neutral, legible narrative voice.
-        //  mono     — Space Mono, the rigid "blueprint" for UI/logistics
-        //             (numbering, pricing, micro-labels), always set uppercase.
-        //  zt-oskon — ZT Bros Oskon 90s, used on key price totals only.
-        display: ['"Sora"', 'Georgia', 'serif'],
+        //  mono     — Space Mono, the rigid "blueprint" for UI/logistics.
+        //  zt-oskon — ZT Bros Oskon 90s, for all titles and wordmarks.
+        display: ['"Epoch"', '"Sora"', 'Georgia', 'sans-serif'],
         body: ['"Manrope"', 'system-ui', 'sans-serif'],
         mono: ['"Space Mono"', 'ui-monospace', 'monospace'],
         'zt-oskon': ['"ZT Oskon 90s"', 'Georgia', 'serif'],
