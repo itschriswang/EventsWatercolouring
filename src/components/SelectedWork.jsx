@@ -7,18 +7,19 @@ import { SPRING, SPRING_SOFT, asset } from '../lib/site.js'
 import { WORK } from '../content.js'
 
 // Graceful fallback when an image fails to load: hide the broken <img> so the
-// paper-toned card and its caption remain instead of a broken-image glyph.
+// paper-toned card remains instead of a broken-image glyph.
 const hideOnError = (e) => {
   e.currentTarget.style.display = 'none'
 }
 
 /**
  * Selected work — a gallery wall driven entirely by `WORK.gallery` (see
- * content.js). Most tiles are a 3:4 portrait with its caption below; a tile
- * flagged `testimonial` takes the same card shape but holds a client quote.
- * Wide screens lay the pieces on a six-column grid where any `feature` piece
- * fills a larger 2-wide focus block; narrower screens flow into a 2/3-column
- * masonry. Tapping a painting opens it in a lightbox.
+ * content.js). The wall carries no captions: most tiles are a bare 3:4 portrait,
+ * a `landscape` piece takes a wide 2×1 letterbox tile, and a tile flagged
+ * `testimonial` takes that same wide shape but holds a client quote with its
+ * attribution inside the card. Wide screens lay the pieces on a six-column grid
+ * where any `feature` piece fills a larger 2-wide focus block; narrower screens
+ * flow into a 2/3-column masonry. Tapping a painting opens it in a lightbox.
  */
 export default function SelectedWork() {
   // The openable paintings (testimonials are not enlargeable). The lightbox
@@ -85,9 +86,9 @@ export default function SelectedWork() {
               index={i}
               onOpen={item.testimonial ? undefined : () => setActiveIndex(paintings.indexOf(item))}
               className={
-                item.feature ? 'col-span-2 row-span-2'
-                : item.wide  ? 'col-span-2 row-span-1'
-                :               'col-span-1 row-span-1'
+                item.feature              ? 'col-span-2 row-span-2'
+                : item.wide || item.landscape ? 'col-span-2 row-span-1'
+                :                           'col-span-1 row-span-1'
               }
             />
           ))}
@@ -118,18 +119,18 @@ export default function SelectedWork() {
 }
 
 /**
- * A single gallery tile. For paintings it is a 3:4 image card with the caption
- * beneath it (and a tap target that opens the lightbox); for a testimonial it
- * is the same card shape holding a quote. In the wide grid the surrounding cell
- * sets the height, so the contents fill it; in masonry the card keeps an
- * explicit 3:4 aspect.
+ * A single gallery tile, captionless. For paintings it is an image card and a
+ * tap target that opens the lightbox; for a testimonial it is the same card
+ * shape holding a quote. In the wide grid the surrounding cell sets the height,
+ * so the contents fill it; in masonry the card keeps an explicit aspect — 3:4
+ * upright, or 4:3 for a `landscape` piece.
  */
 function Tile({ item, index, className = '', masonry = false, onOpen }) {
   const reduce = useReducedMotion()
 
   const cardShape =
     'relative overflow-hidden rounded-[1rem] border border-line ' +
-    (masonry ? 'aspect-[3/4]' : 'min-h-0 flex-1')
+    (masonry ? (item.landscape ? 'aspect-[4/3]' : 'aspect-[3/4]') : 'min-h-0 flex-1')
 
   return (
     <motion.figure
@@ -172,27 +173,6 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
           </picture>
         </button>
       )}
-
-      {!item.testimonial && (
-        <figcaption className="mt-2.5">
-          <span className="block font-display text-[0.95rem] leading-tight text-ink">
-            {item.ttl}
-          </span>
-          <span className="mt-0.5 block font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft">
-            {item.meta}
-          </span>
-        </figcaption>
-      )}
-      {item.testimonial && (
-        <figcaption className="mt-2.5">
-          <span className="block font-display text-[0.95rem] leading-tight text-ink">
-            {item.author}
-          </span>
-          <span className="mt-0.5 block font-mono text-[0.55rem] uppercase tracking-[0.16em] text-ink-soft">
-            {item.detail}
-          </span>
-        </figcaption>
-      )}
     </motion.figure>
   )
 }
@@ -229,6 +209,25 @@ function Testimonial({ item, compact = false, masonry = false }) {
       >
         {item.quote}
       </p>
+      {/* Attribution lives inside the card now that the wall carries no captions. */}
+      <footer className={'mt-auto ' + (masonry ? 'pt-2' : 'pt-4')}>
+        <span
+          className={
+            'block font-display leading-tight text-ink ' +
+            (masonry ? 'text-[0.7rem]' : compact ? 'text-[0.95rem]' : 'text-[1.05rem]')
+          }
+        >
+          {item.author}
+        </span>
+        <span
+          className={
+            'mt-0.5 block font-mono uppercase tracking-[0.16em] text-ink-soft ' +
+            (masonry ? 'text-[0.45rem]' : 'text-[0.55rem]')
+          }
+        >
+          {item.detail}
+        </span>
+      </footer>
     </blockquote>
   )
 }
