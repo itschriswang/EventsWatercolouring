@@ -85,8 +85,8 @@ export default function EveningTimeline() {
                   >
                     <span
                       className={
-                        'pointer-events-none block font-display text-[26vw] font-light leading-[0.78] text-paper/45 tabular-nums ' +
-                        (numberLeft ? '-ml-[1.5vw]' : '-mr-[1.5vw]')
+                        'pointer-events-none block font-mono text-[17vw] leading-[0.82] text-paper/50 tabular-nums ' +
+                        (numberLeft ? '-ml-[1vw]' : '-mr-[1vw]')
                       }
                       aria-hidden="true"
                     >

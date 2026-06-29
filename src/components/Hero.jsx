@@ -90,12 +90,13 @@ export default function Hero({ revealed }) {
         <span className="hidden sm:inline">Melbourne · Sydney</span>
       </motion.div>
 
-      <div className="relative mt-[clamp(2rem,5vw,4rem)] grid grid-cols-4 items-start gap-y-10 lg:grid-cols-12 lg:items-end lg:gap-x-8">
-        {/* Headline + lede + actions — sits in the bottom-left column on wide
-            screens, at a notably smaller display size. Kept first in the DOM so
-            grid auto-placement seats it beside (not below) the study card, and
-            so it leads the stack on mobile. */}
-        <div className="relative z-10 col-span-4 col-start-1 lg:col-span-7 lg:col-start-1">
+      <div className="relative mt-[clamp(2rem,5vw,4rem)] flex flex-col gap-y-[clamp(2.5rem,9vw,4rem)] lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-8 lg:gap-y-0">
+        {/* Headline + lede + actions — on wide screens this sits in the
+            bottom-left column beside the study card (placement fixed by
+            col-start, so DOM order is free). On mobile it is ordered BELOW the
+            artwork, so the big headline lands low on the screen with the images
+            stacked above it — the editorial hero arrangement. */}
+        <div className="relative z-10 order-2 lg:order-none lg:col-span-7 lg:col-start-1">
           <motion.div style={parallax ? { y: copyY } : {}}>
             {revealed && (
               <SplitText
@@ -104,24 +105,22 @@ export default function Hero({ revealed }) {
                 playOnMount
                 lines={isMobile ? HERO.linesMobile : HERO.lines}
                 emphasis={isMobile ? HERO.emphasisMobile : HERO.emphasis}
-                className="display-xl text-ink lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)]"
+                className="display-xl text-ink [font-size:clamp(2.6rem,12.5vw,4.25rem)] lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)]"
               />
             )}
           </motion.div>
 
-          {/* Sub-text + actions. On wide screens this sits under the headline;
-              on mobile the sub-text moves beside the artwork (below), so this
-              copy is desktop-only. */}
+          {/* Sub-text + actions sit directly under the headline on every size. */}
           <motion.div
             variants={fade}
             initial="hidden"
             animate={state}
-            className="mt-[clamp(1.5rem,3vw,2.5rem)] hidden sm:block"
+            className="mt-6 block sm:mt-[clamp(1.5rem,3vw,2.5rem)]"
           >
-            <p className="max-w-md text-[clamp(1rem,1.1vw,1.18rem)] leading-relaxed text-ink-soft">
+            <p className="max-w-md text-[0.92rem] leading-relaxed text-ink-soft sm:text-[clamp(1rem,1.1vw,1.18rem)]">
               {HERO.lede}
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-5">
+            <div className="mt-7 flex flex-wrap items-center gap-5 sm:mt-8">
               <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
             </div>
           </motion.div>
@@ -134,19 +133,9 @@ export default function Hero({ revealed }) {
             layered artworks. */}
         <motion.div
           style={parallax ? { y: artY } : {}}
-          className="relative z-10 col-span-4 col-start-1 lg:col-span-5 lg:col-start-8 lg:mb-[4vh]"
+          className="relative z-10 order-1 lg:order-none lg:col-span-5 lg:col-start-8 lg:mb-[4vh]"
         >
           <div className="flex flex-col sm:block gap-6 sm:gap-0">
-            {/* Mobile-only sub-text (the desktop copy lives under the headline). */}
-            <motion.p
-              variants={fade}
-              initial="hidden"
-              animate={state}
-              className="mt-1 w-full sm:w-[30%] sm:shrink-0 text-[0.78rem] leading-relaxed text-ink-soft sm:hidden"
-            >
-              {HERO.lede}
-            </motion.p>
-
             {/* Two layered artworks, bottom-aligned so the character can be
                 lifted well above the bouquet — staggered and overlapping, with
                 the bouquet sitting lower but still fully visible. */}

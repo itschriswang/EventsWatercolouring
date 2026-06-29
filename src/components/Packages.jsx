@@ -49,7 +49,7 @@ export default function Packages() {
             <span className="font-mono text-[0.6rem] uppercase tracking-[0.25em] text-ink-soft">
               {PACKAGES.base.priceSmall}
             </span>
-            <span className="font-display text-[1.7rem] font-light leading-none text-ink">
+            <span className="font-mono text-[1.4rem] leading-none text-ink">
               {PACKAGES.base.price}
             </span>
           </p>
