@@ -158,7 +158,7 @@ export default function Hero({ revealed }) {
                   initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : -6 }}
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : -6 } : { opacity: 0 }}
                   transition={{ ...SPRING_SOFT, delay: 0.8 }}
-                  className="overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)]"
+                  className="overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(150,85,43,0.28)]"
                 >
                   <picture>
                     <source srcSet={asset('assets/art-bouquet.webp')} type="image/webp" />
@@ -185,7 +185,7 @@ export default function Hero({ revealed }) {
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : 3 } : { opacity: 0 }}
                   transition={{ ...SPRING_SOFT, delay: 0.95 }}
                   whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
-                  className="overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(42,39,36,0.5)]"
+                  className="overflow-hidden rounded-[1.1rem] border border-line bg-paper-deep shadow-[0_24px_50px_-26px_rgba(150,85,43,0.28)]"
                 >
                   <picture>
                     <source srcSet={asset('assets/art-character-boy.webp')} type="image/webp" />
