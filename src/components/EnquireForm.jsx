@@ -236,16 +236,26 @@ export default function EnquireForm() {
                   <label htmlFor="f-package" className="mb-2 font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
                     What are you after?
                   </label>
-                  <select
-                    id="f-package"
-                    name="package"
-                    className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors focus:border-terracotta"
-                  >
-                    <option value="">Choose one</option>
-                    {ENQUIRY.packageOptions.map((o) => (
-                      <option key={o}>{o}</option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <select
+                      id="f-package"
+                      name="package"
+                      className="w-full appearance-none border-b border-ink/30 bg-transparent py-3 pr-8 text-ink outline-none transition-colors focus:border-terracotta"
+                    >
+                      <option value="">Choose one</option>
+                      {ENQUIRY.packageOptions.map((o) => (
+                        <option key={o}>{o}</option>
+                      ))}
+                    </select>
+                    <svg
+                      className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/60 transition-colors"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                  </div>
                 </div>
 
                 <div className="flex flex-col sm:col-span-2">
@@ -271,14 +281,14 @@ export default function EnquireForm() {
                       name="date"
                       className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors focus:border-terracotta"
                     />
-                    <label className="flex items-center gap-2 text-sm text-ink">
+                    <label className="flex items-center gap-3 cursor-pointer group">
                       <input
                         type="checkbox"
                         name="date_unknown"
                         value="true"
-                        className="accent-terracotta"
+                        className="h-5 w-5 rounded border border-ink/30 bg-transparent accent-terracotta cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-terracotta focus:ring-offset-0"
                       />
-                      <span>Not sure yet</span>
+                      <span className="text-sm text-ink transition-colors group-hover:text-terracotta">Not sure yet</span>
                     </label>
                   </div>
                 </div>
