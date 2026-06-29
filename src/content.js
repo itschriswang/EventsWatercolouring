@@ -203,6 +203,8 @@ export const PACKAGES = {
     bullets: [
       'Guest portraits painted live, A5 on archival cotton paper',
       'Each keepsake artwork can feature up to four guests',
+      'Nobody has to pose or sit — I take a quick photo as guests pass by',
+      'You and any VIPs are painted first — just let me know before the night',
     ],
   },
   baseNote:
