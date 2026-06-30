@@ -42,7 +42,7 @@ export default function AboutMe() {
               ))}
             </div>
             {PAINTER.signature && (
-              <p className="mt-6 font-display text-4xl italic text-terracotta">
+              <p className="mt-6 font-sentient text-4xl italic text-terracotta">
                 {PAINTER.signature}
               </p>
             )}

@@ -25,16 +25,13 @@ export default {
         wine: '#6C2A3E',
       },
       fontFamily: {
-        // Three-role editorial system:
-        //  display  — Epoch, the new display/sentence sans (replaces Sora).
-        //             Used for numbers, prices, and sentence-length display text.
-        //             Sora kept as fallback for any chars outside Epoch's basic latin set.
+        // Three-font editorial system:
         //  body     — Manrope, the neutral, legible narrative voice.
-        //  mono     — Space Mono, the rigid "blueprint" for UI/logistics.
-        //  sentient — Sentient variable serif, for all titles and wordmarks.
-        display: ['"Epoch"', '"Sora"', 'Georgia', 'sans-serif'],
+        //  mono     — Mynerve, the handwritten voice for UI/logistics.
+        //  sentient — Sentient variable serif, for titles, wordmarks, numerals
+        //             and any other display-weight text.
         body: ['"Manrope"', 'system-ui', 'sans-serif'],
-        mono: ['"Space Mono"', 'ui-monospace', 'monospace'],
+        mono: ['"Mynerve"', 'cursive'],
         sentient: ['"Sentient"', 'Georgia', 'serif'],
       },
       letterSpacing: {
