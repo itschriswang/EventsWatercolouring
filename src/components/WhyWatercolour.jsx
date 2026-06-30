@@ -9,15 +9,6 @@ export default function WhyWatercolour() {
 
   return (
     <section id="why" className="relative w-full px-[5vw] pt-[clamp(2.5rem,6vw,5rem)] pb-[clamp(4rem,10vw,9rem)]">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(ellipse 60% 55% at 90% 5%, rgba(194,97,60,0.07) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 50% 50% at 8% 95%, rgba(110,140,168,0.06) 0%, transparent 55%)',
-        }}
-      />
       {/* Visually the eyebrow + italic lede read as this section's heading; this
           keeps the document outline correct (an h2 before the note h3s). */}
       <h2 className="sr-only">{WHY.label}</h2>
@@ -28,7 +19,7 @@ export default function WhyWatercolour() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-60px' }}
         transition={SPRING}
-        className="mt-8 max-w-[18ch] font-body text-[clamp(1.25rem,3vw,2.25rem)] font-normal leading-[1.0] text-ink sm:max-w-[24ch]"
+        className="mt-8 max-w-[18ch] font-body text-[clamp(0.95rem,1.8vw,1.5rem)] font-normal leading-[1.3] text-ink sm:max-w-[28ch]"
       >
         {beforeEmph(WHY.lede, 'all in one evening.')}
         <em className="text-terracotta">all in one evening.</em>
@@ -47,7 +38,7 @@ export default function WhyWatercolour() {
               'col-span-12 sm:col-span-6',
               // Zig-zag asymmetric layout: note 0 anchors top-left, note 1
               // bridges right with a deep drop, note 2 reclaims the left wider.
-              ['lg:col-span-5', 'lg:col-span-5 lg:col-start-8 lg:mt-28', 'lg:col-span-7 lg:mt-16'][i],
+              ['lg:col-span-5', 'lg:col-span-5 lg:col-start-8 lg:mt-12', 'lg:col-span-7 lg:mt-6'][i],
             ].join(' ')}
           >
             <span className="num-wide text-sm text-lime">{n.no}</span>
