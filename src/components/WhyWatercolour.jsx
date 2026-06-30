@@ -42,7 +42,7 @@ export default function WhyWatercolour() {
             ].join(' ')}
           >
             <span className="num-wide text-sm text-lime">{n.no}</span>
-            <h3 className="mt-4 font-zt-oskon text-[clamp(1.4rem,2vw,2rem)] font-bold leading-tight tracking-[-0.04em] text-ink">
+            <h3 className="mt-4 font-sentient text-[clamp(1.4rem,2vw,2rem)] font-bold leading-tight tracking-[-0.01em] text-ink">
               {n.title}
             </h3>
             <p className="mt-3 max-w-sm leading-relaxed text-ink-soft">{n.body}</p>
