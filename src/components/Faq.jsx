@@ -55,7 +55,7 @@ export default function Faq() {
                         className="shrink-0"
                         aria-hidden="true"
                       >
-                        <Drop className="h-5 w-auto" gradient={['#7E8B62', '#AEBF56']} />
+                        <Drop className="h-5 w-auto" gradient={['#C9A23A', '#C2613C']} />
                       </motion.span>
                     </button>
                   </h3>
