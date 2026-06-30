@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import GrainOverlay from './components/GrainOverlay.jsx'
-import BloomField from './components/BloomField.jsx'
+import SoftAurora from './components/SoftAurora.jsx'
 import Preloader from './components/Preloader.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
 import MobileNav from './components/MobileNav.jsx'
@@ -35,7 +35,6 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-paper">
-      <BloomField />
       <GrainOverlay />
       <Preloader onDone={() => setRevealed(true)} />
 
@@ -47,6 +46,24 @@ export default function App() {
         <Hero revealed={revealed} />
         <Marquee />
         <div className="relative overflow-visible lg:grid lg:grid-cols-2 lg:items-start lg:divide-x lg:divide-transparent">
+          {/* SoftAurora — clipped to this section, below all content */}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
+            <SoftAurora
+              color1="#E4889C"
+              color2="#AEBF56"
+              brightness={0.42}
+              speed={0.28}
+              scale={1.3}
+              bandHeight={0.45}
+              bandSpread={1.4}
+              octaveDecay={0.45}
+              layerOffset={0.9}
+              colorSpeed={0.55}
+              noiseFrequency={2.2}
+              noiseAmplitude={0.9}
+              enableMouseInteraction={false}
+            />
+          </div>
           <WhyWatercolour />
           <AboutMe />
           <img
