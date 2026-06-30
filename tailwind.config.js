@@ -27,12 +27,12 @@ export default {
       fontFamily: {
         // Three-font editorial system:
         //  body     — Manrope, the neutral, legible narrative voice.
-        //  mono     — Mynerve, the handwritten voice for UI/logistics.
-        //  sentient — Sentient variable serif, for titles, wordmarks, numerals
-        //             and any other display-weight text.
+        //  mono     — Mynerve, the handwritten voice for UI/logistics and
+        //             numerals.
+        //  sentient — Instrument Serif, for all titles and wordmarks.
         body: ['"Manrope"', 'system-ui', 'sans-serif'],
         mono: ['"Mynerve"', 'cursive'],
-        sentient: ['"Sentient"', 'Georgia', 'serif'],
+        sentient: ['"Instrument Serif"', 'Georgia', 'serif'],
       },
       letterSpacing: {
         tightest: '-0.04em',

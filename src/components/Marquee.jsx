@@ -93,7 +93,7 @@ export default function Marquee() {
         {/* Text undulates along the static path; only the offset moves */}
         <text
           fontSize={fontSize}
-          fontFamily="Sentient, serif"
+          fontFamily="Mynerve, cursive"
           fontWeight="700"
           dominantBaseline="middle"
           style={{ letterSpacing: '-0.025em' }}

@@ -196,7 +196,7 @@ function Testimonial({ item, compact = false, masonry = false }) {
       <span
         aria-hidden="true"
         className={
-          'font-sentient leading-none text-terracotta/60 ' +
+          'font-mono leading-none text-terracotta/60 ' +
           (masonry ? 'text-xl' : compact ? 'text-4xl' : 'text-5xl')
         }
       >
@@ -218,7 +218,7 @@ function Testimonial({ item, compact = false, masonry = false }) {
       <footer className={'mt-auto ' + (masonry ? 'pt-2' : 'pt-4')}>
         <span
           className={
-            'block font-sentient leading-tight text-ink ' +
+            'block font-mono leading-tight text-ink ' +
             (masonry ? 'text-[0.7rem]' : compact ? 'text-[0.95rem]' : 'text-[1.05rem]')
           }
         >
@@ -320,13 +320,30 @@ function Lightbox({ items, index, onClose, onNavigate }) {
             </>
           )}
 
+          {/* A soft pigment glow blooms in behind the enlarged piece, like light
+              coming through cotton paper. Decorative, behind the image, screen-
+              blended so it lifts the dark backdrop warmly without competing with
+              the painting. Static (no fade) under reduced-motion. */}
+          <motion.div
+            aria-hidden="true"
+            initial={reduce ? { opacity: 0.6 } : { opacity: 0, scale: 0.92 }}
+            animate={{ opacity: reduce ? 0.6 : 0.7, scale: 1 }}
+            transition={reduce ? { duration: 0 } : { duration: 0.6, ease: [0.22, 0.61, 0.36, 1] }}
+            className="pointer-events-none absolute left-1/2 top-1/2 h-[125vmin] w-[125vmin] -translate-x-1/2 -translate-y-1/2 mix-blend-screen"
+            style={{
+              background:
+                'radial-gradient(circle at 50% 50%, rgba(194,97,60,0.42), rgba(228,136,156,0.2) 42%, transparent 72%)',
+              filter: 'blur(60px)',
+            }}
+          />
+
           <motion.figure
             onClick={(e) => e.stopPropagation()}
             initial={{ scale: reduce ? 1 : 0.92, opacity: 0, y: reduce ? 0 : 16 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: reduce ? 1 : 0.96, opacity: 0 }}
             transition={SPRING_SOFT}
-            className="flex max-h-full max-w-5xl flex-col items-center"
+            className="relative z-[1] flex max-h-full max-w-5xl flex-col items-center"
           >
             {/* Keyed by index so the image crossfades as you move along the wall. */}
             <AnimatePresence mode="wait">
