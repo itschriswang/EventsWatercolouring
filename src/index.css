@@ -3,28 +3,18 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'ZT Oskon 90s';
-  src: url('/fonts/ZTBrosOskon90s-Regular.otf') format('opentype');
-  font-weight: 400;
+  font-family: 'Sentient';
+  src: url('/fonts/Sentient-Variable.woff2') format('woff2-variations');
+  font-weight: 200 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'ZT Oskon 90s';
-  src: url('/fonts/ZTBrosOskon90s-Light.otf') format('opentype');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Map bold requests to the Regular file so the browser never synthesises
-   a faux-bold stroke, which makes the letterforms look blobby. */
-@font-face {
-  font-family: 'ZT Oskon 90s';
-  src: url('/fonts/ZTBrosOskon90s-Regular.otf') format('opentype');
-  font-weight: 600 900;
-  font-style: normal;
+  font-family: 'Sentient';
+  src: url('/fonts/Sentient-VariableItalic.woff2') format('woff2-variations');
+  font-weight: 200 700;
+  font-style: italic;
   font-display: swap;
 }
 
@@ -70,29 +60,27 @@
   /* Fluid display type — raw clamp() so headers behave as graphic art,
      not as rigid Tailwind steps. Tight leading + negative tracking. */
   .display-xl {
-    font-family: theme('fontFamily.zt-oskon');
-    font-weight: 700;
+    font-family: theme('fontFamily.sentient');
+    font-weight: 300;
     font-size: clamp(2.25rem, 6vw, 6rem);
     line-height: 0.95;
-    letter-spacing: -0.04em;
-    text-transform: uppercase;
+    letter-spacing: -0.02em;
   }
 
   .display-lg {
-    font-family: theme('fontFamily.zt-oskon');
-    font-weight: 700;
+    font-family: theme('fontFamily.sentient');
+    font-weight: 500;
     font-size: clamp(2rem, 4vw, 4rem);
     line-height: 0.95;
-    letter-spacing: -0.04em;
-    text-transform: uppercase;
+    letter-spacing: -0.02em;
   }
 
   .display-md {
-    font-family: theme('fontFamily.zt-oskon');
-    font-weight: 700;
+    font-family: theme('fontFamily.sentient');
+    font-weight: 600;
     font-size: clamp(1.5rem, 3.5vw, 3rem);
     line-height: 0.98;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.015em;
   }
 
   .eyebrow {

@@ -104,7 +104,7 @@ export default function SiteHeader({ revealed, className = '' }) {
             }}
           />
           <span
-            className="font-zt-oskon font-bold uppercase tracking-[-0.05em] text-ink"
+            className="font-sentient font-bold tracking-[-0.01em] text-ink"
             style={{
               fontSize: scrolled ? '0.875rem' : '1.1rem',
               transition: 'font-size 0.55s cubic-bezier(0.25,1,0.5,1)',
