@@ -2,15 +2,17 @@ import { useReducedMotion } from 'framer-motion'
 import { useEffect, useId, useMemo, useState } from 'react'
 import { MARQUEE } from '../content.js'
 
-// Single-arch path: one smooth hill per tile (mid → peak → mid).
-// Two tiles gives a seamless loop: the animation drives 0 % → 50 % (one tile).
+// Sine-wave path: one full up-then-down cycle per tile.
+// Two identical tiles give a seamless loop: animation drives 0 % → 50 % (one tile).
 function buildPath(vw, h) {
   const mid = h / 2
-  const amp = h * 0.30
+  const amp = h * 0.25
   const top = mid - amp
-  // Single cubic bezier: symmetric arch with control points at ¼ and ¾ along x.
+  const bot = mid + amp
+  // Up-arch (first half) + down-arch (second half) ≈ one sine wave cycle.
   const tile = (ox) =>
-    `C${ox + vw * 0.25},${top} ${ox + vw * 0.75},${top} ${ox + vw},${mid}`
+    `C${ox + vw * 0.18},${top} ${ox + vw * 0.32},${top} ${ox + vw * 0.50},${mid} ` +
+    `C${ox + vw * 0.68},${bot} ${ox + vw * 0.82},${bot} ${ox + vw},${mid}`
   return `M0,${mid} ${tile(0)} ${tile(vw)}`
 }
 
