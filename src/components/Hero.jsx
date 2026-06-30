@@ -17,9 +17,10 @@ export default function Hero({ revealed }) {
     target: ref,
     offset: ['start start', 'end start'],
   })
+  const { scrollY } = useScroll()
   const artY = useTransform(scrollYProgress, [0, 1], ['0%', '24%'])
   const copyY = useTransform(scrollYProgress, [0, 1], ['0%', '-8%'])
-  const blurOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0])
+  const blurOpacity = useTransform(scrollY, [0, 75], [1, 0])
 
   const fade = {
     hidden: { opacity: 0, y: reduce ? 0 : 24 },
@@ -120,9 +121,22 @@ export default function Hero({ revealed }) {
             animate={state}
             className="mt-6 block sm:mt-[clamp(1.5rem,3vw,2.5rem)]"
           >
-            <p className="max-w-[33ch] text-[0.93rem] leading-relaxed text-ink-soft sm:max-w-md sm:text-[clamp(1rem,1.1vw,1.18rem)]">
-              {HERO.lede}
-            </p>
+            <div className="relative">
+              <p className="max-w-[33ch] text-[0.93rem] leading-relaxed text-ink-soft sm:max-w-md sm:text-[clamp(1rem,1.1vw,1.18rem)]">
+                {HERO.lede}
+              </p>
+              {!reduce && (
+                <motion.div
+                  aria-hidden="true"
+                  className="sm:hidden pointer-events-none absolute inset-0"
+                  style={{
+                    opacity: blurOpacity,
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
+                  }}
+                />
+              )}
+            </div>
             <div className="mt-7 flex flex-wrap items-center gap-5 sm:mt-8">
               <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
             </div>
@@ -251,22 +265,6 @@ export default function Hero({ revealed }) {
         </span>
       </motion.div>
 
-      {/* Mobile — body text blur over lede area, dissolves quickly on scroll */}
-      {!reduce && (
-        <motion.div
-          aria-hidden="true"
-          className="sm:hidden pointer-events-none absolute inset-x-0 z-[15]"
-          style={{
-            top: '78dvh',
-            height: '24dvh',
-            opacity: blurOpacity,
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 28%, black 100%)',
-            maskImage: 'linear-gradient(to bottom, transparent 0%, black 28%, black 100%)',
-          }}
-        />
-      )}
     </section>
   )
 }
