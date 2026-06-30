@@ -8,7 +8,7 @@ export default function Footer() {
   const reduce = useReducedMotion()
 
   return (
-    <footer className="relative w-full overflow-hidden bg-ink px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper">
+    <footer className="relative w-full overflow-hidden bg-ink px-[5vw] pt-[clamp(4rem,8vw,7rem)] pb-36 md:pb-[clamp(4rem,8vw,7rem)] text-paper">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"

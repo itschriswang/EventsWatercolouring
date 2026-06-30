@@ -12,7 +12,7 @@ export default function WhyWatercolour() {
       {/* Visually the eyebrow + italic lede read as this section's heading; this
           keeps the document outline correct (an h2 before the note h3s). */}
       <h2 className="sr-only">{WHY.label}</h2>
-      <Label gradient={['#7E8B62', '#AEBF56']}>{WHY.label}</Label>
+      <Label gradient={['#C9A23A', '#C2613C']}>{WHY.label}</Label>
 
       <motion.p
         initial={{ opacity: 0, y: reduce ? 0 : 24 }}

@@ -57,7 +57,7 @@ export default function Packages() {
             <span className="font-mono text-[0.6rem] uppercase tracking-[0.25em] text-ink-soft">
               {PACKAGES.base.priceSmall}
             </span>
-            <span className="font-display text-[1.4rem] leading-none text-ink">
+            <span className="font-mono text-[1.4rem] leading-none text-ink">
               {PACKAGES.base.price}
             </span>
           </p>
@@ -112,7 +112,7 @@ export default function Packages() {
               <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
                 {PACKAGES.base.priceSmall}{' '}
               </span>
-              <span className="font-display text-3xl leading-none text-ink">
+              <span className="font-mono text-3xl leading-none text-ink">
                 {PACKAGES.base.price}
               </span>
             </p>
@@ -157,7 +157,7 @@ export default function Packages() {
           <ul className="mt-6 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
             {PACKAGES.included.items.map((item) => (
               <li key={item} className="flex gap-3 text-sm text-ink/85">
-                <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#7E8B62', '#AEBF56']} />
+                <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#6E8CA8', '#C9A23A']} />
                 {item}
               </li>
             ))}
@@ -202,7 +202,7 @@ export default function Packages() {
                   {a.small}
                 </span>
               )}
-              <span className={a.tag.startsWith('$') ? 'font-display' : 'font-mono'}>
+              <span className="font-mono">
                 {a.tag}
               </span>
               {a.extra && (

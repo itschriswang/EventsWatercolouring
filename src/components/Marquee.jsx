@@ -2,21 +2,15 @@ import { useReducedMotion } from 'framer-motion'
 import { useEffect, useId, useMemo, useState } from 'react'
 import { MARQUEE } from '../content.js'
 
-// Smooth sine-wave path: 4 quarter-period cubic beziers per tile.
-// Control handles at quarter-period distance give near-perfect sine shape.
-// All peak/trough junctions have horizontal tangents → C1 continuity.
+// Single-arch path: one smooth hill per tile (mid → peak → mid).
+// Two tiles gives a seamless loop: the animation drives 0 % → 50 % (one tile).
 function buildPath(vw, h) {
   const mid = h / 2
-  const amp = h * 0.28
+  const amp = h * 0.30
   const top = mid - amp
-  const bot = mid + amp
-  const ctrl = vw * 0.14
-  const tile = (ox) => [
-    `C${ox + ctrl},${mid} ${ox + vw * 0.25 - ctrl},${top} ${ox + vw * 0.25},${top}`,
-    `C${ox + vw * 0.25 + ctrl},${top} ${ox + vw * 0.5 - ctrl},${mid} ${ox + vw * 0.5},${mid}`,
-    `C${ox + vw * 0.5 + ctrl},${mid} ${ox + vw * 0.75 - ctrl},${bot} ${ox + vw * 0.75},${bot}`,
-    `C${ox + vw * 0.75 + ctrl},${bot} ${ox + vw - ctrl},${mid} ${ox + vw},${mid}`,
-  ].join(' ')
+  // Single cubic bezier: symmetric arch with control points at ¼ and ¾ along x.
+  const tile = (ox) =>
+    `C${ox + vw * 0.25},${top} ${ox + vw * 0.75},${top} ${ox + vw},${mid}`
   return `M0,${mid} ${tile(0)} ${tile(vw)}`
 }
 
@@ -63,7 +57,7 @@ export default function Marquee() {
   return (
     <section
       aria-label="Live wedding watercolour"
-      className="relative overflow-hidden"
+      className="relative overflow-hidden border-y border-line bg-paper-deep"
       style={{ height: h }}
     >
       {/*
