@@ -122,7 +122,7 @@ export default function EveningTimeline() {
                     transition={SPRING}
                     className="-mt-px flex-1 rounded-2xl bg-paper/[0.06] p-4 sm:p-5"
                   >
-                    <h3 className="font-zt-oskon text-[clamp(1.25rem,2.4vw,1.9rem)] font-bold leading-tight tracking-[-0.03em]">
+                    <h3 className="font-display text-[clamp(1.25rem,2.4vw,1.9rem)] font-bold leading-tight tracking-[-0.01em]">
                       {beat.title}
                     </h3>
                     <p className="mt-2 max-w-lg text-[0.95rem] leading-relaxed text-paper/80">

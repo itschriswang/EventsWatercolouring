@@ -46,7 +46,7 @@ export default function Faq() {
                       onClick={() => setOpen(isOpen ? null : i)}
                       className="flex w-full items-center justify-between gap-6 py-6 text-left transition-colors hover:text-terracotta"
                     >
-                      <span className="font-body text-[clamp(1.15rem,1.8vw,1.6rem)] font-semibold leading-snug text-ink">
+                      <span className="font-body text-[clamp(0.9rem,1.3vw,1.15rem)] font-semibold leading-snug text-ink-soft">
                         {item.q}
                       </span>
                       <motion.span
