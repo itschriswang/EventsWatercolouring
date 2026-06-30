@@ -220,15 +220,25 @@ export default function EnquireForm() {
                   >
                     Preferred contact method
                   </label>
-                  <select
-                    id="f-contactMethod"
-                    name="contactMethod"
-                    className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors focus:border-terracotta"
-                  >
-                    <option value="">Choose one</option>
-                    <option>Email</option>
-                    <option>Phone</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      id="f-contactMethod"
+                      name="contactMethod"
+                      className="w-full appearance-none border-b border-ink/30 bg-transparent py-3 pr-8 text-ink outline-none transition-colors focus:border-terracotta"
+                    >
+                      <option value="">Choose one</option>
+                      <option>Email</option>
+                      <option>Phone</option>
+                    </select>
+                    <svg
+                      className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/60 transition-colors"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                  </div>
                 </div>
                 <Field name="venue" label="Venue or city" placeholder="e.g. Melbourne" />
 
