@@ -25,19 +25,16 @@ const BLOOMS_MOBILE = [
   { opacity: 0.28, size: '52vmin', style: { right: '-5vw', top: '74%', background: 'radial-gradient(circle at 38% 55%, #C98B8C, transparent 64%)', animationName: 'bloom-drift1', animationDuration: '28s' } },
 ]
 
-export default function BloomField() {
+export default function BloomField({ contained = false }) {
   const reduce = useReducedMotion()
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const blooms = isDesktop ? BLOOMS_DESKTOP : BLOOMS_MOBILE
-  // On phones the slow drift is imperceptible but the per-frame recompositing of
-  // blurred, blended, fixed layers is the main scroll-jank source. Render the
-  // blooms statically there and lighten the blur (the dominant compositing cost).
   const still = reduce || !isDesktop
 
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+      className={`pointer-events-none ${contained ? 'absolute' : 'fixed'} inset-0 z-0 overflow-hidden`}
     >
       {blooms.map((b, i) => (
         <div
