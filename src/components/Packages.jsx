@@ -4,28 +4,7 @@ import SplitText from './SplitText.jsx'
 import { Drop } from './Label.jsx'
 import { SPRING } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
-
-/**
- * CornerBloom — a soft watercolour bloom that feathers in from a card's
- * corners, framing the clean "unpainted paper" interior (negative space). It
- * relies on the parent card's `overflow-hidden rounded-2xl` to clip the wash.
- * Mirrors the pigment recipe used in BloomField (radial-gradient + multiply).
- */
-function CornerBloom({ from, to }) {
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0"
-      style={{
-        background:
-          `radial-gradient(circle at 100% 100%, ${from}, transparent 46%), ` +
-          `radial-gradient(circle at 0% 0%, ${to}, transparent 40%)`,
-        mixBlendMode: 'multiply',
-        filter: 'blur(10px)',
-      }}
-    />
-  )
-}
+import CornerBloom from './CornerBloom.jsx'
 
 /**
  * Packages — one base package, an "included as standard" grid, and an irregular
