@@ -196,7 +196,7 @@ function Testimonial({ item, compact = false, masonry = false }) {
       <span
         aria-hidden="true"
         className={
-          'font-display leading-none text-terracotta/60 ' +
+          'font-mono leading-none text-terracotta/60 ' +
           (masonry ? 'text-xl' : compact ? 'text-4xl' : 'text-5xl')
         }
       >
@@ -218,7 +218,7 @@ function Testimonial({ item, compact = false, masonry = false }) {
       <footer className={'mt-auto ' + (masonry ? 'pt-2' : 'pt-4')}>
         <span
           className={
-            'block font-display leading-tight text-ink ' +
+            'block font-mono leading-tight text-ink ' +
             (masonry ? 'text-[0.7rem]' : compact ? 'text-[0.95rem]' : 'text-[1.05rem]')
           }
         >
