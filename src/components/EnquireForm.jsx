@@ -119,7 +119,7 @@ export default function EnquireForm() {
       <div className="grid grid-cols-12 gap-x-8 gap-y-12">
         <div className="relative col-span-12 lg:col-span-4">
           <Label>{ENQUIRY.label}</Label>
-          <h2 className="mt-5 font-zt-oskon text-[clamp(2.25rem,5vw,4rem)] font-normal uppercase leading-[0.9] tracking-tight text-ink">
+          <h2 className="mt-5 font-zt-oskon text-[clamp(2.25rem,5vw,4rem)] font-bold uppercase leading-[0.9] tracking-[-0.04em] text-ink">
             {ENQUIRY.title[0]}
             <br />
             <em className="text-terracotta">{ENQUIRY.title[1]}</em>
@@ -173,7 +173,7 @@ export default function EnquireForm() {
                     }}
                   />
                 ))}
-                <h3 className="relative font-zt-oskon text-3xl font-normal text-ink">
+                <h3 className="relative font-zt-oskon text-3xl font-bold tracking-[-0.04em] text-ink">
                   {ENQUIRY.confirm.title}
                 </h3>
                 <p className="relative mt-3 max-w-md leading-relaxed text-ink-soft">

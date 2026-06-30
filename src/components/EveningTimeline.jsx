@@ -57,7 +57,7 @@ export default function EveningTimeline() {
             <Label gradient={['#C9A23A', '#F4EFE6']} className="!text-paper/70">
               {EVENING.label}
             </Label>
-            <h2 className="mt-1 font-zt-oskon text-[clamp(2.5rem,4vw,4.5rem)] font-normal uppercase leading-[0.85] tracking-tight">
+            <h2 className="mt-1 font-zt-oskon text-[clamp(2.5rem,4vw,4.5rem)] font-bold uppercase leading-[0.85] tracking-[-0.04em]">
               {EVENING.title[0]}
               <br />
               <em>{EVENING.title[1]}</em>
@@ -110,7 +110,7 @@ export default function EveningTimeline() {
                         />
                       </span>
                     ) : (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-rust shadow-[0_2px_12px_rgba(100,40,15,0.35)]">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-display text-[0.8rem] font-bold text-rust shadow-[0_2px_12px_rgba(100,40,15,0.35)]">
                         {beat.no}
                       </span>
                     )}
@@ -122,7 +122,7 @@ export default function EveningTimeline() {
                     transition={SPRING}
                     className="-mt-px flex-1 rounded-2xl bg-paper/[0.06] p-4 sm:p-5"
                   >
-                    <h3 className="font-zt-oskon text-[clamp(1.25rem,2.4vw,1.9rem)] font-normal leading-tight">
+                    <h3 className="font-zt-oskon text-[clamp(1.25rem,2.4vw,1.9rem)] font-bold leading-tight tracking-[-0.03em]">
                       {beat.title}
                     </h3>
                     <p className="mt-2 max-w-lg text-[0.95rem] leading-relaxed text-paper/80">
