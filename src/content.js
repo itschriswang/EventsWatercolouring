@@ -328,7 +328,9 @@ export const ENQUIRY = {
     'Not sure yet',
   ],
   confirm: {
-    title: 'Thank you.',
+    // `title` is composed with the sender's first name in EnquireForm, e.g.
+    // "Thank you, Sarah." — so it carries no trailing full stop here.
+    title: 'Thank you',
     body: 'Your message is with me. I will read it properly and write back soon, usually within a few days.',
     sign: 'Chris',
   },
