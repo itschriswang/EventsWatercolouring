@@ -133,7 +133,7 @@ export const PAINTER = {
   emphasis: 'about me.',
   portrait: 'assets/portrait-christopher.jpg',
   portraitWebp: 'assets/portrait-christopher.webp',
-  caption: 'Christopher Wang · Melbourne',
+  caption: 'Chris Wang',
   body: [
     'I am Christopher. I grew up in Sydney and I am based in Melbourne now, and I have been painting in watercolour for more than ten years.',
     'Painting live at a wedding is the part I love most. A few minutes with each guest, a small portrait made by hand while the night carries on, and something real to take home at the end.',
@@ -333,14 +333,14 @@ export const ENQUIRY = {
   confirm: {
     title: 'Thank you.',
     body: 'Your message is with me. I will read it properly and write back soon, usually within a few days.',
-    sign: 'Christopher',
+    sign: 'Chris',
   },
 }
 
 export const FOOTER = {
   cta: ['Let’s make something', 'to keep.'],
   emphasis: 'to keep.',
-  name: 'Christopher Wang',
+  name: 'Chris Wang',
   nav: [
     { href: '#why', label: 'Why' },
     { href: '#night', label: 'On the night' },
