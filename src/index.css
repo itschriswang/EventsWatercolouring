@@ -61,7 +61,7 @@
      not as rigid Tailwind steps. Tight leading + negative tracking. */
   .display-xl {
     font-family: theme('fontFamily.sentient');
-    font-weight: 300;
+    font-weight: 400;
     font-size: clamp(2.25rem, 6vw, 6rem);
     line-height: 0.95;
     letter-spacing: -0.02em;

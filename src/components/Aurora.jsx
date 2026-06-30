@@ -101,7 +101,9 @@ void main() {
   float midPoint = 0.20;
   float auroraAlpha = smoothstep(midPoint - uBlend * 0.5, midPoint + uBlend * 0.5, intensity);
 
-  vec3 auroraColor = intensity * rampColor;
+  // Keep the colour at full palette saturation — visibility lives entirely in
+  // alpha, so the aurora softens by fading out rather than darkening to grey.
+  vec3 auroraColor = rampColor;
 
   fragColor = vec4(auroraColor * auroraAlpha, auroraAlpha);
 }
