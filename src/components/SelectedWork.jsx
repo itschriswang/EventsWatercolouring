@@ -199,7 +199,7 @@ function Testimonial({ item, compact = false, masonry = false }) {
       </span>
       <p
         className={
-          'font-display font-normal leading-snug text-ink ' +
+          'font-body font-normal leading-snug text-ink ' +
           (masonry
             ? 'text-[clamp(0.6rem,1.4vw,0.75rem)]'
             : compact
@@ -343,7 +343,7 @@ function Lightbox({ items, index, onClose, onNavigate }) {
               </motion.picture>
             </AnimatePresence>
             <figcaption className="mt-4 text-center">
-              <span className="block font-zt-oskon text-lg text-paper">{item.ttl}</span>
+              <span className="block font-zt-oskon font-bold tracking-[-0.03em] text-lg text-paper">{item.ttl}</span>
               <span className="mt-0.5 block font-mono text-[0.6rem] uppercase tracking-[0.18em] text-paper/60">
                 {item.meta}
                 {many && (
