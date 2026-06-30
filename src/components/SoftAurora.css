@@ -1,8 +1,9 @@
 .soft-aurora-container {
-  position: fixed;
+  position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 0;
+  overflow: hidden;
 }
 
 .soft-aurora-container canvas {
