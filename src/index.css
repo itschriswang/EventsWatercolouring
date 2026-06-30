@@ -18,6 +18,16 @@
   font-display: swap;
 }
 
+/* Map bold requests to the Regular file so the browser never synthesises
+   a faux-bold stroke, which makes the letterforms look blobby. */
+@font-face {
+  font-family: 'ZT Oskon 90s';
+  src: url('/fonts/ZTBrosOskon90s-Regular.otf') format('opentype');
+  font-weight: 600 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @font-face {
   font-family: 'Epoch';
   src: url('/fonts/Epoch.otf') format('opentype');
