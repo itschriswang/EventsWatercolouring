@@ -18,6 +18,7 @@ export default function Hero({ revealed }) {
   })
   const artY = useTransform(scrollYProgress, [0, 1], ['0%', '24%'])
   const copyY = useTransform(scrollYProgress, [0, 1], ['0%', '-8%'])
+  const blurOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0])
 
   const fade = {
     hidden: { opacity: 0, y: reduce ? 0 : 24 },
@@ -243,17 +244,22 @@ export default function Hero({ revealed }) {
         </span>
       </motion.div>
 
-      {/* Mobile — graduated blur at the bottom of the hero, softens content near the dock */}
-      <div
-        aria-hidden="true"
-        className="sm:hidden pointer-events-none absolute bottom-0 inset-x-0 h-48 z-[15]"
-        style={{
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
-          WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 55%)',
-          maskImage: 'linear-gradient(to bottom, transparent 0%, black 55%)',
-        }}
-      />
+      {/* Mobile — body text blur over lede area, dissolves quickly on scroll */}
+      {!reduce && (
+        <motion.div
+          aria-hidden="true"
+          className="sm:hidden pointer-events-none absolute inset-x-0 z-[15]"
+          style={{
+            top: '78dvh',
+            height: '24dvh',
+            opacity: blurOpacity,
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 28%, black 100%)',
+            maskImage: 'linear-gradient(to bottom, transparent 0%, black 28%, black 100%)',
+          }}
+        />
+      )}
     </section>
   )
 }
