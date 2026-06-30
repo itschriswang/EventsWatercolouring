@@ -6,6 +6,28 @@ import { SPRING } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 
 /**
+ * CornerBloom — a soft watercolour bloom that feathers in from a card's
+ * corners, framing the clean "unpainted paper" interior (negative space). It
+ * relies on the parent card's `overflow-hidden rounded-2xl` to clip the wash.
+ * Mirrors the pigment recipe used in BloomField (radial-gradient + multiply).
+ */
+function CornerBloom({ from, to }) {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0"
+      style={{
+        background:
+          `radial-gradient(circle at 100% 100%, ${from}, transparent 46%), ` +
+          `radial-gradient(circle at 0% 0%, ${to}, transparent 40%)`,
+        mixBlendMode: 'multiply',
+        filter: 'blur(10px)',
+      }}
+    />
+  )
+}
+
+/**
  * Packages — one base package, an "included as standard" grid, and an irregular
  * add-on grid with strong ink borders, like a premium physical catalogue.
  */
@@ -47,7 +69,7 @@ export default function Packages() {
       {/* ── Mobile: base package as an overlapping editorial pull-quote ──────
           The offer leads — the package name reads as display art, with the
           price kept as a quiet, confident detail rather than the loudest thing
-          on the page. A glass card slides up to overlap it. */}
+          on the page. A clean paper card slides up to overlap it. */}
       <div className="relative mt-[clamp(3.5rem,12vw,5rem)] lg:hidden">
         <motion.div {...reveal()} className="relative z-10 max-w-[20rem] pl-1">
           <p className="font-zt-oskon text-2xl font-bold leading-tight tracking-[-0.04em] text-ink">
@@ -64,32 +86,31 @@ export default function Packages() {
         </motion.div>
         <motion.div
           {...reveal(1)}
-          className="relative z-20 mt-4 max-w-[calc(100vw-5vw*2)] overflow-hidden rounded-2xl border border-line/60 p-6 shadow-[0_24px_50px_-20px_rgba(150,85,43,0.28)]"
-          style={{
-            background: 'rgba(244,239,230,0.72)',
-            backdropFilter: 'blur(18px) saturate(1.6)',
-            WebkitBackdropFilter: 'blur(18px) saturate(1.6)',
-          }}
+          className="relative z-20 mt-4 max-w-[calc(100vw-5vw*2)] overflow-hidden rounded-2xl border border-line/45 p-6 shadow-[0_24px_50px_-20px_rgba(150,85,43,0.28)]"
+          style={{ background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FBF8F2 0%, #F4EFE6 62%)' }}
         >
-          <p className="text-sm text-ink-soft">{PACKAGES.base.note}</p>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {PACKAGES.base.facts.map((f) => (
-              <span
-                key={f}
-                className="border border-lime/40 px-3 py-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-sage"
-              >
-                {f}
-              </span>
-            ))}
+          <CornerBloom from="rgba(194,97,60,0.18)" to="rgba(110,140,168,0.13)" />
+          <div className="relative z-10">
+            <p className="text-sm text-ink-soft">{PACKAGES.base.note}</p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {PACKAGES.base.facts.map((f) => (
+                <span
+                  key={f}
+                  className="border border-lime/40 px-3 py-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-sage"
+                >
+                  {f}
+                </span>
+              ))}
+            </div>
+            <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
+              {PACKAGES.base.bullets.map((b) => (
+                <li key={b} className="flex gap-3">
+                  <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#6E8CA8', '#C2613C']} />
+                  {b}
+                </li>
+              ))}
+            </ul>
           </div>
-          <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
-            {PACKAGES.base.bullets.map((b) => (
-              <li key={b} className="flex gap-3">
-                <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#6E8CA8', '#C2613C']} />
-                {b}
-              </li>
-            ))}
-          </ul>
         </motion.div>
       </div>
 
@@ -97,71 +118,69 @@ export default function Packages() {
         {/* Base package card — desktop only; mobile uses the pull-quote above. */}
         <motion.article
           {...reveal()}
-          className="col-span-12 hidden flex-col overflow-hidden rounded-2xl border border-line/60 p-8 shadow-[0_24px_50px_-20px_rgba(150,85,43,0.22)] lg:col-span-5 lg:flex"
-          style={{
-            background: 'rgba(244,239,230,0.72)',
-            backdropFilter: 'blur(18px) saturate(1.6)',
-            WebkitBackdropFilter: 'blur(18px) saturate(1.6)',
-          }}
+          className="relative col-span-12 hidden flex-col overflow-hidden rounded-2xl border border-line/45 p-8 shadow-[0_24px_50px_-20px_rgba(150,85,43,0.22)] lg:col-span-5 lg:flex"
+          style={{ background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FBF8F2 0%, #F4EFE6 62%)' }}
         >
-          <div className="flex items-baseline justify-between gap-4">
-            <h3 className="font-zt-oskon text-2xl font-bold tracking-[-0.04em] text-ink">
-              {PACKAGES.base.title}
-            </h3>
-            <p className="shrink-0 text-right">
-              <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
-                {PACKAGES.base.priceSmall}{' '}
-              </span>
-              <span className="font-mono text-3xl leading-none text-ink">
-                {PACKAGES.base.price}
-              </span>
-            </p>
+          <CornerBloom from="rgba(194,97,60,0.18)" to="rgba(110,140,168,0.13)" />
+          <div className="relative z-10 flex flex-1 flex-col">
+            <div className="flex items-baseline justify-between gap-4">
+              <h3 className="font-zt-oskon text-2xl font-bold tracking-[-0.04em] text-ink">
+                {PACKAGES.base.title}
+              </h3>
+              <p className="shrink-0 text-right">
+                <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
+                  {PACKAGES.base.priceSmall}{' '}
+                </span>
+                <span className="font-mono text-3xl leading-none text-ink">
+                  {PACKAGES.base.price}
+                </span>
+              </p>
+            </div>
+            <p className="mt-2 text-sm text-ink-soft">{PACKAGES.base.note}</p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {PACKAGES.base.facts.map((f) => (
+                <span
+                  key={f}
+                  className="border border-lime/40 px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.15em] text-sage"
+                >
+                  {f}
+                </span>
+              ))}
+            </div>
+            <ul className="mt-7 flex flex-1 flex-col gap-3 border-t border-line/60 pt-7 text-sm text-ink/85">
+              {PACKAGES.base.bullets.map((b) => (
+                <li key={b} className="flex gap-3">
+                  <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#6E8CA8', '#C2613C']} />
+                  {b}
+                </li>
+              ))}
+            </ul>
           </div>
-          <p className="mt-2 text-sm text-ink-soft">{PACKAGES.base.note}</p>
-          <div className="mt-6 flex flex-wrap gap-2">
-            {PACKAGES.base.facts.map((f) => (
-              <span
-                key={f}
-                className="border border-lime/40 px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.15em] text-sage"
-              >
-                {f}
-              </span>
-            ))}
-          </div>
-          <ul className="mt-7 flex flex-1 flex-col gap-3 border-t border-line/60 pt-7 text-sm text-ink/85">
-            {PACKAGES.base.bullets.map((b) => (
-              <li key={b} className="flex gap-3">
-                <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#6E8CA8', '#C2613C']} />
-                {b}
-              </li>
-            ))}
-          </ul>
         </motion.article>
 
         {/* Included as standard */}
         <motion.div
           {...reveal(1)}
-          className="col-span-12 flex flex-col overflow-hidden rounded-2xl border border-line/60 p-8 shadow-[0_24px_50px_-20px_rgba(150,85,43,0.22)] lg:col-span-7"
-          style={{
-            background: 'rgba(244,239,230,0.72)',
-            backdropFilter: 'blur(18px) saturate(1.6)',
-            WebkitBackdropFilter: 'blur(18px) saturate(1.6)',
-          }}
+          className="relative col-span-12 flex flex-col overflow-hidden rounded-2xl border border-line/45 p-8 shadow-[0_24px_50px_-20px_rgba(150,85,43,0.22)] lg:col-span-7"
+          style={{ background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FBF8F2 0%, #F4EFE6 62%)' }}
         >
-          <h3 className="font-zt-oskon text-2xl font-bold tracking-[-0.04em] text-ink">
-            {PACKAGES.included.title}
-          </h3>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-soft">
-            {PACKAGES.included.sub}
-          </p>
-          <ul className="mt-6 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
-            {PACKAGES.included.items.map((item) => (
-              <li key={item} className="flex gap-3 text-sm text-ink/85">
-                <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#6E8CA8', '#C9A23A']} />
-                {item}
-              </li>
-            ))}
-          </ul>
+          <CornerBloom from="rgba(201,162,58,0.16)" to="rgba(110,140,168,0.13)" />
+          <div className="relative z-10">
+            <h3 className="font-zt-oskon text-2xl font-bold tracking-[-0.04em] text-ink">
+              {PACKAGES.included.title}
+            </h3>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-soft">
+              {PACKAGES.included.sub}
+            </p>
+            <ul className="mt-6 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
+              {PACKAGES.included.items.map((item) => (
+                <li key={item} className="flex gap-3 text-sm text-ink/85">
+                  <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#6E8CA8', '#C9A23A']} />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
         </motion.div>
       </div>
 
