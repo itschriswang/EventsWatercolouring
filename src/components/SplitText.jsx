@@ -7,6 +7,8 @@ import { SPRING } from '../lib/site.js'
  * with a staggered spring, rising from y:50. Each line sits in an
  * overflow-hidden mask. A single word can be flagged for display emphasis via
  * `emphasis` (rendered with `emphasisClassName`, defaulting to terracotta).
+ * Pass `emphasisItalic` to set those words in the family's italic cut for an
+ * editorial style contrast against the upright headline.
  *
  * Renders on scroll by default (whileInView); pass `playOnMount` to animate
  * immediately (used by the hero once the preloader hands over).
@@ -18,6 +20,7 @@ export default function SplitText({
   lines = [],
   emphasis = null,
   emphasisClassName = 'bg-gradient-to-r from-terracotta via-orange to-blush bg-clip-text text-transparent',
+  emphasisItalic = false,
   unit = 'char',
   className = '',
   as: Tag = 'h2',
@@ -153,7 +156,7 @@ export default function SplitText({
                     return [
                       <span
                         key={`g${li}-${gi}`}
-                        className="inline-block"
+                        className={emphasisItalic ? 'inline-block italic' : 'inline-block'}
                         style={spanStyle}
                       >
                         {group.words.flatMap((w, wi) => [
@@ -229,7 +232,7 @@ export default function SplitText({
                         key={`g${li}-${gi}`}
                         variants={item}
                         aria-hidden="true"
-                        className="inline-block"
+                        className={emphasisItalic ? 'inline-block italic' : 'inline-block'}
                         style={spanStyle}
                       >
                         {group.words.map((w, wi) => (
