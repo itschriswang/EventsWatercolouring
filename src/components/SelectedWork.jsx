@@ -5,6 +5,7 @@ import SplitText from './SplitText.jsx'
 import useFocusTrap from '../hooks/useFocusTrap.js'
 import { SPRING, SPRING_SOFT, asset } from '../lib/site.js'
 import { WORK } from '../content.js'
+import CornerBloom from './CornerBloom.jsx'
 
 // Graceful fallback when an image fails to load: hide the broken <img> so the
 // paper-toned card remains instead of a broken-image glyph.
@@ -146,7 +147,10 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
     >
       {item.testimonial ? (
         <div className={cardShape + ' bg-paper-deep'}>
-          <Testimonial item={item} compact={!!item.wide} masonry={masonry} />
+          <CornerBloom from="rgba(201,162,58,0.14)" to="rgba(110,140,168,0.11)" />
+          <div className="relative z-10 flex h-full flex-col">
+            <Testimonial item={item} compact={!!item.wide} masonry={masonry} />
+          </div>
         </div>
       ) : (
         <button
@@ -171,6 +175,7 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
             />
           </picture>
+          <CornerBloom from="rgba(194,97,60,0.14)" to="rgba(110,140,168,0.10)" overlay />
         </button>
       )}
     </motion.figure>

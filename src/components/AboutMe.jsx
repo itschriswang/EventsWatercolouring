@@ -5,6 +5,7 @@ import SplitText from './SplitText.jsx'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, asset } from '../lib/site.js'
 import { PAINTER } from '../content.js'
+import CornerBloom from './CornerBloom.jsx'
 
 /** "The painter" — bio set against an asymmetric framed portrait. */
 export default function AboutMe() {
@@ -65,16 +66,19 @@ export default function AboutMe() {
                 style={parallax ? { y } : {}}
                 className="relative overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep"
               >
-                <picture>
-                  <source srcSet={asset(PAINTER.portraitWebp)} type="image/webp" />
-                  <img
-                    src={asset(PAINTER.portrait)}
-                    alt="Christopher Wang, the painter."
-                    loading="lazy"
-                    onError={(e) => (e.currentTarget.style.display = 'none')}
-                    className="h-full w-full object-cover"
-                  />
-                </picture>
+                <CornerBloom from="rgba(194,97,60,0.15)" to="rgba(110,140,168,0.11)" overlay />
+                <div className="relative z-10">
+                  <picture>
+                    <source srcSet={asset(PAINTER.portraitWebp)} type="image/webp" />
+                    <img
+                      src={asset(PAINTER.portrait)}
+                      alt="Christopher Wang, the painter."
+                      loading="lazy"
+                      onError={(e) => (e.currentTarget.style.display = 'none')}
+                      className="h-full w-full object-cover"
+                    />
+                  </picture>
+                </div>
               </motion.div>
             </div>
           </motion.figure>
