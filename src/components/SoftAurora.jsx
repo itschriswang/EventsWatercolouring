@@ -63,10 +63,6 @@ float quinticSmooth(float t) {
   return 6.0 * t3 * t2 - 15.0 * t2 * t2 + 10.0 * t3;
 }
 
-vec3 cosineGradient(float t, vec3 a, vec3 b, vec3 c, vec3 d) {
-  return a + b * cos(TAU * (c * t + d));
-}
-
 float perlin3D(float amplitude, float frequency, float px, float py, float pz) {
   float x = px * frequency;
   float y = py * frequency;
@@ -127,7 +123,6 @@ float auroraGlow(float t, vec2 shift) {
 }
 
 void main() {
-  vec2 uv = gl_FragCoord.xy / uResolution.xy;
   float t = uSpeed * 0.4 * uTime;
 
   vec2 shift = vec2(0.0);
@@ -135,13 +130,22 @@ void main() {
     shift = (uMouse - 0.5) * uMouseInfluence;
   }
 
-  vec3 col = vec3(0.0);
-  col += 0.99 * auroraGlow(t, shift) * cosineGradient(uv.x + uTime * uSpeed * 0.2 * uColorSpeed, vec3(0.5), vec3(0.5), vec3(1.0), vec3(0.3, 0.20, 0.20)) * uColor1;
-  col += 0.99 * auroraGlow(t + uLayerOffset, shift) * cosineGradient(uv.x + uTime * uSpeed * 0.1 * uColorSpeed, vec3(0.5), vec3(0.5), vec3(2.0, 1.0, 0.0), vec3(0.5, 0.20, 0.25)) * uColor2;
+  // Two independent soft bands — each carries one of the chosen pastel
+  // colours. No rainbow/hue cycling, so the result stays soft and on-palette.
+  float g1 = max(auroraGlow(t, shift), 0.0);
+  float g2 = max(auroraGlow(t + uLayerOffset, shift), 0.0);
 
-  col *= uBrightness;
-  float alpha = clamp(length(col), 0.0, 1.0);
-  gl_FragColor = vec4(col, alpha);
+  float total = g1 + g2;
+
+  // Colour is the glow-weighted blend of the two pastels — never washes out
+  // to grey or white because we normalise instead of summing intensities.
+  vec3 tint = (uColor1 * g1 + uColor2 * g2) / max(total, 0.001);
+
+  // Visibility lives entirely in alpha, so colour stays clean and the paper
+  // background shows softly through the falloff.
+  float alpha = clamp(total * uBrightness, 0.0, 1.0);
+
+  gl_FragColor = vec4(tint, alpha);
 }
 `;
 
