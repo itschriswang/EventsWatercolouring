@@ -49,11 +49,11 @@ export default function App() {
             <SoftAurora
               color1="#E8C4D0"
               color2="#C8D890"
-              brightness={0.34}
+              brightness={0.18}
               speed={0.42}
               scale={1.5}
               bandHeight={0.42}
-              bandSpread={1.25}
+              bandSpread={1.5}
               octaveDecay={0.5}
               layerOffset={1.2}
               colorSpeed={0.68}

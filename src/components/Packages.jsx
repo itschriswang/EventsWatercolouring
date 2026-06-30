@@ -46,7 +46,7 @@ export default function Packages() {
       {/* ── Mobile: base package pull-quote + detail card ─────────────────── */}
       <div className="relative mt-[clamp(3.5rem,12vw,5rem)] lg:hidden">
         <motion.div {...reveal()} className="relative z-10 max-w-[20rem] pl-1">
-          <p className="font-sentient text-2xl font-bold leading-tight tracking-[-0.02em] text-ink">
+          <p className="font-sentient text-2xl font-semibold leading-tight tracking-[-0.02em] text-ink">
             {PACKAGES.base.title}
           </p>
           <p className="mt-3 flex items-baseline gap-2">
@@ -104,7 +104,7 @@ export default function Packages() {
         {/* Mobile add-ons */}
         <motion.div {...reveal(2)} className="mt-8">
           <div className="flex items-baseline justify-between border-b border-ink pb-3">
-            <h3 className="font-sentient text-xl font-bold tracking-[-0.02em] text-ink">
+            <h3 className="font-sentient text-xl font-semibold tracking-[-0.02em] text-ink">
               {PACKAGES.addonsHead.title}
             </h3>
             <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
@@ -121,7 +121,7 @@ export default function Packages() {
                   (i % 2 === 0 ? 'sm:border-r sm:pr-5 ' : 'sm:pl-5 ')
                 }
               >
-                <h4 className="font-sentient text-base font-bold tracking-[-0.01em] text-ink">{a.h}</h4>
+                <h4 className="font-sentient text-base font-medium tracking-[-0.01em] text-ink">{a.h}</h4>
                 <p className="mt-1 flex-1 text-xs leading-relaxed text-ink-soft">{a.p}</p>
                 <p className="mt-3 text-xs text-rust">
                   {a.small && (
@@ -153,7 +153,7 @@ export default function Packages() {
           <CornerBloom from="rgba(194,97,60,0.18)" to="rgba(110,140,168,0.13)" />
           <div className="relative z-10 flex flex-1 flex-col">
             <div className="flex items-baseline justify-between gap-4">
-              <h3 className="font-sentient text-2xl font-bold tracking-[-0.02em] text-ink">
+              <h3 className="font-sentient text-2xl font-semibold tracking-[-0.02em] text-ink">
                 {PACKAGES.base.title}
               </h3>
               <p className="shrink-0 text-right">
@@ -210,7 +210,7 @@ export default function Packages() {
           <CornerBloom from="rgba(201,162,58,0.16)" to="rgba(110,140,168,0.13)" />
           <div className="relative z-10 flex h-full flex-col">
             <div className="flex items-baseline justify-between border-b border-line/50 px-8 pb-5 pt-8">
-              <h3 className="font-sentient text-2xl font-bold tracking-[-0.02em] text-ink">
+              <h3 className="font-sentient text-2xl font-semibold tracking-[-0.02em] text-ink">
                 {PACKAGES.addonsHead.title}
               </h3>
               <span className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
@@ -227,7 +227,7 @@ export default function Packages() {
                     (i % 2 === 0 ? 'border-r ' : '')
                   }
                 >
-                  <h4 className="font-sentient text-base font-bold tracking-[-0.01em] text-ink [overflow-wrap:anywhere]">{a.h}</h4>
+                  <h4 className="font-sentient text-base font-medium tracking-[-0.01em] text-ink [overflow-wrap:anywhere]">{a.h}</h4>
                   <p className="mt-2 flex-1 text-xs leading-relaxed text-ink-soft">{a.p}</p>
                   <p className="mt-4 text-xs text-rust">
                     {a.small && (
