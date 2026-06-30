@@ -28,7 +28,7 @@ export default function WhyWatercolour() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-60px' }}
         transition={SPRING}
-        className="mt-8 max-w-[18ch] font-display text-[clamp(1.25rem,3vw,2.25rem)] font-normal leading-[1.0] tracking-tight text-ink sm:max-w-[24ch]"
+        className="mt-8 max-w-[18ch] font-body text-[clamp(1.25rem,3vw,2.25rem)] font-normal leading-[1.0] text-ink sm:max-w-[24ch]"
       >
         {beforeEmph(WHY.lede, 'all in one evening.')}
         <em className="text-terracotta">all in one evening.</em>
@@ -51,7 +51,7 @@ export default function WhyWatercolour() {
             ].join(' ')}
           >
             <span className="num-wide text-sm text-lime">{n.no}</span>
-            <h3 className="mt-4 font-zt-oskon text-[clamp(1.4rem,2vw,2rem)] font-normal leading-tight text-ink">
+            <h3 className="mt-4 font-zt-oskon text-[clamp(1.4rem,2vw,2rem)] font-bold leading-tight tracking-[-0.04em] text-ink">
               {n.title}
             </h3>
             <p className="mt-3 max-w-sm leading-relaxed text-ink-soft">{n.body}</p>
