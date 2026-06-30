@@ -95,6 +95,7 @@ void main() {
   float intensity = 0.6 * height;
   float midPoint = 0.20;
   float auroraAlpha = smoothstep(midPoint - uBlend * 0.5, midPoint + uBlend * 0.5, intensity);
+  auroraAlpha *= 0.25;
 
   vec3 auroraColor = intensity * rampColor;
   fragColor = vec4(auroraColor * auroraAlpha, auroraAlpha);
@@ -169,7 +170,8 @@ export default function Aurora({
         left: 0,
         right: 0,
         bottom: 0,
-        pointerEvents: 'none'
+        pointerEvents: 'none',
+        opacity: 0.6
       }}
     />
   );
