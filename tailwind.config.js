@@ -31,11 +31,11 @@ export default {
         //             Sora kept as fallback for any chars outside Epoch's basic latin set.
         //  body     — Manrope, the neutral, legible narrative voice.
         //  mono     — Space Mono, the rigid "blueprint" for UI/logistics.
-        //  sentient — Sentient variable serif, for all titles and wordmarks.
+        //  sentient — Instrument Serif, for all titles and wordmarks.
         display: ['"Epoch"', '"Sora"', 'Georgia', 'sans-serif'],
         body: ['"Manrope"', 'system-ui', 'sans-serif'],
         mono: ['"Space Mono"', 'ui-monospace', 'monospace'],
-        sentient: ['"Sentient"', 'Georgia', 'serif'],
+        sentient: ['"Instrument Serif"', 'Georgia', 'serif'],
       },
       letterSpacing: {
         tightest: '-0.04em',
