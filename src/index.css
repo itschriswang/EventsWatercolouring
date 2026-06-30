@@ -14,14 +14,6 @@
   font-style: italic;
 }
 
-@font-face {
-  font-family: 'Epoch';
-  src: url('/fonts/Epoch.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
@@ -111,10 +103,10 @@
     margin-left: -5vw;
   }
 
-  /* Wide-tracked Sora for standalone numerals — gives numeric displays a
+  /* Wide-tracked Mynerve for standalone numerals — gives numeric displays a
      generous, editorial feel without changing the font itself. */
   .num-wide {
-    font-family: theme('fontFamily.display');
+    font-family: theme('fontFamily.mono');
     letter-spacing: 0.06em;
   }
 }

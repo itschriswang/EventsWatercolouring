@@ -78,7 +78,7 @@ export function Drop({ className = '', fill = '#6E8CA8', gradient }) {
   )
 }
 
-/** Section eyebrow: an orchid glyph + a Space Mono, wide-tracked uppercase
+/** Section eyebrow: an orchid glyph + a Mynerve, wide-tracked uppercase
  *  label. The pigment passed via `fill` (or a `gradient` pair) tints the
  *  orchid so each section keeps its accent colour. */
 export default function Label({ children, className = '', fill, gradient }) {
