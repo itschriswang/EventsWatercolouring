@@ -41,7 +41,7 @@ export default function Hero({ revealed }) {
         <>
           <div
             aria-hidden="true"
-            style={{ position: 'absolute', inset: 0, opacity: 0.1, pointerEvents: 'none', zIndex: 0 }}
+            style={{ position: 'absolute', inset: 0, opacity: 0.38, pointerEvents: 'none', zIndex: 0 }}
           >
             <Aurora
               colorStops={AURORA_COLORS}
@@ -49,13 +49,13 @@ export default function Hero({ revealed }) {
               blend={0.5}
             />
           </div>
-          {/* Paper scrim — further absorbs the aurora into the background */}
+          {/* Paper scrim — softens the aurora into the background without burying it */}
           <div
             aria-hidden="true"
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(160deg, rgba(244,239,230,0.88) 0%, rgba(244,239,230,0.6) 50%, rgba(244,239,230,0.82) 100%)',
+              background: 'linear-gradient(160deg, rgba(244,239,230,0.5) 0%, rgba(244,239,230,0.28) 50%, rgba(244,239,230,0.45) 100%)',
               pointerEvents: 'none',
               zIndex: 1,
             }}
