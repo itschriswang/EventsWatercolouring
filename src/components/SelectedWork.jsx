@@ -167,7 +167,10 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
         >
           <picture>
             <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
-            <img
+            {/* Shared-layout source: morphs into the lightbox image on open.
+                Disabled under reduced-motion so framer leaves layout untouched. */}
+            <motion.img
+              layoutId={reduce ? undefined : `work-${item.img}`}
               src={asset(`assets/${item.img}.jpg`)}
               alt={item.alt || item.ttl}
               loading="lazy"
@@ -234,6 +237,62 @@ function Testimonial({ item, compact = false, masonry = false }) {
         </span>
       </footer>
     </blockquote>
+  )
+}
+
+/**
+ * Watercolour bloom — an SVG turbulence + displacement filter that "wicks" the
+ * painting into focus, like wet pigment spreading into cotton paper. The
+ * displacement amplitude and a soft wet-edge blur settle to zero on mount, so
+ * remounting the filter (one fresh id per painting) replays the bloom each time
+ * a new piece appears. Rendered only when motion is allowed — see Lightbox.
+ */
+function BloomFilter({ id }) {
+  // Organic, paper-soft easing — mirrors the site's `ease-organic` curve.
+  const ease = '0.22 0.61 0.36 1'
+  return (
+    <svg aria-hidden="true" width="0" height="0" className="absolute" style={{ position: 'absolute' }}>
+      <filter id={id} x="-12%" y="-12%" width="124%" height="124%" colorInterpolationFilters="sRGB">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.011 0.016"
+          numOctaves="2"
+          seed="7"
+          result="paper"
+        />
+        <feDisplacementMap
+          in="SourceGraphic"
+          in2="paper"
+          scale="24"
+          xChannelSelector="R"
+          yChannelSelector="G"
+          result="wet"
+        >
+          <animate
+            attributeName="scale"
+            from="24"
+            to="0"
+            dur="0.9s"
+            fill="freeze"
+            calcMode="spline"
+            keyTimes="0;1"
+            keySplines={ease}
+          />
+        </feDisplacementMap>
+        <feGaussianBlur in="wet" stdDeviation="4">
+          <animate
+            attributeName="stdDeviation"
+            from="4"
+            to="0"
+            dur="0.9s"
+            fill="freeze"
+            calcMode="spline"
+            keyTimes="0;1"
+            keySplines={ease}
+          />
+        </feGaussianBlur>
+      </filter>
+    </svg>
   )
 }
 
@@ -339,30 +398,41 @@ function Lightbox({ items, index, onClose, onNavigate }) {
 
           <motion.figure
             onClick={(e) => e.stopPropagation()}
-            initial={{ scale: reduce ? 1 : 0.92, opacity: 0, y: reduce ? 0 : 16 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: reduce ? 1 : 0.96, opacity: 0 }}
+            // The shared-layout morph carries the figure open, so it no longer
+            // scales itself in. Reduced-motion keeps the original gentle scale-in.
+            initial={reduce ? { scale: 1, opacity: 0, y: 0 } : false}
+            animate={reduce ? { scale: 1, opacity: 1, y: 0 } : false}
+            exit={reduce ? { scale: 1, opacity: 0 } : { opacity: 0 }}
             transition={SPRING_SOFT}
             className="relative z-[1] flex max-h-full max-w-5xl flex-col items-center"
           >
-            {/* Keyed by index so the image crossfades as you move along the wall. */}
+            {/* Keyed by index so each painting crossfades — and re-wicks through
+                the watercolour bloom — as you move along the wall. */}
             <AnimatePresence mode="wait">
-              <motion.picture
+              <motion.div
                 key={index}
                 initial={reduce ? false : { opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={reduce ? { opacity: 1 } : { opacity: 0 }}
                 transition={{ duration: 0.22 }}
-                className="block"
+                className="relative block"
               >
-                <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
-                <img
-                  src={asset(`assets/${item.img}.jpg`)}
-                  alt={item.alt || item.ttl}
-                  onError={hideOnError}
-                  className="max-h-[80vh] w-auto rounded-[1rem] object-contain shadow-[0_28px_60px_-10px_rgba(0,0,0,0.65)]"
-                />
-              </motion.picture>
+                {!reduce && <BloomFilter id={`wc-bloom-${index}`} />}
+                <picture className="block">
+                  <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
+                  {/* Shared-layout target: morphs from the gallery tile of the
+                      same painting, then settles through the pigment-bloom filter. */}
+                  <motion.img
+                    layoutId={reduce ? undefined : `work-${item.img}`}
+                    transition={SPRING_SOFT}
+                    src={asset(`assets/${item.img}.jpg`)}
+                    alt={item.alt || item.ttl}
+                    onError={hideOnError}
+                    style={reduce ? undefined : { filter: `url(#wc-bloom-${index})` }}
+                    className="max-h-[80vh] w-auto rounded-[1rem] object-contain shadow-[0_28px_60px_-10px_rgba(0,0,0,0.65)]"
+                  />
+                </picture>
+              </motion.div>
             </AnimatePresence>
             <figcaption className="mt-4 text-center">
               <span className="block font-sentient font-bold tracking-[-0.03em] text-lg text-paper">{item.ttl}</span>
