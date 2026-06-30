@@ -3,10 +3,10 @@
 // section updates.
 
 export const HERO = {
-  lines: ['Painted', 'live, while', 'you celebrate.'],
-  emphasis: ['Painted', 'live'],
-  linesMobile: ['Painted live,', 'while you', 'celebrate.'],
-  emphasisMobile: ['Painted', 'live,'],
+  lines: ['The day you\'ll', 'remember,', 'painted as', 'you live it.'],
+  emphasis: ['remember', 'live'],
+  linesMobile: ['The day', 'you\'ll', 'remember,', 'painted as', 'you live it.'],
+  emphasisMobile: ['remember', 'live'],
   lede: 'While you dance, laugh, and celebrate the night you have been planning for months, I am quietly painting the people you love most. Your guests carry home a small watercolour portrait. You keep one of the two of you, painted while the night was still happening. All on cotton paper, made by hand.',
 }
 
