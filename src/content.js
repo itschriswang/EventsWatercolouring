@@ -7,7 +7,7 @@ export const HERO = {
   emphasis: ['Painted', 'live'],
   linesMobile: ['Painted live,', 'while you', 'celebrate.'],
   emphasisMobile: ['Painted', 'live,'],
-  lede: 'I set up at your reception and paint while the party carries on. A set number of your guests go home with their own small portrait, and you get one of the two of you, painted that night. Every piece is real watercolour on cotton paper.',
+  lede: 'While you dance, laugh, and celebrate the night you have been planning for months, I am quietly painting the people you love most. Your guests carry home a small watercolour portrait. You keep one of the two of you, painted while the night was still happening. All on cotton paper, made by hand.',
 }
 
 export const MARQUEE = [
@@ -69,7 +69,7 @@ export const EVENING = {
     {
       no: '05',
       title: 'A number you can count on',
-      body: 'I aim for around 9 pieces an hour. The number you book is the number I plan for, and anyone I do not reach on the night, I finish in the studio afterwards and post to you.',
+      body: 'I aim for around 8 pieces an hour. The number you book is the number I plan for, and anyone I do not reach on the night, I finish in the studio afterwards and post to you.',
     },
   ],
 }
@@ -136,7 +136,7 @@ export const PAINTER = {
   caption: 'Chris Wang',
   body: [
     'I am Christopher. I grew up in Sydney and I am based in Melbourne now, and I have been painting in watercolour for more than ten years.',
-    'Painting live at a wedding is the part I love most. A few minutes with each guest, a small portrait made by hand while the night carries on, and something real to take home at the end.',
+    'Painting live at a wedding is the part I love most. Special moments with each guest, a small portrait made by hand while the night carries on, and something real to take home at the end.',
     'I travel across Melbourne and Australia-wide for weddings, corporate events, brand activations, and private celebrations.',
   ],
   signature: '',
@@ -153,24 +153,23 @@ export const PACKAGES = {
     note: 'The base package, painted across your event.',
     priceSmall: 'From',
     price: '$850',
-    facts: ['3 hours live', '27 keepsakes'],
+    facts: ['3 hours live', '24 keepsakes'],
     bullets: [
       'Guest portraits painted live, A5 on archival cotton paper',
-      'Each keepsake artwork can feature up to four guests',
+      'Each keepsake can feature up to four guests',
       'Nobody has to pose or sit. I take a quick photo as guests pass by',
       'You and any VIPs are painted first, just let me know before the night',
+      'Each finished piece goes home in a clear sleeve',
     ],
   },
   baseNote:
     'Want more hours, more guests, or a portrait from photos instead? We build it up from the base. I am happy to produce material before and after the event in my studio too. Some add-ons have a set price, others I quote for your day. Just tell me what you are after.',
   included: {
     title: 'Included as standard',
-    sub: 'Everything below comes with the base package. You provide a table (around 100 by 60cm, at seated height, with a front-facing chair that tucks underneath) and a chair for me. I bring the rest.',
+    sub: 'All of the below is included. You provide a table and chair; I bring everything else.',
     items: [
       'All drawing and painting materials',
       'Premium 300gsm archival watercolour paper',
-      'Clear sleeves for each piece',
-      'Live painting across your event',
       'Set-up about 15 minutes before I start',
       'Public liability insurance',
       'Travel within about an hour of Melbourne or Sydney metro',
@@ -274,7 +273,7 @@ export const FAQ = {
     },
     {
       q: 'How many guests can you paint?',
-      a: 'At least 10 pieces an hour, so a three-hour booking is 30 portraits or more. Anyone I do not get to on the night, I finish in the studio and post to you to pass on, so no guest misses out.',
+      a: 'Around 8 pieces an hour, so a three-hour booking covers roughly 24 portraits. Anyone I do not get to on the night, I finish in the studio and post to you to pass on, so no guest misses out.',
     },
     {
       q: 'What materials do you use?',
