@@ -6,10 +6,10 @@ import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset, ENQUIRE_HREF } from '../lib/site.js'
 import { HERO } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
-import LiquidEther from './LiquidEther.jsx'
+import Aurora from './Aurora.jsx'
 
-// Warm watercolour pigments — pulled from the site's existing palette
-const FLUID_COLORS = ['#C98B8C', '#AEBF56', '#C9A23A']
+// Bloomfield palette
+const AURORA_COLORS = ['#B5395B', '#AEBF56', '#C9A23A']
 
 export default function Hero({ revealed }) {
   const reduce = useReducedMotion()
@@ -38,30 +38,12 @@ export default function Hero({ revealed }) {
       ref={ref}
       className="relative w-full overflow-x-clip px-[5vw] pb-[clamp(3rem,8vw,7rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-8"
     >
-      {/* LiquidEther fluid simulation — contained to the hero section */}
+      {/* Aurora fluid simulation — contained to the hero section */}
       {!reduce && (
-        <LiquidEther
-          colors={FLUID_COLORS}
-          mouseForce={isMobile ? 8 : 12}
-          cursorSize={isMobile ? 70 : 90}
-          autoDemo
-          autoSpeed={0.28}
-          autoIntensity={isMobile ? 1.0 : 1.4}
-          autoResumeDelay={1500}
-          autoRampDuration={0.8}
-          resolution={isMobile ? 0.2 : 0.4}
-          iterationsPoisson={isMobile ? 8 : 32}
-          iterationsViscous={isMobile ? 8 : 32}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 0,
-            pointerEvents: 'none',
-            opacity: 0.72,
-          }}
+        <Aurora
+          colorStops={AURORA_COLORS}
+          amplitude={1.4}
+          blend={0.5}
         />
       )}
 
