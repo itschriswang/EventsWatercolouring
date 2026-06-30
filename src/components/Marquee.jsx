@@ -1,22 +1,21 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { useReducedMotion } from 'framer-motion'
 import { useEffect, useId, useMemo, useState } from 'react'
 import { MARQUEE } from '../content.js'
 
-// Build a 2-tile asymmetric wave path in screen pixel coords.
-// Both endpoints share the same y (mid) with horizontal tangents,
-// guaranteeing C1 continuity where tiles meet — seamless loop.
-// Crest at ~26% width (early), trough at ~72% (late), matching the
-// original ribbon's character.
+// Smooth sine-wave path: 4 quarter-period cubic beziers per tile.
+// Control handles at quarter-period distance give near-perfect sine shape.
+// All peak/trough junctions have horizontal tangents → C1 continuity.
 function buildPath(vw, h) {
   const mid = h / 2
-  const amp = h * 0.22
+  const amp = h * 0.28
   const top = mid - amp
   const bot = mid + amp
+  const ctrl = vw * 0.14
   const tile = (ox) => [
-    `C${ox + vw * 0.06},${mid} ${ox + vw * 0.13},${top} ${ox + vw * 0.26},${top}`,
-    `C${ox + vw * 0.38},${top} ${ox + vw * 0.46},${mid} ${ox + vw * 0.50},${mid}`,
-    `C${ox + vw * 0.58},${mid} ${ox + vw * 0.62},${bot} ${ox + vw * 0.72},${bot}`,
-    `C${ox + vw * 0.86},${bot} ${ox + vw * 0.94},${mid} ${ox + vw},${mid}`,
+    `C${ox + ctrl},${mid} ${ox + vw * 0.25 - ctrl},${top} ${ox + vw * 0.25},${top}`,
+    `C${ox + vw * 0.25 + ctrl},${top} ${ox + vw * 0.5 - ctrl},${mid} ${ox + vw * 0.5},${mid}`,
+    `C${ox + vw * 0.5 + ctrl},${mid} ${ox + vw * 0.75 - ctrl},${bot} ${ox + vw * 0.75},${bot}`,
+    `C${ox + vw * 0.75 + ctrl},${bot} ${ox + vw - ctrl},${mid} ${ox + vw},${mid}`,
   ].join(' ')
   return `M0,${mid} ${tile(0)} ${tile(vw)}`
 }
@@ -68,25 +67,25 @@ export default function Marquee() {
       style={{ height: h }}
     >
       {/*
-        Single SVG, 2× viewport wide.
-        Animation: slide left by exactly one viewport width → seamless loop
-        because both tiles are identical (key={vw} restarts on resize).
+        SVG is 2× viewport wide. The path stays completely static — only the
+        text's startOffset animates (0 % → 50 %, i.e. one full tile width).
+        Because both tiles are identical the loop is seamless.
+        The section's overflow-hidden clips the second tile from view so the
+        wave line itself appears fixed in place.
       */}
-      <motion.svg
+      <svg
         key={vw}
         viewBox={`0 0 ${2 * vw} ${h}`}
         width={2 * vw}
         height={h}
         className="absolute top-0 left-0"
-        animate={reduce ? {} : { x: [0, -vw] }}
-        transition={{ duration: 26, ease: 'linear', repeat: Infinity }}
         aria-hidden="true"
       >
         <defs>
           <path id={pathId} d={path} />
         </defs>
 
-        {/* Single-weight ink line — the "path not a shape" */}
+        {/* Static ink wave line */}
         <use
           href={`#${pathId}`}
           fill="none"
@@ -95,7 +94,7 @@ export default function Marquee() {
           strokeOpacity={0.18}
         />
 
-        {/* Marquee text flowing along the wave */}
+        {/* Text undulates along the static path; only the offset moves */}
         <text
           fontSize={fontSize}
           fontFamily="Sora, sans-serif"
@@ -104,10 +103,20 @@ export default function Marquee() {
           style={{ letterSpacing: '-0.025em' }}
         >
           <textPath href={`#${pathId}`}>
+            {!reduce && (
+              <animate
+                attributeName="startOffset"
+                from="0%"
+                to="50%"
+                dur="26s"
+                repeatCount="indefinite"
+                calcMode="linear"
+              />
+            )}
             {textNodes}
           </textPath>
         </text>
-      </motion.svg>
+      </svg>
     </section>
   )
 }

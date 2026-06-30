@@ -23,15 +23,6 @@ export default function AboutMe() {
       ref={ref}
       className="relative w-full overflow-visble px-[5vw] pt-[clamp(4rem,8vw,7rem)]"
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(ellipse 60% 50% at 90% 10%, rgba(194,97,60,0.07) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 50% 45% at 8% 92%, rgba(110,140,168,0.06) 0%, transparent 55%)',
-        }}
-      />
       <div className="relative pb-[clamp(5rem,10vw,8rem)]">
         <div className="grid grid-cols-12 items-start gap-x-8 gap-y-8">
           {/* Left column: title + bio + signature + CTA */}

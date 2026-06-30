@@ -50,7 +50,7 @@ export default function Packages() {
           on the page. A glass card slides up to overlap it. */}
       <div className="relative mt-[clamp(3.5rem,12vw,5rem)] lg:hidden">
         <motion.div {...reveal()} className="relative z-10 max-w-[20rem] pl-1">
-          <p className="font-display text-[clamp(2.4rem,11vw,3.4rem)] font-bold leading-[0.95] text-ink">
+          <p className="font-zt-oskon text-2xl font-bold leading-tight tracking-[-0.04em] text-ink">
             {PACKAGES.base.title}
           </p>
           <p className="mt-3 flex items-baseline gap-2">
@@ -105,7 +105,7 @@ export default function Packages() {
           }}
         >
           <div className="flex items-baseline justify-between gap-4">
-            <h3 className="font-display text-3xl font-bold text-ink">
+            <h3 className="font-zt-oskon text-2xl font-bold tracking-[-0.04em] text-ink">
               {PACKAGES.base.title}
             </h3>
             <p className="shrink-0 text-right">
