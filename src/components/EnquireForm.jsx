@@ -11,6 +11,14 @@ import {
 } from '../lib/site.js'
 import { ENQUIRY } from '../content.js'
 
+// Pull a first name out of the full name field for the thank-you greeting:
+// the first whitespace-delimited token, with its first letter capitalised so
+// "sarah lee" still greets as "Sarah". Returns '' when there's nothing usable.
+const firstNameOf = (name = '') => {
+  const token = name.trim().split(/\s+/)[0] || ''
+  return token ? token.charAt(0).toUpperCase() + token.slice(1) : ''
+}
+
 // Compose a mailto: link from the enquiry fields — used as a graceful fallback
 // when the Formspree endpoint is not yet configured or the request fails.
 const mailtoFor = (data) => {
@@ -46,6 +54,7 @@ export default function EnquireForm() {
   const reduce = useReducedMotion()
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
+  const [firstName, setFirstName] = useState('')
   const [error, setError] = useState('')
   // Neutral, non-error guidance (e.g. when we hand off to the email client).
   const [notice, setNotice] = useState('')
@@ -92,7 +101,9 @@ export default function EnquireForm() {
         body: new FormData(form),
       })
       if (!res.ok) throw new Error('Bad response')
-      // Only now, on a confirmed send, do we show the thank-you.
+      // Only now, on a confirmed send, do we show the thank-you — greeted by
+      // name, so it reads like a real reply rather than a generic receipt.
+      setFirstName(firstNameOf(data.name))
       setSent(true)
     } catch {
       // Network or server error — let them reach me by email instead.
@@ -175,6 +186,7 @@ export default function EnquireForm() {
                 ))}
                 <h3 className="relative font-sentient text-3xl font-bold tracking-[-0.04em] text-ink">
                   {ENQUIRY.confirm.title}
+                  {firstName && <span className="text-terracotta">, {firstName}</span>}.
                 </h3>
                 <p className="relative mt-3 max-w-md leading-relaxed text-ink-soft">
                   {ENQUIRY.confirm.body}

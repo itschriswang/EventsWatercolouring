@@ -47,9 +47,9 @@ export default function App() {
           {/* SoftAurora — clipped to this section, below all content */}
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
             <SoftAurora
-              color1="#E8C4D0"
+              color1="#E4889C"
               color2="#C8D890"
-              brightness={0.18}
+              brightness={0.12}
               speed={0.42}
               scale={1.5}
               bandHeight={0.42}
@@ -62,6 +62,22 @@ export default function App() {
               enableMouseInteraction={false}
             />
           </div>
+          {/* Top blend — carries the hero's warm paper down into this block so the
+              seam disappears instead of snapping to a pale aurora wash. Pure CSS,
+              behind all content, reduced-motion safe. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-[70vh]"
+            style={{
+              zIndex: 0,
+              background:
+                'linear-gradient(to bottom, ' +
+                '#F4EFE6 0%, ' +
+                'rgba(244,239,230,0.55) 14%, ' +
+                'rgba(228,136,156,0.05) 42%, ' +
+                'transparent 100%)',
+            }}
+          />
           <WhyWatercolour />
           <AboutMe />
           <img
