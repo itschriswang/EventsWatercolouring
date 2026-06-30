@@ -6,7 +6,6 @@ import SiteHeader from './components/SiteHeader.jsx'
 import MobileNav from './components/MobileNav.jsx'
 import ScrollProgress from './components/ScrollProgress.jsx'
 import Hero from './components/Hero.jsx'
-import Marquee from './components/Marquee.jsx'
 import WhyWatercolour from './components/WhyWatercolour.jsx'
 import EveningTimeline from './components/EveningTimeline.jsx'
 import SelectedWork from './components/SelectedWork.jsx'
@@ -44,7 +43,6 @@ export default function App() {
 
       <main className="relative z-10 pb-28 md:pb-0">
         <Hero revealed={revealed} />
-        <Marquee />
         <div className="relative overflow-visible lg:grid lg:grid-cols-2 lg:items-start lg:divide-x lg:divide-transparent">
           {/* SoftAurora — clipped to this section, below all content */}
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
