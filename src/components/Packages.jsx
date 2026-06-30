@@ -5,6 +5,7 @@ import { Drop } from './Label.jsx'
 import { SPRING } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
+import BloomField from './BloomField.jsx'
 
 /**
  * Packages — one base package, an "included as standard" grid, and an irregular
@@ -21,6 +22,8 @@ export default function Packages() {
 
   return (
     <section id="offerings" className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(5rem,10vw,9rem)]">
+      {/* BloomField — warm pigment halos contained to this section */}
+      <BloomField contained />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"

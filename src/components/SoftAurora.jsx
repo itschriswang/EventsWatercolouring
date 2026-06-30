@@ -159,7 +159,8 @@ export default function SoftAurora({
   layerOffset = 0,
   colorSpeed = 1.0,
   enableMouseInteraction = true,
-  mouseInfluence = 0.25
+  mouseInfluence = 0.25,
+  style = {}
 }) {
   const containerRef = useRef(null);
 
@@ -260,5 +261,6 @@ export default function SoftAurora({
     };
   }, [speed, scale, brightness, color1, color2, noiseFrequency, noiseAmplitude, bandHeight, bandSpread, octaveDecay, layerOffset, colorSpeed, enableMouseInteraction, mouseInfluence]);
 
-  return <div ref={containerRef} className="soft-aurora-container" />;
+  return <div ref={containerRef} className="soft-aurora-container" style={style} />;
 }
+
