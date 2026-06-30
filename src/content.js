@@ -155,11 +155,10 @@ export const PACKAGES = {
     price: '$850',
     facts: ['3 hours live', '24 keepsakes'],
     bullets: [
-      'Guest portraits painted live, A5 on archival cotton paper',
+      'Guest portraits painted live, A5 on cotton paper',
       'Each keepsake can feature up to four guests',
-      'Nobody has to pose or sit. I take a quick photo as guests pass by',
-      'You and any VIPs are painted first, just let me know before the night',
-      'Each finished piece goes home in a clear sleeve',
+      'You and any VIPs painted first, the rest as they pass by',
+      'Every piece sleeved to take home on the night',
     ],
   },
   baseNote:
@@ -170,7 +169,6 @@ export const PACKAGES = {
     items: [
       'All drawing and painting materials',
       'Premium 300gsm archival watercolour paper',
-      'Set-up about 15 minutes before I start',
       'Public liability insurance',
       'Travel within about an hour of Melbourne or Sydney metro',
     ],
