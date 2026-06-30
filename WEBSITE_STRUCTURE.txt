@@ -1,0 +1,266 @@
+CHRISTOPHER WANG | LIVE EVENT WATERCOLOUR — WEBSITE STRUCTURE SUMMARY
+=====================================================================
+
+A single-page, scroll-driven editorial website showcasing live event watercolour painting services.
+Built with React, focused on immersive storytelling and visual hierarchy.
+
+
+CONTENT SECTIONS (in scroll order)
+==================================
+
+1. PRELOADER & ENTRY
+   - Auto-dissolving preloader screen
+   - Scroll locks until preloader completes
+   - Hero entrance animation on reveal
+
+2. SITE HEADER & NAVIGATION
+   - Desktop header with navigation links (Why, Packages, Questions)
+   - Mobile navigation menu
+   - Scroll progress indicator
+   - Sticky or floating positioning pattern
+
+3. HERO SECTION
+   - Main headline: "The day you'll remember, painted as you live it"
+   - Lede paragraph explaining the core offering
+   - Sets expectation: guest keepsakes + couple portrait, all painted live
+   - Establishes watercolour-on-cotton-paper as standard
+   - Mobile and desktop headline variations
+
+4. MARQUEE SECTION (Scrolling text band)
+   - Repeating taglines highlighting key features:
+     * Event watercolour
+     * Portraits of your guests
+     * Painted by hand
+     * Real watercolour on cotton paper
+     * A keepsake to take home
+
+5. WHY LIVE WATERCOLOUR
+   - Label & lede introducing the benefits
+   - Three numbered points (01–03):
+     01. Something to gather around — social focal point
+     02. Made by hand, on the day — original, one-of-a-kind pieces
+     03. Something to keep — archival quality memento
+   - Positioned in a two-column grid (left) on desktop
+
+6. ABOUT ME (THE PAINTER)
+   - Artist portrait image
+   - Christopher's bio (Sydney origin, Melbourne-based, 10+ years painting)
+   - Services offered: live weddings, corporate events, brand activations, private celebrations
+   - Positioned in two-column grid (right) on desktop
+   - Emphasizes personal connection and travel availability
+
+7. EVENING TIMELINE (ON THE NIGHT)
+   - Label & title: "How the evening runs"
+   - Lede: First painting is the couple, then guests
+   - Five numbered beats (01–05) describing the workflow:
+     01. Setup (15 mins early, minimal requirements)
+     02. No posing needed — quick photo, name noted
+     03. Painting begins — 5–10 mins per piece, crowd gathers
+     04. Sleeved to take home — protected for travel
+     05. ~8 pieces per hour guarantee, unfinished pieces completed in studio
+   - Full-width section
+   - Establishes expectations for workflow and guest experience
+
+8. SELECTED WORK (GALLERY)
+   - Label: "Selected work"
+   - Title: "Real watercolour, on cotton paper"
+   - Subtitle: "Painted by hand on 300gsm A5 cotton paper"
+   - Gallery wall layout (responsive grid, mixed tile sizes):
+     * 15+ watercolour portrait images (paintings)
+     * One testimonial card from past clients (Clare & William)
+     * Feature tiles (2×2 blocks) for standout pieces
+     * Landscape orientation support for wider paintings
+     * Tap-to-enlarge lightbox interaction
+   - Demonstrates quality, variety, and style consistency
+   - Social proof through testimonial embedded in visual flow
+
+9. PACKAGES
+   - Label: "Packages"
+   - Title: "One base package, built around your day"
+   - Intro explaining cotton-paper standard and flexibility
+
+   BASE PACKAGE section:
+     - Title: "Live on the day"
+     - Price: From $850
+     - Key facts: 3 hours live, 24 keepsakes
+     - 4 bullet points of inclusions
+     - Explanation: VIPs first, then guests as they pass, all sleeved
+
+   INCLUDED AS STANDARD section:
+     - All materials provided
+     - Premium archival paper
+     - Public liability insurance
+     - Travel within ~1 hour of Melbourne/Sydney metro
+
+   ADD-ONS section (8 options):
+     - Guests finished in studio (on enquiry)
+     - Family portrait A3 ($400)
+     - Bridal party A3 ($400)
+     - Extra live hours (on enquiry)
+     - Studio commission (on enquiry)
+     - Stationery licensing (on enquiry)
+     - Travel further afield (on enquiry)
+     - Wedding bouquet illustration ($500 A3, A2 on enquiry)
+
+   Terms note: Style is interpretation, not photo-exact; retainer system (50% to hold date)
+
+10. HOW IT WORKS (TWO PATHS)
+    - Label: "How it works"
+    - Title: "Live on the day, or after it"
+
+    PATH 01: LIVE ON THE DAY
+      - Sub: "I paint your guests as they mingle"
+      - 4-step workflow:
+        1. Book your date (50% retainer, balance 2 weeks prior)
+        2. I arrive early (15 min setup)
+        3. Paint and mingle (guests pass by, quick photo, paint live)
+        4. Keepsakes to go (portrait home with guest)
+
+    PATH 02: FROM YOUR PHOTOGRAPHS
+      - Sub: "Studio commission painted from photos"
+      - 4-step workflow:
+        1. Share your photos (clear reference images)
+        2. I paint in the studio (once references arrive)
+        3. Review and approve (photo sent before posting)
+        4. Posted to you (flat in protective sleeve)
+
+11. FREQUENTLY ASKED QUESTIONS (FAQ)
+    - Label: "Questions"
+    - Title: "The practical bits"
+    - 12 Q&A pairs covering:
+      1. Booking timeline (typically 2 months out)
+      2. Live vs. photography options
+      3. Duration on the day (3–5 hours)
+      4. Guest capacity (~8 per hour, ~24 for base)
+      5. Materials (professional watercolours, archival cotton paper, lightfast pigments)
+      6. Delivery timeline (same night for guests, 4 weeks for studio)
+      7. Travel coverage (Melbourne/Sydney metro included, regional on enquiry)
+      8. Framing (not included, pre-sleeved)
+      9. Date security (50% retainer system)
+      10. Cancellation/postponement (flexible, terms in agreement)
+      11. Day-of requirements (table 100×60cm, chair, break space)
+      12. Non-wedding events (corporate, brand activations, private parties)
+      13. Photo submission guidelines (clear, high-res, well-lit)
+
+12. ENQUIRY FORM
+    - Label: "Enquire"
+    - Title: "Tell me about your day"
+    - Form collects:
+      * Contact information (name, email, phone)
+      * Event date
+      * Service type (dropdown with 7 options):
+        - Live on the day (base package)
+        - Live on the day, with add-ons
+        - After-Event Service for guests
+        - Studio commission from photographs
+        - Corporate event or brand activation
+        - Private celebration
+        - Not sure yet
+      * Message/additional details
+    - Confirmation message: "Thank you, [Name]. Your message is with me. I will read it properly and write back soon, usually within a few days. — Chris"
+    - Email submission backend
+
+13. FOOTER
+    - CTA: "Let's make something to keep"
+    - Artist name: "Chris Wang"
+    - Navigation links (6 items):
+      * Why
+      * On the night
+      * The work
+      * The painter
+      * Packages
+      * Questions
+    - Social link: Instagram (@chriswangstudio)
+
+
+KEY CONTENT THEMES
+==================
+
+Primary Value Proposition:
+  Hand-painted watercolour keepsakes for guests + couple portrait, painted live during the event
+  on archival A5 cotton paper. Creates a memorable focal point and lasting memento.
+
+Core Service Variants:
+  1. Live on the day (base: 3 hours, ~24 portraits, $850+)
+  2. Studio commissions from photos (4 weeks turnaround, $400–$500+)
+  3. Add-ons (extra hours, family portraits, stationery, bouquet illustrations)
+
+Target Audience:
+  Wedding couples (primary), corporate event planners, private celebration hosts
+
+Geographic Scope:
+  Melbourne and Sydney metro (travel included)
+  Regional Victoria and destination weddings (on enquiry)
+
+Credibility Markers:
+  * 10+ years painting experience
+  * Professional materials (archival paper, lightfast pigments)
+  * Public liability insurance
+  * Testimonial from past clients
+  * Gallery of portfolio work
+  * Transparent pricing model with retainer system
+
+Booking Model:
+  50% retainer to secure date + balance due 2 weeks before event
+  Payment and terms confirmed in booking agreement
+
+
+STRUCTURAL FEATURES
+===================
+
+Layout Pattern:
+  * Full-bleed, immersive single-page scroll
+  * Two-column grid on desktop (Why + About Me sections)
+  * Responsive grid gallery with mixed tile sizes
+  * Sticky header with scroll progress indicator
+
+Visual Hierarchy:
+  * Large, hand-painted headline typography
+  * Numbered sections (01–05, 01–03) for easy scanning
+  * Feature tiles (2×2 on desktop) for emphasis
+  * Testimonial card embedded in gallery flow
+  * Decorative watercolour-inspired background elements
+
+Interactive Elements:
+  * Mobile navigation menu (drawer)
+  * Gallery lightbox (tap/click to enlarge)
+  * Form submission with success confirmation
+  * Scroll-triggered animations and reveals
+  * Magnetic button interactions
+  * Marquee scrolling text band
+
+Accessibility Considerations:
+  * Semantic HTML structure
+  * Alt text for all images
+  * Keyboard navigation support
+  * Reduced-motion safe animations
+  * Noscript fallback with essential info and contact email
+
+
+DESIGN NOTES (Content-independent)
+==================================
+
+Color Palette:
+  * Paper (cream background): #F4EFE6
+  * Accent colors: Rose (#E4889C), Sage green (#C8D890)
+  * Aurora/gradient effects layered behind content
+
+Typography:
+  * Display: Mynerve (hand-drawn, signature feel)
+  * Body: Manrope (clean, readable)
+  * Accent: Instrument Serif (editorial)
+
+Decorative Elements:
+  * Grain overlay (paper texture)
+  * Soft Aurora canvas (animated gradient wash)
+  * Bloom field accents (floral illustrations)
+  * Corner flourishes
+  * Background landscape textures
+
+Animation:
+  * Fade-in on scroll
+  * Preloader auto-dissolve
+  * Hero entrance on reveal
+  * Scroll progress bar
+  * Magnetic button hover effects
+  * Marquee continuous scroll
