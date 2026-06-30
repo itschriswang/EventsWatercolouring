@@ -49,18 +49,18 @@ export default function App() {
           {/* SoftAurora — clipped to this section, below all content */}
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
             <SoftAurora
-              color1="#E4889C"
-              color2="#AEBF56"
-              brightness={0.42}
-              speed={0.28}
-              scale={1.3}
-              bandHeight={0.45}
-              bandSpread={1.4}
-              octaveDecay={0.45}
-              layerOffset={0.9}
-              colorSpeed={0.55}
-              noiseFrequency={2.2}
-              noiseAmplitude={0.9}
+              color1="#B5395B"
+              color2="#ED8A33"
+              brightness={0.18}
+              speed={0.42}
+              scale={1.5}
+              bandHeight={0.42}
+              bandSpread={1.8}
+              octaveDecay={0.5}
+              layerOffset={1.2}
+              colorSpeed={0.68}
+              noiseFrequency={2.4}
+              noiseAmplitude={1.1}
               enableMouseInteraction={false}
             />
           </div>
