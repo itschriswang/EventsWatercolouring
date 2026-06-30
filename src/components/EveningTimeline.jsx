@@ -110,7 +110,7 @@ export default function EveningTimeline() {
                         />
                       </span>
                     ) : (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-display text-[0.8rem] font-bold text-rust shadow-[0_2px_12px_rgba(100,40,15,0.35)]">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] text-rust shadow-[0_2px_12px_rgba(100,40,15,0.35)]">
                         {beat.no}
                       </span>
                     )}
