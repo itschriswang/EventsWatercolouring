@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
@@ -15,6 +15,18 @@ import CornerBloom from './CornerBloom.jsx'
 // shared id across lookalike tiles breaks the projection system badly enough
 // that the affected images stop painting entirely, not just the morph.
 const GALLERY = WORK.gallery.map((g, i) => ({ ...g, _idx: i }))
+
+// Thumbnail-size options for the desktop wall — swapping the column count
+// (and the row height that keeps cells roughly square) reshuffles every
+// tile's size at once. `feature`/`wide` pieces keep their 2-track span
+// regardless, so they simply read as a bigger or smaller fraction of a
+// denser or looser wall. Mobile stays a fixed 2/3-column masonry, since
+// there isn't the width to spare for a size control there.
+const DENSITIES = [
+  { key: 'compact', label: 'Compact', cols: 9, row: '11vw', row2xl: '9.5rem' },
+  { key: 'comfortable', label: 'Standard', cols: 6, row: '16vw', row2xl: '14rem' },
+  { key: 'spacious', label: 'Spacious', cols: 4, row: '22vw', row2xl: '19rem' },
+]
 
 // Graceful fallback when an image fails to load: hide the broken <img> so the
 // paper-toned card remains instead of a broken-image glyph.
@@ -41,6 +53,15 @@ export default function SelectedWork() {
   // meant every tile had a second, invisible sibling sharing its layoutId —
   // the same class of bug the reused-image case above causes.
   const isDesktop = useMediaQuery('(min-width: 1024px)')
+
+  // Which thumbnail size the desktop wall is showing. Resets to the default
+  // on reload rather than persisting — a lightweight view preference, not a
+  // setting worth remembering across visits.
+  const [density, setDensity] = useState('comfortable')
+  const activeDensity = useMemo(
+    () => DENSITIES.find((d) => d.key === density) ?? DENSITIES[1],
+    [density],
+  )
 
   // Index of the painting currently enlarged in the lightbox (null when closed).
   const [activeIndex, setActiveIndex] = useState(null)
@@ -79,14 +100,42 @@ export default function SelectedWork() {
               className="display-lg mt-5 text-ink"
             />
           </div>
-          <div className="max-w-xs">
-            <p className="font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
-              {WORK.note}
-            </p>
-            {WORK.zoomHint && (
-              <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-rust">
-                {WORK.zoomHint}
+          <div className="flex max-w-xs flex-col items-start gap-4 sm:items-end">
+            <div>
+              <p className="font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
+                {WORK.note}
               </p>
+              {WORK.zoomHint && (
+                <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-rust">
+                  {WORK.zoomHint}
+                </p>
+              )}
+            </div>
+
+            {/* Thumbnail size control — desktop wall only. */}
+            {isDesktop && (
+              <div
+                role="group"
+                aria-label="Gallery thumbnail size"
+                className="flex items-center gap-1 rounded-full border border-line bg-paper-deep/70 p-1 font-mono text-[0.58rem] uppercase tracking-[0.15em]"
+              >
+                {DENSITIES.map((d) => (
+                  <button
+                    key={d.key}
+                    type="button"
+                    onClick={() => setDensity(d.key)}
+                    aria-pressed={density === d.key}
+                    className={
+                      'rounded-full px-3 py-1.5 transition-colors duration-300 ' +
+                      (density === d.key
+                        ? 'bg-ink text-paper'
+                        : 'text-ink-soft hover:text-ink')
+                    }
+                  >
+                    {d.label}
+                  </button>
+                ))}
+              </div>
             )}
           </div>
         </div>
@@ -96,11 +145,19 @@ export default function SelectedWork() {
             around them); narrower screens get a 2/3-column masonry. Only one
             of the two ever mounts — see the `isDesktop` note above. */}
         {isDesktop ? (
-          <div className="mt-[clamp(2rem,4vw,3.5rem)] grid grid-cols-6 auto-rows-[16vw] 2xl:auto-rows-[14rem] gap-x-[1.4vw] gap-y-5 [grid-auto-flow:dense]">
+          <div
+            className="mt-[clamp(2rem,4vw,3.5rem)] grid auto-rows-[var(--gallery-row)] grid-cols-[repeat(var(--gallery-cols),minmax(0,1fr))] gap-x-[1.4vw] gap-y-5 [grid-auto-flow:dense] 2xl:auto-rows-[var(--gallery-row-2xl)]"
+            style={{
+              '--gallery-cols': activeDensity.cols,
+              '--gallery-row': activeDensity.row,
+              '--gallery-row-2xl': activeDensity.row2xl,
+            }}
+          >
             {GALLERY.map((item) => (
               <Tile
                 key={item._idx}
                 item={item}
+                reflow
                 onOpen={item.testimonial ? undefined : () => setActiveIndex(paintings.indexOf(item))}
                 className={
                   item.feature              ? 'col-span-2 row-span-2'
@@ -141,7 +198,7 @@ export default function SelectedWork() {
  * so the contents fill it; in masonry the card keeps an explicit aspect — 3:4
  * upright, or 4:3 for a `landscape` piece.
  */
-function Tile({ item, className = '', masonry = false, onOpen }) {
+function Tile({ item, className = '', masonry = false, onOpen, reflow = false }) {
   const reduce = useReducedMotion()
 
   const cardShape =
@@ -150,6 +207,10 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
 
   return (
     <motion.figure
+      // `layout` lets Framer Motion FLIP each tile into its new grid cell
+      // when the desktop thumbnail-size control changes the column count,
+      // instead of it just jumping.
+      layout={reflow && !reduce ? true : undefined}
       initial={{ opacity: 0, y: reduce ? 0 : 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
