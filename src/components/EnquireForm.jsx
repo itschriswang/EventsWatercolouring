@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import Label from './Label.jsx'
+import Label, { Drop } from './Label.jsx'
 import {
   SPRING,
   EMAIL,
@@ -45,13 +45,24 @@ const mailtoFor = (data) => {
 }
 
 /**
- * Enquiry form — minimalist bottom-border fields that blend into the canvas.
- * Submissions POST to Formspree (see FORMSPREE_ENDPOINT in lib/site.js) and
- * show a thank-you state on success. If the endpoint is unconfigured or the
- * request fails, it falls back to opening the visitor's email client.
+ * Enquiry form, staged as a hand-placed reply card.
+ *
+ * Rather than blending into the page like the sections above it, the form sits
+ * on a deckle-edged sheet of watercolour paper (torn edges are a live SVG
+ * turbulence + displacement filter, see DecklePaper), layered over a second
+ * sheet and cast in a soft shadow so it reads as a physical object laid on the
+ * table. The card is tilted at rest and straightens (`focus-within`) when the
+ * visitor starts filling it in. Submitting presses a terracotta wax seal.
+ *
+ * Form and confirmation share the SAME card: on a confirmed send the sheet
+ * floods with pigment and becomes the handwritten thank-you, so the note never
+ * appears out of nowhere. Submissions POST to Formspree (see FORMSPREE_ENDPOINT
+ * in lib/site.js); if the endpoint is unconfigured or the request fails it
+ * falls back to opening the visitor's email client.
  */
 export default function EnquireForm() {
   const reduce = useReducedMotion()
+  const uid = useId().replace(/:/g, '')
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
   const [firstName, setFirstName] = useState('')
@@ -148,196 +159,409 @@ export default function EnquireForm() {
           />
         </div>
 
+        {/* The card column. The outer wrapper carries the resting tilt and
+            straightens on focus-within; the inner motion.div settles the sheet
+            into place on first reveal (a placed-on-the-table drop). Tilt is a
+            static transform, safe under reduced-motion. */}
         <div className="col-span-12 lg:col-span-7 lg:col-start-6">
-          <AnimatePresence mode="wait">
-            {sent ? (
-              <motion.div
-                key="confirm"
-                initial={{ opacity: 0, y: reduce ? 0 : 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={SPRING}
-                className="relative overflow-hidden border border-line bg-paper-deep/40 p-10"
-              >
-                {/* Two pigment washes bloom into the paper as the note settles,
-                    like a wet mark drying. Decorative; static under reduced-motion. */}
+          <div className="-rotate-1 transition-transform duration-500 ease-organic hover:-rotate-[0.4deg] focus-within:rotate-0">
+            <motion.div
+              initial={reduce ? false : { opacity: 0, y: 26 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={SPRING}
+              className="relative"
+            >
+              <DecklePaper id={uid} />
+
+              {/* Pigment life clipped to roughly the paper bounds — a resting
+                  wash in both states, plus a one-time flood when the note
+                  arrives. Sits above the paper, below the content. */}
+              <div className="pointer-events-none absolute inset-[3%] z-[1] overflow-hidden rounded-[3px]">
                 {[
-                  { c: '#C2613C', pos: '-right-12 -top-12 h-52 w-52', d: 0 },
-                  { c: '#6E8CA8', pos: '-right-2 top-10 h-32 w-32', d: 0.18 },
+                  { c: '#C2613C', pos: '-right-10 -top-12 h-52 w-52', o: 0.1 },
+                  { c: '#6E8CA8', pos: '-left-10 bottom-0 h-44 w-44', o: 0.09 },
                 ].map((b, i) => (
-                  <motion.span
+                  <span
                     key={i}
                     aria-hidden="true"
-                    initial={reduce ? { opacity: 0.14 } : { opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 0.14, scale: 1 }}
-                    transition={
-                      reduce
-                        ? { duration: 0 }
-                        : { duration: 1.5, delay: b.d, ease: [0.22, 0.61, 0.36, 1] }
-                    }
-                    className={`pointer-events-none absolute ${b.pos} rounded-full mix-blend-multiply`}
+                    className={`absolute ${b.pos} rounded-full mix-blend-multiply`}
                     style={{
+                      opacity: b.o,
                       background: `radial-gradient(circle at 50% 50%, ${b.c}, transparent 68%)`,
-                      filter: 'blur(28px)',
+                      filter: 'blur(30px)',
                     }}
                   />
                 ))}
-                <h3 className="relative font-sentient text-3xl tracking-[-0.04em] text-ink">
-                  {ENQUIRY.confirm.title}
-                  {firstName && <span className="text-terracotta">, {firstName}</span>}.
-                </h3>
-                <p className="relative mt-3 max-w-md leading-relaxed text-ink-soft">
-                  {ENQUIRY.confirm.body}
-                </p>
-                {ENQUIRY.confirm.sign && (
-                  <motion.p
-                    initial={{ opacity: 0, y: reduce ? 0 : 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={reduce ? { duration: 0 } : { ...SPRING, delay: 0.45 }}
-                    className="relative mt-6 font-sentient text-3xl italic text-terracotta"
-                  >
-                    {ENQUIRY.confirm.sign}
-                  </motion.p>
-                )}
-              </motion.div>
-            ) : (
-              <motion.form
-                key="form"
-                noValidate
-                onSubmit={onSubmit}
-                initial={false}
-                className="grid grid-cols-1 gap-x-8 gap-y-7 sm:grid-cols-2"
-              >
-                {/* honeypot */}
-                <label className="absolute left-[-9999px]" aria-hidden="true">
-                  Leave this empty
-                  <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" />
-                </label>
-
-                <Field name="name" label="Your name" required autoComplete="name" invalid={invalidField === 'name'} />
-                <Field
-                  name="phone"
-                  label="Phone number"
-                  type="tel"
-                  autoComplete="tel"
-                  placeholder="e.g. 0400 000 000"
-                />
-                <Field name="email" label="Email" type="email" required autoComplete="email" invalid={invalidField === 'email'} />
-                <div className="flex flex-col sm:col-span-2">
-                  <label
-                    htmlFor="f-contactMethod"
-                    className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink"
-                  >
-                    Preferred contact method
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="f-contactMethod"
-                      name="contactMethod"
-                      className="w-full appearance-none border-b border-ink/30 bg-transparent py-3 pr-8 text-ink outline-none transition-colors focus:border-terracotta"
-                    >
-                      <option value="">Choose one</option>
-                      <option>Email</option>
-                      <option>Phone</option>
-                    </select>
-                    <svg
-                      className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/60 transition-colors"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                    </svg>
-                  </div>
-                </div>
-                <Field name="venue" label="Venue or city" placeholder="e.g. Melbourne" />
-
-                <div className="flex flex-col">
-                  <label htmlFor="f-package" className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
-                    What are you after?
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="f-package"
-                      name="package"
-                      className="w-full appearance-none border-b border-ink/30 bg-transparent py-3 pr-8 text-ink outline-none transition-colors focus:border-terracotta"
-                    >
-                      <option value="">Choose one</option>
-                      {ENQUIRY.packageOptions.map((o) => (
-                        <option key={o}>{o}</option>
-                      ))}
-                    </select>
-                    <svg
-                      className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/60 transition-colors"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                    </svg>
-                  </div>
-                </div>
-
-                <div className="flex flex-col sm:col-span-2">
-                  <label htmlFor="f-message" className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
-                    Message
-                  </label>
-                  <textarea
-                    id="f-message"
-                    name="message"
-                    rows={4}
-                    placeholder="Tell me a little about the day, and the people who matter most."
-                    className="resize-none border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft/60 focus:border-terracotta"
+                {sent && (
+                  <motion.span
+                    aria-hidden="true"
+                    initial={reduce ? { opacity: 0.12 } : { opacity: 0, scale: 0.4 }}
+                    animate={reduce ? { opacity: 0.12 } : { opacity: [0, 0.22, 0.12], scale: 1.7 }}
+                    transition={reduce ? { duration: 0 } : { duration: 1.6, ease: [0.22, 0.61, 0.36, 1] }}
+                    className="absolute left-1/2 top-1/2 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-multiply"
+                    style={{
+                      background:
+                        'radial-gradient(circle at 50% 50%, #C2613C, rgba(233,136,156,0.5) 45%, transparent 72%)',
+                      filter: 'blur(34px)',
+                    }}
                   />
-                </div>
-                
-                <div className="flex flex-col sm:col-span-2">
-                  <label className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
-                    Wedding date
-                  </label>
-                  <div className="flex flex-col gap-3">
-                    <input
-                      type="date"
-                      name="date"
-                      className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors focus:border-terracotta"
-                    />
-                    <label className="flex items-center gap-3 cursor-pointer group">
-                      <input
-                        type="checkbox"
-                        name="date_unknown"
-                        value="true"
-                        className="h-5 w-5 rounded border border-ink/30 bg-transparent accent-terracotta cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-terracotta focus:ring-offset-0"
-                      />
-                      <span className="text-sm text-ink transition-colors group-hover:text-terracotta">Not sure yet</span>
-                    </label>
-                  </div>
+                )}
+              </div>
+
+              {/* Content sits above paper + wash, textured with the site grain. */}
+              <div className="paper-grain relative z-10 px-[clamp(1.75rem,4vw,3rem)] py-[clamp(1.75rem,4vw,2.75rem)]">
+                {/* Card header — reads the sheet as a reply card. Persists across
+                    both states so the confirmation stays on the same stationery. */}
+                <div className="mb-7 flex items-baseline justify-between border-b border-line/80 pb-4">
+                  <span className="eyebrow inline-flex items-center gap-2">
+                    <Drop className="h-5 w-auto" fill="#C2613C" />
+                    Reply card
+                  </span>
+                  <span className="font-mono text-xs lowercase tracking-wide text-ink-soft">
+                    fill freely
+                  </span>
                 </div>
 
-                <div className="flex flex-col gap-3 sm:col-span-2">
-                  <button
-                    type="submit"
-                    disabled={sending}
-                    className="group inline-flex w-fit items-center gap-3 rounded-full bg-ink px-9 py-5 font-mono text-xs uppercase tracking-[0.18em] text-paper transition-colors hover:bg-terracotta disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {sending ? 'Sending…' : 'Send enquiry'}
-                    <span className="transition-transform group-hover:translate-x-1">→</span>
-                  </button>
-                  {error && (
-                    <p id="enquire-error" role="alert" className="font-mono text-xs text-rust">
-                      {error}
-                    </p>
+                <AnimatePresence mode="wait">
+                  {sent ? (
+                    <motion.div
+                      key="confirm"
+                      initial={{ opacity: 0, y: reduce ? 0 : 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={SPRING}
+                      className="relative"
+                    >
+                      <h3 className="font-sentient text-3xl tracking-[-0.04em] text-ink">
+                        {ENQUIRY.confirm.title}
+                        {firstName && <span className="text-terracotta">, {firstName}</span>}.
+                      </h3>
+                      <p className="mt-3 max-w-md leading-relaxed text-ink-soft">
+                        {ENQUIRY.confirm.body}
+                      </p>
+                      {ENQUIRY.confirm.sign && (
+                        <motion.p
+                          initial={{ opacity: 0, y: reduce ? 0 : 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={reduce ? { duration: 0 } : { ...SPRING, delay: 0.45 }}
+                          className="mt-6 font-sentient text-3xl italic text-terracotta"
+                        >
+                          {ENQUIRY.confirm.sign}
+                        </motion.p>
+                      )}
+                    </motion.div>
+                  ) : (
+                    <motion.form
+                      key="form"
+                      noValidate
+                      onSubmit={onSubmit}
+                      initial={false}
+                      className="grid grid-cols-1 gap-x-8 gap-y-7 sm:grid-cols-2"
+                    >
+                      {/* honeypot */}
+                      <label className="absolute left-[-9999px]" aria-hidden="true">
+                        Leave this empty
+                        <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" />
+                      </label>
+
+                      <Field name="name" label="Your name" required autoComplete="name" invalid={invalidField === 'name'} />
+                      <Field
+                        name="phone"
+                        label="Phone number"
+                        type="tel"
+                        autoComplete="tel"
+                        placeholder="e.g. 0400 000 000"
+                      />
+                      <Field name="email" label="Email" type="email" required autoComplete="email" invalid={invalidField === 'email'} />
+                      <div className="flex flex-col sm:col-span-2">
+                        <label
+                          htmlFor="f-contactMethod"
+                          className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink"
+                        >
+                          Preferred contact method
+                        </label>
+                        <div className="relative">
+                          <select
+                            id="f-contactMethod"
+                            name="contactMethod"
+                            className="w-full appearance-none border-b border-ink/30 bg-transparent py-3 pr-8 text-ink outline-none transition-colors focus:border-terracotta"
+                          >
+                            <option value="">Choose one</option>
+                            <option>Email</option>
+                            <option>Phone</option>
+                          </select>
+                          <svg
+                            className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/60 transition-colors"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                          </svg>
+                        </div>
+                      </div>
+                      <Field name="venue" label="Venue or city" placeholder="e.g. Melbourne" />
+
+                      <div className="flex flex-col">
+                        <label htmlFor="f-package" className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
+                          What are you after?
+                        </label>
+                        <div className="relative">
+                          <select
+                            id="f-package"
+                            name="package"
+                            className="w-full appearance-none border-b border-ink/30 bg-transparent py-3 pr-8 text-ink outline-none transition-colors focus:border-terracotta"
+                          >
+                            <option value="">Choose one</option>
+                            {ENQUIRY.packageOptions.map((o) => (
+                              <option key={o}>{o}</option>
+                            ))}
+                          </select>
+                          <svg
+                            className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/60 transition-colors"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col sm:col-span-2">
+                        <label htmlFor="f-message" className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
+                          Message
+                        </label>
+                        <textarea
+                          id="f-message"
+                          name="message"
+                          rows={4}
+                          placeholder="Tell me a little about the day, and the people who matter most."
+                          className="resize-none border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft/60 focus:border-terracotta"
+                        />
+                      </div>
+
+                      <div className="flex flex-col sm:col-span-2">
+                        <label className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
+                          Wedding date
+                        </label>
+                        <div className="flex flex-col gap-3">
+                          <input
+                            type="date"
+                            name="date"
+                            className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors focus:border-terracotta"
+                          />
+                          <label className="flex items-center gap-3 cursor-pointer group">
+                            <input
+                              type="checkbox"
+                              name="date_unknown"
+                              value="true"
+                              className="h-5 w-5 rounded border border-ink/30 bg-transparent accent-terracotta cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-terracotta focus:ring-offset-0"
+                            />
+                            <span className="text-sm text-ink transition-colors group-hover:text-terracotta">Not sure yet</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-4 sm:col-span-2">
+                        <SealButton sending={sending} />
+                        {error && (
+                          <p id="enquire-error" role="alert" className="font-mono text-xs text-rust">
+                            {error}
+                          </p>
+                        )}
+                        {notice && !error && (
+                          <p role="status" className="max-w-md font-mono text-xs leading-relaxed text-ink-soft">
+                            {notice}
+                          </p>
+                        )}
+                      </div>
+                    </motion.form>
                   )}
-                  {notice && !error && (
-                    <p role="status" className="max-w-md font-mono text-xs leading-relaxed text-ink-soft">
-                      {notice}
-                    </p>
-                  )}
-                </div>
-              </motion.form>
-            )}
-          </AnimatePresence>
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>
+  )
+}
+
+/**
+ * The sheet the card is printed on: two stacked, slightly offset rectangles
+ * whose edges are roughened by a shared feTurbulence + feDisplacementMap so
+ * they read as torn watercolour paper rather than a crisp box. The whole layer
+ * is cast in a soft, warm drop-shadow so the card lifts off the page. Static
+ * (no animation) — cheap on mobile. Purely decorative, hidden from a11y.
+ */
+function DecklePaper({ id }) {
+  const filterId = `deckle-${id}`
+  return (
+    <div
+      aria-hidden="true"
+      className="absolute inset-0"
+      style={{ filter: 'drop-shadow(0 18px 38px rgba(42,39,36,0.18))' }}
+    >
+      <svg className="h-full w-full" preserveAspectRatio="none">
+        <defs>
+          <filter id={filterId} x="-6%" y="-6%" width="112%" height="112%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.013" numOctaves="3" seed="7" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="13" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+        {/* backing sheet, peeking out below/right */}
+        <rect x="2%" y="2.6%" width="97%" height="97%" rx="3" fill="#DBCFBB" filter={`url(#${filterId})`} />
+        {/* front sheet — the writing surface */}
+        <rect x="0.6%" y="0.4%" width="97.4%" height="97.4%" rx="3" fill="#ECE4D6" filter={`url(#${filterId})`} />
+      </svg>
+    </div>
+  )
+}
+
+// Scattered gold-leaf flecks embedded in the wax — irregular shards, like the
+// loose gold in a real pressed seal. Positions/rotations are hand-placed so
+// they read as flecks, not a pattern.
+const GOLD_FLECKS = [
+  { top: '30%', left: '33%', w: 7, h: 5, rot: 22 },
+  { top: '40%', left: '58%', w: 5, h: 6, rot: -32 },
+  { top: '64%', left: '46%', w: 8, h: 5, rot: 12 },
+  { top: '58%', left: '30%', w: 4, h: 4, rot: 48 },
+]
+
+// Tiny trapped air bubbles near the poured edge — small bright specks with a
+// soft ring, as seen where wax/resin sets.
+const BUBBLES = [
+  { top: '20%', left: '66%', d: 3 },
+  { top: '74%', left: '62%', d: 2.5 },
+  { top: '68%', left: '24%', d: 2 },
+]
+
+/**
+ * Submit control shaped as a real translucent wax seal.
+ *
+ * The wax read comes from silhouette and structure, not just material: a shared
+ * feTurbulence + feDisplacementMap (the same trick as the card's deckle edge)
+ * warps the disc so its rim is organic and hand-pressed rather than a perfect
+ * circle, and the body is split into a thick clear raised rim around a frosted,
+ * recessed centre medallion that holds the pressed orchid. Gold-leaf flecks and
+ * a few trapped bubbles are embedded in it, and a soft iridescence blooms on
+ * hover as if the glass were tilted. Decorative; the accessible name comes from
+ * the button + its visible label.
+ */
+function SealButton({ sending }) {
+  const uid = useId().replace(/:/g, '')
+  const waxId = `wax-${uid}`
+  return (
+    <button
+      type="submit"
+      disabled={sending}
+      aria-label="Send enquiry"
+      className="group inline-flex w-fit items-center gap-4 outline-none disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      {/* Displacement filter that gives the seal its poured, irregular edge. */}
+      <svg aria-hidden="true" className="absolute h-0 w-0">
+        <defs>
+          <filter id={waxId} x="-30%" y="-30%" width="160%" height="160%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="11" result="n" />
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+      </svg>
+
+      <span className="relative grid h-14 w-14 shrink-0 place-items-center transition-transform duration-200 ease-organic group-hover:translate-y-0.5 group-active:translate-y-1 group-focus-visible:ring-2 group-focus-visible:ring-terracotta group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-transparent">
+        {/* Wax body: clear raised rim → frosted recessed centre. The whole
+            layer (and its cast shadow) is displaced into an organic blob. */}
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 rounded-full"
+          style={{
+            filter: `url(#${waxId}) drop-shadow(0 6px 12px rgba(70,55,110,0.32)) drop-shadow(0 2px 3px rgba(40,30,70,0.26))`,
+            background: [
+              // top-left glass highlight
+              'radial-gradient(circle at 30% 22%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 40%)',
+              // faint oil-film tints in the resin
+              'radial-gradient(circle at 74% 32%, rgba(150,215,230,0.24) 0%, rgba(150,215,230,0) 46%)',
+              'radial-gradient(circle at 30% 78%, rgba(198,168,232,0.22) 0%, rgba(198,168,232,0) 50%)',
+              // two-zone body: frosted centre medallion → clear raised rim
+              'radial-gradient(circle at 50% 50%, rgba(247,249,255,0.66) 0%, rgba(246,248,255,0.6) 44%, rgba(226,232,247,0.4) 57%, rgba(255,255,255,0.14) 70%, rgba(255,255,255,0.08) 100%)',
+            ].join(', '),
+            boxShadow: [
+              'inset 0 0 0 1px rgba(255,255,255,0.5)', // bright glass edge
+              'inset 0 2px 2px rgba(255,255,255,0.85)', // top rim catch
+              'inset 0 -3px 6px rgba(70,52,110,0.22)', // dome falloff, lower
+              'inset 0 0 5px 3px rgba(255,255,255,0.3)', // raised-rim inner glow
+              'inset 0 0 0 5px rgba(232,237,250,0.16)', // step down into the centre
+            ].join(', '),
+          }}
+        />
+
+        {/* Iridescent sheen that blooms on hover, as if the glass were tilted. */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{
+            filter: `url(#${waxId})`,
+            background:
+              'radial-gradient(circle at 72% 18%, rgba(255,120,200,0.42) 0%, rgba(255,120,200,0) 46%), radial-gradient(circle at 22% 74%, rgba(120,255,220,0.4) 0%, rgba(120,255,220,0) 50%)',
+            mixBlendMode: 'screen',
+          }}
+        />
+
+        {/* Gold-leaf flecks embedded in the wax. */}
+        {GOLD_FLECKS.map((f, i) => (
+          <span
+            key={`g${i}`}
+            aria-hidden="true"
+            className="pointer-events-none absolute"
+            style={{
+              top: f.top,
+              left: f.left,
+              width: f.w,
+              height: f.h,
+              transform: `rotate(${f.rot}deg)`,
+              borderRadius: '1px',
+              background: 'linear-gradient(135deg, #F1D583 0%, #C79A3B 55%, #9A7526 100%)',
+              boxShadow: '0 0 1px rgba(120,90,30,0.5), inset 0 0.5px 0.5px rgba(255,245,210,0.8)',
+            }}
+          />
+        ))}
+
+        {/* Trapped air bubbles. */}
+        {BUBBLES.map((b, i) => (
+          <span
+            key={`b${i}`}
+            aria-hidden="true"
+            className="pointer-events-none absolute rounded-full"
+            style={{
+              top: b.top,
+              left: b.left,
+              width: b.d,
+              height: b.d,
+              background: 'radial-gradient(circle at 35% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0) 70%)',
+              boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.6)',
+            }}
+          />
+        ))}
+
+        {/* Orchid pressed into the frosted centre: an icy face whose dual
+            drop-shadow gives it a lit upper edge and a shadowed lower recess. */}
+        <span
+          aria-hidden="true"
+          className="relative h-6 w-6 opacity-80"
+          style={{
+            filter:
+              'drop-shadow(0.6px 0.9px 0.5px rgba(55,38,90,0.5)) drop-shadow(-0.6px -0.7px 0.4px rgba(255,255,255,0.85))',
+          }}
+        >
+          <Drop className="h-6 w-6" fill="#EEF5FF" />
+        </span>
+      </span>
+      <span className="font-sentient text-2xl tracking-[-0.02em] text-ink transition-colors group-hover:text-terracotta">
+        {sending ? 'Sealing…' : 'Seal & send'}
+        <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
+      </span>
+    </button>
   )
 }
 
