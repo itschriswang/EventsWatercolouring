@@ -3,8 +3,10 @@
 // section updates.
 
 export const HERO = {
-  lines: ['Memories'], ['painted as they'],['happen'],
-  emphasis: ['painted'],
+  lines: ['Memories', 'painted as they', 'happen'],
+  linesMobile: ['Memories', 'painted as they', 'happen'],
+  emphasis: 'painted',
+  emphasisMobile: 'painted',
   lede: 'Delight your guests with live watercolour portraits while transforming your event into an immersive artistic experience they’ll be talking about long after.',
 }
 
