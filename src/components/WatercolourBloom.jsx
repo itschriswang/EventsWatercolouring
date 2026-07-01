@@ -13,45 +13,49 @@ import './WatercolourBloom.css'
  * cost is paid once rather than every animation tick.
  *
  * cx/cy/r live in the 0–100 viewBox, which doubles as the percentage space
- * for each shape's own `transform-origin` — deliberate, so scale/drift
- * animations pivot around the bloom's own centre without extra bookkeeping.
+ * for each shape's own `transform-origin` — deliberate, so the grow/fade
+ * animation pivots around the bloom's own centre without extra bookkeeping.
+ *
+ * `variant` picks one of three wcb-bloom-fade-N keyframes (see the CSS) —
+ * each has a differently shaped rise/hold/fade curve — so paired with the
+ * per-bloom duration/delay, no two blooms read as the same pulse.
  */
 const BLOOMS = [
   // Dominant wash
   { id: 'terracotta', color: '#C2613C', rim: '#8F4321', cx: 16, cy: 28, r: 36, warm: true,
-    freq: 0.058, scale: 9, blur: 2.6, seed: 3, dur: '30s', delay: '-6s', dx: 2.8, dy: 2.1 },
+    freq: 0.058, scale: 9, blur: 2.6, seed: 3, dur: '22s', delay: '-6s', variant: 1 },
   // Secondary warms
   { id: 'rust', color: '#A4502F', rim: '#7A3A20', cx: 36, cy: 52, r: 22, warm: true,
-    freq: 0.078, scale: 7, blur: 2.0, seed: 11, dur: '34s', delay: '-18s', dx: -2.4, dy: 3.0 },
+    freq: 0.078, scale: 7, blur: 2.0, seed: 11, dur: '31s', delay: '-18s', variant: 2 },
   { id: 'rust2', color: '#A4502F', rim: '#7A3A20', cx: 24, cy: 69, r: 14, warm: true,
-    freq: 0.09, scale: 5, blur: 1.6, seed: 87, dur: '26s', delay: '-10s', dx: 2.0, dy: -2.4 },
+    freq: 0.09, scale: 5, blur: 1.6, seed: 87, dur: '17s', delay: '-10s', variant: 3 },
   { id: 'ochre', color: '#C9A23A', rim: '#9C7B26', cx: 88, cy: 13, r: 22, warm: true,
-    freq: 0.072, scale: 7, blur: 2.1, seed: 19, dur: '26s', delay: '-11s', dx: -2.6, dy: 1.8 },
+    freq: 0.072, scale: 7, blur: 2.1, seed: 19, dur: '26s', delay: '-11s', variant: 1 },
   { id: 'ochre2', color: '#C9A23A', rim: '#9C7B26', cx: 70, cy: 33, r: 13, warm: true,
-    freq: 0.095, scale: 5, blur: 1.5, seed: 93, dur: '24s', delay: '-4s', dx: 2.1, dy: 2.3 },
+    freq: 0.095, scale: 5, blur: 1.5, seed: 93, dur: '15s', delay: '-4s', variant: 2 },
   { id: 'blush', color: '#E4889C', rim: '#C06C82', cx: 85, cy: 86, r: 24, warm: true,
-    freq: 0.068, scale: 6, blur: 2.2, seed: 27, dur: '36s', delay: '-27s', dx: -1.8, dy: -2.6 },
+    freq: 0.068, scale: 6, blur: 2.2, seed: 27, dur: '36s', delay: '-27s', variant: 3 },
   { id: 'rose', color: '#C98B8C', rim: '#9C6668', cx: 8, cy: 90, r: 20, warm: true,
-    freq: 0.082, scale: 5, blur: 1.8, seed: 35, dur: '28s', delay: '-9s', dx: 2.3, dy: -2.0 },
+    freq: 0.082, scale: 5, blur: 1.8, seed: 35, dur: '20s', delay: '-9s', variant: 1 },
   { id: 'orange', color: '#ED8A33', rim: '#C0691A', cx: 54, cy: 96, r: 17, warm: true,
-    freq: 0.09, scale: 5, blur: 1.7, seed: 43, dur: '30s', delay: '-33s', dx: 1.7, dy: -1.5 },
+    freq: 0.09, scale: 5, blur: 1.7, seed: 43, dur: '28s', delay: '-33s', variant: 2 },
   // Cool balancing washes (~30%)
   { id: 'lime', color: '#AEBF56', rim: '#84943A', cx: 62, cy: 6, r: 17, warm: false,
-    freq: 0.078, scale: 5, blur: 1.8, seed: 51, dur: '32s', delay: '-4s', dx: -1.5, dy: 2.0 },
+    freq: 0.078, scale: 5, blur: 1.8, seed: 51, dur: '24s', delay: '-4s', variant: 3 },
   { id: 'cornflower', color: '#6E8CA8', rim: '#4F6A85', cx: 99, cy: 50, r: 20, warm: false,
-    freq: 0.07, scale: 6, blur: 2.0, seed: 59, dur: '30s', delay: '-21s', dx: -2.0, dy: -1.7 },
+    freq: 0.07, scale: 6, blur: 2.0, seed: 59, dur: '33s', delay: '-21s', variant: 1 },
   { id: 'cornflower2', color: '#6E8CA8', rim: '#4F6A85', cx: 46, cy: 15, r: 12, warm: false,
-    freq: 0.1, scale: 4, blur: 1.4, seed: 97, dur: '22s', delay: '-15s', dx: 1.5, dy: 1.9 },
+    freq: 0.1, scale: 4, blur: 1.4, seed: 97, dur: '18s', delay: '-15s', variant: 2 },
 ]
 
 // "Backruns" — small cauliflower blooms that surface then fade, now often
 // enough that the paper always has one or two settling somewhere.
 const CAULIFLOWERS = [
-  { id: 'c1', color: '#8F4321', cx: 31, cy: 47, r: 8.5, seed: 67, dur: '55s', delay: '-14s' },
-  { id: 'c2', color: '#9C7B26', cx: 79, cy: 27, r: 7, seed: 73, dur: '64s', delay: '-40s' },
-  { id: 'c3', color: '#9C6668', cx: 17, cy: 74, r: 7.5, seed: 79, dur: '60s', delay: '-24s' },
-  { id: 'c4', color: '#7A3A20', cx: 58, cy: 60, r: 6.5, seed: 103, dur: '58s', delay: '-6s' },
-  { id: 'c5', color: '#4F6A85', cx: 90, cy: 70, r: 6, seed: 109, dur: '68s', delay: '-34s' },
+  { id: 'c1', color: '#8F4321', cx: 31, cy: 47, r: 8.5, seed: 67, dur: '46s', delay: '-14s', variant: 1 },
+  { id: 'c2', color: '#9C7B26', cx: 79, cy: 27, r: 7, seed: 73, dur: '55s', delay: '-40s', variant: 2 },
+  { id: 'c3', color: '#9C6668', cx: 17, cy: 74, r: 7.5, seed: 79, dur: '38s', delay: '-24s', variant: 3 },
+  { id: 'c4', color: '#7A3A20', cx: 58, cy: 60, r: 6.5, seed: 103, dur: '61s', delay: '-6s', variant: 1 },
+  { id: 'c5', color: '#4F6A85', cx: 90, cy: 70, r: 6, seed: 109, dur: '43s', delay: '-34s', variant: 2 },
 ]
 
 export default function WatercolourBloom({ className = '', blend = 'multiply' }) {
@@ -127,10 +131,9 @@ export default function WatercolourBloom({ className = '', blend = 'multiply' })
               style={{
                 transformOrigin: `${b.cx}% ${b.cy}%`,
                 mixBlendMode: blend,
+                animationName: `wcb-bloom-fade-${b.variant}`,
                 animationDuration: b.dur,
                 animationDelay: b.delay,
-                '--wcb-dx': `${b.dx}%`,
-                '--wcb-dy': `${b.dy}%`,
               }}
             />
           ))}
@@ -148,6 +151,7 @@ export default function WatercolourBloom({ className = '', blend = 'multiply' })
               style={{
                 transformOrigin: `${c.cx}% ${c.cy}%`,
                 mixBlendMode: blend,
+                animationName: `wcb-backrun-${c.variant}`,
                 animationDuration: c.dur,
                 animationDelay: c.delay,
               }}
