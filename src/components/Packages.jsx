@@ -34,6 +34,7 @@ export default function Packages() {
         unit="char"
         lines={PACKAGES.title}
         emphasis={PACKAGES.emphasis}
+        emphasisItalic
         className="display-lg mt-5 text-ink"
       />
       <motion.p

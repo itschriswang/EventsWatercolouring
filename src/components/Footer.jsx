@@ -25,6 +25,7 @@ export default function Footer() {
           unit="char"
           lines={FOOTER.cta}
           emphasis={FOOTER.emphasis}
+          emphasisItalic
           className="display-lg max-w-[18ch]"
         />
       </div>
