@@ -5,7 +5,6 @@ import { Drop } from './Label.jsx'
 import { SPRING } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
-import BloomField from './BloomField.jsx'
 
 export default function Packages() {
   const reduce = useReducedMotion()
@@ -18,16 +17,6 @@ export default function Packages() {
 
   return (
     <section id="offerings" className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(5rem,10vw,9rem)]">
-      <BloomField contained />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(ellipse 65% 50% at 88% 8%, rgba(194,97,60,0.07) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 55% 45% at 12% 92%, rgba(110,140,168,0.06) 0%, transparent 55%)',
-        }}
-      />
       <Label gradient={['#6E8CA8', '#C2613C']}>{PACKAGES.label}</Label>
       <SplitText
         as="h2"
