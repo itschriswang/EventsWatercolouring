@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import GrainOverlay from './components/GrainOverlay.jsx'
-import SoftAurora from './components/SoftAurora.jsx'
+import WatercolourBloom from './components/WatercolourBloom.jsx'
 import Preloader from './components/Preloader.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
 import MobileNav from './components/MobileNav.jsx'
@@ -44,23 +44,9 @@ export default function App() {
       <main className="relative z-10 pb-28 md:pb-0">
         <Hero revealed={revealed} />
         <div className="relative overflow-visible lg:grid lg:grid-cols-2 lg:items-start lg:divide-x lg:divide-transparent">
-          {/* SoftAurora — clipped to this section, below all content */}
+          {/* WatercolourBloom — clipped to this section, below all content */}
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
-            <SoftAurora
-              color1="#E4889C"
-              color2="#C8D890"
-              brightness={0.12}
-              speed={0.42}
-              scale={1.5}
-              bandHeight={0.42}
-              bandSpread={1.5}
-              octaveDecay={0.5}
-              layerOffset={1.2}
-              colorSpeed={0.68}
-              noiseFrequency={2.4}
-              noiseAmplitude={1.1}
-              enableMouseInteraction={false}
-            />
+            <WatercolourBloom />
           </div>
           {/* Top blend — carries the hero's warm paper down into this block so the
               seam disappears instead of snapping to a pale aurora wash. Pure CSS,
