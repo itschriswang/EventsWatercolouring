@@ -3,7 +3,7 @@
 // section updates.
 
 export const HERO = {
-  lines: ['The day you\'ll', 'remember,', 'painted as', 'you live it.'],
+  lines: ['The day you\'ll', 'remember, painted', 'as you live it.'],
   emphasis: ['remember', 'live'],
   linesMobile: ['The day you\'ll', 'remember,', 'painted as', 'you live it.'],
   emphasisMobile: ['remember', 'live'],

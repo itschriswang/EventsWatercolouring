@@ -118,15 +118,6 @@ export default function EnquireForm() {
 
   return (
     <section id="enquiry" className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(5rem,10vw,9rem)]">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(ellipse 65% 50% at 85% 10%, rgba(194,97,60,0.07) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 55% 45% at 10% 92%, rgba(201,162,58,0.05) 0%, transparent 55%)',
-        }}
-      />
       <div className="grid grid-cols-12 gap-x-8 gap-y-12">
         <div className="relative col-span-12 lg:col-span-4">
           <Label>{ENQUIRY.label}</Label>

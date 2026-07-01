@@ -3,6 +3,7 @@ import Label, { Drop } from './Label.jsx'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, asset } from '../lib/site.js'
 import { EVENING } from '../content.js'
+import WatercolourBloom from './WatercolourBloom.jsx'
 
 /**
  * "How the evening runs" — a sticky split-screen. A massive section title is
@@ -48,6 +49,17 @@ export default function EveningTimeline() {
             (lite ? '' : ' mix-blend-screen')
           }
         />
+      </div>
+
+      {/* Watercolour pigment wash, bottom-left — the title rail leaves that
+          corner empty once the beats run long down the right, and screen
+          blend reads as a warm glow lifting off the dark rust rather than a
+          fill. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-[8vw] -bottom-[10vw] h-[52vw] w-[52vw] max-h-[560px] max-w-[560px] overflow-hidden opacity-70"
+      >
+        <WatercolourBloom blend="screen" />
       </div>
 
       <div className="grid grid-cols-12 gap-x-8">

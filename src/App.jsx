@@ -75,9 +75,18 @@ export default function App() {
         </div>
         <EveningTimeline />
         <SelectedWork />
-        <Packages />
-        <Faq />
-        <EnquireForm />
+        <div className="relative">
+          {/* One continuous WatercolourBloom behind Packages/Faq/Enquire so
+              the wash carries through all three without a seam at the section
+              boundaries — each section's own small ad-hoc gradients were
+              removed so they don't compete with it. */}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
+            <WatercolourBloom />
+          </div>
+          <Packages />
+          <Faq />
+          <EnquireForm />
+        </div>
       </main>
 
       <Footer />
