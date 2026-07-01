@@ -1,6 +1,14 @@
-import { useId, useState } from 'react'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { useId, useRef, useState } from 'react'
+import {
+  motion,
+  AnimatePresence,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from 'framer-motion'
 import Label, { Drop } from './Label.jsx'
+import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import {
   SPRING,
   EMAIL,
@@ -419,16 +427,6 @@ function DecklePaper({ id }) {
   )
 }
 
-// Scattered gold-leaf flecks embedded in the wax — irregular shards, like the
-// loose gold in a real pressed seal. Positions/rotations are hand-placed so
-// they read as flecks, not a pattern.
-const GOLD_FLECKS = [
-  { top: '30%', left: '33%', w: 7, h: 5, rot: 22 },
-  { top: '40%', left: '58%', w: 5, h: 6, rot: -32 },
-  { top: '64%', left: '46%', w: 8, h: 5, rot: 12 },
-  { top: '58%', left: '30%', w: 4, h: 4, rot: 48 },
-]
-
 // Tiny trapped air bubbles near the poured edge — small bright specks with a
 // soft ring, as seen where wax/resin sets.
 const BUBBLES = [
@@ -440,18 +438,40 @@ const BUBBLES = [
 /**
  * Submit control shaped as a real translucent wax seal.
  *
- * The wax read comes from silhouette and structure, not just material: a shared
- * feTurbulence + feDisplacementMap (the same trick as the card's deckle edge)
- * warps the disc so its rim is organic and hand-pressed rather than a perfect
- * circle, and the body is split into a thick clear raised rim around a frosted,
- * recessed centre medallion that holds the pressed orchid. Gold-leaf flecks and
- * a few trapped bubbles are embedded in it, and a soft iridescence blooms on
- * hover as if the glass were tilted. Decorative; the accessible name comes from
- * the button + its visible label.
+ * The wax read comes from silhouette and structure: a feTurbulence +
+ * feDisplacementMap (the same trick as the card's deckle edge) warps the disc
+ * so its rim is organic and hand-pressed rather than a perfect circle. The body
+ * is a thick raised rim around a frosted, recessed centre medallion; the raised
+ * rim is modelled by a lit bead on its top-left and a shadow on its
+ * bottom-right, with the centre sunk below via a concave inner shadow.
+ *
+ * On desktop those highlight and shadow layers parallax as the seal scrolls
+ * through the viewport — light gliding one way, shadow the other — so the raised
+ * rim catches the light as if you were tilting a real seal in your hand. Touch
+ * devices and reduced-motion get the same lighting, held static. A few trapped
+ * bubbles are embedded, and iridescence blooms on hover. Decorative; the
+ * accessible name comes from the button + its visible label.
  */
 function SealButton({ sending }) {
   const uid = useId().replace(/:/g, '')
   const waxId = `wax-${uid}`
+  const reduce = useReducedMotion()
+  const parallax = useHeavyFx() && !reduce
+
+  // Track the seal's travel through the viewport and split it into two opposed
+  // motion values — the light glides against the shadow, so the raised rim reads
+  // as a real bevel catching a shifting light.
+  const sealRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: sealRef,
+    offset: ['start end', 'end start'],
+  })
+  const p = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.4 })
+  const lightX = useTransform(p, [0, 1], [4, -4])
+  const lightY = useTransform(p, [0, 1], [7, -7])
+  const shadowX = useTransform(p, [0, 1], [-4, 4])
+  const shadowY = useTransform(p, [0, 1], [-6, 6])
+
   return (
     <button
       type="submit"
@@ -469,34 +489,67 @@ function SealButton({ sending }) {
         </defs>
       </svg>
 
-      <span className="relative grid h-14 w-14 shrink-0 place-items-center transition-transform duration-200 ease-organic group-hover:translate-y-0.5 group-active:translate-y-1 group-focus-visible:ring-2 group-focus-visible:ring-terracotta group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-transparent">
-        {/* Wax body: clear raised rim → frosted recessed centre. The whole
-            layer (and its cast shadow) is displaced into an organic blob. */}
+      <span
+        ref={sealRef}
+        className="relative grid h-14 w-14 shrink-0 place-items-center transition-transform duration-200 ease-organic group-hover:translate-y-0.5 group-active:translate-y-1 group-focus-visible:ring-2 group-focus-visible:ring-terracotta group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-transparent"
+      >
+        {/* Wax body: frosted recessed centre → thick raised rim, warped into an
+            organic blob (cast shadow included). The inset shadows carve the
+            groove that steps down from the rim into the sunken centre. */}
         <span
           aria-hidden="true"
           className="absolute inset-0 rounded-full"
           style={{
             filter: `url(#${waxId}) drop-shadow(0 6px 12px rgba(70,55,110,0.32)) drop-shadow(0 2px 3px rgba(40,30,70,0.26))`,
             background: [
-              // top-left glass highlight
-              'radial-gradient(circle at 30% 22%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 40%)',
               // faint oil-film tints in the resin
-              'radial-gradient(circle at 74% 32%, rgba(150,215,230,0.24) 0%, rgba(150,215,230,0) 46%)',
-              'radial-gradient(circle at 30% 78%, rgba(198,168,232,0.22) 0%, rgba(198,168,232,0) 50%)',
+              'radial-gradient(circle at 74% 32%, rgba(150,215,230,0.2) 0%, rgba(150,215,230,0) 46%)',
+              'radial-gradient(circle at 30% 78%, rgba(198,168,232,0.18) 0%, rgba(198,168,232,0) 50%)',
               // two-zone body: frosted centre medallion → clear raised rim
-              'radial-gradient(circle at 50% 50%, rgba(247,249,255,0.66) 0%, rgba(246,248,255,0.6) 44%, rgba(226,232,247,0.4) 57%, rgba(255,255,255,0.14) 70%, rgba(255,255,255,0.08) 100%)',
+              'radial-gradient(circle at 50% 50%, rgba(247,249,255,0.68) 0%, rgba(246,248,255,0.62) 42%, rgba(224,230,246,0.46) 56%, rgba(255,255,255,0.16) 68%, rgba(255,255,255,0.08) 100%)',
             ].join(', '),
             boxShadow: [
-              'inset 0 0 0 1px rgba(255,255,255,0.5)', // bright glass edge
-              'inset 0 2px 2px rgba(255,255,255,0.85)', // top rim catch
-              'inset 0 -3px 6px rgba(70,52,110,0.22)', // dome falloff, lower
-              'inset 0 0 5px 3px rgba(255,255,255,0.3)', // raised-rim inner glow
-              'inset 0 0 0 5px rgba(232,237,250,0.16)', // step down into the centre
+              'inset 0 0 0 1px rgba(255,255,255,0.45)', // bright glass edge
+              'inset 0 0 4px 3px rgba(255,255,255,0.32)', // raised-rim inner bead
+              'inset 0 0 0 6px rgba(210,216,234,0.22)', // groove: rim → centre step
+              'inset 0 5px 7px -2px rgba(58,44,92,0.34)', // centre sunk: top-inner shade
+              'inset 0 -4px 6px -2px rgba(255,255,255,0.5)', // centre floor lit from below
             ].join(', '),
           }}
         />
 
-        {/* Iridescent sheen that blooms on hover, as if the glass were tilted. */}
+        {/* Parallax SHADOW — bottom-right of the raised rim, glides against the
+            light. Clipped to the disc; the inner layer is oversized so its travel
+            never exposes an edge. */}
+        <span aria-hidden="true" className="pointer-events-none absolute inset-[3px] overflow-hidden rounded-full">
+          <motion.span
+            className="absolute -inset-3"
+            style={{
+              x: parallax ? shadowX : 0,
+              y: parallax ? shadowY : 0,
+              background:
+                'radial-gradient(62% 62% at 80% 84%, rgba(44,32,72,0.5) 0%, rgba(44,32,72,0) 55%)',
+            }}
+          />
+        </span>
+
+        {/* Parallax LIGHT — the lit bead on the rim's top-left plus a tight
+            specular hot-spot, gliding opposite the shadow. */}
+        <span aria-hidden="true" className="pointer-events-none absolute inset-[3px] overflow-hidden rounded-full">
+          <motion.span
+            className="absolute -inset-3"
+            style={{
+              x: parallax ? lightX : 0,
+              y: parallax ? lightY : 0,
+              background: [
+                'radial-gradient(58% 58% at 26% 20%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 52%)',
+                'radial-gradient(circle at 31% 22%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 20%)',
+              ].join(', '),
+            }}
+          />
+        </span>
+
+        {/* Iridescent sheen that blooms on hover, as if the seal were tilted. */}
         <span
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -507,25 +560,6 @@ function SealButton({ sending }) {
             mixBlendMode: 'screen',
           }}
         />
-
-        {/* Gold-leaf flecks embedded in the wax. */}
-        {GOLD_FLECKS.map((f, i) => (
-          <span
-            key={`g${i}`}
-            aria-hidden="true"
-            className="pointer-events-none absolute"
-            style={{
-              top: f.top,
-              left: f.left,
-              width: f.w,
-              height: f.h,
-              transform: `rotate(${f.rot}deg)`,
-              borderRadius: '1px',
-              background: 'linear-gradient(135deg, #F1D583 0%, #C79A3B 55%, #9A7526 100%)',
-              boxShadow: '0 0 1px rgba(120,90,30,0.5), inset 0 0.5px 0.5px rgba(255,245,210,0.8)',
-            }}
-          />
-        ))}
 
         {/* Trapped air bubbles. */}
         {BUBBLES.map((b, i) => (
