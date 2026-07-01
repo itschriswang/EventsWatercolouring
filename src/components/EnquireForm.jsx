@@ -91,7 +91,7 @@ export default function EnquireForm() {
       return
     }
     if (!data.email?.trim() || !isValidEmail(data.email)) {
-      setError('That email looks off — please check it, like name@example.com.')
+      setError('That email looks off, please check it, like name@example.com.')
       setInvalidField('email')
       focusField(form, 'email')
       return

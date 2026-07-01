@@ -5,26 +5,27 @@ import { WHY } from '../content.js'
 import { withUnderline } from './Underline.jsx'
 
 // Notes that get a hand-drawn underline under a key phrase, and which phrase.
-// Not every note needs one — that's what keeps it feeling picked out rather
+// Not every note needs one; that's what keeps it feeling picked out rather
 // than applied uniformly.
 const NOTE_UNDERLINES = {
   '02': { phrase: 'one of a kind', className: 'text-rust' },
   '03': { phrase: 'archival cotton paper', className: 'text-sage-deep' },
 }
 
-// The three keepsakes are laid out like watercolours set down to dry — each
+// The three keepsakes are laid out like watercolours set down to dry: each
 // card sits at a slight, fixed tilt and settles level on hover. The tilts are
 // authored (not random) so the scatter reads composed rather than messy.
 const CARD_TILT = ['-1.6deg', '1.4deg', '-0.8deg']
 
 /**
- * "What you keep" — the resolution of the evening timeline directly above it.
- * Where the timeline runs dark rust and ends at a "destination" marker, this
- * section is the arrival: the palette lifts back to warm paper through a
- * top-of-section wash so the seam between the two dissolves, and the three
- * keepsakes are presented as objects that outlast the night rather than as
- * reasons to book. Same content system as before (numbered notes, hand-drawn
- * underlines) — reframed from a pitch into a coda.
+ * "What you keep" resolves the evening timeline directly above it. Rather than
+ * blending the two with a gradient, the section IS a sheet of the archival
+ * cotton paper the work is painted on: it overlaps up onto the dark rust of the
+ * timeline with a hand-deckled torn top edge and a soft lift shadow, so the
+ * night reads as the surface a fresh sheet has just been laid over. The
+ * transition earns its keep from the content (the paper that lasts) instead of
+ * a decorative fade. Same content system as before (numbered notes, hand-drawn
+ * underlines), reframed from a pitch into a coda.
  */
 export default function WhatYouKeep() {
   const reduce = useReducedMotion()
@@ -32,35 +33,27 @@ export default function WhatYouKeep() {
   return (
     <section
       id="keep"
-      className="relative w-full overflow-hidden bg-paper px-[5vw] pt-[clamp(3.5rem,8vw,7rem)] pb-[clamp(4.5rem,11vw,10rem)]"
+      // Pulled up so the torn edge overhangs onto the rust timeline; no
+      // overflow clip, so the sheet's lift shadow can fall on the dark above it.
+      className="relative w-full px-[5vw] pb-[clamp(4.5rem,11vw,10rem)]"
+      style={{ marginTop: 'calc(-1 * clamp(3.5rem, 7vw, 5.5rem))' }}
     >
-      {/* Carry the rust of the timeline above down over the top edge, then let
-          it dissolve into paper — the two sections read as one continuous
-          movement (the night resolving into daylight) rather than a hard cut
-          from a dark section to a light one. Pure CSS, reduced-motion safe. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[46vh]"
-        style={{
-          background:
-            'linear-gradient(to bottom, ' +
-            '#9A4A2B 0%, ' +
-            'rgba(154,74,43,0.42) 12%, ' +
-            'rgba(228,136,156,0.10) 44%, ' +
-            'transparent 100%)',
-        }}
-      />
+      <TornPaperEdge />
 
-      <div className="relative">
-        {/* Bridge line — a whispered handoff from the last beat of the evening,
-            set over the rust wash so it belongs to the section above as much as
-            this one. */}
+      {/* The paper body of the sheet: starts just under the frayed edge and
+          runs to the bottom. Sits below the content, above the torn strip. */}
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 top-[60px] bg-paper" />
+
+      {/* Content rides on the sheet, clear of the torn edge. */}
+      <div className="relative z-10 pt-[clamp(6rem,11vw,8rem)]">
+        {/* Bridge line: a whispered handoff from the last beat of the evening,
+            now set in ink on the fresh sheet. */}
         <motion.p
           initial={{ opacity: 0, y: reduce ? 0 : 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
           transition={SPRING}
-          className="font-mono text-[clamp(1rem,1.6vw,1.4rem)] italic leading-tight text-paper/90"
+          className="font-mono text-[clamp(1rem,1.6vw,1.4rem)] italic leading-tight text-rust/80"
         >
           {WHY.bridge}
         </motion.p>
@@ -102,7 +95,7 @@ export default function WhatYouKeep() {
                 ['lg:col-span-4', 'lg:col-span-4 lg:col-start-5 lg:mt-14', 'lg:col-span-4 lg:col-start-9 lg:mt-6'][i],
               ].join(' ')}
             >
-              {/* Deckle edge — a faint inner ring echoing the torn edge of
+              {/* Deckle edge: a faint inner ring echoing the torn edge of
                   cotton paper, warming on hover. */}
               <span
                 aria-hidden="true"
@@ -122,6 +115,41 @@ export default function WhatYouKeep() {
         </div>
       </div>
     </section>
+  )
+}
+
+/**
+ * The torn top edge of the cotton sheet. Hand-authored contour with prominent
+ * undulation suggesting torn fibres. The path uses smooth Bezier curves with
+ * meaningful height variation to convey torn paper texture without algorithmic
+ * quantization. Soft shadow lifts the sheet off the night behind it.
+ */
+function TornPaperEdge() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-x-0 top-0 h-[96px] w-full"
+      viewBox="0 0 1440 96"
+      preserveAspectRatio="none"
+    >
+      <defs>
+        <filter id="keep-tear-shadow" x="0%" y="-100%" width="100%" height="200%">
+          <feDropShadow dx="0" dy="-2.5" stdDeviation="5" floodColor="#2A1206" floodOpacity="0.42" />
+        </filter>
+      </defs>
+      {/* Torn paper body with prominent wavy edge suggesting fibrous tear */}
+      <path
+        d="M -60,96 L -60,58 C 30,35 90,72 150,42 C 210,18 270,75 330,48 C 390,25 450,70 510,40 C 570,15 630,68 690,45 C 750,25 810,72 870,40 C 930,12 990,70 1050,48 C 1110,28 1170,68 1230,42 C 1290,20 1350,72 1500,58 L 1500,96 Z"
+        fill="#F4EFE6"
+        filter="url(#keep-tear-shadow)"
+      />
+      {/* Lighter lip along the tear catching light, following the torn contour */}
+      <path
+        d="M -60,60 L -60,58 C 30,35 90,72 150,42 C 210,18 270,75 330,48 C 390,25 450,70 510,40 C 570,15 630,68 690,45 C 750,25 810,72 870,40 C 930,12 990,70 1050,48 C 1110,28 1170,68 1230,42 C 1290,20 1350,72 1500,58 L 1500,60 Z"
+        fill="#FBF8F1"
+        fillOpacity="0.7"
+      />
+    </svg>
   )
 }
 

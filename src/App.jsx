@@ -80,9 +80,9 @@ export default function App() {
           </picture>
         </div>
         {/* The night and its keepsake coda are one movement: the rust timeline
-            runs to its "destination" marker, then WhatYouKeep resolves that
-            back into warm paper (its own top wash dissolves the seam). Grouped
-            so they read as a single arc — what happens, then what's left. */}
+            runs to its "destination" marker, then WhatYouKeep overlaps up onto
+            it as a torn sheet of cotton paper (see that component). Grouped so
+            they read as a single arc: what happens, then what's left. */}
         <div className="relative">
           <EveningTimeline />
           <WhatYouKeep />

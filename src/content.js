@@ -20,13 +20,13 @@ export const MARQUEE = [
 
 // Reframed from a "why choose this" pitch into the closing movement of the
 // night: once the evening is over, this is what's left in people's hands. It
-// reads as the resolution of the timeline above it, not a sales argument —
-// hence the declarative label and the bridge line that carries over from the
-// last beat of the evening.
+// reads as the resolution of the timeline above it rather than a sales
+// argument, hence the declarative label and the bridge line that carries over
+// from the last beat of the evening.
 export const WHY = {
   label: 'What you keep',
   bridge: 'When the music stops',
-  lede: 'A wedding, a gala, a quiet milestone — whatever the evening was, it does not simply end. It goes home in your guests’ hands, painted while it was still happening.',
+  lede: 'A wedding, a gala, a quiet milestone. Whatever the evening was, it does not simply end. It goes home in your guests’ hands, painted while it was still happening.',
   emphasis: 'painted while it was still happening.',
   notes: [
     {
@@ -113,7 +113,7 @@ export const WORK = {
       testimonial: true,
       feature: true,
       quote:
-        'Christopher painted us from our photographs after the wedding, and it has become the piece everyone stops at in our home. Our only regret is not having him there on the night — honestly, it is the reason this whole thing exists.',
+        'Christopher painted us from our photographs after the wedding, and it has become the piece everyone stops at in our home. Our only regret is not having him there on the night. Honestly, it is the reason this whole thing exists.',
       author: 'Clare & William',
       detail: 'Post-wedding commission',
     },
@@ -228,7 +228,7 @@ export const PATHS = {
     {
       no: '01',
       title: 'Live on the day',
-      sub: 'I paint your guests as they mingle — quick portraits in watercolour, handed over as the night unfolds.',
+      sub: 'I paint your guests as they mingle, quick portraits in watercolour, handed over as the night unfolds.',
       steps: [
         { b: 'Book your date', t: 'A 50% retainer holds the date. Balance due two weeks before.' },
         { b: 'I arrive early', t: 'Set-up takes about 15 minutes before the event starts.' },
@@ -239,7 +239,7 @@ export const PATHS = {
     {
       no: '02',
       title: 'From your photographs',
-      sub: 'A studio commission painted from photos before or after the event — ready in about four weeks.',
+      sub: 'A studio commission painted from photos before or after the event, ready in about four weeks.',
       steps: [
         { b: 'Share your photos', t: 'Send clear reference images after the booking is confirmed.' },
         { b: 'I paint in the studio', t: 'Work begins once the references arrive.' },
