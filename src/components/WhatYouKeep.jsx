@@ -135,8 +135,8 @@ function TornPaperEdge() {
     >
       <defs>
         <filter id="keep-tear" x="-6%" y="-140%" width="112%" height="360%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.005 0.08" numOctaves="5" seed="11" result="noise" />
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="20" xChannelSelector="R" yChannelSelector="G" result="torn" />
+          <feTurbulence type="fractalNoise" baseFrequency="0.013" numOctaves="3" seed="7" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="13" xChannelSelector="R" yChannelSelector="G" result="torn" />
           <feDropShadow in="torn" dx="0" dy="-2.5" stdDeviation="5" floodColor="#2A1206" floodOpacity="0.42" />
         </filter>
       </defs>
