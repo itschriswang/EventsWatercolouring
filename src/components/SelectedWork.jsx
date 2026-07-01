@@ -3,9 +3,18 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
 import useFocusTrap from '../hooks/useFocusTrap.js'
+import useMediaQuery from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset } from '../lib/site.js'
 import { WORK } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
+
+// Every gallery entry gets a stable index up front. Several paintings reuse
+// the same source image (e.g. `art-bouquet` appears three times), so `_idx`
+// — not `item.img` — is what backs each tile's layoutId. Framer Motion
+// requires layoutId to be unique among simultaneously mounted elements; a
+// shared id across lookalike tiles breaks the projection system badly enough
+// that the affected images stop painting entirely, not just the morph.
+const GALLERY = WORK.gallery.map((g, i) => ({ ...g, _idx: i }))
 
 // Graceful fallback when an image fails to load: hide the broken <img> so the
 // paper-toned card remains instead of a broken-image glyph.
@@ -25,7 +34,13 @@ const hideOnError = (e) => {
 export default function SelectedWork() {
   // The openable paintings (testimonials are not enlargeable). The lightbox
   // walks this list, so navigation skips quote cards automatically.
-  const paintings = WORK.gallery.filter((g) => !g.testimonial)
+  const paintings = GALLERY.filter((g) => !g.testimonial)
+
+  // Only one of the two grid layouts is ever mounted at a time. Both grids
+  // used to render simultaneously (one hidden via CSS per breakpoint), which
+  // meant every tile had a second, invisible sibling sharing its layoutId —
+  // the same class of bug the reused-image case above causes.
+  const isDesktop = useMediaQuery('(min-width: 1024px)')
 
   // Index of the painting currently enlarged in the lightbox (null when closed).
   const [activeIndex, setActiveIndex] = useState(null)
@@ -76,38 +91,37 @@ export default function SelectedWork() {
           </div>
         </div>
 
-        {/* Wide screens — a six-column wall of 3:4 portraits. `feature` pieces
-            fill a larger 2-wide focus block; dense flow tucks the rest in around
-            them. Row height is capped so tiles stay a sensible size on very wide
-            screens. */}
-        <div className="mt-[clamp(2rem,4vw,3.5rem)] hidden lg:grid lg:grid-cols-6 lg:auto-rows-[16vw] 2xl:auto-rows-[14rem] lg:gap-x-[1.4vw] lg:gap-y-5 lg:[grid-auto-flow:dense]">
-          {WORK.gallery.map((item, i) => (
-            <Tile
-              key={i}
-              item={item}
-              index={i}
-              onOpen={item.testimonial ? undefined : () => setActiveIndex(paintings.indexOf(item))}
-              className={
-                item.feature              ? 'col-span-2 row-span-2'
-                : item.wide || item.landscape ? 'col-span-2 row-span-1'
-                :                           'col-span-1 row-span-1'
-              }
-            />
-          ))}
-        </div>
-
-        {/* Narrow / medium — a masonry wall (2 columns, then 3). */}
-        <div className="mt-[clamp(2rem,8vw,3rem)] columns-2 gap-3 sm:columns-3 lg:hidden">
-          {WORK.gallery.map((item, i) => (
-            <Tile
-              key={i}
-              item={item}
-              index={i}
-              onOpen={item.testimonial ? undefined : () => setActiveIndex(paintings.indexOf(item))}
-              masonry
-            />
-          ))}
-        </div>
+        {/* Wide screens get a six-column wall of 3:4 portraits (`feature` pieces
+            fill a larger 2-wide focus block, dense flow tucks the rest in
+            around them); narrower screens get a 2/3-column masonry. Only one
+            of the two ever mounts — see the `isDesktop` note above. */}
+        {isDesktop ? (
+          <div className="mt-[clamp(2rem,4vw,3.5rem)] grid grid-cols-6 auto-rows-[16vw] 2xl:auto-rows-[14rem] gap-x-[1.4vw] gap-y-5 [grid-auto-flow:dense]">
+            {GALLERY.map((item) => (
+              <Tile
+                key={item._idx}
+                item={item}
+                onOpen={item.testimonial ? undefined : () => setActiveIndex(paintings.indexOf(item))}
+                className={
+                  item.feature              ? 'col-span-2 row-span-2'
+                  : item.wide || item.landscape ? 'col-span-2 row-span-1'
+                  :                           'col-span-1 row-span-1'
+                }
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="mt-[clamp(2rem,8vw,3rem)] columns-2 gap-3 sm:columns-3">
+            {GALLERY.map((item) => (
+              <Tile
+                key={item._idx}
+                item={item}
+                onOpen={item.testimonial ? undefined : () => setActiveIndex(paintings.indexOf(item))}
+                masonry
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       <Lightbox
@@ -127,7 +141,7 @@ export default function SelectedWork() {
  * so the contents fill it; in masonry the card keeps an explicit aspect — 3:4
  * upright, or 4:3 for a `landscape` piece.
  */
-function Tile({ item, index, className = '', masonry = false, onOpen }) {
+function Tile({ item, className = '', masonry = false, onOpen }) {
   const reduce = useReducedMotion()
 
   const cardShape =
@@ -139,7 +153,7 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
       initial={{ opacity: 0, y: reduce ? 0 : 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
-      transition={{ ...SPRING, delay: reduce ? 0 : (index % 6) * 0.05 }}
+      transition={{ ...SPRING, delay: reduce ? 0 : (item._idx % 6) * 0.05 }}
       className={
         'group flex flex-col ' +
         (masonry ? 'mb-6 break-inside-avoid ' : '') +
@@ -171,7 +185,7 @@ function Tile({ item, index, className = '', masonry = false, onOpen }) {
             {/* Shared-layout source: morphs into the lightbox image on open.
                 Disabled under reduced-motion so framer leaves layout untouched. */}
             <motion.img
-              layoutId={reduce ? undefined : `work-${item.img}`}
+              layoutId={reduce ? undefined : `work-${item._idx}`}
               src={asset(`assets/${item.img}.jpg`)}
               alt={item.alt || item.ttl}
               loading="lazy"
@@ -424,7 +438,7 @@ function Lightbox({ items, index, onClose, onNavigate }) {
                   {/* Shared-layout target: morphs from the gallery tile of the
                       same painting, then settles through the pigment-bloom filter. */}
                   <motion.img
-                    layoutId={reduce ? undefined : `work-${item.img}`}
+                    layoutId={reduce ? undefined : `work-${item._idx}`}
                     transition={SPRING_SOFT}
                     src={asset(`assets/${item.img}.jpg`)}
                     alt={item.alt || item.ttl}

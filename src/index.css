@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@property --gf-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
 .instrument-serif-regular {
   font-family: "Instrument Serif", serif;
   font-weight: 400;
@@ -76,7 +82,10 @@
     font-size: 0.66rem;
     text-transform: uppercase;
     letter-spacing: 0.18em;
-    color: theme('colors.ink-soft');
+    /* Darker than ink-soft (5.2:1) on purpose: this text is tiny and often
+       sits over the watercolour bloom washes, so it needs headroom above
+       the 4.5:1 AA minimum rather than just clearing it. ~7.45:1 on paper. */
+    color: #544B41;
   }
 }
 
@@ -108,6 +117,26 @@
   .num-wide {
     font-family: theme('fontFamily.mono');
     letter-spacing: 0.06em;
+  }
+
+  /* A stroke-only, no-fill rounded frame: the element's own `padding` sets
+     the ring thickness, and two mask layers (content-box and border-box)
+     XORed together leave just that ring paintable, so the gradient
+     background only ever renders as a hairline, never a fill — works at any
+     aspect ratio since it's ordinary box painting, not a fixed SVG viewBox.
+     The angle keeps drifting via @property so the gradient itself slowly
+     turns rather than sitting static. */
+  .gradient-frame {
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: gf-rotate 14s linear infinite;
+  }
+
+  @keyframes gf-rotate {
+    to {
+      --gf-angle: 360deg;
+    }
   }
 }
 

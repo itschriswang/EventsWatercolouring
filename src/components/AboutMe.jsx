@@ -58,16 +58,16 @@ export default function AboutMe() {
             className="col-span-12 sm:col-span-6 sm:col-start-7 lg:col-span-6 lg:col-start-7 lg:mt-16"
           >
             <div className="relative">
-              {/* offset accent frame with gradient stroke */}
+              {/* offset accent frame — a gradient stroke, no fill, so the
+                  bloom wash behind the portrait stays visible through it.
+                  The angle keeps drifting via @property so the gradient
+                  itself slowly turns rather than sitting static. */}
               <div
                 aria-hidden="true"
-                className="absolute -left-4 -top-4 h-full w-full rounded-[1.2rem]"
+                className="gradient-frame absolute -left-4 -top-4 h-full w-full rounded-[1.2rem]"
                 style={{
-                  background: 'linear-gradient(135deg, #6E8CA8 0%, #C2613C 100%)',
+                  background: 'linear-gradient(var(--gf-angle), #6E8CA8 0%, #C2613C 100%)',
                   padding: '1px',
-                  WebkitMaskImage: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                  WebkitMaskComposite: 'xor',
-                  maskComposite: 'exclude',
                 }}
               />
               <motion.div
