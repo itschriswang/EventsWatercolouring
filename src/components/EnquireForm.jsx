@@ -419,20 +419,39 @@ function DecklePaper({ id }) {
   )
 }
 
+// Scattered gold-leaf flecks embedded in the wax — irregular shards, like the
+// loose gold in a real pressed seal. Positions/rotations are hand-placed so
+// they read as flecks, not a pattern.
+const GOLD_FLECKS = [
+  { top: '30%', left: '33%', w: 7, h: 5, rot: 22 },
+  { top: '40%', left: '58%', w: 5, h: 6, rot: -32 },
+  { top: '64%', left: '46%', w: 8, h: 5, rot: 12 },
+  { top: '58%', left: '30%', w: 4, h: 4, rot: 48 },
+]
+
+// Tiny trapped air bubbles near the poured edge — small bright specks with a
+// soft ring, as seen where wax/resin sets.
+const BUBBLES = [
+  { top: '20%', left: '66%', d: 3 },
+  { top: '74%', left: '62%', d: 2.5 },
+  { top: '68%', left: '24%', d: 2 },
+]
+
 /**
- * Submit control shaped as a wax seal, cast in translucent iridescent glass.
+ * Submit control shaped as a real translucent wax seal.
  *
- * The wax-seal read is preserved through four optical cues, only the material
- * changes: a domed body (light gathers top-left via the frosted highlight,
- * falls off bottom-right via the inner shadow); a bright Fresnel rim where the
- * glass edge catches light; oil-film iridescence (cyan/violet/peach/mint
- * blotches) that shifts on hover as if the glass were tilted; and the orchid
- * motif embossed into the surface — its dual drop-shadow (lit up-left,
- * shadowed down-right) makes it read as relief pressed into clear glass rather
- * than a flat glyph. `backdrop-blur` frosts the paper showing through. The disc
- * is decorative; the accessible name comes from the button + its visible label.
+ * The wax read comes from silhouette and structure, not just material: a shared
+ * feTurbulence + feDisplacementMap (the same trick as the card's deckle edge)
+ * warps the disc so its rim is organic and hand-pressed rather than a perfect
+ * circle, and the body is split into a thick clear raised rim around a frosted,
+ * recessed centre medallion that holds the pressed orchid. Gold-leaf flecks and
+ * a few trapped bubbles are embedded in it, and a soft iridescence blooms on
+ * hover as if the glass were tilted. Decorative; the accessible name comes from
+ * the button + its visible label.
  */
 function SealButton({ sending }) {
+  const uid = useId().replace(/:/g, '')
+  const waxId = `wax-${uid}`
   return (
     <button
       type="submit"
@@ -440,59 +459,102 @@ function SealButton({ sending }) {
       aria-label="Send enquiry"
       className="group inline-flex w-fit items-center gap-4 outline-none disabled:cursor-not-allowed disabled:opacity-60"
     >
-      <span
-        className="relative grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full backdrop-blur-md transition-transform duration-200 ease-organic group-hover:translate-y-0.5 group-active:translate-y-1 group-focus-visible:ring-2 group-focus-visible:ring-terracotta group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-transparent"
-        style={{
-          // Frosted, translucent body with oil-film colour blotches — brightest
-          // top-left where the light source sits, so the disc reads as a dome.
-          background: [
-            'radial-gradient(circle at 30% 22%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 42%)',
-            'radial-gradient(circle at 74% 30%, rgba(120,220,235,0.5) 0%, rgba(120,220,235,0) 46%)',
-            'radial-gradient(circle at 28% 80%, rgba(196,150,235,0.48) 0%, rgba(196,150,235,0) 52%)',
-            'radial-gradient(circle at 80% 82%, rgba(245,190,150,0.46) 0%, rgba(245,190,150,0) 50%)',
-            'radial-gradient(circle at 52% 58%, rgba(150,235,200,0.36) 0%, rgba(150,235,200,0) 56%)',
-            'linear-gradient(135deg, rgba(255,255,255,0.26), rgba(210,224,255,0.12))',
-          ].join(', '),
-          boxShadow: [
-            'inset 0 1.5px 1.5px rgba(255,255,255,0.9)', // top rim catch
-            'inset 1.5px 0 2px rgba(255,255,255,0.45)', // left rim catch
-            'inset -3px -4px 8px rgba(70,50,110,0.28)', // dome falloff, lower-right
-            'inset 0 0 0 1px rgba(255,255,255,0.35)', // glass edge
-            '0 8px 18px rgba(80,60,130,0.3)', // cool cast shadow
-            '0 2px 4px rgba(40,30,70,0.25)', // contact shadow
-          ].join(', '),
-        }}
-      >
-        {/* Bright crescent glare across the top — glass catching the light. */}
+      {/* Displacement filter that gives the seal its poured, irregular edge. */}
+      <svg aria-hidden="true" className="absolute h-0 w-0">
+        <defs>
+          <filter id={waxId} x="-30%" y="-30%" width="160%" height="160%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="11" result="n" />
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+      </svg>
+
+      <span className="relative grid h-14 w-14 shrink-0 place-items-center transition-transform duration-200 ease-organic group-hover:translate-y-0.5 group-active:translate-y-1 group-focus-visible:ring-2 group-focus-visible:ring-terracotta group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-transparent">
+        {/* Wax body: clear raised rim → frosted recessed centre. The whole
+            layer (and its cast shadow) is displaced into an organic blob. */}
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 rounded-full"
+          className="absolute inset-0 rounded-full"
           style={{
-            background:
-              'radial-gradient(120% 78% at 28% 6%, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0) 40%)',
+            filter: `url(#${waxId}) drop-shadow(0 6px 12px rgba(70,55,110,0.32)) drop-shadow(0 2px 3px rgba(40,30,70,0.26))`,
+            background: [
+              // top-left glass highlight
+              'radial-gradient(circle at 30% 22%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 40%)',
+              // faint oil-film tints in the resin
+              'radial-gradient(circle at 74% 32%, rgba(150,215,230,0.24) 0%, rgba(150,215,230,0) 46%)',
+              'radial-gradient(circle at 30% 78%, rgba(198,168,232,0.22) 0%, rgba(198,168,232,0) 50%)',
+              // two-zone body: frosted centre medallion → clear raised rim
+              'radial-gradient(circle at 50% 50%, rgba(247,249,255,0.66) 0%, rgba(246,248,255,0.6) 44%, rgba(226,232,247,0.4) 57%, rgba(255,255,255,0.14) 70%, rgba(255,255,255,0.08) 100%)',
+            ].join(', '),
+            boxShadow: [
+              'inset 0 0 0 1px rgba(255,255,255,0.5)', // bright glass edge
+              'inset 0 2px 2px rgba(255,255,255,0.85)', // top rim catch
+              'inset 0 -3px 6px rgba(70,52,110,0.22)', // dome falloff, lower
+              'inset 0 0 5px 3px rgba(255,255,255,0.3)', // raised-rim inner glow
+              'inset 0 0 0 5px rgba(232,237,250,0.16)', // step down into the centre
+            ].join(', '),
           }}
         />
+
         {/* Iridescent sheen that blooms on hover, as if the glass were tilted. */}
         <span
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
           style={{
+            filter: `url(#${waxId})`,
             background:
-              'radial-gradient(circle at 72% 18%, rgba(255,120,200,0.5) 0%, rgba(255,120,200,0) 46%), radial-gradient(circle at 22% 74%, rgba(120,255,220,0.45) 0%, rgba(120,255,220,0) 50%)',
+              'radial-gradient(circle at 72% 18%, rgba(255,120,200,0.42) 0%, rgba(255,120,200,0) 46%), radial-gradient(circle at 22% 74%, rgba(120,255,220,0.4) 0%, rgba(120,255,220,0) 50%)',
             mixBlendMode: 'screen',
           }}
         />
-        {/* Orchid embossed into the glass: an icy translucent face whose dual
+
+        {/* Gold-leaf flecks embedded in the wax. */}
+        {GOLD_FLECKS.map((f, i) => (
+          <span
+            key={`g${i}`}
+            aria-hidden="true"
+            className="pointer-events-none absolute"
+            style={{
+              top: f.top,
+              left: f.left,
+              width: f.w,
+              height: f.h,
+              transform: `rotate(${f.rot}deg)`,
+              borderRadius: '1px',
+              background: 'linear-gradient(135deg, #F1D583 0%, #C79A3B 55%, #9A7526 100%)',
+              boxShadow: '0 0 1px rgba(120,90,30,0.5), inset 0 0.5px 0.5px rgba(255,245,210,0.8)',
+            }}
+          />
+        ))}
+
+        {/* Trapped air bubbles. */}
+        {BUBBLES.map((b, i) => (
+          <span
+            key={`b${i}`}
+            aria-hidden="true"
+            className="pointer-events-none absolute rounded-full"
+            style={{
+              top: b.top,
+              left: b.left,
+              width: b.d,
+              height: b.d,
+              background: 'radial-gradient(circle at 35% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0) 70%)',
+              boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.6)',
+            }}
+          />
+        ))}
+
+        {/* Orchid pressed into the frosted centre: an icy face whose dual
             drop-shadow gives it a lit upper edge and a shadowed lower recess. */}
         <span
           aria-hidden="true"
-          className="relative h-7 w-7 opacity-80"
+          className="relative h-6 w-6 opacity-80"
           style={{
             filter:
               'drop-shadow(0.6px 0.9px 0.5px rgba(55,38,90,0.5)) drop-shadow(-0.6px -0.7px 0.4px rgba(255,255,255,0.85))',
           }}
         >
-          <Drop className="h-7 w-7" fill="#EEF5FF" />
+          <Drop className="h-6 w-6" fill="#EEF5FF" />
         </span>
       </span>
       <span className="font-sentient text-2xl tracking-[-0.02em] text-ink transition-colors group-hover:text-terracotta">
