@@ -18,9 +18,16 @@ export const MARQUEE = [
   'A keepsake to take home',
 ]
 
+// Reframed from a "why choose this" pitch into the closing movement of the
+// night: once the evening is over, this is what's left in people's hands. It
+// reads as the resolution of the timeline above it, not a sales argument —
+// hence the declarative label and the bridge line that carries over from the
+// last beat of the evening.
 export const WHY = {
-  label: 'Why live watercolour',
-  lede: 'Entertainment for the room and a hand-painted keepsake for your guests, all in one evening. Whether it is your wedding, a corporate gala, or a private milestone, the idea stays the same.',
+  label: 'What you keep',
+  bridge: 'When the music stops',
+  lede: 'A wedding, a gala, a quiet milestone — whatever the evening was, it does not simply end. It goes home in your guests’ hands, painted while it was still happening.',
+  emphasis: 'painted while it was still happening.',
   notes: [
     {
       no: '01',
@@ -34,8 +41,8 @@ export const WHY = {
     },
     {
       no: '03',
-      title: 'Something to keep',
-      body: 'Guests go home with a small painting of their own, and you keep a portrait or memory painted while the day is still going. It is on archival cotton paper, so it lasts.',
+      title: 'Yours to keep',
+      body: 'Guests go home with a small painting of their own, and you keep a portrait of the two of you, painted while the day was still going. It is on archival cotton paper, so it lasts.',
     },
   ],
 }
@@ -341,10 +348,10 @@ export const FOOTER = {
   emphasis: 'to keep.',
   name: 'Chris Wang',
   nav: [
-    { href: '#why', label: 'Why' },
-    { href: '#night', label: 'On the night' },
-    { href: '#work', label: 'The work' },
     { href: '#painter', label: 'The painter' },
+    { href: '#night', label: 'On the night' },
+    { href: '#keep', label: 'What you keep' },
+    { href: '#work', label: 'The work' },
     { href: '#offerings', label: 'Packages' },
     { href: '#faq', label: 'Questions' },
   ],
@@ -352,7 +359,7 @@ export const FOOTER = {
 }
 
 export const NAV = [
-  { href: '#why', label: 'Why' },
+  { href: '#keep', label: 'What you keep' },
   { href: '#offerings', label: 'Packages' },
   { href: '#faq', label: 'Questions' },
 ]

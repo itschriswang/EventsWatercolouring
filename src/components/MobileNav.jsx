@@ -75,7 +75,7 @@ function ArrowRightIcon() {
 
 const DOCK_ITEMS = [
   { id: 'home',      href: '#top',        label: 'Home',     Icon: HomeIcon },
-  { id: 'why',       href: '#why',        label: 'Why',      Icon: BrushIcon },
+  { id: 'keep',      href: '#keep',       label: 'Keepsakes', Icon: BrushIcon },
   { id: 'offerings', href: '#offerings',  label: 'Packages', Icon: BoxIcon },
   { id: 'enquiry',   href: ENQUIRE_HREF,  label: 'Enquire',  Icon: MailIcon, highlight: true },
 ]
