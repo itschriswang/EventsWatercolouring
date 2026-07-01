@@ -83,7 +83,7 @@ export default function EveningTimeline() {
         {/* Sticky title rail */}
         <div className="col-span-12 lg:col-span-5">
           <div className="lg:sticky lg:top-24 lg:h-fit">
-            <Label gradient={['#C9A23A', '#F4EFE6']} className="!text-paper/70">
+            <Label gradient={['#C9A23A', '#F4EFE6']} className="!text-paper/90">
               {EVENING.label}
             </Label>
             <h2 className="mt-1 font-sentient text-[clamp(2.5rem,4vw,4.5rem)] leading-[0.9] tracking-[-0.02em]">
@@ -91,8 +91,8 @@ export default function EveningTimeline() {
               <br />
               <em>{EVENING.title[1]}</em>
             </h2>
-            <p className="mt-3 max-w-md leading-relaxed text-paper/80">
-              {withUnderline(EVENING.lede, 'the two of you', { className: 'text-ochre' })}
+            <p className="mt-3 max-w-md leading-relaxed text-paper/90">
+              {withUnderline(EVENING.lede, 'the two of you', { className: 'text-ochre-light' })}
             </p>
           </div>
         </div>
@@ -154,7 +154,7 @@ export default function EveningTimeline() {
                     <h3 className="font-mono text-[clamp(1.25rem,2.4vw,1.9rem)] leading-tight tracking-[-0.01em]">
                       {beat.title}
                     </h3>
-                    <p className="mt-2 max-w-lg text-[0.95rem] leading-relaxed text-paper/80">
+                    <p className="mt-2 max-w-lg text-[0.95rem] leading-relaxed text-paper">
                       {beat.body}
                     </p>
                   </motion.div>

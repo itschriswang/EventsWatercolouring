@@ -56,6 +56,9 @@ export default function EnquireForm() {
   const [sending, setSending] = useState(false)
   const [firstName, setFirstName] = useState('')
   const [error, setError] = useState('')
+  // Which field the current error belongs to, so it can be wired to the input
+  // via aria-invalid / aria-describedby for screen-reader users.
+  const [invalidField, setInvalidField] = useState('')
   // Neutral, non-error guidance (e.g. when we hand off to the email client).
   const [notice, setNotice] = useState('')
 
@@ -72,15 +75,18 @@ export default function EnquireForm() {
     setNotice('')
     if (!data.name?.trim()) {
       setError('Please add your name so I know who I am writing back to.')
+      setInvalidField('name')
       focusField(form, 'name')
       return
     }
     if (!data.email?.trim() || !isValidEmail(data.email)) {
       setError('That email looks off — please check it, like name@example.com.')
+      setInvalidField('email')
       focusField(form, 'email')
       return
     }
     setError('')
+    setInvalidField('')
 
     // No real Formspree id set yet: hand the enquiry to the visitor's email
     // client. We can't confirm it actually sent, so we DON'T show the success
@@ -207,7 +213,7 @@ export default function EnquireForm() {
                   <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" />
                 </label>
 
-                <Field name="name" label="Your name" required autoComplete="name" />
+                <Field name="name" label="Your name" required autoComplete="name" invalid={invalidField === 'name'} />
                 <Field
                   name="phone"
                   label="Phone number"
@@ -215,7 +221,7 @@ export default function EnquireForm() {
                   autoComplete="tel"
                   placeholder="e.g. 0400 000 000"
                 />
-                <Field name="email" label="Email" type="email" required autoComplete="email" />
+                <Field name="email" label="Email" type="email" required autoComplete="email" invalid={invalidField === 'email'} />
                 <div className="flex flex-col sm:col-span-2">
                   <label
                     htmlFor="f-contactMethod"
@@ -316,7 +322,7 @@ export default function EnquireForm() {
                     <span className="transition-transform group-hover:translate-x-1">→</span>
                   </button>
                   {error && (
-                    <p role="alert" className="font-mono text-xs text-rust">
+                    <p id="enquire-error" role="alert" className="font-mono text-xs text-rust">
                       {error}
                     </p>
                   )}
@@ -335,7 +341,7 @@ export default function EnquireForm() {
   )
 }
 
-function Field({ name, label, type = 'text', required, ...rest }) {
+function Field({ name, label, type = 'text', required, invalid = false, ...rest }) {
   return (
     <div className="flex flex-col">
       <label
@@ -343,13 +349,15 @@ function Field({ name, label, type = 'text', required, ...rest }) {
         className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink"
       >
         {label}
-        {required && <span className="text-terracotta"> *</span>}
+        {required && <span className="text-rust"> *</span>}
       </label>
       <input
         id={`f-${name}`}
         name={name}
         type={type}
         required={required}
+        aria-invalid={invalid || undefined}
+        aria-describedby={invalid ? 'enquire-error' : undefined}
         className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft/60 focus:border-terracotta"
         {...rest}
       />

@@ -8,8 +8,8 @@ import { withUnderline } from './Underline.jsx'
 // Not every note needs one — that's what keeps it feeling picked out rather
 // than applied uniformly.
 const NOTE_UNDERLINES = {
-  '02': { phrase: 'one of a kind', className: 'text-terracotta' },
-  '03': { phrase: 'archival cotton paper', className: 'text-sage' },
+  '02': { phrase: 'one of a kind', className: 'text-rust' },
+  '03': { phrase: 'archival cotton paper', className: 'text-sage-deep' },
 }
 
 /** "Why live watercolour" — a big italic lede over three offset notes. */
@@ -31,7 +31,7 @@ export default function WhyWatercolour() {
         className="mt-8 max-w-[18ch] font-body text-[clamp(0.8rem,1vw,0.98rem)] font-normal leading-[1.4] text-ink sm:max-w-[28ch]"
       >
         {beforeEmph(WHY.lede, 'all in one evening.')}
-        <em className="text-terracotta">all in one evening.</em>
+        <em className="text-rust">all in one evening.</em>
       </motion.p>
 
       <div className="mt-[clamp(1.5rem,3.5vw,3rem)] grid grid-cols-12 gap-x-6 gap-y-12">
@@ -50,7 +50,7 @@ export default function WhyWatercolour() {
               ['lg:col-span-5', 'lg:col-span-5 lg:col-start-8 lg:mt-12', 'lg:col-span-7 lg:mt-6'][i],
             ].join(' ')}
           >
-            <span className="num-wide text-sm text-lime">{n.no}</span>
+            <span className="num-wide text-sm text-sage-deep">{n.no}</span>
             <h3 className="mt-4 font-sentient text-[clamp(1.4rem,2vw,2rem)] leading-tight tracking-[-0.01em] text-ink">
               {n.title}
             </h3>
