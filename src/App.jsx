@@ -6,6 +6,7 @@ import SiteHeader from './components/SiteHeader.jsx'
 import MobileNav from './components/MobileNav.jsx'
 import ScrollProgress from './components/ScrollProgress.jsx'
 import Hero from './components/Hero.jsx'
+import NegativeSeam from './components/NegativeSeam.jsx'
 import WhyWatercolour from './components/WhyWatercolour.jsx'
 import EveningTimeline from './components/EveningTimeline.jsx'
 import SelectedWork from './components/SelectedWork.jsx'
@@ -80,6 +81,7 @@ export default function App() {
             />
           </picture>
         </div>
+        <NegativeSeam />
         <EveningTimeline />
         <SelectedWork />
         <div className="relative">
