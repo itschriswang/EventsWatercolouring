@@ -19,13 +19,13 @@ export default function WhyWatercolour() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-60px' }}
         transition={SPRING}
-        className="mt-8 max-w-[18ch] font-body text-[clamp(0.95rem,1.8vw,1.5rem)] font-normal leading-[1.3] text-ink sm:max-w-[28ch]"
+        className="mt-8 max-w-[18ch] font-body text-[clamp(0.8rem,1vw,0.98rem)] font-normal leading-[1.4] text-ink sm:max-w-[28ch]"
       >
         {beforeEmph(WHY.lede, 'all in one evening.')}
         <em className="text-terracotta">all in one evening.</em>
       </motion.p>
 
-      <div className="mt-[clamp(3rem,7vw,6rem)] grid grid-cols-12 gap-x-6 gap-y-12">
+      <div className="mt-[clamp(1.5rem,3.5vw,3rem)] grid grid-cols-12 gap-x-6 gap-y-12">
         {WHY.notes.map((n, i) => (
           <motion.article
             key={n.no}
