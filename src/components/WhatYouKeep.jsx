@@ -5,26 +5,27 @@ import { WHY } from '../content.js'
 import { withUnderline } from './Underline.jsx'
 
 // Notes that get a hand-drawn underline under a key phrase, and which phrase.
-// Not every note needs one — that's what keeps it feeling picked out rather
+// Not every note needs one; that's what keeps it feeling picked out rather
 // than applied uniformly.
 const NOTE_UNDERLINES = {
   '02': { phrase: 'one of a kind', className: 'text-rust' },
   '03': { phrase: 'archival cotton paper', className: 'text-sage-deep' },
 }
 
-// The three keepsakes are laid out like watercolours set down to dry — each
+// The three keepsakes are laid out like watercolours set down to dry: each
 // card sits at a slight, fixed tilt and settles level on hover. The tilts are
 // authored (not random) so the scatter reads composed rather than messy.
 const CARD_TILT = ['-1.6deg', '1.4deg', '-0.8deg']
 
 /**
- * "What you keep" — the resolution of the evening timeline directly above it.
- * Where the timeline runs dark rust and ends at a "destination" marker, this
- * section is the arrival: the palette lifts back to warm paper through a
- * top-of-section wash so the seam between the two dissolves, and the three
- * keepsakes are presented as objects that outlast the night rather than as
- * reasons to book. Same content system as before (numbered notes, hand-drawn
- * underlines) — reframed from a pitch into a coda.
+ * "What you keep" resolves the evening timeline directly above it. Rather than
+ * blending the two with a gradient, the section IS a sheet of the archival
+ * cotton paper the work is painted on: it overlaps up onto the dark rust of the
+ * timeline with a hand-deckled torn top edge and a soft lift shadow, so the
+ * night reads as the surface a fresh sheet has just been laid over. The
+ * transition earns its keep from the content (the paper that lasts) instead of
+ * a decorative fade. Same content system as before (numbered notes, hand-drawn
+ * underlines), reframed from a pitch into a coda.
  */
 export default function WhatYouKeep() {
   const reduce = useReducedMotion()
@@ -32,35 +33,27 @@ export default function WhatYouKeep() {
   return (
     <section
       id="keep"
-      className="relative w-full overflow-hidden bg-paper px-[5vw] pt-[clamp(3.5rem,8vw,7rem)] pb-[clamp(4.5rem,11vw,10rem)]"
+      // Pulled up so the torn edge overhangs onto the rust timeline; no
+      // overflow clip, so the sheet's lift shadow can fall on the dark above it.
+      className="relative w-full px-[5vw] pb-[clamp(4.5rem,11vw,10rem)]"
+      style={{ marginTop: 'calc(-1 * clamp(3.5rem, 7vw, 5.5rem))' }}
     >
-      {/* Carry the rust of the timeline above down over the top edge, then let
-          it dissolve into paper — the two sections read as one continuous
-          movement (the night resolving into daylight) rather than a hard cut
-          from a dark section to a light one. Pure CSS, reduced-motion safe. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[46vh]"
-        style={{
-          background:
-            'linear-gradient(to bottom, ' +
-            '#9A4A2B 0%, ' +
-            'rgba(154,74,43,0.42) 12%, ' +
-            'rgba(228,136,156,0.10) 44%, ' +
-            'transparent 100%)',
-        }}
-      />
+      <TornPaperEdge />
 
-      <div className="relative">
-        {/* Bridge line — a whispered handoff from the last beat of the evening,
-            set over the rust wash so it belongs to the section above as much as
-            this one. */}
+      {/* The paper body of the sheet: starts just under the frayed edge and
+          runs to the bottom. Sits below the content, above the torn strip. */}
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 top-[60px] bg-paper" />
+
+      {/* Content rides on the sheet, clear of the torn edge. */}
+      <div className="relative z-10 pt-[clamp(6rem,11vw,8rem)]">
+        {/* Bridge line: a whispered handoff from the last beat of the evening,
+            now set in ink on the fresh sheet. */}
         <motion.p
           initial={{ opacity: 0, y: reduce ? 0 : 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
           transition={SPRING}
-          className="font-mono text-[clamp(1rem,1.6vw,1.4rem)] italic leading-tight text-paper/90"
+          className="font-mono text-[clamp(1rem,1.6vw,1.4rem)] italic leading-tight text-rust/80"
         >
           {WHY.bridge}
         </motion.p>
@@ -102,7 +95,7 @@ export default function WhatYouKeep() {
                 ['lg:col-span-4', 'lg:col-span-4 lg:col-start-5 lg:mt-14', 'lg:col-span-4 lg:col-start-9 lg:mt-6'][i],
               ].join(' ')}
             >
-              {/* Deckle edge — a faint inner ring echoing the torn edge of
+              {/* Deckle edge: a faint inner ring echoing the torn edge of
                   cotton paper, warming on hover. */}
               <span
                 aria-hidden="true"
@@ -122,6 +115,46 @@ export default function WhatYouKeep() {
         </div>
       </div>
     </section>
+  )
+}
+
+/**
+ * The torn top edge of the cotton sheet. Rather than a smooth curve, a straight
+ * paper band is pushed through an feTurbulence displacement map (the same
+ * organic-distortion idiom the watercolour blooms use), so the contour frays
+ * into fibres the way real cotton-rag paper tears: a soft overall deckle
+ * undulation from the low-frequency noise, fine hairs from the high-frequency
+ * octaves, and the odd fleck of fibre lifting off into the dark. The noise is
+ * anisotropic (low across, high down) so the fray reads as vertical fibres
+ * rather than round blobs. A lighter lip catches the light along the tear and a
+ * soft shadow lifts the sheet off the night behind it. Static (computed once),
+ * reduced-motion safe.
+ */
+function TornPaperEdge() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-x-0 top-0 h-[96px] w-full"
+      viewBox="0 0 1440 96"
+      preserveAspectRatio="none"
+    >
+      <defs>
+        <filter id="keep-tear" x="-6%" y="-140%" width="112%" height="360%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.006 0.09" numOctaves="4" seed="11" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="34" xChannelSelector="R" yChannelSelector="G" result="torn" />
+          {/* Shadow the frayed edge casts upward onto the dark night behind it. */}
+          <feDropShadow in="torn" dx="0" dy="-2.5" stdDeviation="5" floodColor="#2A1206" floodOpacity="0.42" />
+        </filter>
+      </defs>
+      {/* Paper body plus a lighter lip along the tear, displaced together by the
+          one filter so the highlight stays registered to the frayed contour.
+          Geometry runs past the viewBox sides so the fray never opens a gap at
+          the left/right margins. */}
+      <g filter="url(#keep-tear)">
+        <path d="M-60,96 L-60,58 L1500,58 L1500,96 Z" fill="#F4EFE6" />
+        <path d="M-60,60 L-60,58 L1500,58 L1500,60 Z" fill="#FBF8F1" fillOpacity="0.7" />
+      </g>
+    </svg>
   )
 }
 
