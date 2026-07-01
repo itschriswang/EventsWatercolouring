@@ -435,7 +435,7 @@ function Lightbox({ items, index, onClose, onNavigate }) {
               </motion.div>
             </AnimatePresence>
             <figcaption className="mt-4 text-center">
-              <span className="block font-sentient font-bold tracking-[-0.03em] text-lg text-paper">{item.ttl}</span>
+              <span className="block font-sentient tracking-[-0.03em] text-lg text-paper">{item.ttl}</span>
               <span className="mt-0.5 block font-mono text-[0.6rem] uppercase tracking-[0.18em] text-paper/60">
                 {item.meta}
                 {many && (

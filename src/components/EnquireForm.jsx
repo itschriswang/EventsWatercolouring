@@ -130,7 +130,7 @@ export default function EnquireForm() {
       <div className="grid grid-cols-12 gap-x-8 gap-y-12">
         <div className="relative col-span-12 lg:col-span-4">
           <Label>{ENQUIRY.label}</Label>
-          <h2 className="mt-5 font-sentient text-[clamp(2.25rem,5vw,4rem)] font-bold leading-[0.95] tracking-[-0.02em] text-ink">
+          <h2 className="mt-5 font-sentient text-[clamp(2.25rem,5vw,4rem)] leading-[0.95] tracking-[-0.02em] text-ink">
             {ENQUIRY.title[0]}
             <br />
             <em className="text-terracotta">{ENQUIRY.title[1]}</em>
@@ -184,7 +184,7 @@ export default function EnquireForm() {
                     }}
                   />
                 ))}
-                <h3 className="relative font-sentient text-3xl font-bold tracking-[-0.04em] text-ink">
+                <h3 className="relative font-sentient text-3xl tracking-[-0.04em] text-ink">
                   {ENQUIRY.confirm.title}
                   {firstName && <span className="text-terracotta">, {firstName}</span>}.
                 </h3>
@@ -228,7 +228,7 @@ export default function EnquireForm() {
                 <div className="flex flex-col sm:col-span-2">
                   <label
                     htmlFor="f-contactMethod"
-                    className="mb-2 font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft"
+                    className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink"
                   >
                     Preferred contact method
                   </label>
@@ -255,7 +255,7 @@ export default function EnquireForm() {
                 <Field name="venue" label="Venue or city" placeholder="e.g. Melbourne" />
 
                 <div className="flex flex-col">
-                  <label htmlFor="f-package" className="mb-2 font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
+                  <label htmlFor="f-package" className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
                     What are you after?
                   </label>
                   <div className="relative">
@@ -281,7 +281,7 @@ export default function EnquireForm() {
                 </div>
 
                 <div className="flex flex-col sm:col-span-2">
-                  <label htmlFor="f-message" className="mb-2 font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
+                  <label htmlFor="f-message" className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
                     Message
                   </label>
                   <textarea
@@ -294,7 +294,7 @@ export default function EnquireForm() {
                 </div>
                 
                 <div className="flex flex-col sm:col-span-2">
-                  <label className="mb-2 font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
+                  <label className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
                     Wedding date
                   </label>
                   <div className="flex flex-col gap-3">
@@ -349,7 +349,7 @@ function Field({ name, label, type = 'text', required, ...rest }) {
     <div className="flex flex-col">
       <label
         htmlFor={`f-${name}`}
-        className="mb-2 font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft"
+        className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink"
       >
         {label}
         {required && <span className="text-terracotta"> *</span>}
