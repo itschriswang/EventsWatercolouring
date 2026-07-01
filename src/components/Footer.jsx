@@ -30,7 +30,7 @@ export default function Footer() {
       </div>
 
       <div className="mt-[clamp(3rem,7vw,6rem)] flex flex-col gap-8 border-t border-paper/15 pt-10 lg:flex-row lg:justify-between">
-        <span className="font-sentient font-bold text-2xl tracking-[-0.01em]">
+        <span className="font-sentient text-2xl tracking-[-0.01em]">
           {FOOTER.name}
         </span>
         <nav
