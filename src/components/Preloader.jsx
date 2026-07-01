@@ -14,6 +14,7 @@ export default function Preloader({ onDone }) {
   const [progress, setProgress] = useState(0)
   const [bloom, setBloom] = useState(false)
   const [gone, setGone] = useState(false)
+  const [particles, setParticles] = useState([])
 
   useEffect(() => {
     let frame
@@ -26,8 +27,11 @@ export default function Preloader({ onDone }) {
       if (t < 1) {
         frame = requestAnimationFrame(tick)
       } else {
-        // Bloom, then dissolve automatically.
+        // Bloom, emit particles, then dissolve automatically.
         setBloom(true)
+        if (!reduce) {
+          generateParticles()
+        }
         window.setTimeout(() => setGone(true), reduce ? 120 : 620)
         window.setTimeout(() => done?.(), reduce ? 200 : 1000)
       }
@@ -35,6 +39,31 @@ export default function Preloader({ onDone }) {
     frame = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(frame)
   }, [reduce, done])
+
+  const generateParticles = () => {
+    const colors = ['#B5395B', '#ED8A33', '#3A7F9D', '#AEBF56', '#E4889C']
+    const newParticles = []
+    const particleCount = 16
+    const duration = 0.7
+
+    for (let i = 0; i < particleCount; i++) {
+      const angle = (i / particleCount) * Math.PI * 2 + (Math.random() - 0.5) * 0.3
+      const speed = 100 + Math.random() * 80
+      const distance = speed * duration
+
+      newParticles.push({
+        id: Math.random(),
+        color: colors[Math.floor(Math.random() * colors.length)],
+        angle,
+        distance,
+        duration,
+        size: 6 + Math.random() * 4,
+      })
+    }
+
+    setParticles(newParticles)
+    window.setTimeout(() => setParticles([]), (duration + 0.1) * 1000)
+  }
 
   return (
     <AnimatePresence>
@@ -73,6 +102,9 @@ export default function Preloader({ onDone }) {
           >
             <Bloom active={bloom} reduce={reduce} />
           </motion.div>
+
+          {/* Particle burst on completion */}
+          <Particles particles={particles} />
 
           <div className="mt-10 flex flex-col items-center gap-4 text-center">
             <p className="eyebrow">Getting set up for you</p>
@@ -192,5 +224,47 @@ function PigmentBlob({ color, rim, seed }) {
       </defs>
       <circle cx="50" cy="50" r="46" fill={`url(#pb-g-${uid})`} filter={`url(#pb-f-${uid})`} />
     </svg>
+  )
+}
+
+/**
+ * Particle burst emitted on load completion. Each particle shoots outward
+ * from center in a starburst pattern with random speed variance, fading out
+ * as it travels. Quick, celebratory feedback before screen dissolve.
+ */
+function Particles({ particles }) {
+  return (
+    <div className="pointer-events-none fixed inset-0">
+      {particles.map((p) => {
+        const radians = p.angle
+        const x = Math.cos(radians) * p.distance
+        const y = Math.sin(radians) * p.distance
+
+        return (
+          <motion.div
+            key={p.id}
+            className="absolute rounded-full"
+            style={{
+              left: '50%',
+              top: '45%',
+              width: p.size,
+              height: p.size,
+              backgroundColor: p.color,
+              filter: 'blur(0.5px)',
+            }}
+            initial={{ x: 0, y: 0, opacity: 1 }}
+            animate={{
+              x,
+              y,
+              opacity: 0,
+            }}
+            transition={{
+              duration: p.duration,
+              ease: 'easeOut',
+            }}
+          />
+        )
+      })}
+    </div>
   )
 }
