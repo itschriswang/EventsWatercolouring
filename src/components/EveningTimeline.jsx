@@ -54,10 +54,19 @@ export default function EveningTimeline() {
       {/* Watercolour pigment wash, bottom-left — the title rail leaves that
           corner empty once the beats run long down the right, and screen
           blend reads as a warm glow lifting off the dark rust rather than a
-          fill. */}
+          fill. Anchored to the section's own bottom-left padding edge (not
+          pushed past it) so the wash never bleeds into the section below,
+          and masked to a soft radial fade so its clipping box never reads
+          as a hard-edged square against the rust background. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-[8vw] -bottom-[10vw] h-[52vw] w-[52vw] max-h-[560px] max-w-[560px] overflow-hidden opacity-70"
+        className="pointer-events-none absolute -left-[8vw] bottom-0 h-[52vw] w-[52vw] max-h-[560px] max-w-[560px] overflow-hidden opacity-70"
+        style={{
+          WebkitMaskImage:
+            'radial-gradient(ellipse 70% 70% at 32% 72%, black 0%, black 38%, transparent 76%)',
+          maskImage:
+            'radial-gradient(ellipse 70% 70% at 32% 72%, black 0%, black 38%, transparent 76%)',
+        }}
       >
         <WatercolourBloom blend="screen" />
       </div>
