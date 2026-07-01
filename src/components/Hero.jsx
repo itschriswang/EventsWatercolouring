@@ -1,13 +1,18 @@
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { lazy, Suspense, useRef } from 'react'
 import SplitText from './SplitText.jsx'
 import MagneticButton from './MagneticButton.jsx'
 import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset, ENQUIRE_HREF } from '../lib/site.js'
 import { HERO } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
-import Aurora from './Aurora.jsx'
 import { withUnderline } from './Underline.jsx'
+
+// Aurora is a continuously-animating WebGL canvas built on `ogl`. It only ever
+// renders on fine-pointer desktops (heavyFx), so we code-split it: the ogl
+// bundle is fetched lazily when the hero mounts on those devices, and mobile /
+// reduced-motion visitors never download it at all.
+const Aurora = lazy(() => import('./Aurora.jsx'))
 
 // Bloomfield palette
 const AURORA_COLORS = ['#B5395B', '#AEBF56', '#C9A23A']
@@ -46,11 +51,13 @@ export default function Hero({ revealed }) {
           aria-hidden="true"
           style={{ position: 'absolute', inset: 0, opacity: 0.38, pointerEvents: 'none', zIndex: 0 }}
         >
-          <Aurora
-            colorStops={AURORA_COLORS}
-            amplitude={1.4}
-            blend={0.5}
-          />
+          <Suspense fallback={null}>
+            <Aurora
+              colorStops={AURORA_COLORS}
+              amplitude={1.4}
+              blend={0.5}
+            />
+          </Suspense>
         </div>
       )}
       {/* Paper scrim — softens the aurora into the background without burying it */}
@@ -191,6 +198,10 @@ export default function Hero({ revealed }) {
                         alt="A small watercolour character study at the palette."
                         className="aspect-[4/5] w-full object-cover max-h-[40dvh] [@media(max-height:500px)]:max-h-[22dvh] sm:max-h-none sm:h-[clamp(160px,18vh,260px)] sm:aspect-auto lg:h-[38vh]"
                         loading="eager"
+                        fetchpriority="high"
+                        decoding="async"
+                        width="1242"
+                        height="1800"
                         onError={(e) => (e.currentTarget.style.display = 'none')}
                       />
                     </picture>
@@ -219,6 +230,10 @@ export default function Hero({ revealed }) {
                         alt="A watercolour bouquet study held to the light."
                         className="aspect-[4/5] w-full object-cover max-h-[34dvh] [@media(max-height:500px)]:max-h-[20dvh] sm:max-h-none sm:h-[clamp(175px,20vh,280px)] sm:aspect-auto lg:h-[42vh]"
                         loading="eager"
+                        fetchpriority="high"
+                        decoding="async"
+                        width="1200"
+                        height="1600"
                         onError={(e) => (e.currentTarget.style.display = 'none')}
                       />
                     </picture>
