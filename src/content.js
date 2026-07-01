@@ -3,11 +3,11 @@
 // section updates.
 
 export const HERO = {
-  lines: ['The day you\'ll', 'remember, painted', 'as you live it.'],
-  emphasis: ['remember', 'live'],
+  lines: ['Live Watercolour','Illustrations'],
+  emphasis: ['Watercolour'],
   linesMobile: ['The day you\'ll', 'remember,', 'painted as', 'you live it.'],
   emphasisMobile: ['remember', 'live'],
-  lede: 'While you dance, laugh, and celebrate the night you have been planning for months, I am quietly painting the people you love most. Your guests carry home a small watercolour portrait. You keep one of the two of you, painted while the night was still happening. All on cotton paper, made by hand.',
+  lede: 'While you dance, laugh, and celebrate the night you have been planning for months, I am painting the people you love most. Your guests carry home a small watercolour portrait. You keep one of the two of you, painted while the night was still happening.',
 }
 
 export const MARQUEE = [
