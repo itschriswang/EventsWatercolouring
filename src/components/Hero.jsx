@@ -47,7 +47,7 @@ export default function Hero({ revealed }) {
           way GrainOverlay does, and just keep the plain paper scrim below. */}
       {!reduce && heavyFx && (
         <div
-          aria-hidden="true"
+          aria-hidden="false"
           style={{ position: 'absolute', inset: 0, opacity: 0.38, pointerEvents: 'none', zIndex: 0 }}
         >
           <Suspense fallback={null}>
