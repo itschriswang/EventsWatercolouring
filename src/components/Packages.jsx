@@ -75,20 +75,6 @@ export default function Packages() {
                 </li>
               ))}
             </ul>
-            {/* Also included */}
-            <div className="mt-5">
-              <p className="mb-3 font-mono text-[0.58rem] uppercase tracking-[0.18em] text-ink-soft">
-                {PACKAGES.included.sub}
-              </p>
-              <ul className="flex flex-col gap-2">
-                {PACKAGES.included.items.map((item) => (
-                  <li key={item} className="flex gap-2 text-xs text-ink/70">
-                    <Drop className="mt-0.5 h-3 w-auto shrink-0" gradient={['#6E8CA8', '#C9A23A']} />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
         </motion.div>
 
@@ -175,20 +161,6 @@ export default function Packages() {
                 </li>
               ))}
             </ul>
-            {/* Also included */}
-            <div className="mt-5 flex-1">
-              <p className="mb-3 font-mono text-[0.58rem] uppercase tracking-[0.18em] text-ink-soft">
-                {PACKAGES.included.sub}
-              </p>
-              <ul className="flex flex-col gap-2">
-                {PACKAGES.included.items.map((item) => (
-                  <li key={item} className="flex gap-2 text-xs text-ink/70">
-                    <Drop className="mt-0.5 h-3 w-auto shrink-0" gradient={['#6E8CA8', '#C9A23A']} />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
         </motion.article>
 
