@@ -4,6 +4,7 @@ import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, asset } from '../lib/site.js'
 import { EVENING } from '../content.js'
 import WatercolourBloom from './WatercolourBloom.jsx'
+import { withUnderline } from './Underline.jsx'
 
 /**
  * "How the evening runs" — a sticky split-screen. A massive section title is
@@ -84,7 +85,7 @@ export default function EveningTimeline() {
               <em>{EVENING.title[1]}</em>
             </h2>
             <p className="mt-3 max-w-md leading-relaxed text-paper/80">
-              {EVENING.lede}
+              {withUnderline(EVENING.lede, 'the two of you', { className: 'text-ochre' })}
             </p>
           </div>
         </div>
