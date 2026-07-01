@@ -5,6 +5,7 @@ import { Drop } from './Label.jsx'
 import { SPRING } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
+import { withUnderline } from './Underline.jsx'
 
 export default function Packages() {
   const reduce = useReducedMotion()
@@ -30,7 +31,7 @@ export default function Packages() {
         {...reveal(1)}
         className="mt-8 max-w-2xl text-[clamp(1rem,1.1vw,1.15rem)] leading-relaxed text-ink-soft"
       >
-        {PACKAGES.intro}
+        {withUnderline(PACKAGES.intro, 'painted live', { className: 'text-terracotta' })}
       </motion.p>
 
       {/* ── Mobile: base package pull-quote + detail card ─────────────────── */}

@@ -2,6 +2,15 @@ import { motion, useReducedMotion } from 'framer-motion'
 import Label from './Label.jsx'
 import { SPRING } from '../lib/site.js'
 import { WHY } from '../content.js'
+import { withUnderline } from './Underline.jsx'
+
+// Notes that get a hand-drawn underline under a key phrase, and which phrase.
+// Not every note needs one — that's what keeps it feeling picked out rather
+// than applied uniformly.
+const NOTE_UNDERLINES = {
+  '02': { phrase: 'one of a kind', className: 'text-terracotta' },
+  '03': { phrase: 'archival cotton paper', className: 'text-sage' },
+}
 
 /** "Why live watercolour" — a big italic lede over three offset notes. */
 export default function WhyWatercolour() {
@@ -45,7 +54,11 @@ export default function WhyWatercolour() {
             <h3 className="mt-4 font-sentient text-[clamp(1.4rem,2vw,2rem)] leading-tight tracking-[-0.01em] text-ink">
               {n.title}
             </h3>
-            <p className="mt-3 max-w-sm leading-relaxed text-ink-soft">{n.body}</p>
+            <p className="mt-3 max-w-sm leading-relaxed text-ink-soft">
+              {NOTE_UNDERLINES[n.no]
+                ? withUnderline(n.body, NOTE_UNDERLINES[n.no].phrase, { className: NOTE_UNDERLINES[n.no].className })
+                : n.body}
+            </p>
           </motion.article>
         ))}
       </div>
