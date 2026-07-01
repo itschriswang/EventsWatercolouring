@@ -6,9 +6,9 @@ import { SPRING } from '../lib/site.js'
  * Splits a headline into masked lines and reveals each unit (word or character)
  * with a staggered spring, rising from y:50. Each line sits in an
  * overflow-hidden mask. A single word can be flagged for display emphasis via
- * `emphasis` (rendered with `emphasisClassName`, defaulting to terracotta).
- * Pass `emphasisItalic` to set those words in the family's italic cut for an
- * editorial style contrast against the upright headline.
+ * `emphasis`, rendered in a solid terracotta pigment. Pass `emphasisItalic` to
+ * set those words in the family's italic cut for an editorial style contrast
+ * against the upright headline.
  *
  * Renders on scroll by default (whileInView); pass `playOnMount` to animate
  * immediately (used by the hero once the preloader hands over).
@@ -19,7 +19,6 @@ import { SPRING } from '../lib/site.js'
 export default function SplitText({
   lines = [],
   emphasis = null,
-  emphasisClassName = 'bg-gradient-to-r from-terracotta via-orange to-blush bg-clip-text text-transparent',
   emphasisItalic = false,
   unit = 'char',
   className = '',
@@ -42,41 +41,23 @@ export default function SplitText({
     return emphasisList.some(e => normalise(word) === normalise(e))
   }
 
-  // Build a map of which words are emphasized and their global position
+  // Build a map of which words are emphasized.
   const emphasisMap = new Map()
   let globalWordIndex = 0
-  let firstEmphIndex = null
-  let lastEmphIndex = null
 
   lines.forEach((line) => {
     line.split(' ').forEach((word) => {
-      if (isWordEmphasisized(word)) {
-        if (firstEmphIndex === null) firstEmphIndex = globalWordIndex
-        lastEmphIndex = globalWordIndex
-        emphasisMap.set(globalWordIndex, true)
-      }
+      if (isWordEmphasisized(word)) emphasisMap.set(globalWordIndex, true)
       globalWordIndex++
     })
   })
 
-  // Calculate gradient span: each emphasized word gets inline style to position the gradient
-  const getGradientStyle = (wordIndex) => {
-    if (!emphasisMap.has(wordIndex) || firstEmphIndex === null) return {}
-
-    const totalSpan = lastEmphIndex - firstEmphIndex + 1
-    const posInSpan = wordIndex - firstEmphIndex
-    const startPercent = (posInSpan / totalSpan) * 100
-    const endPercent = ((posInSpan + 1) / totalSpan) * 100
-
-    return {
-      background: 'linear-gradient(110deg, #A4502F, #C2613C, #6C2A3E)',
-      backgroundSize: `${totalSpan * 100}% 100%`,
-      backgroundPosition: `${-posInSpan * 100}% 0`,
-      WebkitBackgroundClip: 'text',
-      backgroundClip: 'text',
-      WebkitTextFillColor: 'transparent',
-    }
-  }
+  // Emphasis words render as a single warm pigment rather than a multi-stop
+  // gradient-text fill — the italic cut already carries the emphasis, and solid
+  // colour avoids the gradient-text look while keeping AA contrast at the
+  // display sizes SplitText is used at.
+  const getGradientStyle = (wordIndex) =>
+    emphasisMap.has(wordIndex) ? { color: 'var(--c-terracotta)' } : {}
 
   // Group consecutive emphasized words on same line
   const groupEmphasisWords = (words) => {

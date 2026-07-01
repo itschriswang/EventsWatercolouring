@@ -21,6 +21,20 @@
 }
 
 @layer base {
+  /* Palette exposed as custom properties so inline styles and SVG — which
+     can't reach Tailwind's `theme()` — reference the same tokens instead of
+     re-typing hex. The `--rgb-*` triplets feed `rgb(... / <alpha>)` for the
+     translucent nav chrome. */
+  :root {
+    --c-paper: #F4EFE6;
+    --c-ink: #2A2724;
+    --c-terracotta: #C2613C;
+    --rgb-paper: 244 239 230;
+    --rgb-ink: 42 39 36;
+    --rgb-ink-soft: 107 98 88;
+    --rgb-line: 216 207 191;
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
