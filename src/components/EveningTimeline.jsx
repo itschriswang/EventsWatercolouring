@@ -42,14 +42,21 @@ export default function EveningTimeline() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 overflow-hidden"
       >
-        <img
-          src={asset('assets/bloom-accent-1.png')}
-          alt=""
-          className={
-            'absolute -right-[6vw] -top-[6vw] w-[34vw] max-w-[420px] opacity-20' +
-            (lite ? '' : ' mix-blend-screen')
-          }
-        />
+        <picture>
+          <source srcSet={asset('assets/bloom-accent-1.webp')} type="image/webp" />
+          <img
+            src={asset('assets/bloom-accent-1.png')}
+            alt=""
+            width="1100"
+            height="1374"
+            loading="lazy"
+            decoding="async"
+            className={
+              'absolute -right-[6vw] -top-[6vw] w-[34vw] max-w-[420px] opacity-20' +
+              (lite ? '' : ' mix-blend-screen')
+            }
+          />
+        </picture>
       </div>
 
       {/* Watercolour pigment wash, bottom-left — the title rail leaves that

@@ -66,12 +66,19 @@ export default function App() {
           />
           <WhyWatercolour />
           <AboutMe />
-          <img
-            src={asset('assets/bloom-accent-2.png')}
-            alt=""
-            aria-hidden="true"
-            className="pointer-events-none absolute bottom-0 right-0 z-20 w-[19rem] sm:w-[22rem] lg:w-[28rem]"
-          />
+          <picture>
+            <source srcSet={asset('assets/bloom-accent-2.webp')} type="image/webp" />
+            <img
+              src={asset('assets/bloom-accent-2.png')}
+              alt=""
+              aria-hidden="true"
+              width="1200"
+              height="1028"
+              loading="lazy"
+              decoding="async"
+              className="pointer-events-none absolute bottom-0 right-0 z-20 w-[19rem] sm:w-[22rem] lg:w-[28rem]"
+            />
+          </picture>
         </div>
         <EveningTimeline />
         <SelectedWork />

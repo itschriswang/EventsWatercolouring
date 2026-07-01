@@ -37,31 +37,34 @@ export default function Hero({ revealed }) {
       ref={ref}
       className="relative w-full overflow-x-clip px-[5vw] pb-[clamp(3rem,8vw,7rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-8"
     >
-      {/* Aurora fluid simulation — dialled way back so it reads as a whisper of colour */}
-      {!reduce && (
-        <>
-          <div
-            aria-hidden="true"
-            style={{ position: 'absolute', inset: 0, opacity: 0.38, pointerEvents: 'none', zIndex: 0 }}
-          >
-            <Aurora
-              colorStops={AURORA_COLORS}
-              amplitude={1.4}
-              blend={0.5}
-            />
-          </div>
-          {/* Paper scrim — softens the aurora into the background without burying it */}
-          <div
-            aria-hidden="true"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'linear-gradient(160deg, rgba(244,239,230,0.5) 0%, rgba(244,239,230,0.28) 50%, rgba(244,239,230,0.45) 100%)',
-              pointerEvents: 'none',
-              zIndex: 1,
-            }}
+      {/* Aurora fluid simulation — dialled way back so it reads as a whisper of
+          colour. It's a continuously-animating WebGL canvas, so it's reserved
+          for fine-pointer desktops (heavyFx); touch devices skip it the same
+          way GrainOverlay does, and just keep the plain paper scrim below. */}
+      {!reduce && heavyFx && (
+        <div
+          aria-hidden="true"
+          style={{ position: 'absolute', inset: 0, opacity: 0.38, pointerEvents: 'none', zIndex: 0 }}
+        >
+          <Aurora
+            colorStops={AURORA_COLORS}
+            amplitude={1.4}
+            blend={0.5}
           />
-        </>
+        </div>
+      )}
+      {/* Paper scrim — softens the aurora into the background without burying it */}
+      {!reduce && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(160deg, rgba(244,239,230,0.5) 0%, rgba(244,239,230,0.28) 50%, rgba(244,239,230,0.45) 100%)',
+            pointerEvents: 'none',
+            zIndex: 1,
+          }}
+        />
       )}
 
       {/* Local hero bloom — bottom-right, behind artwork */}
