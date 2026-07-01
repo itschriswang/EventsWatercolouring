@@ -119,16 +119,10 @@ export default function WhatYouKeep() {
 }
 
 /**
- * The torn top edge of the cotton sheet. Rather than a smooth curve, a straight
- * paper band is pushed through an feTurbulence displacement map (the same
- * organic-distortion idiom the watercolour blooms use), so the contour frays
- * into fibres the way real cotton-rag paper tears: a soft overall deckle
- * undulation from the low-frequency noise, fine hairs from the high-frequency
- * octaves, and the odd fleck of fibre lifting off into the dark. The noise is
- * anisotropic (low across, high down) so the fray reads as vertical fibres
- * rather than round blobs. A lighter lip catches the light along the tear and a
- * soft shadow lifts the sheet off the night behind it. Static (computed once),
- * reduced-motion safe.
+ * The torn top edge of the cotton sheet. Hand-authored contour with prominent
+ * undulation suggesting torn fibres. The path uses smooth Bezier curves with
+ * meaningful height variation to convey torn paper texture without algorithmic
+ * quantization. Soft shadow lifts the sheet off the night behind it.
  */
 function TornPaperEdge() {
   return (
@@ -139,21 +133,22 @@ function TornPaperEdge() {
       preserveAspectRatio="none"
     >
       <defs>
-        <filter id="keep-tear" x="-6%" y="-140%" width="112%" height="360%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.006 0.09" numOctaves="4" seed="11" result="noise" />
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="34" xChannelSelector="R" yChannelSelector="G" result="torn" />
-          {/* Shadow the frayed edge casts upward onto the dark night behind it. */}
-          <feDropShadow in="torn" dx="0" dy="-2.5" stdDeviation="5" floodColor="#2A1206" floodOpacity="0.42" />
+        <filter id="keep-tear-shadow" x="0%" y="-100%" width="100%" height="200%">
+          <feDropShadow dx="0" dy="-2.5" stdDeviation="5" floodColor="#2A1206" floodOpacity="0.42" />
         </filter>
       </defs>
-      {/* Paper body plus a lighter lip along the tear, displaced together by the
-          one filter so the highlight stays registered to the frayed contour.
-          Geometry runs past the viewBox sides so the fray never opens a gap at
-          the left/right margins. */}
-      <g filter="url(#keep-tear)">
-        <path d="M-60,96 L-60,58 L1500,58 L1500,96 Z" fill="#F4EFE6" />
-        <path d="M-60,60 L-60,58 L1500,58 L1500,60 Z" fill="#FBF8F1" fillOpacity="0.7" />
-      </g>
+      {/* Torn paper body with prominent wavy edge suggesting fibrous tear */}
+      <path
+        d="M -60,96 L -60,58 C 30,35 90,72 150,42 C 210,18 270,75 330,48 C 390,25 450,70 510,40 C 570,15 630,68 690,45 C 750,25 810,72 870,40 C 930,12 990,70 1050,48 C 1110,28 1170,68 1230,42 C 1290,20 1350,72 1500,58 L 1500,96 Z"
+        fill="#F4EFE6"
+        filter="url(#keep-tear-shadow)"
+      />
+      {/* Lighter lip along the tear catching light, following the torn contour */}
+      <path
+        d="M -60,60 L -60,58 C 30,35 90,72 150,42 C 210,18 270,75 330,48 C 390,25 450,70 510,40 C 570,15 630,68 690,45 C 750,25 810,72 870,40 C 930,12 990,70 1050,48 C 1110,28 1170,68 1230,42 C 1290,20 1350,72 1500,58 L 1500,60 Z"
+        fill="#FBF8F1"
+        fillOpacity="0.7"
+      />
     </svg>
   )
 }
