@@ -1,4 +1,5 @@
 import { useId } from 'react'
+import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import './WatercolourBloom.css'
 
 /**
@@ -61,6 +62,18 @@ const CAULIFLOWERS = [
 export default function WatercolourBloom({ className = '', blend = 'multiply' }) {
   const rawId = useId()
   const uid = `wcb${rawId.replace(/[^a-zA-Z0-9]/g, '')}`
+  const heavyFx = useHeavyFx()
+
+  // On touch / small devices the animated version is far too expensive: up to
+  // three instances mount at once, each with 16 continuously-animating circles
+  // carrying their own feTurbulence/feDisplacementMap/feGaussianBlur filter and
+  // a mix-blend pass. That is a per-frame GPU repaint the whole time the page is
+  // open — the main cause of scroll/interaction lag on phones. There we render a
+  // static CSS radial-gradient wash instead: same warm pigment feel, painted
+  // once, no filters, no blend re-compositing, no animation.
+  if (!heavyFx) {
+    return <div aria-hidden="true" className={`wcb-root wcb-static ${className}`} />
+  }
 
   return (
     <div aria-hidden="true" className={`wcb-root ${className}`}>

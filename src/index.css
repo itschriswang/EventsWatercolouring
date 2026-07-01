@@ -140,6 +140,17 @@
   }
 }
 
+/* The rotating gradient frame drives an animated custom property, so it
+   repaints every frame for as long as it is on screen. Touch devices can't
+   spare that continuous repaint, and the drift is imperceptible in normal use —
+   freeze it to a static angle there. (Unlayered, so it wins over the layered
+   animation above.) */
+@media (pointer: coarse) {
+  .gradient-frame {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
