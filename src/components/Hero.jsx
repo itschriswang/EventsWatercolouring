@@ -6,6 +6,7 @@ import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset, ENQUIRE_HREF } from '../lib/site.js'
 import { HERO } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
+import { withUnderline } from './Underline.jsx'
 
 // Aurora is a continuously-animating WebGL canvas built on `ogl`. It only ever
 // renders on fine-pointer desktops (heavyFx), so we code-split it: the ogl
@@ -163,11 +164,7 @@ export default function Hero({ revealed }) {
           >
             <div className="relative">
               <p className="max-w-[33ch] text-[0.93rem] leading-relaxed text-ink-soft sm:max-w-md sm:text-[clamp(1rem,1.1vw,1.18rem)]">
-                {HERO.lede}
-                                <p key={i}>
-                  {i === 1
-                    ? withUnderline(p, 'watercolour', { className: 'text-rust' })
-                    : p}
+                    {withUnderline(HERO.lede, 'watercolour', { className: 'text-rust' })}
                 </p>
               </p>
             </div>
