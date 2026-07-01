@@ -165,7 +165,7 @@ export const PACKAGES = {
     'Want more hours, more guests, or a portrait from photos instead? We build it up from the base. I am happy to produce material before and after the event in my studio too. Some add-ons have a set price, others I quote for your day. Just tell me what you are after.',
   included: {
     title: 'Included as standard',
-    sub: 'All of the below is included. You provide a table and chair; I bring everything else.',
+    sub: 'You provide a table and chair; I bring everything else.',
     items: [
       'All drawing and painting materials',
       'Premium 300gsm archival watercolour paper',
