@@ -67,7 +67,7 @@ export default function WatercolourBloom({ className = '', blend = 'multiply' })
       <svg
         className="wcb-svg"
         viewBox="0 0 100 100"
-        preserveAspectRatio="none"
+        preserveAspectRatio="xMidYMid slice"
         style={{ colorInterpolationFilters: 'sRGB' }}
       >
         <defs>
