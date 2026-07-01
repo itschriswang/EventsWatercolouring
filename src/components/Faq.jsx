@@ -25,7 +25,7 @@ export default function Faq() {
         <div className="col-span-12 lg:col-span-4">
           <div className="lg:sticky lg:top-24 lg:h-fit">
             <Label gradient={['#6E8CA8', '#C2613C']}>{FAQ.label}</Label>
-            <h2 className="mt-5 font-sentient text-[clamp(2rem,4vw,3.5rem)] font-bold leading-[0.95] tracking-[-0.02em] text-ink">
+            <h2 className="mt-5 font-sentient text-[clamp(2rem,4vw,3.5rem)] leading-[0.95] tracking-[-0.02em] text-ink">
               {FAQ.title}
             </h2>
           </div>

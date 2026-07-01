@@ -235,7 +235,7 @@ function NavSheet({ onClose }) {
                 }}
               >
                 <span
-                  className="font-sentient font-bold text-[1.15rem] tracking-[-0.01em] text-ink group-hover:text-terracotta"
+                  className="font-sentient text-[1.15rem] tracking-[-0.01em] text-ink group-hover:text-terracotta"
                   style={{ transition: 'color 0.26s cubic-bezier(0.25,1,0.5,1)' }}
                 >
                   {item.label}

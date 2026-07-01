@@ -57,7 +57,7 @@ export default function EveningTimeline() {
             <Label gradient={['#C9A23A', '#F4EFE6']} className="!text-paper/70">
               {EVENING.label}
             </Label>
-            <h2 className="mt-1 font-sentient text-[clamp(2.5rem,4vw,4.5rem)] font-bold leading-[0.9] tracking-[-0.02em]">
+            <h2 className="mt-1 font-sentient text-[clamp(2.5rem,4vw,4.5rem)] leading-[0.9] tracking-[-0.02em]">
               {EVENING.title[0]}
               <br />
               <em>{EVENING.title[1]}</em>
