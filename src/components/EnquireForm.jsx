@@ -1,6 +1,14 @@
-import { useId, useState } from 'react'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { useId, useRef, useState } from 'react'
+import {
+  motion,
+  AnimatePresence,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useMotionValueEvent,
+} from 'framer-motion'
 import Label, { Drop } from './Label.jsx'
+import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import {
   SPRING,
   EMAIL,
@@ -419,39 +427,75 @@ function DecklePaper({ id }) {
   )
 }
 
-// Scattered gold-leaf flecks embedded in the wax — irregular shards, like the
-// loose gold in a real pressed seal. Positions/rotations are hand-placed so
-// they read as flecks, not a pattern.
-const GOLD_FLECKS = [
-  { top: '30%', left: '33%', w: 7, h: 5, rot: 22 },
-  { top: '40%', left: '58%', w: 5, h: 6, rot: -32 },
-  { top: '64%', left: '46%', w: 8, h: 5, rot: 12 },
-  { top: '58%', left: '30%', w: 4, h: 4, rot: 48 },
+// One orchid petal (from the Label glyph) and the five rotations that compose
+// the bloom — reused as the pressed motif stamped into the seal.
+const PETAL_D = 'M 0,0 C -12,-4 -14,-24 -2,-35 C 0,-36 2,-35 0,-36 C 14,-24 12,-4 0,0 Z'
+const PETAL_ROT = [128, -128, 75, -75, 0]
+
+// Trapped air bubbles, pressed as tiny raised specks so the lighting catches
+// them too. Coordinates are in the seal's 0–100 viewBox.
+const SEAL_BUBBLES = [
+  { cx: 66, cy: 30, r: 1.7 },
+  { cx: 62, cy: 72, r: 1.3 },
+  { cx: 31, cy: 66, r: 1.1 },
 ]
 
-// Tiny trapped air bubbles near the poured edge — small bright specks with a
-// soft ring, as seen where wax/resin sets.
-const BUBBLES = [
-  { top: '20%', left: '66%', d: 3 },
-  { top: '74%', left: '62%', d: 2.5 },
-  { top: '68%', left: '24%', d: 2 },
-]
+// Resting light position (top-left) used on touch/reduced-motion, and the
+// horizontal/vertical sweep the point light travels as the seal scrolls.
+const LIGHT_REST = { x: 40, y: 26 }
+const lightAt = (v) => ({ x: 34 + v * 32, y: 23 + v * 8 })
 
 /**
- * Submit control shaped as a real translucent wax seal.
+ * Submit control shaped as a real, gooey wax seal, lit in 3D.
  *
- * The wax read comes from silhouette and structure, not just material: a shared
- * feTurbulence + feDisplacementMap (the same trick as the card's deckle edge)
- * warps the disc so its rim is organic and hand-pressed rather than a perfect
- * circle, and the body is split into a thick clear raised rim around a frosted,
- * recessed centre medallion that holds the pressed orchid. Gold-leaf flecks and
- * a few trapped bubbles are embedded in it, and a soft iridescence blooms on
- * hover as if the glass were tilted. Decorative; the accessible name comes from
- * the button + its visible label.
+ * The seal is built as TWO layered height maps run through real lighting
+ * filters (feDiffuseLighting + feSpecularLighting), not stacked CSS gradients:
+ *
+ *  - The BASE (floor disc + raised rim ring) gets a big, low-frequency
+ *    feTurbulence + a wide feDisplacementMap, so the whole silhouette pours out
+ *    unevenly — thicker in some places, thinner in others — like real dripped
+ *    wax rather than a uniform ring. Its height map is blurred wide enough
+ *    that the rim has no flat plateau: it's a genuine rounded bead, brightest
+ *    where it curves toward the light and shaded where it curves away.
+ *  - The MOTIF (the pressed orchid + trapped bubbles) is layered on top with
+ *    only a light blur and no displacement, so the fine relief stays crisp
+ *    while still catching its own curved highlight.
+ *
+ * Both layers are warmed (ivory/tan lighting colours, not steel) and their
+ * point lights share one scroll-driven position on desktop, so the whole seal
+ * re-lights together as it scrolls — the highlight sweeping across the ridge
+ * like a real seal tilted in the hand. Touch and reduced-motion hold the light
+ * at rest. Iridescence blooms on hover. Decorative; the accessible name comes
+ * from the button + its visible label.
  */
 function SealButton({ sending }) {
   const uid = useId().replace(/:/g, '')
-  const waxId = `wax-${uid}`
+  const baseId = `waxbase-${uid}`
+  const motifId = `waxmotif-${uid}`
+  const reduce = useReducedMotion()
+  const parallax = useHeavyFx() && !reduce
+
+  // Drive both filters' point lights imperatively off scroll so re-lighting the
+  // SVG never triggers a React render. All four lights share one motion value.
+  const sealRef = useRef(null)
+  const baseDiffRef = useRef(null)
+  const baseSpecRef = useRef(null)
+  const motifDiffRef = useRef(null)
+  const motifSpecRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: sealRef,
+    offset: ['start end', 'end start'],
+  })
+  const light = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.4 })
+  useMotionValueEvent(light, 'change', (v) => {
+    if (!parallax) return
+    const { x, y } = lightAt(v)
+    for (const ref of [baseDiffRef, baseSpecRef, motifDiffRef, motifSpecRef]) {
+      ref.current?.setAttribute('x', x.toFixed(1))
+      ref.current?.setAttribute('y', y.toFixed(1))
+    }
+  })
+
   return (
     <button
       type="submit"
@@ -459,103 +503,121 @@ function SealButton({ sending }) {
       aria-label="Send enquiry"
       className="group inline-flex w-fit items-center gap-4 outline-none disabled:cursor-not-allowed disabled:opacity-60"
     >
-      {/* Displacement filter that gives the seal its poured, irregular edge. */}
-      <svg aria-hidden="true" className="absolute h-0 w-0">
-        <defs>
-          <filter id={waxId} x="-30%" y="-30%" width="160%" height="160%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="11" result="n" />
-            <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
-          </filter>
-        </defs>
-      </svg>
+      <span
+        ref={sealRef}
+        className="relative h-14 w-14 shrink-0 transition-transform duration-200 ease-organic group-hover:translate-y-0.5 group-active:translate-y-1 group-focus-visible:ring-2 group-focus-visible:ring-terracotta group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-transparent"
+      >
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 100 100"
+          className="absolute inset-0 h-full w-full overflow-visible"
+          style={{ filter: 'drop-shadow(0 2.5px 3px rgba(58,44,92,0.22))' }}
+        >
+          <defs>
+            {/* BASE: the poured blob + its plump, unevenly-rounded rim.
+                Two blur widths do different jobs: H (wide) feeds the lighting
+                so the rim curves with no flat plateau; Hclip (tight) is what
+                the visible paint is masked to, so the colour itself doesn't
+                melt outward into a wide halo the way the lighting's height map
+                needs to. */}
+            <filter id={baseId} x="-30%" y="-30%" width="160%" height="160%" colorInterpolationFilters="sRGB">
+              <feTurbulence type="fractalNoise" baseFrequency="0.011" numOctaves="2" seed="7" result="noise" />
+              <feGaussianBlur in="SourceAlpha" stdDeviation="7" result="H" />
+              <feGaussianBlur in="SourceAlpha" stdDeviation="1.3" result="Hclip" />
+              {/* Low-opacity flood: a clear-gel tint, not opaque wax colour —
+                  most of the card behind is meant to read through. */}
+              <feFlood floodColor="#F1EEFA" floodOpacity="0.4" result="tint" />
+              <feComposite in="tint" in2="Hclip" operator="in" result="body" />
+              <feDiffuseLighting in="H" surfaceScale="7.5" diffuseConstant="1" lightingColor="#e9ecf7" result="diffRaw">
+                <fePointLight ref={baseDiffRef} x={LIGHT_REST.x} y={LIGHT_REST.y} z="46" />
+              </feDiffuseLighting>
+              {/* Raise the shadow FLOOR on colour (R/G/B), not alpha — otherwise
+                  the diffuse shading still crushes to near-black in shadow and
+                  drags the translucent body dark when multiplied below. */}
+              <feComponentTransfer in="diffRaw" result="diffSoft">
+                <feFuncR type="linear" slope="0.55" intercept="0.42" />
+                <feFuncG type="linear" slope="0.55" intercept="0.42" />
+                <feFuncB type="linear" slope="0.55" intercept="0.42" />
+              </feComponentTransfer>
+              <feComposite in="diffSoft" in2="Hclip" operator="in" result="diff" />
+              <feSpecularLighting in="H" surfaceScale="7.5" specularConstant="0.8" specularExponent="9" lightingColor="#ffffff" result="specRaw">
+                <fePointLight ref={baseSpecRef} x={LIGHT_REST.x} y={LIGHT_REST.y} z="46" />
+              </feSpecularLighting>
+              <feComposite in="specRaw" in2="Hclip" operator="in" result="spec" />
+              <feBlend in="body" in2="diff" mode="multiply" result="shaded" />
+              <feComposite in="spec" in2="shaded" operator="arithmetic" k1="0" k2="0.85" k3="1" k4="0" result="lit" />
+              <feComponentTransfer in="lit" result="glass">
+                <feFuncA type="linear" slope="0.85" />
+              </feComponentTransfer>
+              <feDisplacementMap in="glass" in2="noise" scale="14" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
 
-      <span className="relative grid h-14 w-14 shrink-0 place-items-center transition-transform duration-200 ease-organic group-hover:translate-y-0.5 group-active:translate-y-1 group-focus-visible:ring-2 group-focus-visible:ring-terracotta group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-transparent">
-        {/* Wax body: clear raised rim → frosted recessed centre. The whole
-            layer (and its cast shadow) is displaced into an organic blob. */}
+            {/* MOTIF: the pressed orchid + bubbles — crisp, not displaced,
+                same clear-gel translucency as the base. */}
+            <filter id={motifId} x="-60%" y="-60%" width="220%" height="220%" colorInterpolationFilters="sRGB">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="1.1" result="Hm" />
+              <feFlood floodColor="#F1EEFA" floodOpacity="0.45" result="mtint" />
+              <feComposite in="mtint" in2="Hm" operator="in" result="mbody" />
+              <feDiffuseLighting in="Hm" surfaceScale="4" diffuseConstant="1" lightingColor="#e9ecf7" result="mdiffRaw">
+                <fePointLight ref={motifDiffRef} x={LIGHT_REST.x} y={LIGHT_REST.y} z="46" />
+              </feDiffuseLighting>
+              <feComponentTransfer in="mdiffRaw" result="mdiffSoft">
+                <feFuncR type="linear" slope="0.6" intercept="0.35" />
+                <feFuncG type="linear" slope="0.6" intercept="0.35" />
+                <feFuncB type="linear" slope="0.6" intercept="0.35" />
+              </feComponentTransfer>
+              <feComposite in="mdiffSoft" in2="Hm" operator="in" result="mdiff" />
+              <feSpecularLighting in="Hm" surfaceScale="4" specularConstant="0.7" specularExponent="14" lightingColor="#ffffff" result="mspecRaw">
+                <fePointLight ref={motifSpecRef} x={LIGHT_REST.x} y={LIGHT_REST.y} z="46" />
+              </feSpecularLighting>
+              <feComposite in="mspecRaw" in2="Hm" operator="in" result="mspec" />
+              <feBlend in="mbody" in2="mdiff" mode="multiply" result="mshaded" />
+              <feComposite in="mspec" in2="mshaded" operator="arithmetic" k1="0" k2="0.85" k3="1" k4="0" />
+            </filter>
+          </defs>
+
+          {/* Silhouette that becomes the BASE height map: a thin, mostly-clear
+              floor disc and a much more opaque raised rim ring. The big gap
+              between the floor's alpha (0.16) and the ring's (0.95) is what
+              gives the rim a real INNER slope too — a symmetric step down on
+              both its outer face (rim → background) and inner face (rim →
+              recessed centre), so both sides pick up their own highlight and
+              shadow instead of just the outer edge. Fill colour is irrelevant
+              — only the alpha feeds the lighting. */}
+          <g filter={`url(#${baseId})`} fill="#fff">
+            <circle cx="50" cy="50" r="43" opacity="0.16" />
+            <circle cx="50" cy="50" r="37" fill="none" stroke="#fff" strokeWidth="12" opacity="0.95" />
+          </g>
+
+          {/* MOTIF layer, stamped on top: the pressed orchid + bubbles. */}
+          <g filter={`url(#${motifId})`} fill="#fff">
+            <g transform="translate(50 52) scale(0.4)" opacity="0.65">
+              {PETAL_ROT.map((r, i) => (
+                <path key={i} d={PETAL_D} transform={`rotate(${r})`} />
+              ))}
+            </g>
+            {SEAL_BUBBLES.map((b, i) => (
+              <circle key={i} cx={b.cx} cy={b.cy} r={b.r} opacity="0.6" />
+            ))}
+          </g>
+        </svg>
+
+        {/* Oil-film iridescence — always faintly present on the clear gel,
+            blooming brighter on hover as if the seal were tilted to the light. */}
         <span
           aria-hidden="true"
-          className="absolute inset-0 rounded-full"
+          className="pointer-events-none absolute inset-[10%] rounded-full opacity-60 transition-opacity duration-300 group-hover:opacity-100"
           style={{
-            filter: `url(#${waxId}) drop-shadow(0 6px 12px rgba(70,55,110,0.32)) drop-shadow(0 2px 3px rgba(40,30,70,0.26))`,
             background: [
-              // top-left glass highlight
-              'radial-gradient(circle at 30% 22%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 40%)',
-              // faint oil-film tints in the resin
-              'radial-gradient(circle at 74% 32%, rgba(150,215,230,0.24) 0%, rgba(150,215,230,0) 46%)',
-              'radial-gradient(circle at 30% 78%, rgba(198,168,232,0.22) 0%, rgba(198,168,232,0) 50%)',
-              // two-zone body: frosted centre medallion → clear raised rim
-              'radial-gradient(circle at 50% 50%, rgba(247,249,255,0.66) 0%, rgba(246,248,255,0.6) 44%, rgba(226,232,247,0.4) 57%, rgba(255,255,255,0.14) 70%, rgba(255,255,255,0.08) 100%)',
+              'radial-gradient(circle at 30% 20%, rgba(140,225,240,0.42) 0%, rgba(140,225,240,0) 44%)',
+              'radial-gradient(circle at 72% 24%, rgba(255,140,205,0.4) 0%, rgba(255,140,205,0) 46%)',
+              'radial-gradient(circle at 26% 76%, rgba(200,165,235,0.38) 0%, rgba(200,165,235,0) 50%)',
+              'radial-gradient(circle at 76% 78%, rgba(255,195,150,0.36) 0%, rgba(255,195,150,0) 50%)',
+              'radial-gradient(circle at 50% 55%, rgba(150,235,205,0.3) 0%, rgba(150,235,205,0) 56%)',
             ].join(', '),
-            boxShadow: [
-              'inset 0 0 0 1px rgba(255,255,255,0.5)', // bright glass edge
-              'inset 0 2px 2px rgba(255,255,255,0.85)', // top rim catch
-              'inset 0 -3px 6px rgba(70,52,110,0.22)', // dome falloff, lower
-              'inset 0 0 5px 3px rgba(255,255,255,0.3)', // raised-rim inner glow
-              'inset 0 0 0 5px rgba(232,237,250,0.16)', // step down into the centre
-            ].join(', '),
-          }}
-        />
-
-        {/* Iridescent sheen that blooms on hover, as if the glass were tilted. */}
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-          style={{
-            filter: `url(#${waxId})`,
-            background:
-              'radial-gradient(circle at 72% 18%, rgba(255,120,200,0.42) 0%, rgba(255,120,200,0) 46%), radial-gradient(circle at 22% 74%, rgba(120,255,220,0.4) 0%, rgba(120,255,220,0) 50%)',
             mixBlendMode: 'screen',
           }}
         />
-
-        {/* Gold-leaf flecks embedded in the wax. */}
-        {GOLD_FLECKS.map((f, i) => (
-          <span
-            key={`g${i}`}
-            aria-hidden="true"
-            className="pointer-events-none absolute"
-            style={{
-              top: f.top,
-              left: f.left,
-              width: f.w,
-              height: f.h,
-              transform: `rotate(${f.rot}deg)`,
-              borderRadius: '1px',
-              background: 'linear-gradient(135deg, #F1D583 0%, #C79A3B 55%, #9A7526 100%)',
-              boxShadow: '0 0 1px rgba(120,90,30,0.5), inset 0 0.5px 0.5px rgba(255,245,210,0.8)',
-            }}
-          />
-        ))}
-
-        {/* Trapped air bubbles. */}
-        {BUBBLES.map((b, i) => (
-          <span
-            key={`b${i}`}
-            aria-hidden="true"
-            className="pointer-events-none absolute rounded-full"
-            style={{
-              top: b.top,
-              left: b.left,
-              width: b.d,
-              height: b.d,
-              background: 'radial-gradient(circle at 35% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0) 70%)',
-              boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.6)',
-            }}
-          />
-        ))}
-
-        {/* Orchid pressed into the frosted centre: an icy face whose dual
-            drop-shadow gives it a lit upper edge and a shadowed lower recess. */}
-        <span
-          aria-hidden="true"
-          className="relative h-6 w-6 opacity-80"
-          style={{
-            filter:
-              'drop-shadow(0.6px 0.9px 0.5px rgba(55,38,90,0.5)) drop-shadow(-0.6px -0.7px 0.4px rgba(255,255,255,0.85))',
-          }}
-        >
-          <Drop className="h-6 w-6" fill="#EEF5FF" />
-        </span>
       </span>
       <span className="font-sentient text-2xl tracking-[-0.02em] text-ink transition-colors group-hover:text-terracotta">
         {sending ? 'Sealing…' : 'Seal & send'}
