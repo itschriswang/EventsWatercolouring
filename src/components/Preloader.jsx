@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { SPRING, SPRING_SOFT } from '../lib/site.js'
 
@@ -21,7 +21,7 @@ export default function Preloader({ onDone }) {
     const start = performance.now()
     const duration = reduce ? 350 : 1700
     const tick = (now) => {
-      const t = Math.min(1, (now - start) / duration)
+      const t = Math.min(1, Math.max(0, (now - start) / duration))
       const eased = 1 - Math.pow(1 - t, 3)
       setProgress(Math.round(eased * 100))
       if (t < 1) {
@@ -128,22 +128,19 @@ export default function Preloader({ onDone }) {
 }
 
 /**
- * Layered pigment bloom — overlapping watercolour blobs, each rendered with
- * the same turbulence-displaced, edge-darkened recipe as the full-page
- * WatercolourBloom washes (see WatercolourBloom.jsx) instead of flat circles,
- * so the loading mark reads as hand-painted rather than graphic. Each blob
- * drifts, breathes and re-scales on its own infinite loop (unique duration +
- * phase), so the pigment keeps bleeding for the whole load rather than
- * springing once and freezing. Static for reduced-motion users.
+ * Layered pigment bloom — overlapping multiply circles. Each blob drifts,
+ * breathes and re-scales on its own infinite loop (unique duration + phase),
+ * so the pigment keeps bleeding for the whole load rather than springing once
+ * and freezing. Static for reduced-motion users.
  */
 function Bloom({ active, reduce }) {
   // dx/dy = wander amplitude (%), dur = loop length (s), rot = max rotation (deg). Heavily desynced.
   const blobs = [
-    { c: '#B5395B', rim: '#7A2A45', x: 0,   y: 0,   s: 1,    dx: 15,  dy: 12,  dur: 5.4, rot: 0,   seed: 3  },
-    { c: '#ED8A33', rim: '#C0691A', x: -22, y: 14,  s: 0.78, dx: 17,  dy: -11, dur: 7.8, rot: 11,  seed: 11 },
-    { c: '#3A7F9D', rim: '#285A72', x: 20,  y: 18,  s: 0.7,  dx: -13, dy: 14,  dur: 9.3, rot: -8,  seed: 19 },
-    { c: '#AEBF56', rim: '#84943A', x: 14,  y: -20, s: 0.6,  dx: 12,  dy: -16, dur: 6.5, rot: 14,  seed: 27 },
-    { c: '#E4889C', rim: '#C06C82', x: -16, y: -16, s: 0.66, dx: -16, dy: 11,  dur: 8.7, rot: -12, seed: 35 },
+    { c: '#B5395B', x: 0,   y: 0,   s: 1,    dx: 15,  dy: 12,  dur: 5.4, rot: 0   },
+    { c: '#ED8A33', x: -22, y: 14,  s: 0.78, dx: 17,  dy: -11, dur: 7.8, rot: 11  },
+    { c: '#3A7F9D', x: 20,  y: 18,  s: 0.7,  dx: -13, dy: 14,  dur: 9.3, rot: -8  },
+    { c: '#AEBF56', x: 14,  y: -20, s: 0.6,  dx: 12,  dy: -16, dur: 6.5, rot: 14  },
+    { c: '#E4889C', x: -16, y: -16, s: 0.66, dx: -16, dy: 11,  dur: 8.7, rot: -12 },
   ]
   return (
     <div className="relative h-full w-full">
@@ -184,46 +181,20 @@ function Bloom({ active, reduce }) {
         return (
           <motion.span
             key={i}
-            className="absolute inset-0 m-auto"
+            className="absolute inset-0 m-auto rounded-full mix-blend-multiply"
             style={{
               width: '62%',
               height: '62%',
+              backgroundColor: b.c,
+              filter: 'blur(2px)',
               willChange: reduce ? 'auto' : 'transform',
             }}
             animate={animate}
             transition={transition}
-          >
-            <PigmentBlob color={b.c} rim={b.rim} seed={b.seed} />
-          </motion.span>
+          />
         )
       })}
     </div>
-  )
-}
-
-/** A single hand-painted pigment blob: turbulence-warped edge, an edge-darkened
- *  rim and fine granulation, matching WatercolourBloom's recipe at icon scale. */
-function PigmentBlob({ color, rim, seed }) {
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, '')
-  return (
-    <svg viewBox="0 0 100 100" className="h-full w-full" style={{ mixBlendMode: 'multiply' }}>
-      <defs>
-        <radialGradient id={`pb-g-${uid}`} cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor={color} stopOpacity="0.85" />
-          <stop offset="55%" stopColor={color} stopOpacity="0.72" />
-          <stop offset="78%" stopColor={rim} stopOpacity="0.62" />
-          <stop offset="100%" stopColor={rim} stopOpacity="0" />
-        </radialGradient>
-        <filter id={`pb-f-${uid}`} x="-60%" y="-60%" width="220%" height="220%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="3" seed={seed} result="warp" />
-          <feDisplacementMap in="SourceGraphic" in2="warp" scale="9" xChannelSelector="R" yChannelSelector="G" result="displaced" />
-          <feGaussianBlur in="displaced" stdDeviation="1.6" result="soft" />
-          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed={seed + 5} result="grain" />
-          <feComposite in="soft" in2="grain" operator="arithmetic" k1="0.1" k2="0.9" k3="0" k4="0" />
-        </filter>
-      </defs>
-      <circle cx="50" cy="50" r="46" fill={`url(#pb-g-${uid})`} filter={`url(#pb-f-${uid})`} />
-    </svg>
   )
 }
 
