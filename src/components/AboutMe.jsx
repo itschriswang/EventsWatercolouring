@@ -6,6 +6,7 @@ import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, asset } from '../lib/site.js'
 import { PAINTER } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
+import { withUnderline } from './Underline.jsx'
 
 /** "The painter" — bio set against an asymmetric framed portrait. */
 export default function AboutMe() {
@@ -39,7 +40,11 @@ export default function AboutMe() {
             />
             <div className="mt-8 flex flex-col gap-5 text-[clamp(1rem,1.1vw,1.15rem)] leading-relaxed text-ink-soft">
               {PAINTER.body.map((p, i) => (
-                <p key={i}>{p}</p>
+                <p key={i}>
+                  {i === 1
+                    ? withUnderline(p, 'something real to take home', { className: 'text-terracotta' })
+                    : p}
+                </p>
               ))}
             </div>
             {PAINTER.signature && (
