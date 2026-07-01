@@ -420,9 +420,17 @@ function DecklePaper({ id }) {
 }
 
 /**
- * Submit control shaped as a wax seal: a waxy terracotta disc, embossed with
- * the site's orchid glyph, that presses down on hover/active. The disc is
- * decorative; the accessible name comes from the button + its visible label.
+ * Submit control shaped as a wax seal, cast in translucent iridescent glass.
+ *
+ * The wax-seal read is preserved through four optical cues, only the material
+ * changes: a domed body (light gathers top-left via the frosted highlight,
+ * falls off bottom-right via the inner shadow); a bright Fresnel rim where the
+ * glass edge catches light; oil-film iridescence (cyan/violet/peach/mint
+ * blotches) that shifts on hover as if the glass were tilted; and the orchid
+ * motif embossed into the surface — its dual drop-shadow (lit up-left,
+ * shadowed down-right) makes it read as relief pressed into clear glass rather
+ * than a flat glyph. `backdrop-blur` frosts the paper showing through. The disc
+ * is decorative; the accessible name comes from the button + its visible label.
  */
 function SealButton({ sending }) {
   return (
@@ -433,17 +441,59 @@ function SealButton({ sending }) {
       className="group inline-flex w-fit items-center gap-4 outline-none disabled:cursor-not-allowed disabled:opacity-60"
     >
       <span
-        className="relative grid h-14 w-14 shrink-0 place-items-center rounded-full transition-transform duration-200 ease-organic group-hover:translate-y-0.5 group-active:translate-y-1 group-focus-visible:ring-2 group-focus-visible:ring-terracotta group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-transparent"
+        className="relative grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full backdrop-blur-md transition-transform duration-200 ease-organic group-hover:translate-y-0.5 group-active:translate-y-1 group-focus-visible:ring-2 group-focus-visible:ring-terracotta group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-transparent"
         style={{
-          background:
-            'radial-gradient(circle at 34% 28%, #D2764E 0%, #C2613C 44%, #9A4A2B 100%)',
-          boxShadow:
-            'inset 0 2px 3px rgba(255,240,230,0.35), inset 0 -4px 7px rgba(108,42,62,0.55), 0 7px 15px rgba(154,74,43,0.4)',
+          // Frosted, translucent body with oil-film colour blotches — brightest
+          // top-left where the light source sits, so the disc reads as a dome.
+          background: [
+            'radial-gradient(circle at 30% 22%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 42%)',
+            'radial-gradient(circle at 74% 30%, rgba(120,220,235,0.5) 0%, rgba(120,220,235,0) 46%)',
+            'radial-gradient(circle at 28% 80%, rgba(196,150,235,0.48) 0%, rgba(196,150,235,0) 52%)',
+            'radial-gradient(circle at 80% 82%, rgba(245,190,150,0.46) 0%, rgba(245,190,150,0) 50%)',
+            'radial-gradient(circle at 52% 58%, rgba(150,235,200,0.36) 0%, rgba(150,235,200,0) 56%)',
+            'linear-gradient(135deg, rgba(255,255,255,0.26), rgba(210,224,255,0.12))',
+          ].join(', '),
+          boxShadow: [
+            'inset 0 1.5px 1.5px rgba(255,255,255,0.9)', // top rim catch
+            'inset 1.5px 0 2px rgba(255,255,255,0.45)', // left rim catch
+            'inset -3px -4px 8px rgba(70,50,110,0.28)', // dome falloff, lower-right
+            'inset 0 0 0 1px rgba(255,255,255,0.35)', // glass edge
+            '0 8px 18px rgba(80,60,130,0.3)', // cool cast shadow
+            '0 2px 4px rgba(40,30,70,0.25)', // contact shadow
+          ].join(', '),
         }}
       >
-        {/* embossed orchid: a darker stamp offset behind a light face */}
-        <Drop className="absolute h-7 w-7 translate-y-px opacity-40" fill="#6C2A3E" />
-        <Drop className="relative h-7 w-7" fill="#F4EFE6" />
+        {/* Bright crescent glare across the top — glass catching the light. */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 rounded-full"
+          style={{
+            background:
+              'radial-gradient(120% 78% at 28% 6%, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0) 40%)',
+          }}
+        />
+        {/* Iridescent sheen that blooms on hover, as if the glass were tilted. */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{
+            background:
+              'radial-gradient(circle at 72% 18%, rgba(255,120,200,0.5) 0%, rgba(255,120,200,0) 46%), radial-gradient(circle at 22% 74%, rgba(120,255,220,0.45) 0%, rgba(120,255,220,0) 50%)',
+            mixBlendMode: 'screen',
+          }}
+        />
+        {/* Orchid embossed into the glass: an icy translucent face whose dual
+            drop-shadow gives it a lit upper edge and a shadowed lower recess. */}
+        <span
+          aria-hidden="true"
+          className="relative h-7 w-7 opacity-80"
+          style={{
+            filter:
+              'drop-shadow(0.6px 0.9px 0.5px rgba(55,38,90,0.5)) drop-shadow(-0.6px -0.7px 0.4px rgba(255,255,255,0.85))',
+          }}
+        >
+          <Drop className="h-7 w-7" fill="#EEF5FF" />
+        </span>
       </span>
       <span className="font-sentient text-2xl tracking-[-0.02em] text-ink transition-colors group-hover:text-terracotta">
         {sending ? 'Sealing…' : 'Seal & send'}
