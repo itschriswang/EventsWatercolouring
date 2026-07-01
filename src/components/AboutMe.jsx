@@ -57,10 +57,17 @@ export default function AboutMe() {
             className="col-span-12 sm:col-span-6 sm:col-start-7 lg:col-span-6 lg:col-start-7 lg:mt-16"
           >
             <div className="relative">
-              {/* offset accent frame */}
+              {/* offset accent frame with gradient stroke */}
               <div
                 aria-hidden="true"
-                className="absolute -left-4 -top-4 h-full w-full rounded-[1.2rem] border border-terracotta/60"
+                className="absolute -left-4 -top-4 h-full w-full rounded-[1.2rem]"
+                style={{
+                  background: 'linear-gradient(135deg, #6E8CA8 0%, #C2613C 100%)',
+                  padding: '1px',
+                  WebkitMaskImage: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                  WebkitMaskComposite: 'xor',
+                  maskComposite: 'exclude',
+                }}
               />
               <motion.div
                 style={parallax ? { y } : {}}
