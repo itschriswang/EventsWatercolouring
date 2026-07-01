@@ -6,7 +6,7 @@ import SiteHeader from './components/SiteHeader.jsx'
 import MobileNav from './components/MobileNav.jsx'
 import ScrollProgress from './components/ScrollProgress.jsx'
 import Hero from './components/Hero.jsx'
-import WhyWatercolour from './components/WhyWatercolour.jsx'
+import WhatYouKeep from './components/WhatYouKeep.jsx'
 import EveningTimeline from './components/EveningTimeline.jsx'
 import SelectedWork from './components/SelectedWork.jsx'
 import AboutMe from './components/AboutMe.jsx'
@@ -43,7 +43,7 @@ export default function App() {
 
       <main className="relative z-10 pb-28 md:pb-0">
         <Hero revealed={revealed} />
-        <div className="relative overflow-visible lg:grid lg:grid-cols-2 lg:items-start lg:divide-x lg:divide-transparent">
+        <div className="relative overflow-visible">
           {/* WatercolourBloom — clipped to this section, below all content */}
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
             <WatercolourBloom />
@@ -64,7 +64,6 @@ export default function App() {
                 'transparent 100%)',
             }}
           />
-          <WhyWatercolour />
           <AboutMe />
           <picture>
             <source srcSet={asset('assets/bloom-accent-2.webp')} type="image/webp" />
@@ -80,7 +79,14 @@ export default function App() {
             />
           </picture>
         </div>
-        <EveningTimeline />
+        {/* The night and its keepsake coda are one movement: the rust timeline
+            runs to its "destination" marker, then WhatYouKeep resolves that
+            back into warm paper (its own top wash dissolves the seam). Grouped
+            so they read as a single arc — what happens, then what's left. */}
+        <div className="relative">
+          <EveningTimeline />
+          <WhatYouKeep />
+        </div>
         <SelectedWork />
         <div className="relative">
           {/* One continuous WatercolourBloom behind Packages/Faq/Enquire so
