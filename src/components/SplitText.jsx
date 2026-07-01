@@ -69,7 +69,7 @@ export default function SplitText({
     const endPercent = ((posInSpan + 1) / totalSpan) * 100
 
     return {
-      background: 'linear-gradient(110deg, #C2613C, #ED8A33, #E4889C)',
+      background: 'linear-gradient(110deg, #A4502F, #C2613C, #6C2A3E)',
       backgroundSize: `${totalSpan * 100}% 100%`,
       backgroundPosition: `${-posInSpan * 100}% 0`,
       WebkitBackgroundClip: 'text',

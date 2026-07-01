@@ -46,7 +46,7 @@ export default function Packages() {
       {/* ── Mobile: base package pull-quote + detail card ─────────────────── */}
       <div className="relative mt-[clamp(3.5rem,12vw,5rem)] lg:hidden">
         <motion.div {...reveal()} className="relative z-10 max-w-[20rem] pl-1">
-          <p className="font-sentient text-2xl font-semibold leading-tight tracking-[-0.02em] text-ink">
+          <p className="font-sentient text-2xl leading-tight tracking-[-0.02em] text-ink">
             {PACKAGES.base.title}
           </p>
           <p className="mt-3 flex items-baseline gap-2">
@@ -85,7 +85,7 @@ export default function Packages() {
               ))}
             </ul>
             {/* Also included */}
-            <div className="mt-6 border-t border-line/40 pt-5">
+            <div className="mt-5">
               <p className="mb-3 font-mono text-[0.58rem] uppercase tracking-[0.18em] text-ink-soft">
                 {PACKAGES.included.sub}
               </p>
@@ -104,7 +104,7 @@ export default function Packages() {
         {/* Mobile add-ons */}
         <motion.div {...reveal(2)} className="mt-8">
           <div className="flex items-baseline justify-between border-b border-ink pb-3">
-            <h3 className="font-sentient text-xl font-semibold tracking-[-0.02em] text-ink">
+            <h3 className="font-sentient text-xl tracking-[-0.02em] text-ink">
               {PACKAGES.addonsHead.title}
             </h3>
             <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
@@ -121,7 +121,7 @@ export default function Packages() {
                   (i % 2 === 0 ? 'sm:border-r sm:pr-5 ' : 'sm:pl-5 ')
                 }
               >
-                <h4 className="font-sentient text-base font-medium tracking-[-0.01em] text-ink">{a.h}</h4>
+                <h4 className="font-sentient text-base tracking-[-0.01em] text-ink">{a.h}</h4>
                 <p className="mt-1 flex-1 text-xs leading-relaxed text-ink-soft">{a.p}</p>
                 <p className="mt-3 text-xs text-rust">
                   {a.small && (
@@ -147,13 +147,13 @@ export default function Packages() {
         {/* Base package card */}
         <motion.article
           {...reveal()}
-          className="relative col-span-5 flex flex-col overflow-hidden rounded-2xl border border-line/45 p-8 shadow-[0_24px_50px_-20px_rgba(150,85,43,0.22)]"
+          className="relative col-span-5 flex flex-col overflow-hidden rounded-2xl border border-line/45 p-7 shadow-[0_24px_50px_-20px_rgba(150,85,43,0.22)]"
           style={{ background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FBF8F2 0%, #F4EFE6 62%)' }}
         >
           <CornerBloom from="rgba(194,97,60,0.18)" to="rgba(110,140,168,0.13)" />
           <div className="relative z-10 flex flex-1 flex-col">
             <div className="flex items-baseline justify-between gap-4">
-              <h3 className="font-sentient text-2xl font-semibold tracking-[-0.02em] text-ink">
+              <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
                 {PACKAGES.base.title}
               </h3>
               <p className="shrink-0 text-right">
@@ -166,7 +166,7 @@ export default function Packages() {
               </p>
             </div>
             <p className="mt-2 text-sm text-ink-soft">{PACKAGES.base.note}</p>
-            <div className="mt-6 flex flex-wrap gap-2">
+            <div className="mt-5 flex flex-wrap gap-2">
               {PACKAGES.base.facts.map((f) => (
                 <span
                   key={f}
@@ -176,7 +176,7 @@ export default function Packages() {
                 </span>
               ))}
             </div>
-            <ul className="mt-7 flex flex-col gap-3 border-t border-line/60 pt-7 text-sm text-ink/85">
+            <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
               {PACKAGES.base.bullets.map((b) => (
                 <li key={b} className="flex gap-3">
                   <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#6E8CA8', '#C2613C']} />
@@ -185,7 +185,7 @@ export default function Packages() {
               ))}
             </ul>
             {/* Also included */}
-            <div className="mt-6 flex-1 border-t border-line/40 pt-5">
+            <div className="mt-5 flex-1">
               <p className="mb-3 font-mono text-[0.58rem] uppercase tracking-[0.18em] text-ink-soft">
                 {PACKAGES.included.sub}
               </p>
@@ -210,7 +210,7 @@ export default function Packages() {
           <CornerBloom from="rgba(201,162,58,0.16)" to="rgba(110,140,168,0.13)" />
           <div className="relative z-10 flex h-full flex-col">
             <div className="flex items-baseline justify-between border-b border-line/50 px-8 pb-5 pt-8">
-              <h3 className="font-sentient text-2xl font-semibold tracking-[-0.02em] text-ink">
+              <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
                 {PACKAGES.addonsHead.title}
               </h3>
               <span className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
@@ -227,7 +227,7 @@ export default function Packages() {
                     (i % 2 === 0 ? 'border-r ' : '')
                   }
                 >
-                  <h4 className="font-sentient text-base font-medium tracking-[-0.01em] text-ink [overflow-wrap:anywhere]">{a.h}</h4>
+                  <h4 className="font-sentient text-base tracking-[-0.01em] text-ink [overflow-wrap:anywhere]">{a.h}</h4>
                   <p className="mt-2 flex-1 text-xs leading-relaxed text-ink-soft">{a.p}</p>
                   <p className="mt-4 text-xs text-rust">
                     {a.small && (
