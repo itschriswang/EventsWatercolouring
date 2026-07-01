@@ -31,7 +31,7 @@ export default function Packages() {
         {...reveal(1)}
         className="mt-8 max-w-2xl text-[clamp(1rem,1.1vw,1.15rem)] leading-relaxed text-ink-soft"
       >
-        {withUnderline(PACKAGES.intro, 'painted live', { className: 'text-terracotta' })}
+        {withUnderline(PACKAGES.intro, 'painted live', { className: 'text-rust' })}
       </motion.p>
 
       {/* ── Mobile: base package pull-quote + detail card ─────────────────── */}
@@ -61,7 +61,7 @@ export default function Packages() {
               {PACKAGES.base.facts.map((f) => (
                 <span
                   key={f}
-                  className="border border-lime/40 px-3 py-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-sage"
+                  className="border border-lime/40 px-3 py-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-sage-deep"
                 >
                   {f}
                 </span>
@@ -161,7 +161,7 @@ export default function Packages() {
               {PACKAGES.base.facts.map((f) => (
                 <span
                   key={f}
-                  className="border border-lime/40 px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.15em] text-sage"
+                  className="border border-lime/40 px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.15em] text-sage-deep"
                 >
                   {f}
                 </span>

@@ -177,10 +177,10 @@ function NavSheet({ onClose }) {
       className="fixed inset-x-0 bottom-0 z-50 md:hidden overflow-hidden"
       style={{
         borderRadius: '24px 24px 0 0',
-        background: 'rgba(244,239,230,0.97)',
-        backdropFilter: 'blur(28px) saturate(1.6)',
-        WebkitBackdropFilter: 'blur(28px) saturate(1.6)',
-        border: '1px solid rgba(216,207,191,0.6)',
+        background: 'rgb(var(--rgb-paper) / 0.97)',
+        backdropFilter: 'blur(28px) saturate(1.1)',
+        WebkitBackdropFilter: 'blur(28px) saturate(1.1)',
+        border: '1px solid rgb(var(--rgb-line) / 0.6)',
         borderBottom: 'none',
         boxShadow: '0 -14px 52px rgba(42,39,36,0.13), 0 -1px 0 rgba(255,255,255,0.65) inset',
       }}
@@ -196,7 +196,7 @@ function NavSheet({ onClose }) {
             width: 36,
             height: 4,
             borderRadius: 9999,
-            background: 'rgba(216,207,191,0.9)',
+            background: 'rgb(var(--rgb-line) / 0.9)',
           }}
         />
       </div>
@@ -209,7 +209,7 @@ function NavSheet({ onClose }) {
         <button
           type="button"
           onClick={onClose}
-          className="flex items-center justify-center w-8 h-8 rounded-full text-ink-soft hover:text-ink hover:bg-line/40 transition-colors duration-200"
+          className="flex items-center justify-center w-11 h-11 rounded-full text-ink-soft hover:text-ink hover:bg-line/40 transition-colors duration-200"
           aria-label="Close navigation"
         >
           <CloseIcon />
@@ -298,7 +298,7 @@ export default function MobileNav({ revealed }) {
             transition={{ duration: 0.28, ease: EASE }}
             className="fixed inset-0 z-40 md:hidden"
             style={{
-              background: 'rgba(42,39,36,0.26)',
+              background: 'rgb(var(--rgb-ink) / 0.26)',
               backdropFilter: 'blur(4px)',
               WebkitBackdropFilter: 'blur(4px)',
             }}
@@ -326,10 +326,10 @@ export default function MobileNav({ revealed }) {
         <nav
           className="flex items-center gap-0.5 px-2 py-1.5 pointer-events-auto"
           style={{
-            background: 'rgba(244,239,230,0.72)',
-            backdropFilter: 'blur(26px) saturate(1.9)',
-            WebkitBackdropFilter: 'blur(26px) saturate(1.9)',
-            border: '1px solid rgba(216,207,191,0.56)',
+            background: 'rgb(var(--rgb-paper) / 0.72)',
+            backdropFilter: 'blur(26px) saturate(1.15)',
+            WebkitBackdropFilter: 'blur(26px) saturate(1.15)',
+            border: '1px solid rgb(var(--rgb-line) / 0.56)',
             borderRadius: 9999,
             boxShadow:
               '0 8px 32px rgba(42,39,36,0.14), 0 0 0 1px rgba(255,255,255,0.42) inset',

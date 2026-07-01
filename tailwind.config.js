@@ -12,10 +12,19 @@ export default {
         line: '#D8CFBF',
         // Pigments sampled from the bouquet painting (reused from the legacy site).
         terracotta: '#C2613C',
-        rust: '#A4502F',
+        // Deepened from #A4502F so body-size `text-rust` clears WCAG AA (4.5:1)
+        // on the warm paper/card backgrounds, and the timeline section it backs
+        // (`bg-rust`) sits a touch richer.
+        rust: '#9A4A2B',
         orange: '#ED8A33',
         ochre: '#C9A23A',
+        // Light ochre for emphasis set on the dark rust timeline — a mid ochre
+        // sits too close to rust to read (2.6:1); this clears AA (~5:1).
+        'ochre-light': '#F8E6AE',
         sage: '#6E7E4E',
+        // Darker sage for sage used as *text* (chips, section numerals): the
+        // base sage is a fill/accent green and only reaches 3.85:1 on paper.
+        'sage-deep': '#566443',
         lime: '#AEBF56',
         cornflower: '#6E8CA8',
         teal: '#3A7F9D',

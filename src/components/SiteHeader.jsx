@@ -14,7 +14,7 @@ function NavLink({ href, label, isActive }) {
       href={href}
       className="relative py-0.5"
       style={{
-        color: isActive ? 'rgb(42,39,36)' : 'rgb(107,98,88)',
+        color: isActive ? 'rgb(var(--rgb-ink))' : 'rgb(var(--rgb-ink-soft))',
         transition: 'color 0.3s cubic-bezier(0.25,1,0.5,1)',
       }}
       onMouseEnter={() => setHovered(true)}
@@ -29,7 +29,7 @@ function NavLink({ href, label, isActive }) {
           bottom: 0,
           left: 0,
           height: '1px',
-          backgroundColor: '#C2613C',
+          backgroundColor: 'var(--c-terracotta)',
           width: isActive || hovered ? '100%' : '0%',
           transition: 'width 0.4s cubic-bezier(0.25,1,0.5,1)',
         }}
@@ -75,10 +75,10 @@ export default function SiteHeader({ revealed, className = '' }) {
       // hidden on mobile — MobileNav owns small screens
       className={`hidden md:block sticky top-0 z-50 ${className}`}
       style={{
-        background: scrolled ? 'rgba(244,239,230,0.97)' : 'rgba(244,239,230,0.74)',
-        backdropFilter: 'blur(18px) saturate(1.7)',
-        WebkitBackdropFilter: 'blur(18px) saturate(1.7)',
-        borderBottom: `1px solid ${scrolled ? 'rgba(216,207,191,0.72)' : 'rgba(216,207,191,0.46)'}`,
+        background: scrolled ? 'rgb(var(--rgb-paper) / 0.97)' : 'rgb(var(--rgb-paper) / 0.74)',
+        backdropFilter: 'blur(18px) saturate(1.1)',
+        WebkitBackdropFilter: 'blur(18px) saturate(1.1)',
+        borderBottom: `1px solid ${scrolled ? 'rgb(var(--rgb-line) / 0.72)' : 'rgb(var(--rgb-line) / 0.46)'}`,
         transition:
           'background 0.55s cubic-bezier(0.25,1,0.5,1), border-color 0.55s cubic-bezier(0.25,1,0.5,1)',
       }}
@@ -99,7 +99,7 @@ export default function SiteHeader({ revealed, className = '' }) {
               width: '1.5px',
               height: scrolled ? '13px' : '20px',
               borderRadius: '9999px',
-              backgroundColor: '#C2613C',
+              backgroundColor: 'var(--c-terracotta)',
               transition: 'height 0.55s cubic-bezier(0.25,1,0.5,1)',
             }}
           />
@@ -110,7 +110,7 @@ export default function SiteHeader({ revealed, className = '' }) {
               transition: 'font-size 0.55s cubic-bezier(0.25,1,0.5,1)',
             }}
           >
-            Chris Wang<span style={{ color: '#C2613C' }}>.</span>
+            Chris Wang<span style={{ color: 'var(--c-terracotta)' }}>.</span>
           </span>
         </a>
 

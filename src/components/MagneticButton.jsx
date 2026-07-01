@@ -13,7 +13,10 @@ export default function MagneticButton({
   variant = 'ink',
 }) {
   const reduce = useReducedMotion()
-
+  // Magnetic pull toward the cursor (no-op on touch / reduced-motion). This is
+  // the behaviour the component is named for; without it the CTA is just a
+  // plain link.
+  const { ref, style } = useMagnetic()
 
   const palette =
     variant === 'paper'
@@ -22,9 +25,9 @@ export default function MagneticButton({
 
   return (
     <motion.a
-      
+      ref={ref}
       href={href}
-      
+      style={style}
       whileHover="hover"
       whileTap={{ scale: 0.96 }}
       className={
