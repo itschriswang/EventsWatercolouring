@@ -40,7 +40,10 @@ export default function App() {
     if (!revealed) return
     const id = window.location.hash.slice(1)
     if (!id) return
-    document.getElementById(id)?.scrollIntoView({ behavior: 'auto', block: 'start' })
+    // Use requestAnimationFrame to ensure layout is complete before scrolling
+    requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    })
   }, [revealed])
 
   return (
