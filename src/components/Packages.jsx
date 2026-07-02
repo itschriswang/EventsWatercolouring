@@ -10,7 +10,13 @@ import { withUnderline } from './Underline.jsx'
 
 export default function Packages() {
   const reduce = useReducedMotion()
-  const [addonsOpen, setAddonsOpen] = useState(false)
+  const [openAddons, setOpenAddons] = useState(() => new Set())
+  const toggleAddon = (i) =>
+    setOpenAddons((prev) => {
+      const next = new Set(prev)
+      next.has(i) ? next.delete(i) : next.add(i)
+      return next
+    })
   const reveal = (i = 0) => ({
     initial: { opacity: 0, y: reduce ? 0 : 36 },
     whileInView: { opacity: 1, y: 0 },
@@ -80,62 +86,36 @@ export default function Packages() {
           </div>
         </motion.div>
 
-        {/* Mobile add-ons — collapsed into a single disclosure rather than
-            eight cards dominating the scroll. Closed by default; the whole
-            header row is the toggle, with the same drop-icon-rotate device
-            the FAQ accordion used to use (now free, since that page shows
-            every answer at once instead). */}
+        {/* Mobile add-ons — every add-on is visible up front as a compact
+            row (name + price), and each drops open independently to reveal
+            its description. All eight are scannable at a glance; nothing is
+            hidden behind a single group toggle. */}
         <motion.div {...reveal(2)} className="mt-8">
-          <button
-            type="button"
-            onClick={() => setAddonsOpen((v) => !v)}
-            aria-expanded={addonsOpen}
-            aria-controls="mobile-addons-panel"
-            className="flex w-full items-center justify-between gap-4 border-b border-ink pb-3 text-left"
-          >
-            <span className="flex items-baseline gap-3">
-              <h3 className="font-sentient text-xl tracking-[-0.02em] text-ink">
-                {PACKAGES.addonsHead.title}
-              </h3>
-              <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
-                {PACKAGES.addonsHead.note}
-              </span>
+          <div className="flex items-baseline justify-between border-b border-ink pb-3">
+            <h3 className="font-sentient text-xl tracking-[-0.02em] text-ink">
+              {PACKAGES.addonsHead.title}
+            </h3>
+            <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
+              {PACKAGES.addonsHead.note}
             </span>
-            <motion.span
-              animate={{ rotate: addonsOpen ? 45 : 0 }}
-              transition={SPRING}
-              className="shrink-0 rounded-full bg-paper-deep/70 p-2.5 shadow-[0_2px_10px_-2px_rgba(173,98,49,0.30)] transition-colors duration-200 hover:bg-paper-deep"
-              aria-hidden="true"
-            >
-              <Drop className="h-4 w-auto" gradient={['#C9A23A', '#C2613C']} />
-            </motion.span>
-          </button>
-
-          <AnimatePresence initial={false}>
-            {addonsOpen && (
-              <motion.div
-                id="mobile-addons-panel"
-                initial={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
-                animate={reduce ? { opacity: 1 } : { height: 'auto', opacity: 1 }}
-                exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
-                transition={SPRING}
-                className="overflow-hidden"
-              >
-                <div className="grid grid-cols-1 sm:grid-cols-2">
-                  {PACKAGES.addons.map((a, i) => (
-                    <motion.div
-                      key={a.h}
-                      initial={{ opacity: 0, y: reduce ? 0 : 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ ...SPRING, delay: reduce ? 0 : (i % 2) * 0.05 }}
-                      className={
-                        'flex flex-col border-b border-line px-1 py-5 ' +
-                        (i % 2 === 0 ? 'sm:border-r sm:pr-5 ' : 'sm:pl-5 ')
-                      }
-                    >
-                      <h4 className="font-sentient text-base tracking-[-0.01em] text-ink">{a.h}</h4>
-                      <p className="mt-1 flex-1 text-xs leading-relaxed text-ink-soft">{a.p}</p>
-                      <p className="mt-3 text-xs text-rust">
+          </div>
+          <ul>
+            {PACKAGES.addons.map((a, i) => {
+              const isOpen = openAddons.has(i)
+              return (
+                <motion.li key={a.h} {...reveal(i % 3)} className="border-b border-line">
+                  <button
+                    type="button"
+                    onClick={() => toggleAddon(i)}
+                    aria-expanded={isOpen}
+                    aria-controls={`mobile-addon-${i}`}
+                    className="flex w-full items-center justify-between gap-4 py-4 text-left"
+                  >
+                    <span className="flex flex-col gap-1">
+                      <span className="font-sentient text-base tracking-[-0.01em] text-ink">
+                        {a.h}
+                      </span>
+                      <span className="text-xs text-rust">
                         {a.small && (
                           <span className="mr-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
                             {a.small}
@@ -147,13 +127,35 @@ export default function Packages() {
                             {a.extra}
                           </span>
                         )}
-                      </p>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                      </span>
+                    </span>
+                    <motion.span
+                      animate={{ rotate: isOpen ? 45 : 0 }}
+                      transition={SPRING}
+                      className="shrink-0 rounded-full bg-paper-deep/70 p-2"
+                      aria-hidden="true"
+                    >
+                      <Drop className="h-3.5 w-auto" gradient={['#C9A23A', '#C2613C']} />
+                    </motion.span>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        id={`mobile-addon-${i}`}
+                        initial={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
+                        animate={reduce ? { opacity: 1 } : { height: 'auto', opacity: 1 }}
+                        exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
+                        transition={SPRING}
+                        className="overflow-hidden"
+                      >
+                        <p className="pb-4 text-xs leading-relaxed text-ink-soft">{a.p}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.li>
+              )
+            })}
+          </ul>
         </motion.div>
       </div>
 
@@ -251,7 +253,11 @@ export default function Packages() {
       </div>
 
       <motion.p {...reveal()} className="mt-10 max-w-2xl text-ink-soft">
-        {PACKAGES.baseNote}
+        Got a question about any of this?{' '}
+        <a href="/faq/" className="text-ink underline underline-offset-4">
+          Check the FAQ
+        </a>
+        .
       </motion.p>
 
       <motion.p {...reveal()} className="mt-6 max-w-2xl text-sm leading-relaxed text-ink-soft">
