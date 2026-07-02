@@ -237,7 +237,7 @@ function Tile({ item, className = '', masonry = false, onOpen, reflow = false })
             cardShape +
             ' block w-full cursor-zoom-in bg-paper-deep text-left outline-none' +
             ' transition-[transform,box-shadow] duration-500 ease-organic' +
-            ' group-hover:-translate-y-1 group-hover:shadow-[0_18px_42px_-26px_rgba(150,85,43,0.28)]' +
+            ' group-hover:-translate-y-1 group-hover:shadow-[0_18px_42px_-26px_rgba(173,98,49,0.32)]' +
             ' focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-paper'
           }
         >
@@ -505,7 +505,7 @@ function Lightbox({ items, index, onClose, onNavigate }) {
                     alt={item.alt || item.ttl}
                     onError={hideOnError}
                     style={reduce ? undefined : { filter: `url(#wc-bloom-${index})` }}
-                    className="max-h-[80vh] w-auto rounded-[1rem] object-contain shadow-[0_28px_60px_-10px_rgba(0,0,0,0.65)]"
+                    className="max-h-[80vh] w-auto rounded-[1rem] object-contain shadow-[0_28px_60px_-10px_rgba(150,85,43,0.65)]"
                   />
                 </picture>
               </motion.div>

@@ -88,7 +88,7 @@ export default function WhatYouKeep() {
               whileHover={reduce ? {} : { y: -6, rotate: 0 }}
               style={{ rotate: reduce ? '0deg' : CARD_TILT[i] }}
               className={[
-                'group relative rounded-[1.1rem] border border-line bg-paper-deep/70 p-6 shadow-[0_10px_30px_-18px_rgba(60,30,15,0.5)] backdrop-blur-[1px] sm:p-7',
+                'group relative rounded-[1.1rem] border border-line bg-paper-deep/70 p-6 shadow-[0_10px_30px_-18px_rgba(69,34,17,0.58)] backdrop-blur-[1px] sm:p-7',
                 'col-span-12 sm:col-span-6',
                 // Zig-zag drop so the three read as pieces set down across a
                 // surface rather than a tidy row.
