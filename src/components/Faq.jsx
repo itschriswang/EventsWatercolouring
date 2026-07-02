@@ -23,11 +23,11 @@ export default function Faq() {
         </div>
 
         <div className="col-span-12 mt-10 lg:col-span-8 lg:mt-0">
-          <ul className="border-t border-line">
+          <ul className="space-y-3 border-t border-line/30">
             {FAQ.items.map((item, i) => {
               const isOpen = open === i
               return (
-                <li key={i} className="border-b border-line">
+                <li key={i} className="group rounded-lg transition-all duration-200 hover:bg-stone-50/40">
                   <h3>
                     <button
                       type="button"
@@ -35,18 +35,22 @@ export default function Faq() {
                       aria-expanded={isOpen}
                       aria-controls={`faq-a-${i}`}
                       onClick={() => setOpen(isOpen ? null : i)}
-                      className="flex w-full items-center justify-between gap-6 py-6 text-left transition-colors hover:text-terracotta"
+                      className={`flex w-full items-center justify-between gap-6 px-4 py-5 text-left transition-all duration-200 ${
+                        isOpen
+                          ? 'text-terracotta'
+                          : 'text-ink-soft hover:text-terracotta'
+                      }`}
                     >
-                      <span className="font-body text-[clamp(0.9rem,1.3vw,1.15rem)] font-semibold leading-snug text-ink-soft">
+                      <span className="font-body text-[clamp(0.9rem,1.3vw,1.15rem)] font-semibold leading-snug">
                         {item.q}
                       </span>
                       <motion.span
                         animate={{ rotate: isOpen ? 45 : 0 }}
                         transition={SPRING}
-                        className="shrink-0"
+                        className="shrink-0 rounded-full bg-white/60 p-2 transition-all duration-200 group-hover:bg-white group-hover:shadow-sm"
                         aria-hidden="true"
                       >
-                        <Drop className="h-5 w-auto" gradient={['#C9A23A', '#C2613C']} />
+                        <Drop className="h-4 w-auto" gradient={['#C9A23A', '#C2613C']} />
                       </motion.span>
                     </button>
                   </h3>
@@ -62,7 +66,7 @@ export default function Faq() {
                         transition={SPRING}
                         className="overflow-hidden"
                       >
-                        <p className="max-w-2xl pb-7 leading-relaxed text-ink-soft">
+                        <p className="max-w-2xl px-4 pb-5 leading-relaxed text-ink-soft/80">
                           {item.a}
                         </p>
                       </motion.div>
