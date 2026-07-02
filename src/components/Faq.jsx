@@ -2,9 +2,45 @@ import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label from './Label.jsx'
 import { Drop } from './Label.jsx'
-import CornerBloom from './CornerBloom.jsx'
 import { SPRING } from '../lib/site.js'
 import { FAQ } from '../content.js'
+
+/**
+ * The same terracotta → ochre → rust → blush → dusty-pink wash used to sit
+ * on the shared <ul> background — sampled per-card instead, so each cell
+ * carries its own slice of the wash rather than the whole list sharing one
+ * background that shows through (and blurs into) the gaps between cards.
+ */
+const WASH_STOPS = [
+  { at: 0, rgb: [194, 97, 60], a: 0.22 },
+  { at: 0.26, rgb: [201, 162, 58], a: 0.19 },
+  { at: 0.52, rgb: [164, 80, 47], a: 0.2 },
+  { at: 0.76, rgb: [228, 136, 156], a: 0.18 },
+  { at: 1, rgb: [201, 139, 140], a: 0.17 },
+]
+
+function sampleWash(t) {
+  for (let i = 0; i < WASH_STOPS.length - 1; i++) {
+    const a = WASH_STOPS[i]
+    const b = WASH_STOPS[i + 1]
+    if (t >= a.at && t <= b.at) {
+      const lt = (t - a.at) / (b.at - a.at)
+      const lerp = (x, y) => x + (y - x) * lt
+      const [r1, g1, b1] = a.rgb
+      const [r2, g2, b2] = b.rgb
+      const rgb = [lerp(r1, r2), lerp(g1, g2), lerp(b1, b2)].map(Math.round)
+      return `rgba(${rgb.join(', ')}, ${lerp(a.a, b.a).toFixed(3)})`
+    }
+  }
+  const last = WASH_STOPS[WASH_STOPS.length - 1]
+  return `rgba(${last.rgb.join(', ')}, ${last.a})`
+}
+
+function cardWash(i, count) {
+  const top = sampleWash(i / count)
+  const bottom = sampleWash((i + 1) / count)
+  return `linear-gradient(172deg, ${top} 0%, ${bottom} 100%)`
+}
 
 /** The practical bits — an accessible accordion with spring height reveals. */
 export default function Faq() {
@@ -25,35 +61,24 @@ export default function Faq() {
 
         <div className="col-span-12 mt-10 lg:col-span-8 lg:mt-0">
           {/*
-            One continuous gradient painted on the <ul> itself — terracotta,
-            ochre, rust and blush washing top to bottom — rather than a
-            separate gradient per item. Each <li> below is transparent, so it
-            acts as a window onto whichever slice of this gradient sits behind
-            it: the list reads as one connected wash the questions are cut
-            from, instead of five unrelated cards.
+            The terracotta → ochre → rust → blush → dusty-pink wash runs the
+            same way it always did top to bottom, but each card now samples
+            its own slice via cardWash() and paints it on its own <li>
+            (clipped by that card's own rounded corners) instead of one
+            gradient shared across the whole <ul> — that let colour show
+            through, and blur past the card edges, into the gaps between
+            cards.
           */}
-          <ul
-            className="space-y-3"
-            style={{
-              backgroundImage:
-                'linear-gradient(172deg, ' +
-                'rgba(194,97,60,0.16) 0%, ' +
-                'rgba(201,162,58,0.14) 26%, ' +
-                'rgba(164,80,47,0.15) 52%, ' +
-                'rgba(228,136,156,0.13) 76%, ' +
-                'rgba(201,139,140,0.12) 100%)',
-              backgroundColor: '#FBF8F2',
-            }}
-          >
+          <ul className="space-y-3">
             {FAQ.items.map((item, i) => {
               const isOpen = open === i
 
               return (
                 <li
                   key={i}
-                  className="group relative overflow-hidden rounded-2xl border border-line/45 bg-transparent transition-all duration-200"
+                  className="group relative overflow-hidden rounded-2xl border border-line/45 bg-paper transition-all duration-200"
+                  style={{ backgroundImage: cardWash(i, FAQ.items.length) }}
                 >
-                  <CornerBloom from="rgba(194,97,60,0.12)" to="rgba(110,140,168,0.08)" />
                   <div className="relative z-10">
                     <h3>
                       <button
