@@ -14,16 +14,24 @@
 /* Lightweight fallback for touch / small devices (see WatercolourBloom.jsx).
    A handful of soft radial-gradients echoing the animated blooms' palette and
    positions. No SVG filters, no mix-blend, no animation — it paints once and
-   composites for free, so it never touches the frame budget while scrolling. */
+   composites for free, so it never touches the frame budget while scrolling.
+
+   Sized with `circle NNvw` rather than an `x% y%` ellipse: the sections this
+   sits behind are absolutely-positioned to `inset: 0` and can run many
+   viewport-heights tall on mobile, so a two-axis percentage size (resolved
+   independently against the container's width and height) stretched every
+   wash into a tall sliver instead of a round bloom. A single circle radius
+   keyed to viewport width keeps each wash a natural, round blob regardless
+   of how tall the section behind it is. */
 .wcb-static {
   background-image:
-    radial-gradient(38% 32% at 16% 26%, rgba(194, 97, 60, 0.20), transparent 72%),
-    radial-gradient(30% 26% at 88% 14%, rgba(201, 162, 58, 0.18), transparent 72%),
-    radial-gradient(34% 30% at 85% 84%, rgba(228, 136, 156, 0.16), transparent 72%),
-    radial-gradient(30% 28% at 8% 88%, rgba(201, 139, 140, 0.15), transparent 72%),
-    radial-gradient(30% 26% at 62% 8%, rgba(174, 191, 86, 0.13), transparent 72%),
-    radial-gradient(32% 28% at 99% 50%, rgba(110, 140, 168, 0.14), transparent 72%),
-    radial-gradient(26% 24% at 36% 52%, rgba(164, 80, 47, 0.14), transparent 74%);
+    radial-gradient(circle 34vw at 16% 26%, rgba(194, 97, 60, 0.20), transparent 72%),
+    radial-gradient(circle 28vw at 88% 14%, rgba(201, 162, 58, 0.18), transparent 72%),
+    radial-gradient(circle 32vw at 85% 84%, rgba(228, 136, 156, 0.16), transparent 72%),
+    radial-gradient(circle 29vw at 8% 88%, rgba(201, 139, 140, 0.15), transparent 72%),
+    radial-gradient(circle 27vw at 62% 8%, rgba(174, 191, 86, 0.13), transparent 72%),
+    radial-gradient(circle 30vw at 99% 50%, rgba(110, 140, 168, 0.14), transparent 72%),
+    radial-gradient(circle 24vw at 36% 52%, rgba(164, 80, 47, 0.14), transparent 74%);
 }
 
 /* Whole-canvas breathing — an almost-imperceptible density shift, as if the
