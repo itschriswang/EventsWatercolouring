@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
+import Underline from './Underline.jsx'
 import { SPRING } from '../lib/site.js'
 
 /**
@@ -20,6 +21,7 @@ export default function SplitText({
   lines = [],
   emphasis = null,
   emphasisItalic = false,
+  underline = null,
   unit = 'char',
   className = '',
   as: Tag = 'h2',
@@ -30,6 +32,7 @@ export default function SplitText({
   const lite = reduce || !useHeavyFx()
   const MotionTag = motion(Tag)
   const normalise = s => s.toLowerCase().replace(/[^a-z]/g, '')
+  const isWordUnderlined = (word) => underline !== null && normalise(word) === normalise(underline)
 
   const emphasisList = emphasis
     ? (Array.isArray(emphasis) ? emphasis : [emphasis])
@@ -176,10 +179,15 @@ export default function SplitText({
                     ]
                   }
                   wordIndexInHeading++
+                  const WordTag = isWordUnderlined(group.word) ? Underline : 'span'
+                  const wordTagProps = isWordUnderlined(group.word)
+                    ? { seed: group.word }
+                    : {}
                   return [
-                    <span
+                    <WordTag
                       key={`w${li}-${gi}`}
                       className="inline-block"
+                      {...wordTagProps}
                     >
                       {Array.from(group.word).map((ch, ci) => (
                         <motion.span
@@ -191,7 +199,7 @@ export default function SplitText({
                           {ch}
                         </motion.span>
                       ))}
-                    </span>,
+                    </WordTag>,
                     gi < groupedWords.length - 1 ? (
                       <motion.span
                         key={`sp${li}-${gi}`}
