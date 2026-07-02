@@ -192,6 +192,9 @@ export default function Hero({ revealed }) {
             <div className="mt-7 flex flex-wrap items-center gap-5 sm:mt-8">
               <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
             </div>
+            <p className="mt-4 font-mono text-[0.6rem] uppercase tracking-[0.22em] text-ink-soft/85">
+              {HERO.note}
+            </p>
           </motion.div>
         </div>
 
@@ -209,6 +212,7 @@ export default function Hero({ revealed }) {
                   initial={{ opacity: 0, y: reduce ? 0 : 55, rotate: reduce ? 0 : -6 }}
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : -6 } : { opacity: 0 }}
                   transition={{ ...SPRING_SOFT, delay: 0.8 }}
+                  whileHover={reduce ? {} : { rotate: -2, scale: 1.03 }}
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(173,98,49,0.30),0_6px_16px_-6px_rgba(173,98,49,0.12)]"
                 >
                   <CornerBloom from="rgba(201,140,140,0.15)" to="rgba(110,140,168,0.11)" overlay />
