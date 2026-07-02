@@ -1,14 +1,6 @@
-import { useId, useRef, useState } from 'react'
-import {
-  motion,
-  AnimatePresence,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useMotionValueEvent,
-} from 'framer-motion'
+import { useId, useState } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label, { Drop } from './Label.jsx'
-import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import {
   SPRING,
   EMAIL,
@@ -427,118 +419,12 @@ function DecklePaper({ id }) {
   )
 }
 
-// One orchid petal (from the Label glyph) and the five rotations that compose
-// the bloom — reused as the pressed motif stamped into the seal.
-const PETAL_D = 'M 0,0 C -12,-4 -14,-24 -2,-35 C 0,-36 2,-35 0,-36 C 14,-24 12,-4 0,0 Z'
-const PETAL_ROT = [128, -128, 75, -75, 0]
-
-// Trapped air bubbles, pressed as tiny raised specks so the lighting catches
-// them too. Coordinates are in the seal's 0–100 viewBox.
-const SEAL_BUBBLES = [
-  { cx: 66, cy: 30, r: 1.7 },
-  { cx: 62, cy: 72, r: 1.3 },
-  { cx: 31, cy: 66, r: 1.1 },
-]
-
-// The rim's cross-section, baked directly into the shape's own alpha as a
-// radial gradient: flat recessed floor -> smooth rise -> peak -> smooth fall
-// -> background. A `feDistantLight` (parallel light, not a point light) over
-// this profile is what makes the rim read as a real torus: the slope rising
-// toward the peak and the slope falling away from it catch the light from
-// OPPOSITE sides, so the highlight/shadow pair flips between the rim's inner
-// face and outer face as you go around it — outer bright + inner shadowed on
-// the side facing the light, reversed on the far side. (A point light instead
-// washes this out: proximity to the light dominates and every point's inner
-// edge ends up brighter than its outer edge, everywhere, with no flip.)
-// Baking the bump into the gradient — rather than leaning on a big Gaussian
-// blur to round a flat-topped ring — also keeps the steep part of the slope
-// inside the rim's own visible width instead of spreading it wider than what
-// actually gets painted.
-const RING_STOPS = (() => {
-  const smoothstep = (x) => {
-    x = Math.max(0, Math.min(1, x))
-    return x * x * (3 - 2 * x)
-  }
-  const floor = 0.14
-  const peak = 0.95
-  const r0 = 37 // rim's peak radius
-  const w = 6.5 // half-width of the rise/fall
-  const R = 49 // gradient extent
-  const N = 48
-  const stops = []
-  for (let i = 0; i <= N; i++) {
-    const r = (i / N) * R
-    const a =
-      r <= r0
-        ? floor + (peak - floor) * smoothstep((r - (r0 - w)) / w)
-        : peak * (1 - smoothstep((r - r0) / w))
-    stops.push({ offset: `${((r / R) * 100).toFixed(2)}%`, opacity: a.toFixed(3) })
-  }
-  return stops
-})()
-
-// Resting light direction (mostly from the top, a slight lean to the left)
-// used on touch/reduced-motion, and the azimuth sweep the light travels
-// through as the seal scrolls — a directional light "arcing" a little, so the
-// highlight/shadow pair visibly trades sides like tilting a seal in the hand.
-const LIGHT_ELEVATION = 50
-const LIGHT_AZIMUTH_REST = 262
-const azimuthAt = (v) => LIGHT_AZIMUTH_REST + (v - 0.5) * 36
-
 /**
- * Submit control shaped as a real, gooey wax seal, lit in 3D.
- *
- * The seal is built as TWO layered height maps run through real lighting
- * filters (feDiffuseLighting + feSpecularLighting), not stacked CSS gradients:
- *
- *  - The BASE is a single radial gradient (RING_STOPS) whose alpha rises from
- *    a recessed floor, over a rounded rim peak, back to nothing — the torus
- *    cross-section is baked into the shape itself, not faked with blur. A big
- *    low-frequency feTurbulence + wide feDisplacementMap then pours the whole
- *    silhouette unevenly, so it reads as dripped wax, not a uniform ring.
- *  - The MOTIF (the pressed orchid + trapped bubbles) is layered on top with
- *    only a light blur and no displacement, so the fine relief stays crisp
- *    while still catching its own curved highlight.
- *
- * Both layers are lit by a `feDistantLight` (a parallel light, not a point
- * light) — that's what makes the rim's inner and outer faces catch the
- * highlight/shadow on OPPOSITE sides of the ring, the way a real torus does.
- * (A point light instead makes proximity dominate: every point's inner edge
- * reads brighter than its outer edge, everywhere, with no flip.) The light's
- * azimuth sweeps gently as the seal scrolls through the viewport on desktop,
- * so the highlight visibly trades sides like tilting a seal in the hand.
- * Touch and reduced-motion hold the light at rest. Iridescence blooms on
- * hover. Decorative; the accessible name comes from the button + its visible
- * label.
+ * Submit control shaped as a wax seal: the iridescent pressed-seal artwork,
+ * cut out with a transparent centre so the card shows through the motif.
+ * Decorative; the accessible name comes from the button + its visible label.
  */
 function SealButton({ sending }) {
-  const uid = useId().replace(/:/g, '')
-  const baseId = `waxbase-${uid}`
-  const motifId = `waxmotif-${uid}`
-  const ringGradId = `ringgrad-${uid}`
-  const reduce = useReducedMotion()
-  const parallax = useHeavyFx() && !reduce
-
-  // Drive both filters' lights imperatively off scroll so re-lighting the SVG
-  // never triggers a React render. All four lights share one motion value.
-  const sealRef = useRef(null)
-  const baseDiffRef = useRef(null)
-  const baseSpecRef = useRef(null)
-  const motifDiffRef = useRef(null)
-  const motifSpecRef = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: sealRef,
-    offset: ['start end', 'end start'],
-  })
-  const light = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.4 })
-  useMotionValueEvent(light, 'change', (v) => {
-    if (!parallax) return
-    const azimuth = azimuthAt(v).toFixed(1)
-    for (const ref of [baseDiffRef, baseSpecRef, motifDiffRef, motifSpecRef]) {
-      ref.current?.setAttribute('azimuth', azimuth)
-    }
-  })
-
   return (
     <button
       type="submit"
@@ -546,135 +432,20 @@ function SealButton({ sending }) {
       aria-label="Send enquiry"
       className="group inline-flex w-fit items-center gap-4 outline-none disabled:cursor-not-allowed disabled:opacity-60"
     >
-      <span
-        ref={sealRef}
-        className="relative h-14 w-14 shrink-0 transition-transform duration-200 ease-organic group-hover:translate-y-0.5 group-active:translate-y-1 group-focus-visible:ring-2 group-focus-visible:ring-terracotta group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-transparent"
-      >
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 100 100"
-          className="absolute inset-0 h-full w-full overflow-visible"
-          style={{ filter: 'drop-shadow(0 2.5px 3px rgba(67,50,106,0.25))' }}
-        >
-          <defs>
-            <radialGradient id={ringGradId} cx="50" cy="50" r="49" gradientUnits="userSpaceOnUse">
-              {RING_STOPS.map((s, i) => (
-                <stop key={i} offset={s.offset} stopColor="#fff" stopOpacity={s.opacity} />
-              ))}
-            </radialGradient>
+      <span className="relative h-14 w-14 shrink-0 transition-transform duration-200 ease-organic group-hover:translate-y-0.5 group-active:translate-y-1 group-focus-visible:ring-2 group-focus-visible:ring-terracotta group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-transparent">
+        <picture>
+          <source srcSet={asset('assets/seal.webp')} type="image/webp" />
+          <img
+            src={asset('assets/seal.png')}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full object-contain"
+            style={{ filter: 'drop-shadow(0 2.5px 3px rgba(67,50,106,0.25))' }}
+          />
+        </picture>
 
-            {/* BASE: the poured blob + its plump, rounded rim. Only a small
-                blur here — for anti-aliasing, not for rounding — since the
-                bump profile is already baked into RING_STOPS. */}
-            <filter id={baseId} x="-30%" y="-30%" width="160%" height="160%" colorInterpolationFilters="sRGB">
-              <feTurbulence type="fractalNoise" baseFrequency="0.011" numOctaves="2" seed="7" result="noise" />
-              <feGaussianBlur in="SourceAlpha" stdDeviation="1.5" result="H" />
-              {/* Distortion mask: an "edge shell" isolating only the outer few
-                  units of the silhouette, built by eroding H (shrinking its
-                  silhouette inward) and subtracting that from H itself. This is
-                  a purely geometric distance-from-boundary mask, so — unlike a
-                  mask built from H's own alpha VALUES — it isn't confused by
-                  RING_STOPS' bump profile rising then falling through the same
-                  alpha twice. (An earlier attempt built this mask from a
-                  separate feImage-referenced radialGradient shape, but
-                  feDisplacementMap silently ignored any feImage-derived input in
-                  this renderer — confirmed by feeding it an exaggerated,
-                  off-centre test gradient and seeing zero displacement — so the
-                  mask has to be built from filter primitives operating directly
-                  on H instead.) Masking the noise's alpha this way, then feeding
-                  it straight into feDisplacementMap (skipping a would-be "flatten
-                  onto neutral grey" step — that additionally broke the effect in
-                  testing), fades displacement in from nothing at the recessed
-                  centre to full strength only at the true outer edge: the
-                  stamped impression stays a true circle: only the excess wax
-                  pooling past it bulges unevenly. */}
-              <feMorphology in="H" operator="erode" radius="7" result="eroded" />
-              <feComposite in="H" in2="eroded" operator="out" result="edgeShell" />
-              <feComponentTransfer in="noise" result="noiseOpaque">
-                <feFuncA type="linear" slope="0" intercept="1" />
-              </feComponentTransfer>
-              <feComposite in="noiseOpaque" in2="edgeShell" operator="in" result="noiseFaded" />
-              {/* Low-opacity flood: a clear-gel tint, not opaque wax colour —
-                  most of the card behind is meant to read through. */}
-              <feFlood floodColor="#F1EEFA" floodOpacity="0.4" result="tint" />
-              <feComposite in="tint" in2="H" operator="in" result="body" />
-              <feDiffuseLighting in="H" surfaceScale="19" diffuseConstant="1" lightingColor="#e9ecf7" result="diffRaw">
-                <feDistantLight ref={baseDiffRef} azimuth={LIGHT_AZIMUTH_REST} elevation={LIGHT_ELEVATION} />
-              </feDiffuseLighting>
-              {/* Raise the shadow FLOOR on colour (R/G/B), not alpha — otherwise
-                  the diffuse shading still crushes to near-black in shadow and
-                  drags the translucent body dark when multiplied below. Kept
-                  low enough that the dimmer far side of the rim still shows a
-                  visible inner/outer split, not just the near side. */}
-              <feComponentTransfer in="diffRaw" result="diffSoft">
-                <feFuncR type="linear" slope="0.75" intercept="0.2" />
-                <feFuncG type="linear" slope="0.75" intercept="0.2" />
-                <feFuncB type="linear" slope="0.75" intercept="0.2" />
-              </feComponentTransfer>
-              <feComposite in="diffSoft" in2="H" operator="in" result="diff" />
-              <feSpecularLighting in="H" surfaceScale="15" specularConstant="0.55" specularExponent="10" lightingColor="#ffffff" result="specRaw">
-                <feDistantLight ref={baseSpecRef} azimuth={LIGHT_AZIMUTH_REST} elevation={LIGHT_ELEVATION} />
-              </feSpecularLighting>
-              <feComposite in="specRaw" in2="H" operator="in" result="spec" />
-              <feBlend in="body" in2="diff" mode="multiply" result="shaded" />
-              <feComposite in="spec" in2="shaded" operator="arithmetic" k1="0" k2="0.85" k3="1" k4="0" result="lit" />
-              <feComponentTransfer in="lit" result="glass">
-                <feFuncA type="linear" slope="0.85" />
-              </feComponentTransfer>
-              <feDisplacementMap in="glass" in2="noiseFaded" scale="40" xChannelSelector="R" yChannelSelector="G" />
-            </filter>
-
-            {/* MOTIF: the pressed orchid + bubbles — crisp, not displaced,
-                same clear-gel translucency as the base. */}
-            <filter id={motifId} x="-60%" y="-60%" width="220%" height="220%" colorInterpolationFilters="sRGB">
-              <feGaussianBlur in="SourceAlpha" stdDeviation="1.1" result="Hm" />
-              <feFlood floodColor="#F1EEFA" floodOpacity="0.45" result="mtint" />
-              <feComposite in="mtint" in2="Hm" operator="in" result="mbody" />
-              <feDiffuseLighting in="Hm" surfaceScale="4" diffuseConstant="1" lightingColor="#e9ecf7" result="mdiffRaw">
-                <feDistantLight ref={motifDiffRef} azimuth={LIGHT_AZIMUTH_REST} elevation={LIGHT_ELEVATION} />
-              </feDiffuseLighting>
-              <feComponentTransfer in="mdiffRaw" result="mdiffSoft">
-                <feFuncR type="linear" slope="0.6" intercept="0.35" />
-                <feFuncG type="linear" slope="0.6" intercept="0.35" />
-                <feFuncB type="linear" slope="0.6" intercept="0.35" />
-              </feComponentTransfer>
-              <feComposite in="mdiffSoft" in2="Hm" operator="in" result="mdiff" />
-              <feSpecularLighting in="Hm" surfaceScale="4" specularConstant="0.7" specularExponent="14" lightingColor="#ffffff" result="mspecRaw">
-                <feDistantLight ref={motifSpecRef} azimuth={LIGHT_AZIMUTH_REST} elevation={LIGHT_ELEVATION} />
-              </feSpecularLighting>
-              <feComposite in="mspecRaw" in2="Hm" operator="in" result="mspec" />
-              <feBlend in="mbody" in2="mdiff" mode="multiply" result="mshaded" />
-              <feComposite in="mspec" in2="mshaded" operator="arithmetic" k1="0" k2="0.85" k3="1" k4="0" />
-            </filter>
-          </defs>
-
-          {/* Silhouette that becomes the BASE height map: one circle, filled
-              by RING_STOPS so its own alpha already rises from the recessed
-              centre, over the rim, back to nothing. The filter's masked
-              displacement (see noiseFaded above) keeps this circle true near
-              the centre and only bulges it unevenly near the rim, so the
-              stamped impression stays circular while the outer edge reads as
-              real poured wax. Fill colour is irrelevant — only the alpha
-              feeds the lighting. */}
-          <g filter={`url(#${baseId})`}>
-            <circle cx="50" cy="50" r="49" fill={`url(#${ringGradId})`} />
-          </g>
-
-          {/* MOTIF layer, stamped on top: the pressed orchid + bubbles. */}
-          <g filter={`url(#${motifId})`} fill="#fff">
-            <g transform="translate(50 52) scale(0.4)" opacity="0.65">
-              {PETAL_ROT.map((r, i) => (
-                <path key={i} d={PETAL_D} transform={`rotate(${r})`} />
-              ))}
-            </g>
-            {SEAL_BUBBLES.map((b, i) => (
-              <circle key={i} cx={b.cx} cy={b.cy} r={b.r} opacity="0.6" />
-            ))}
-          </g>
-        </svg>
-
-        {/* Oil-film iridescence — always faintly present on the clear gel,
-            blooming brighter on hover as if the seal were tilted to the light. */}
+        {/* Oil-film iridescence — always faintly present on the seal,
+            blooming brighter on hover as if it were tilted to the light. */}
         <span
           aria-hidden="true"
           className="pointer-events-none absolute inset-[10%] rounded-full opacity-60 transition-opacity duration-300 group-hover:opacity-100"
