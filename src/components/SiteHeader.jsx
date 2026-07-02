@@ -110,7 +110,7 @@ export default function SiteHeader({ revealed, className = '' }) {
               transition: 'font-size 0.55s cubic-bezier(0.25,1,0.5,1)',
             }}
           >
-            Chris Wang<span style={{ color: 'var(--c-terracotta)' }}>.</span>
+            chris wang<span style={{ color: 'var(--c-terracotta)' }}>.</span>
           </span>
         </a>
 
