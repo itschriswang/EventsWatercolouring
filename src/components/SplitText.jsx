@@ -130,8 +130,17 @@ export default function SplitText({
           wordIndexInHeading += lines[prevLi].split(' ').length
         }
 
+        // An italic emphasis group at the very start of a line leans into the
+        // mask's overflow-hidden edge, clipping its leading stroke. Nudge the
+        // clip box left and the content right by the same amount so the
+        // italic overhang has room without moving the visible text.
+        const lineStartsWithItalic = emphasisItalic && groupedWords[0]?.isGroup
+
         return (
-          <span key={li} className="block overflow-hidden pb-[0.08em]">
+          <span
+            key={li}
+            className={`block overflow-hidden pb-[0.08em]${lineStartsWithItalic ? ' -ml-[0.12em] pl-[0.12em]' : ''}`}
+          >
             {unit === 'char'
               ? groupedWords.flatMap((group, gi) => {
                   if (group.isGroup) {
