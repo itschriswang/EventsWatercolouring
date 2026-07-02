@@ -8,6 +8,7 @@ export const HERO = {
   emphasis: 'painted',
   emphasisMobile: 'painted',
   lede: 'Delight your guests with live watercolour portraits while transforming your event into an immersive artistic experience they’ll be talking about long after.',
+  note: 'Every enquiry answered personally, usually within a few days.',
 }
 
 export const MARQUEE = [
@@ -93,13 +94,7 @@ export const WORK = {
     { img: 'art-character-girl', ttl: 'Little character, in green', meta: 'Studio study', alt: 'Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre' },
     { img: 'art-couple-blush',   ttl: 'Blush & black tie',    meta: 'Watercolour · A5', alt: 'Watercolour portrait of a couple, the bride in a blush off-shoulder gown beside a groom in a black suit and glasses' },
     { img: 'art-character-boy',  ttl: 'At the palette',       meta: 'Studio study', alt: "Small watercolour character portrait with the artist's palette alongside, in warm terracotta and ochre" },
-    { img: 'art-bouquet',        ttl: 'Ribbon & rose',        meta: 'Watercolour · A5' },
-    { img: 'art-character-boy2',  ttl: 'Warm ochre',           meta: 'Studio study' },
-    { img: 'art-character-girl', ttl: 'Olive & hat',          meta: 'Studio study', feature: true },
-    { img: 'art-character-boy',  ttl: 'On cotton paper',      meta: 'Watercolour · A5' },
-    { img: 'art-bouquet',        ttl: 'Forget-me-not',        meta: 'Watercolour · A5' },
-    { img: 'art-character-girl', ttl: 'Quiet study',          meta: 'Studio study' },
-    { img: 'art-character-boy',  ttl: 'Little portrait',      meta: 'Studio study' },
+    { img: 'art-character-boy2', ttl: 'Warm ochre',           meta: 'Studio study', alt: 'Small watercolour character portrait of a seated figure in warm ochre tones, holding a jar' },
   ],
 }
 
