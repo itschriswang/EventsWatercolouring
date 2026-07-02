@@ -569,6 +569,31 @@ function SealButton({ sending }) {
             <filter id={baseId} x="-30%" y="-30%" width="160%" height="160%" colorInterpolationFilters="sRGB">
               <feTurbulence type="fractalNoise" baseFrequency="0.011" numOctaves="2" seed="7" result="noise" />
               <feGaussianBlur in="SourceAlpha" stdDeviation="1.5" result="H" />
+              {/* Distortion mask: an "edge shell" isolating only the outer few
+                  units of the silhouette, built by eroding H (shrinking its
+                  silhouette inward) and subtracting that from H itself. This is
+                  a purely geometric distance-from-boundary mask, so — unlike a
+                  mask built from H's own alpha VALUES — it isn't confused by
+                  RING_STOPS' bump profile rising then falling through the same
+                  alpha twice. (An earlier attempt built this mask from a
+                  separate feImage-referenced radialGradient shape, but
+                  feDisplacementMap silently ignored any feImage-derived input in
+                  this renderer — confirmed by feeding it an exaggerated,
+                  off-centre test gradient and seeing zero displacement — so the
+                  mask has to be built from filter primitives operating directly
+                  on H instead.) Masking the noise's alpha this way, then feeding
+                  it straight into feDisplacementMap (skipping a would-be "flatten
+                  onto neutral grey" step — that additionally broke the effect in
+                  testing), fades displacement in from nothing at the recessed
+                  centre to full strength only at the true outer edge: the
+                  stamped impression stays a true circle: only the excess wax
+                  pooling past it bulges unevenly. */}
+              <feMorphology in="H" operator="erode" radius="7" result="eroded" />
+              <feComposite in="H" in2="eroded" operator="out" result="edgeShell" />
+              <feComponentTransfer in="noise" result="noiseOpaque">
+                <feFuncA type="linear" slope="0" intercept="1" />
+              </feComponentTransfer>
+              <feComposite in="noiseOpaque" in2="edgeShell" operator="in" result="noiseFaded" />
               {/* Low-opacity flood: a clear-gel tint, not opaque wax colour —
                   most of the card behind is meant to read through. */}
               <feFlood floodColor="#F1EEFA" floodOpacity="0.4" result="tint" />
@@ -596,7 +621,7 @@ function SealButton({ sending }) {
               <feComponentTransfer in="lit" result="glass">
                 <feFuncA type="linear" slope="0.85" />
               </feComponentTransfer>
-              <feDisplacementMap in="glass" in2="noise" scale="14" xChannelSelector="R" yChannelSelector="G" />
+              <feDisplacementMap in="glass" in2="noiseFaded" scale="40" xChannelSelector="R" yChannelSelector="G" />
             </filter>
 
             {/* MOTIF: the pressed orchid + bubbles — crisp, not displaced,
@@ -625,8 +650,12 @@ function SealButton({ sending }) {
 
           {/* Silhouette that becomes the BASE height map: one circle, filled
               by RING_STOPS so its own alpha already rises from the recessed
-              centre, over the rim, back to nothing. Fill colour is irrelevant
-              — only the alpha feeds the lighting. */}
+              centre, over the rim, back to nothing. The filter's masked
+              displacement (see noiseFaded above) keeps this circle true near
+              the centre and only bulges it unevenly near the rim, so the
+              stamped impression stays circular while the outer edge reads as
+              real poured wax. Fill colour is irrelevant — only the alpha
+              feeds the lighting. */}
           <g filter={`url(#${baseId})`}>
             <circle cx="50" cy="50" r="49" fill={`url(#${ringGradId})`} />
           </g>
