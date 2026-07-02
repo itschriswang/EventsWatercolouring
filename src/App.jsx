@@ -6,12 +6,10 @@ import SiteHeader from './components/SiteHeader.jsx'
 import MobileNav from './components/MobileNav.jsx'
 import ScrollProgress from './components/ScrollProgress.jsx'
 import Hero from './components/Hero.jsx'
-import WhatYouKeep from './components/WhatYouKeep.jsx'
 import EveningTimeline from './components/EveningTimeline.jsx'
 import SelectedWork from './components/SelectedWork.jsx'
 import AboutMe from './components/AboutMe.jsx'
 import Packages from './components/Packages.jsx'
-import Faq from './components/Faq.jsx'
 import EnquireForm from './components/EnquireForm.jsx'
 import Footer from './components/Footer.jsx'
 import { asset } from './lib/site.js'
@@ -30,6 +28,18 @@ export default function App() {
     return () => {
       document.body.style.overflow = ''
     }
+  }, [revealed])
+
+  // A URL hash (e.g. arriving at /#offerings from the /faq/ page) can't land
+  // on target during the preloader: the body is scroll-locked and the
+  // section may not exist in the very first paint, so the browser's native
+  // scroll-to-fragment has nothing to grab onto. Once the preloader clears
+  // and scroll unlocks, finish that jump ourselves.
+  useEffect(() => {
+    if (!revealed) return
+    const id = window.location.hash.slice(1)
+    if (!id) return
+    document.getElementById(id)?.scrollIntoView({ behavior: 'auto', block: 'start' })
   }, [revealed])
 
   return (
@@ -79,21 +89,14 @@ export default function App() {
             />
           </picture>
         </div>
-        {/* The night and its keepsake coda are one movement: the rust timeline
-            runs to its "destination" marker, then WhatYouKeep overlaps up onto
-            it as a torn sheet of cotton paper (see that component). Grouped so
-            they read as a single arc: what happens, then what's left. */}
-        <div className="relative">
-          <EveningTimeline />
-          <WhatYouKeep />
-        </div>
+        <EveningTimeline />
         <div className="relative">
           {/* One continuous WatercolourBloom behind the gallery through
-              Packages/Faq/Enquire so the wash carries through all four
-              without a seam at any section boundary — each section's own
-              small ad-hoc gradients were removed so they don't compete with
-              it. Masked to fade in over the gallery rather than switching on
-              abruptly at the Packages boundary. */}
+              Packages/Enquire so the wash carries through both without a
+              seam at the section boundary — each section's own small ad-hoc
+              gradients were removed so they don't compete with it. Masked to
+              fade in over the gallery rather than switching on abruptly at
+              the Packages boundary. */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 overflow-hidden"
@@ -107,7 +110,6 @@ export default function App() {
           </div>
           <SelectedWork />
           <Packages />
-          <Faq />
           <EnquireForm />
         </div>
       </main>
