@@ -87,15 +87,25 @@ export default function App() {
           <EveningTimeline />
           <WhatYouKeep />
         </div>
-        <SelectedWork />
         <div className="relative">
-          {/* One continuous WatercolourBloom behind Packages/Faq/Enquire so
-              the wash carries through all three without a seam at the section
-              boundaries — each section's own small ad-hoc gradients were
-              removed so they don't compete with it. */}
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
+          {/* One continuous WatercolourBloom behind the gallery through
+              Packages/Faq/Enquire so the wash carries through all four
+              without a seam at any section boundary — each section's own
+              small ad-hoc gradients were removed so they don't compete with
+              it. Masked to fade in over the gallery rather than switching on
+              abruptly at the Packages boundary. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 overflow-hidden"
+            style={{
+              zIndex: 0,
+              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 45%, black 100%)',
+              maskImage: 'linear-gradient(to bottom, transparent 0%, black 45%, black 100%)',
+            }}
+          >
             <WatercolourBloom />
           </div>
+          <SelectedWork />
           <Packages />
           <Faq />
           <EnquireForm />
