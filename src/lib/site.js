@@ -10,8 +10,11 @@ export const SPRING_SOFT = { type: 'spring', stiffness: 70, damping: 18 }
 export const asset = (path) =>
   `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
 
-// Where the "Enquire" actions point in-page.
-export const ENQUIRE_HREF = '#enquiry'
+// Where the "Enquire" actions point. Root-relative (not a bare `#enquiry`
+// hash) so the link still works from other static pages, like /faq/ — same
+// document, same-page smooth scroll on the homepage; a normal navigation
+// back to the homepage anchor from anywhere else.
+export const ENQUIRE_HREF = '/#enquiry'
 
 // Placeholder enquiry address — swap for your real address before launch.
 export const EMAIL = 'create@chriswangstudio.com'

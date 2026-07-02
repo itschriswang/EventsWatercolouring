@@ -144,9 +144,12 @@ export default function EnquireForm() {
             <em className="text-terracotta">{ENQUIRY.title[1]}</em>
           </h2>
           <p className="mt-6 max-w-sm leading-relaxed text-ink-soft">{ENQUIRY.intro}</p>
-          <p className="mt-6 font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
-            Or email{' '}
-            <a href={`mailto:${EMAIL}`} className="text-ink underline underline-offset-4">
+          <p className="mt-6 flex flex-col gap-1 font-mono text-xs uppercase tracking-[0.15em] text-ink-soft sm:flex-row sm:items-baseline sm:gap-1.5">
+            <span>Or email</span>
+            <a
+              href={`mailto:${EMAIL}`}
+              className="text-ink underline underline-offset-4 [overflow-wrap:anywhere]"
+            >
               {EMAIL}
             </a>
           </p>
