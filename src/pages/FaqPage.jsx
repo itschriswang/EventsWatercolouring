@@ -34,7 +34,7 @@ export default function FaqPage() {
               maskImage: 'linear-gradient(to bottom, black 0%, transparent 80%)',
             }}
           >
-            <WatercolourBloom />
+            <WatercolourBloom negative />
           </div>
           <div className="relative z-10 max-w-2xl">
             <Label gradient={['#6E8CA8', '#C2613C']}>{FAQ.label}</Label>
@@ -42,8 +42,8 @@ export default function FaqPage() {
               {FAQ.title}
             </h1>
             <p className="mt-6 max-w-md leading-relaxed text-ink-soft">
-              Everything I get asked before booking, gathered in one place.
-              Still got something specific in mind?{' '}
+              This FAQ gathers everything I get asked before booking, in one
+              place. Still got something specific in mind?{' '}
               <a href={ENQUIRE_HREF} className="text-ink underline underline-offset-4">
                 Send me a note
               </a>
