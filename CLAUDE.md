@@ -78,6 +78,7 @@ When adding shadows to new components:
 - `src/components/Packages.jsx`
 - `src/components/WhatYouKeep.jsx`
 - `src/components/EnquireForm.jsx`
+- `src/components/Footer.jsx`
 
 ### Design Philosophy
 
