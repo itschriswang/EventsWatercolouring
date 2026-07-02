@@ -18,35 +18,6 @@ export const MARQUEE = [
   'A keepsake to take home',
 ]
 
-// Reframed from a "why choose this" pitch into the closing movement of the
-// night: once the evening is over, this is what's left in people's hands. It
-// reads as the resolution of the timeline above it rather than a sales
-// argument, hence the declarative label and the bridge line that carries over
-// from the last beat of the evening.
-export const WHY = {
-  label: 'What you keep',
-  bridge: 'When the music stops',
-  lede: 'A wedding, a gala, a quiet milestone. Whatever the evening was, it does not simply end. It goes home in your guests’ hands, painted while it was still happening.',
-  emphasis: 'painted while it was still happening.',
-  notes: [
-    {
-      no: '01',
-      title: 'Something to gather around',
-      body: 'Guests wander over to watch a portrait happen. The table turns into a spot people gather, and something they keep talking about long after the night is over.',
-    },
-    {
-      no: '02',
-      title: 'Made by hand, on the day',
-      body: 'Every piece is an original watercolour, painted right there in the room while the day is happening around it. Each one is one of a kind.',
-    },
-    {
-      no: '03',
-      title: 'Yours to keep',
-      body: 'Guests go home with a small painting of their own, and you keep a portrait of the two of you, painted while the day was still going. It is on archival cotton paper, so it lasts.',
-    },
-  ],
-}
-
 export const EVENING = {
   label: 'On the night',
   title: ['How the evening', 'runs.'],
@@ -338,19 +309,20 @@ export const FOOTER = {
   emphasis: 'to keep.',
   name: 'chris wang',
   nav: [
-    { href: '#painter', label: 'The painter' },
-    { href: '#night', label: 'On the night' },
-    { href: '#keep', label: 'What you keep' },
-    { href: '#work', label: 'The work' },
-    { href: '#offerings', label: 'Packages' },
-    { href: '#faq', label: 'Questions' },
+    { href: '/#painter', label: 'The painter' },
+    { href: '/#night', label: 'On the night' },
+    { href: '/#work', label: 'The work' },
+    { href: '/#offerings', label: 'Packages' },
+    { href: '/faq/', label: 'Questions' },
   ],
   instagram: 'https://www.instagram.com/chriswangstudio',
   instagramHandle: '@chriswangstudio',
 }
 
+// Root-relative hrefs (`/#offerings`, not `#offerings`) so the same nav
+// works unchanged from the homepage (same-document hash scroll) and from
+// the /faq/ subpage (a normal navigation back to that homepage anchor).
 export const NAV = [
-  { href: '#keep', label: 'What you keep' },
-  { href: '#offerings', label: 'Packages' },
-  { href: '#faq', label: 'Questions' },
+  { href: '/#offerings', label: 'Packages' },
+  { href: '/faq/', label: 'Questions' },
 ]

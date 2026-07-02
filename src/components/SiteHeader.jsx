@@ -50,22 +50,35 @@ export default function SiteHeader({ revealed, className = '' }) {
   }, [])
 
   // Highlight the nav link whose section is currently in the reading zone.
+  // Hrefs are root-relative (e.g. `/#offerings`) so the same nav also works
+  // from other static pages like /faq/ — match by element, not by stripping
+  // a leading '#' (which would mangle the '/' prefix).
   useEffect(() => {
-    const ids = NAV.map((n) => n.href.replace('#', ''))
-    const sections = ids.map((id) => document.getElementById(id)).filter(Boolean)
+    const sections = NAV
+      .filter((n) => n.href.includes('#'))
+      .map((n) => ({ href: n.href, el: document.getElementById(n.href.split('#')[1]) }))
+      .filter((s) => s.el)
     if (!sections.length) return
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
-          if (e.isIntersecting) setActive('#' + e.target.id)
+          if (!e.isIntersecting) return
+          const match = sections.find((s) => s.el === e.target)
+          if (match) setActive(match.href)
         })
       },
       { rootMargin: '-15% 0px -75% 0px', threshold: 0 }
     )
-    sections.forEach((s) => observer.observe(s))
+    sections.forEach((s) => observer.observe(s.el))
     return () => observer.disconnect()
   }, [])
+
+  // Page-link nav items (no '#', e.g. '/faq/') are active by pathname match
+  // rather than scroll position, since there's nothing to observe for them.
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '/'
+  const isNavActive = (href) =>
+    active === href || (!href.includes('#') && pathname === href)
 
   return (
     <motion.header
@@ -92,7 +105,7 @@ export default function SiteHeader({ revealed, className = '' }) {
         }}
       >
         {/* Logo — a thin terracotta accent stroke mirrors a painter's mark */}
-        <a href="#top" className="flex items-center gap-2.5">
+        <a href="/#top" className="flex items-center gap-2.5">
           <span
             style={{
               display: 'block',
@@ -120,7 +133,7 @@ export default function SiteHeader({ revealed, className = '' }) {
           className="flex items-center gap-8 font-mono text-[0.66rem] uppercase tracking-[0.2em]"
         >
           {NAV.map((n) => (
-            <NavLink key={n.href} href={n.href} label={n.label} isActive={active === n.href} />
+            <NavLink key={n.href} href={n.href} label={n.label} isActive={isNavActive(n.href)} />
           ))}
         </nav>
 
