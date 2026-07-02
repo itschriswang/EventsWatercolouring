@@ -1,11 +1,17 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import SplitText from './SplitText.jsx'
+import Underline, { withUnderline } from './Underline.jsx'
 import { EMAIL } from '../lib/site.js'
 import { FOOTER } from '../content.js'
 
 /** Closing CTA band — dark, full-bleed, with nav and signature. */
 export default function Footer() {
   const reduce = useReducedMotion()
+
+  const lines = [
+    FOOTER.cta[0],
+    withUnderline(FOOTER.cta[1], 'keep')
+  ]
 
   return (
     <footer className="relative w-full overflow-hidden bg-ink px-[5vw] pt-[clamp(4rem,8vw,7rem)] pb-36 md:pb-[clamp(4rem,8vw,7rem)] text-paper">
@@ -23,7 +29,7 @@ export default function Footer() {
         <SplitText
           as="p"
           unit="char"
-          lines={FOOTER.cta}
+          lines={lines}
           emphasis={FOOTER.emphasis}
           emphasisItalic
           className="display-lg max-w-[18ch]"
