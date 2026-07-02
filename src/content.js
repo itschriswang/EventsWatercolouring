@@ -255,36 +255,12 @@ export const FAQ = {
   title: 'The practical bits.',
   items: [
     {
-      q: 'How far ahead should we book?',
-      a: 'Right now I am booking up to about two months out, so send me your date and I will tell you what is open. Earlier is always welcome, since I only take a limited number of weddings.',
-    },
-    {
       q: 'Do you paint live, or from photographs?',
       a: 'Both. The base package has me at your wedding painting live through the reception, and we add to it from there. If you would rather a studio commission from your own photos, before or after the day, I do those too, priced on enquiry.',
     },
     {
-      q: 'How long do you paint on the day?',
-      a: 'Three hours in the base package, up to about five if you add hours, usually across the reception with short breaks. I pace myself instead of painting flat out, so the last piece gets the same care as the first.',
-    },
-    {
-      q: 'How many guests can you paint?',
-      a: 'Around 8 pieces an hour, so a three-hour booking covers roughly 24 portraits. Anyone I do not get to on the night, I finish in the studio and post to you to pass on, so no guest misses out.',
-    },
-    {
-      q: 'What materials do you use?',
-      a: 'Professional watercolours on archival 300gsm A5 cotton paper. The pigments are lightfast, so the colour holds for decades if you look after it.',
-    },
-    {
-      q: 'When do we receive the finished work?',
-      a: 'Guest portraits are done on the night and go home with your guests. Your couple portrait is painted that night too and left with you. Studio commissions from photos usually arrive within four weeks.',
-    },
-    {
-      q: 'Do you travel?',
-      a: 'Travel is included for venues within about an hour of Melbourne or Sydney metro. Further out, including regional Victoria, regional NSW, and destination weddings, I am happy to discuss it and quote travel on enquiry. Just tell me your venue.',
-    },
-    {
-      q: 'Do you frame the work?',
-      a: 'I do not frame the work. It comes to you on cotton paper, sleeved and ready for a frame.',
+      q: 'How far ahead should we book?',
+      a: 'Right now I am booking up to about two months out, so send me your date and I will tell you what is open. Earlier is always welcome, since I only take a limited number of weddings.',
     },
     {
       q: 'How do we secure our date?',
@@ -295,16 +271,40 @@ export const FAQ = {
       a: 'Weddings move, and I get that. If you need to cancel or postpone, just let me know as early as you can. I try to be fair and reasonable, and the details depend on timing and whether I am able to rebook the date. Full terms sit in your booking agreement.',
     },
     {
+      q: 'How long do you paint on the day?',
+      a: 'Three hours in the base package, up to about five if you add hours, usually across the reception with short breaks. I pace myself instead of painting flat out, so the last piece gets the same care as the first.',
+    },
+    {
+      q: 'Do you travel?',
+      a: 'Travel is included for venues within about an hour of Melbourne or Sydney metro. Further out, including regional Victoria, regional NSW, and destination weddings, I am happy to discuss it and quote travel on enquiry. Just tell me your venue.',
+    },
+    {
+      q: 'When do we receive the finished work?',
+      a: 'Guest portraits are done on the night and go home with your guests. Your couple portrait is painted that night too and left with you. Studio commissions from photos usually arrive within four weeks.',
+    },
+    {
+      q: 'How many guests can you paint?',
+      a: 'Around 8 pieces an hour, so a three-hour booking covers roughly 24 portraits. Anyone I do not get to on the night, I finish in the studio and post to you to pass on, so no guest misses out.',
+    },
+    {
+      q: 'Do you frame the work?',
+      a: 'I do not frame the work. It comes to you on cotton paper, sleeved and ready for a frame.',
+    },
+    {
+      q: 'How should we send photos for a commission?',
+      a: 'The clearer the photos, the better the portrait. Send a few well-lit, high-resolution shots where your faces are clear, and tell me which one feels most like you. I will take it from there.',
+    },
+    {
+      q: 'What materials do you use?',
+      a: 'Professional watercolours on archival 300gsm A5 cotton paper. The pigments are lightfast, so the colour holds for decades if you look after it.',
+    },
+    {
       q: 'What do you need from us on the day?',
       a: 'Not much. A table around 100 by 60cm at seated height with room for a front-facing chair underneath, a chair, and a bit of space to stand for a short break each hour. I bring everything else. A drink or a bite is always welcome but never expected.',
     },
     {
       q: 'Do you paint events other than weddings?',
       a: 'Yes. As well as weddings I do brand activations, corporate events and private parties across Melbourne and Australia-wide. It bends to fit the room, so tell me what you have in mind.',
-    },
-    {
-      q: 'How should we send photos for a commission?',
-      a: 'The clearer the photos, the better the portrait. Send a few well-lit, high-resolution shots where your faces are clear, and tell me which one feels most like you. I will take it from there.',
     },
   ],
 }
