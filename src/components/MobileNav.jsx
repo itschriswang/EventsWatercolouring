@@ -15,22 +15,34 @@ const SKETCH_FILTER = (
   </defs>
 )
 
-function HomeIcon() {
+function AboutIcon() {
   return (
     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       {SKETCH_FILTER}
-      <path d="M2.6 9.3L12 2L21.4 9.2V19.6C21.4 20.9 20.3 21.9 19 21.9H5C3.7 21.9 2.6 20.8 2.6 19.5V9.3Z" filter="url(#sketch-rough)" />
-      <path d="M9 21.9V12H15V21.9" filter="url(#sketch-rough)" />
+      <circle cx="12" cy="7.6" r="4.1" filter="url(#sketch-rough)" />
+      <path d="M3.6 21.4C4.3 16.9 7.7 14.4 12 14.4C16.3 14.4 19.7 16.9 20.4 21.4" filter="url(#sketch-rough)" />
     </svg>
   )
 }
 
-function BrushIcon() {
+function GalleryIcon() {
   return (
     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       {SKETCH_FILTER}
-      <path d="M9.2 11.8L17.1 3.9Q19.8 1.2 22.2 3.6Q24.5 6.0 21.9 8.6L14 16.5" filter="url(#sketch-rough)" />
-      <path d="M7.1 15C5.8 16.3 5.2 17.6 5.2 19.1C5.2 20.3 6 21.2 7.2 21.2C8.9 20.9 10.4 19.8 11.8 18.3" filter="url(#sketch-rough)" />
+      <path d="M3.2 4.3H20.8V19.7H3.2Z" filter="url(#sketch-rough)" />
+      <path d="M3.2 16.3L8.6 10.6Q9.6 9.5 10.6 10.6L14.3 14.6" filter="url(#sketch-rough)" />
+      <path d="M12.9 16.1L16 12.9Q17 11.8 18 12.9L20.8 15.9" filter="url(#sketch-rough)" />
+      <circle cx="8.1" cy="8.2" r="1.35" filter="url(#sketch-rough)" />
+    </svg>
+  )
+}
+
+function FaqIcon() {
+  return (
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {SKETCH_FILTER}
+      <path d="M8.4 9.1C8.4 6.8 10.1 5.2 12.1 5.2C14.1 5.2 15.7 6.6 15.7 8.5C15.7 10.9 12.1 11.2 12.1 14.3" filter="url(#sketch-rough)" />
+      <circle cx="12.1" cy="18.2" r="0.9" fill="currentColor" stroke="none" filter="url(#sketch-rough)" />
     </svg>
   )
 }
@@ -90,10 +102,11 @@ function ArrowRightIcon() {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const DOCK_ITEMS = [
-  { id: 'home',      href: '#top',        label: 'Home',     Icon: HomeIcon },
-  { id: 'keep',      href: '#keep',       label: 'Keepsakes', Icon: BrushIcon },
-  { id: 'offerings', href: '#offerings',  label: 'Packages', Icon: BoxIcon },
+  { id: 'about',     href: '#painter',    label: 'About',    Icon: AboutIcon },
+  { id: 'gallery',   href: '#work',       label: 'Gallery',  Icon: GalleryIcon },
   { id: 'enquiry',   href: ENQUIRE_HREF,  label: 'Enquire',  Icon: MailIcon, highlight: true },
+  { id: 'offerings', href: '#offerings',  label: 'Packages', Icon: BoxIcon },
+  { id: 'faq',       href: '#faq',        label: 'FAQ',      Icon: FaqIcon },
 ]
 
 // The premium easing curve used site-wide.
@@ -108,9 +121,9 @@ function DockButton({ item }) {
       href={href}
       className={[
         'flex flex-col items-center justify-center gap-[3px] rounded-full select-none',
-        'px-3.5 py-2.5',
+        'px-2 py-2.5',
         highlight
-          ? 'bg-lime text-ink px-4'
+          ? 'bg-lime text-ink px-2.5'
           : 'text-ink-soft',
       ].join(' ')}
       whileTap={{ scale: 0.86 }}
@@ -118,7 +131,7 @@ function DockButton({ item }) {
       aria-label={label}
     >
       <Icon />
-      <span className="font-mono text-[0.58rem] uppercase tracking-[0.14em] leading-none whitespace-nowrap">
+      <span className="font-mono text-[0.52rem] uppercase tracking-[0.1em] leading-none whitespace-nowrap">
         {label}
       </span>
     </motion.a>
@@ -134,7 +147,7 @@ function MenuToggle({ open, onToggle }) {
       onClick={onToggle}
       aria-label={open ? 'Close navigation' : 'Open navigation'}
       aria-expanded={open}
-      className="flex flex-col items-center justify-center gap-[3px] rounded-full px-3.5 py-2.5 text-ink-soft select-none"
+      className="flex flex-col items-center justify-center gap-[3px] rounded-full px-2 py-2.5 text-ink-soft select-none"
       whileTap={{ scale: 0.86 }}
       transition={{ duration: 0.16, ease: EASE }}
     >
@@ -155,7 +168,7 @@ function MenuToggle({ open, onToggle }) {
           <CloseIcon />
         </motion.div>
       </div>
-      <span className="font-mono text-[0.58rem] uppercase tracking-[0.14em] leading-none">
+      <span className="font-mono text-[0.52rem] uppercase tracking-[0.1em] leading-none">
         {open ? 'Close' : 'More'}
       </span>
     </motion.button>
