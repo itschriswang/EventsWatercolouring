@@ -117,7 +117,7 @@ export default function Hero({ revealed }) {
         {/* Mobile static bloom */}
         {isMobile && (
           <div
-            className="absolute inset-0 rounded-full"
+            className="absolute inset-0"
             style={{
               backgroundImage:
                 'radial-gradient(38% 32% at 16% 26%, rgba(194, 97, 60, 0.18), transparent 72%), ' +
