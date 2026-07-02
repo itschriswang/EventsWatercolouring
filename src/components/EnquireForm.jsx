@@ -409,7 +409,7 @@ function DecklePaper({ id }) {
     <div
       aria-hidden="true"
       className="absolute inset-0"
-      style={{ filter: 'drop-shadow(0 18px 38px rgba(42,39,36,0.18))' }}
+      style={{ filter: 'drop-shadow(0 18px 38px rgba(48,45,41,0.21))' }}
     >
       <svg className="h-full w-full" preserveAspectRatio="none">
         <defs>
@@ -554,7 +554,7 @@ function SealButton({ sending }) {
           aria-hidden="true"
           viewBox="0 0 100 100"
           className="absolute inset-0 h-full w-full overflow-visible"
-          style={{ filter: 'drop-shadow(0 2.5px 3px rgba(58,44,92,0.22))' }}
+          style={{ filter: 'drop-shadow(0 2.5px 3px rgba(67,50,106,0.25))' }}
         >
           <defs>
             <radialGradient id={ringGradId} cx="50" cy="50" r="49" gradientUnits="userSpaceOnUse">

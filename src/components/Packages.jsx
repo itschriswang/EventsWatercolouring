@@ -51,7 +51,7 @@ export default function Packages() {
         </motion.div>
         <motion.div
           {...reveal(1)}
-          className="relative z-20 mt-4 max-w-[calc(100vw-5vw*2)] overflow-hidden rounded-2xl border border-line/45 p-6 shadow-[0_24px_50px_-20px_rgba(150,85,43,0.28)]"
+          className="relative z-20 mt-4 max-w-[calc(100vw-5vw*2)] overflow-hidden rounded-2xl border border-line/45 p-6 shadow-[0_24px_50px_-20px_rgba(173,98,49,0.32)]"
           style={{ background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FBF8F2 0%, #F4EFE6 62%)' }}
         >
           <CornerBloom from="rgba(194,97,60,0.18)" to="rgba(110,140,168,0.13)" />
@@ -124,7 +124,7 @@ export default function Packages() {
         {/* Base package card */}
         <motion.article
           {...reveal()}
-          className="relative col-span-5 flex flex-col overflow-hidden rounded-2xl border border-line/45 p-7 shadow-[0_24px_50px_-20px_rgba(150,85,43,0.22)]"
+          className="relative col-span-5 flex flex-col overflow-hidden rounded-2xl border border-line/45 p-7 shadow-[0_24px_50px_-20px_rgba(173,98,49,0.25)]"
           style={{ background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FBF8F2 0%, #F4EFE6 62%)' }}
         >
           <CornerBloom from="rgba(194,97,60,0.18)" to="rgba(110,140,168,0.13)" />
@@ -167,7 +167,7 @@ export default function Packages() {
         {/* Add-ons — right column, replacing "Included as standard" */}
         <motion.div
           {...reveal(1)}
-          className="relative col-span-7 overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(150,85,43,0.22)]"
+          className="relative col-span-7 overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(173,98,49,0.25)]"
           style={{ background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FBF8F2 0%, #F4EFE6 62%)' }}
         >
           <CornerBloom from="rgba(201,162,58,0.16)" to="rgba(110,140,168,0.13)" />
