@@ -6,11 +6,21 @@ import { FOOTER } from '../content.js'
 
 // ─── Inline SVG icons — no external dependency ───────────────────────────────
 
+const SKETCH_FILTER = (
+  <defs>
+    <filter id="sketch-rough">
+      <feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="3" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.8" />
+    </filter>
+  </defs>
+)
+
 function HomeIcon() {
   return (
     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-      <polyline points="9 22 9 12 15 12 15 22" />
+      {SKETCH_FILTER}
+      <path d="M2.6 9.3L12 2L21.4 9.2V19.6C21.4 20.9 20.3 21.9 19 21.9H5C3.7 21.9 2.6 20.8 2.6 19.5V9.3Z" filter="url(#sketch-rough)" />
+      <path d="M9 21.9V12H15V21.9" filter="url(#sketch-rough)" />
     </svg>
   )
 }
@@ -18,8 +28,9 @@ function HomeIcon() {
 function BrushIcon() {
   return (
     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M9.06 11.9l8.07-8.06a2.85 2.85 0 114.03 4.03l-8.06 8.08" />
-      <path d="M7.07 14.94C5.79 16.2 5 17.5 5 19c0 1.1.9 2 2 2 1.79 0 3.43-1.03 5.06-2.66" />
+      {SKETCH_FILTER}
+      <path d="M9.2 11.8L17.1 3.9Q19.8 1.2 22.2 3.6Q24.5 6.0 21.9 8.6L14 16.5" filter="url(#sketch-rough)" />
+      <path d="M7.1 15C5.8 16.3 5.2 17.6 5.2 19.1C5.2 20.3 6 21.2 7.2 21.2C8.9 20.9 10.4 19.8 11.8 18.3" filter="url(#sketch-rough)" />
     </svg>
   )
 }
@@ -27,9 +38,10 @@ function BrushIcon() {
 function BoxIcon() {
   return (
     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <polyline points="21 8 21 21 3 21 3 8" />
-      <rect x="1" y="3" width="22" height="5" rx="1" />
-      <line x1="10" y1="12" x2="14" y2="12" />
+      {SKETCH_FILTER}
+      <path d="M20.9 8.2V21.2H3.1V8.1" filter="url(#sketch-rough)" />
+      <path d="M1.2 3.3H22.8V7.9C22.8 8.3 22.4 8.6 22 8.6H2C1.6 8.6 1.2 8.3 1.2 7.9V3.3Z" filter="url(#sketch-rough)" />
+      <line x1="10.2" y1="12" x2="13.8" y2="12" filter="url(#sketch-rough)" />
     </svg>
   )
 }
@@ -37,8 +49,9 @@ function BoxIcon() {
 function MailIcon() {
   return (
     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-      <polyline points="22 6 12 13 2 6" />
+      {SKETCH_FILTER}
+      <path d="M4.1 4.2H19.9C21 4.2 21.9 5.1 21.9 6.2V17.8C21.9 18.9 21 19.9 19.9 19.9H4.1C3 19.9 2.1 19 2.1 17.8V6.2C2.1 5.1 3 4.2 4.1 4.2Z" filter="url(#sketch-rough)" />
+      <path d="M21.8 6.3L12 12.9L2.2 6.2" filter="url(#sketch-rough)" />
     </svg>
   )
 }
@@ -46,9 +59,10 @@ function MailIcon() {
 function MenuIcon() {
   return (
     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <line x1="3" y1="7"  x2="21" y2="7"  />
-      <line x1="3" y1="12" x2="21" y2="12" />
-      <line x1="3" y1="17" x2="21" y2="17" />
+      {SKETCH_FILTER}
+      <path d="M3.2 7.1Q12 6.8 20.8 7.2" filter="url(#sketch-rough)" />
+      <path d="M3 12.1H20.8" filter="url(#sketch-rough)" />
+      <path d="M3.1 17.2Q12.1 17.8 21 17" filter="url(#sketch-rough)" />
     </svg>
   )
 }
@@ -56,8 +70,9 @@ function MenuIcon() {
 function CloseIcon() {
   return (
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <line x1="18" y1="6"  x2="6"  y2="18" />
-      <line x1="6"  y1="6"  x2="18" y2="18" />
+      {SKETCH_FILTER}
+      <path d="M18.1 5.9L6.1 17.9" filter="url(#sketch-rough)" />
+      <path d="M6.1 5.9L18.1 17.9" filter="url(#sketch-rough)" />
     </svg>
   )
 }
@@ -65,8 +80,9 @@ function CloseIcon() {
 function ArrowRightIcon() {
   return (
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <line x1="5" y1="12" x2="19" y2="12" />
-      <polyline points="12 5 19 12 12 19" />
+      {SKETCH_FILTER}
+      <path d="M5.1 12.2H18.9" filter="url(#sketch-rough)" />
+      <path d="M12.2 5.1L19 12.2L12.1 19.1" filter="url(#sketch-rough)" />
     </svg>
   )
 }
