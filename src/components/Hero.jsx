@@ -7,6 +7,7 @@ import { SPRING, SPRING_SOFT, asset, ENQUIRE_HREF } from '../lib/site.js'
 import { HERO } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
 import { withUnderline } from './Underline.jsx'
+import BloomFilter from './WetBloom.jsx'
 
 // Aurora is a continuously-animating WebGL canvas built on `ogl`. It only ever
 // renders on fine-pointer desktops (heavyFx), so we code-split it: the ogl
@@ -35,6 +36,13 @@ export default function Hero({ revealed }) {
     show: { opacity: 1, y: 0, transition: { ...SPRING, delay: 0.7 } },
   }
   const state = revealed ? 'show' : 'hidden'
+
+  // The artwork arrives the way a watercolour does: wet. As each card rises,
+  // its painting settles from a displaced, blurred wash into focus — the same
+  // pigment-wick the lightbox plays, timed to the card entrances. Reserved
+  // for fine-pointer desktops; the filters mount only once the preloader
+  // hands over so the wick isn't spent behind it.
+  const wick = revealed && parallax
 
   return (
     <section
@@ -216,12 +224,14 @@ export default function Hero({ revealed }) {
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(173,98,49,0.30),0_6px_16px_-6px_rgba(173,98,49,0.12)]"
                 >
                   <CornerBloom from="rgba(201,140,140,0.15)" to="rgba(110,140,168,0.11)" overlay />
+                  {wick && <BloomFilter id="hero-wick-1" dur="1.2s" begin="0.8s" />}
                   <div className="relative z-10">
                     <picture>
                       <source srcSet={asset('assets/art-character-boy.webp')} type="image/webp" />
                       <img
                         src={asset('assets/art-character-boy.jpg')}
                         alt="A small watercolour character study at the palette."
+                        style={wick ? { filter: 'url(#hero-wick-1)' } : undefined}
                         className="aspect-[4/5] w-full object-cover max-h-[40dvh] [@media(max-height:500px)]:max-h-[22dvh] sm:max-h-none sm:h-[clamp(160px,18vh,260px)] sm:aspect-auto lg:h-[38vh]"
                         loading="eager"
                         fetchpriority="high"
@@ -248,12 +258,14 @@ export default function Hero({ revealed }) {
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(173,98,49,0.30),0_6px_16px_-6px_rgba(173,98,49,0.12)]"
                 >
                   <CornerBloom from="rgba(194,97,60,0.16)" to="rgba(110,140,168,0.12)" overlay />
+                  {wick && <BloomFilter id="hero-wick-2" dur="1.2s" begin="0.95s" />}
                   <div className="relative z-10">
                     <picture>
                       <source srcSet={asset('assets/art-bouquet.webp')} type="image/webp" />
                       <img
                         src={asset('assets/art-bouquet.jpg')}
                         alt="A watercolour bouquet study held to the light."
+                        style={wick ? { filter: 'url(#hero-wick-2)' } : undefined}
                         className="aspect-[4/5] w-full object-cover max-h-[34dvh] [@media(max-height:500px)]:max-h-[20dvh] sm:max-h-none sm:h-[clamp(175px,20vh,280px)] sm:aspect-auto lg:h-[42vh]"
                         loading="eager"
                         fetchpriority="high"

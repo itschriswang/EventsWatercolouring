@@ -6,6 +6,7 @@ import { Drop } from './Label.jsx'
 import { SPRING } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
+import NightPlanner from './NightPlanner.jsx'
 import { withUnderline } from './Underline.jsx'
 
 export default function Packages() {
@@ -250,11 +251,9 @@ export default function Packages() {
         </motion.div>
       </div>
 
-      <motion.p {...reveal()} className="mt-10 max-w-2xl text-ink-soft">
-        {PACKAGES.baseNote}
-      </motion.p>
+      <NightPlanner />
 
-      <motion.p {...reveal()} className="mt-6 max-w-2xl text-sm leading-relaxed text-ink-soft">
+      <motion.p {...reveal()} className="mt-10 max-w-2xl text-sm leading-relaxed text-ink-soft">
         <b className="text-ink">A note on style.</b>{' '}
         {PACKAGES.licence.replace('A note on style. ', '')}
       </motion.p>

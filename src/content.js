@@ -7,46 +7,51 @@ export const HERO = {
   linesMobile: ['Memories', 'painted as they', 'happen'],
   emphasis: 'painted',
   emphasisMobile: 'painted',
-  lede: 'Delight your guests with live watercolour portraits while transforming your event into an immersive artistic experience they’ll be talking about long after.',
+  lede: 'Your guests, painted live in watercolour while the night carries on. Everyone takes home something real, and they talk about it long after.',
   note: 'Every enquiry answered personally, usually within a few days.',
 }
 
-export const MARQUEE = [
-  'Event watercolour',
-  'Portraits of your guests',
-  'Painted by hand',
-  'Real watercolour on cotton paper',
-  'A keepsake to take home',
-]
+// The one quote that does the selling — pulled up between the hero and the
+// story so it is the first full sentence a visitor reads after the headline.
+export const PULLQUOTE = {
+  quote: 'It has become the piece everyone stops at in our home. Our only regret is not having him there on the night.',
+  author: 'Clare & William',
+  detail: 'Post-wedding commission',
+}
 
 export const EVENING = {
   label: 'On the night',
   title: ['How the evening', 'runs.'],
   emphasis: 'runs.',
-  lede: 'The first thing I paint is the two of you, while everything is fresh. After that I work through your guests.',
+  lede: 'The first thing I paint is the two of you, while everything is fresh. After that I work through your guests. Say your reception kicks off at seven, here is how the night goes.',
   beats: [
     {
       no: '01',
+      time: '6:45pm',
       title: 'I set up',
       body: 'I get there about fifteen minutes early and set up before I start. You do not need to organise much beyond a table and chair for me.',
     },
     {
       no: '02',
+      time: '7:00pm',
       title: 'No need to pose',
       body: 'Your guests keep enjoying the night. I take a quick photo and note their name as they pass, so nobody has to stop or sit still for me.',
     },
     {
       no: '03',
+      time: '7:20pm',
       title: 'I start painting',
       body: 'Each piece takes about five to ten minutes. Once the first few are done, word gets around and guests start coming over to watch the next one.',
     },
     {
       no: '04',
+      time: '9:30pm',
       title: 'Sleeved to take home',
       body: 'Every painting goes into a clear sleeve so it gets home in one piece, right about when the champagne starts flowing a little more freely.',
     },
     {
       no: '05',
+      time: 'The week after',
       title: 'A number you can count on',
       body: 'I aim for around 8 pieces an hour. The number you book is the number I plan for, and anyone I do not reach on the night, I finish in the studio afterwards and post to you.',
     },
@@ -55,7 +60,7 @@ export const EVENING = {
 
 
 export const WORK = {
-  label: 'Selected work',
+  label: 'The keepsakes',
   zoomHint: 'Tap any piece to enlarge.',
   title: ['Real watercolour, on', 'cotton paper.'],
   emphasis: 'cotton paper.',
@@ -81,14 +86,6 @@ export const WORK = {
   // one-liner in a 2×1 block.
   gallery: [
     { img: 'art-bouquet',        ttl: 'The bouquet',          meta: 'Watercolour · A5', feature: true, alt: 'Watercolour study of a bridal bouquet, with rust ribbon, orange roses and forget-me-not blue, painted on cotton-rag paper' },
-    {
-      testimonial: true,
-      feature: true,
-      quote:
-        'Christopher painted us from our photographs after the wedding, and it has become the piece everyone stops at in our home. Our only regret is not having him there on the night. Honestly, it is the reason this whole thing exists.',
-      author: 'Clare & William',
-      detail: 'Post-wedding commission',
-    },
     { img: 'art-couple-vows',    ttl: 'The vows',             meta: 'Watercolour · A5', landscape: true, alt: 'Landscape watercolour of a bride in a white gown and a groom in a navy tuxedo holding hands among scattered confetti' },
     { img: 'art-couple-sage',    ttl: 'The pair, in sage',    meta: 'Watercolour · A5', alt: 'Watercolour portrait of a couple, the bride in a sage-green off-shoulder gown beside a groom in a soft brown jacket' },
     { img: 'art-character-girl', ttl: 'Little character, in green', meta: 'Studio study', alt: 'Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre' },
@@ -184,36 +181,18 @@ export const PACKAGES = {
   ],
   licence:
     'A note on style. What I paint is my interpretation, not a photo-exact likeness, and my style evolves over time, so no two pieces are the same. Booking means you are comfortable with that approach and my style. A 50% retainer holds your date, with the balance due two weeks before your big day.',
-}
-
-export const PATHS = {
-  label: 'How it works',
-  title: ['Live on the day,', 'or after it.'],
-  emphasis: 'or after it.',
-  items: [
-    {
-      no: '01',
-      title: 'Live on the day',
-      sub: 'I paint your guests as they mingle, quick portraits in watercolour, handed over as the night unfolds.',
-      steps: [
-        { b: 'Book your date', t: 'A 50% retainer holds the date. Balance due two weeks before.' },
-        { b: 'I arrive early', t: 'Set-up takes about 15 minutes before the event starts.' },
-        { b: 'Paint and mingle', t: 'Guests pass by; I take a quick photo and paint them live.' },
-        { b: 'Keepsakes to go', t: 'Each finished portrait goes home with the guest on the night.' },
-      ],
-    },
-    {
-      no: '02',
-      title: 'From your photographs',
-      sub: 'A studio commission painted from photos before or after the event, ready in about four weeks.',
-      steps: [
-        { b: 'Share your photos', t: 'Send clear reference images after the booking is confirmed.' },
-        { b: 'I paint in the studio', t: 'Work begins once the references arrive.' },
-        { b: 'Review and approve', t: 'I send a photo of the finished piece before it is posted.' },
-        { b: 'Posted to you', t: 'Shipped flat in a protective sleeve, ready to frame.' },
-      ],
-    },
-  ],
+  planner: {
+    title: 'Will everyone get painted?',
+    lede: 'Slide to your guest list and pick your hours. I paint around 8 pieces an hour, and each piece can hold up to four guests.',
+    guestsLabel: 'Your guest list',
+    hoursLabel: 'Hours booked',
+    piecesUnit: 'keepsakes painted live',
+    coversUnit: 'Room for up to',
+    coversTail: 'guests on them, four to a piece',
+    fits: 'Everyone can be on a piece before the night is out.',
+    overflow: 'I paint through the night, then finish the rest in the studio and post them to you, so no guest misses out.',
+    small: 'Numbers to plan around, not a stopwatch. Groups and pacing vary on the night.',
+  },
 }
 
 export const FAQ = {
@@ -304,9 +283,9 @@ export const FOOTER = {
   emphasis: 'to keep.',
   name: 'chris wang',
   nav: [
-    { href: '/#painter', label: 'The painter' },
     { href: '/#night', label: 'On the night' },
     { href: '/#work', label: 'The work' },
+    { href: '/#painter', label: 'The painter' },
     { href: '/#offerings', label: 'Packages' },
     { href: '/faq/', label: 'Questions' },
   ],

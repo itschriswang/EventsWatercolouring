@@ -67,9 +67,11 @@ function MailIcon() {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
+// Ordered to match the page's narrative flow (gallery now sits above the
+// painter), keeping Enquire as the highlighted centrepiece.
 const DOCK_ITEMS = [
-  { id: 'about',     href: '/#painter',   label: 'About',    Icon: AboutIcon },
   { id: 'gallery',   href: '/#work',      label: 'Gallery',  Icon: GalleryIcon },
+  { id: 'about',     href: '/#painter',   label: 'About',    Icon: AboutIcon },
   { id: 'enquiry',   href: ENQUIRE_HREF,  label: 'Enquire',  Icon: MailIcon, highlight: true },
   { id: 'offerings', href: '/#offerings', label: 'Packages', Icon: BoxIcon },
   { id: 'faq',       href: '/faq/',       label: 'FAQ',      Icon: FaqIcon },
