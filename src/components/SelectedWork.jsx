@@ -87,6 +87,19 @@ export default function SelectedWork() {
 
   return (
     <section id="work" className="relative w-full px-[5vw] py-[clamp(3rem,7vw,7rem)]">
+      {/* Smooth transition bloom from gallery to packages — warm editorial gradient
+          blending the white gallery background into the bloom-backed packages section */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-px left-0 right-0 h-[clamp(100px,15vw,200px)] z-10"
+        style={{
+          backgroundImage:
+            'radial-gradient(ellipse 180% 80% at 50% 100%, rgba(201,97,60,0.08) 0%, rgba(228,136,156,0.04) 25%, transparent 60%), ' +
+            'radial-gradient(ellipse 160% 100% at 30% 120%, rgba(201,162,58,0.06) 0%, transparent 50%), ' +
+            'radial-gradient(ellipse 160% 100% at 70% 120%, rgba(164,80,47,0.05) 0%, transparent 50%)',
+          pointerEvents: 'none',
+        }}
+      />
       <div className="mx-auto max-w-[88rem]">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
