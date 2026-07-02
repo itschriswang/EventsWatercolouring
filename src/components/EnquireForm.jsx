@@ -440,10 +440,50 @@ const SEAL_BUBBLES = [
   { cx: 31, cy: 66, r: 1.1 },
 ]
 
-// Resting light position (top-left) used on touch/reduced-motion, and the
-// horizontal/vertical sweep the point light travels as the seal scrolls.
-const LIGHT_REST = { x: 40, y: 26 }
-const lightAt = (v) => ({ x: 34 + v * 32, y: 23 + v * 8 })
+// The rim's cross-section, baked directly into the shape's own alpha as a
+// radial gradient: flat recessed floor -> smooth rise -> peak -> smooth fall
+// -> background. A `feDistantLight` (parallel light, not a point light) over
+// this profile is what makes the rim read as a real torus: the slope rising
+// toward the peak and the slope falling away from it catch the light from
+// OPPOSITE sides, so the highlight/shadow pair flips between the rim's inner
+// face and outer face as you go around it — outer bright + inner shadowed on
+// the side facing the light, reversed on the far side. (A point light instead
+// washes this out: proximity to the light dominates and every point's inner
+// edge ends up brighter than its outer edge, everywhere, with no flip.)
+// Baking the bump into the gradient — rather than leaning on a big Gaussian
+// blur to round a flat-topped ring — also keeps the steep part of the slope
+// inside the rim's own visible width instead of spreading it wider than what
+// actually gets painted.
+const RING_STOPS = (() => {
+  const smoothstep = (x) => {
+    x = Math.max(0, Math.min(1, x))
+    return x * x * (3 - 2 * x)
+  }
+  const floor = 0.14
+  const peak = 0.95
+  const r0 = 37 // rim's peak radius
+  const w = 6.5 // half-width of the rise/fall
+  const R = 49 // gradient extent
+  const N = 48
+  const stops = []
+  for (let i = 0; i <= N; i++) {
+    const r = (i / N) * R
+    const a =
+      r <= r0
+        ? floor + (peak - floor) * smoothstep((r - (r0 - w)) / w)
+        : peak * (1 - smoothstep((r - r0) / w))
+    stops.push({ offset: `${((r / R) * 100).toFixed(2)}%`, opacity: a.toFixed(3) })
+  }
+  return stops
+})()
+
+// Resting light direction (mostly from the top, a slight lean to the left)
+// used on touch/reduced-motion, and the azimuth sweep the light travels
+// through as the seal scrolls — a directional light "arcing" a little, so the
+// highlight/shadow pair visibly trades sides like tilting a seal in the hand.
+const LIGHT_ELEVATION = 50
+const LIGHT_AZIMUTH_REST = 262
+const azimuthAt = (v) => LIGHT_AZIMUTH_REST + (v - 0.5) * 36
 
 /**
  * Submit control shaped as a real, gooey wax seal, lit in 3D.
@@ -451,32 +491,36 @@ const lightAt = (v) => ({ x: 34 + v * 32, y: 23 + v * 8 })
  * The seal is built as TWO layered height maps run through real lighting
  * filters (feDiffuseLighting + feSpecularLighting), not stacked CSS gradients:
  *
- *  - The BASE (floor disc + raised rim ring) gets a big, low-frequency
- *    feTurbulence + a wide feDisplacementMap, so the whole silhouette pours out
- *    unevenly — thicker in some places, thinner in others — like real dripped
- *    wax rather than a uniform ring. Its height map is blurred wide enough
- *    that the rim has no flat plateau: it's a genuine rounded bead, brightest
- *    where it curves toward the light and shaded where it curves away.
+ *  - The BASE is a single radial gradient (RING_STOPS) whose alpha rises from
+ *    a recessed floor, over a rounded rim peak, back to nothing — the torus
+ *    cross-section is baked into the shape itself, not faked with blur. A big
+ *    low-frequency feTurbulence + wide feDisplacementMap then pours the whole
+ *    silhouette unevenly, so it reads as dripped wax, not a uniform ring.
  *  - The MOTIF (the pressed orchid + trapped bubbles) is layered on top with
  *    only a light blur and no displacement, so the fine relief stays crisp
  *    while still catching its own curved highlight.
  *
- * Both layers are warmed (ivory/tan lighting colours, not steel) and their
- * point lights share one scroll-driven position on desktop, so the whole seal
- * re-lights together as it scrolls — the highlight sweeping across the ridge
- * like a real seal tilted in the hand. Touch and reduced-motion hold the light
- * at rest. Iridescence blooms on hover. Decorative; the accessible name comes
- * from the button + its visible label.
+ * Both layers are lit by a `feDistantLight` (a parallel light, not a point
+ * light) — that's what makes the rim's inner and outer faces catch the
+ * highlight/shadow on OPPOSITE sides of the ring, the way a real torus does.
+ * (A point light instead makes proximity dominate: every point's inner edge
+ * reads brighter than its outer edge, everywhere, with no flip.) The light's
+ * azimuth sweeps gently as the seal scrolls through the viewport on desktop,
+ * so the highlight visibly trades sides like tilting a seal in the hand.
+ * Touch and reduced-motion hold the light at rest. Iridescence blooms on
+ * hover. Decorative; the accessible name comes from the button + its visible
+ * label.
  */
 function SealButton({ sending }) {
   const uid = useId().replace(/:/g, '')
   const baseId = `waxbase-${uid}`
   const motifId = `waxmotif-${uid}`
+  const ringGradId = `ringgrad-${uid}`
   const reduce = useReducedMotion()
   const parallax = useHeavyFx() && !reduce
 
-  // Drive both filters' point lights imperatively off scroll so re-lighting the
-  // SVG never triggers a React render. All four lights share one motion value.
+  // Drive both filters' lights imperatively off scroll so re-lighting the SVG
+  // never triggers a React render. All four lights share one motion value.
   const sealRef = useRef(null)
   const baseDiffRef = useRef(null)
   const baseSpecRef = useRef(null)
@@ -489,10 +533,9 @@ function SealButton({ sending }) {
   const light = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.4 })
   useMotionValueEvent(light, 'change', (v) => {
     if (!parallax) return
-    const { x, y } = lightAt(v)
+    const azimuth = azimuthAt(v).toFixed(1)
     for (const ref of [baseDiffRef, baseSpecRef, motifDiffRef, motifSpecRef]) {
-      ref.current?.setAttribute('x', x.toFixed(1))
-      ref.current?.setAttribute('y', y.toFixed(1))
+      ref.current?.setAttribute('azimuth', azimuth)
     }
   })
 
@@ -514,36 +557,40 @@ function SealButton({ sending }) {
           style={{ filter: 'drop-shadow(0 2.5px 3px rgba(58,44,92,0.22))' }}
         >
           <defs>
-            {/* BASE: the poured blob + its plump, unevenly-rounded rim.
-                Two blur widths do different jobs: H (wide) feeds the lighting
-                so the rim curves with no flat plateau; Hclip (tight) is what
-                the visible paint is masked to, so the colour itself doesn't
-                melt outward into a wide halo the way the lighting's height map
-                needs to. */}
+            <radialGradient id={ringGradId} cx="50" cy="50" r="49" gradientUnits="userSpaceOnUse">
+              {RING_STOPS.map((s, i) => (
+                <stop key={i} offset={s.offset} stopColor="#fff" stopOpacity={s.opacity} />
+              ))}
+            </radialGradient>
+
+            {/* BASE: the poured blob + its plump, rounded rim. Only a small
+                blur here — for anti-aliasing, not for rounding — since the
+                bump profile is already baked into RING_STOPS. */}
             <filter id={baseId} x="-30%" y="-30%" width="160%" height="160%" colorInterpolationFilters="sRGB">
               <feTurbulence type="fractalNoise" baseFrequency="0.011" numOctaves="2" seed="7" result="noise" />
-              <feGaussianBlur in="SourceAlpha" stdDeviation="7" result="H" />
-              <feGaussianBlur in="SourceAlpha" stdDeviation="1.3" result="Hclip" />
+              <feGaussianBlur in="SourceAlpha" stdDeviation="1.5" result="H" />
               {/* Low-opacity flood: a clear-gel tint, not opaque wax colour —
                   most of the card behind is meant to read through. */}
               <feFlood floodColor="#F1EEFA" floodOpacity="0.4" result="tint" />
-              <feComposite in="tint" in2="Hclip" operator="in" result="body" />
-              <feDiffuseLighting in="H" surfaceScale="7.5" diffuseConstant="1" lightingColor="#e9ecf7" result="diffRaw">
-                <fePointLight ref={baseDiffRef} x={LIGHT_REST.x} y={LIGHT_REST.y} z="46" />
+              <feComposite in="tint" in2="H" operator="in" result="body" />
+              <feDiffuseLighting in="H" surfaceScale="19" diffuseConstant="1" lightingColor="#e9ecf7" result="diffRaw">
+                <feDistantLight ref={baseDiffRef} azimuth={LIGHT_AZIMUTH_REST} elevation={LIGHT_ELEVATION} />
               </feDiffuseLighting>
               {/* Raise the shadow FLOOR on colour (R/G/B), not alpha — otherwise
                   the diffuse shading still crushes to near-black in shadow and
-                  drags the translucent body dark when multiplied below. */}
+                  drags the translucent body dark when multiplied below. Kept
+                  low enough that the dimmer far side of the rim still shows a
+                  visible inner/outer split, not just the near side. */}
               <feComponentTransfer in="diffRaw" result="diffSoft">
-                <feFuncR type="linear" slope="0.55" intercept="0.42" />
-                <feFuncG type="linear" slope="0.55" intercept="0.42" />
-                <feFuncB type="linear" slope="0.55" intercept="0.42" />
+                <feFuncR type="linear" slope="0.75" intercept="0.2" />
+                <feFuncG type="linear" slope="0.75" intercept="0.2" />
+                <feFuncB type="linear" slope="0.75" intercept="0.2" />
               </feComponentTransfer>
-              <feComposite in="diffSoft" in2="Hclip" operator="in" result="diff" />
-              <feSpecularLighting in="H" surfaceScale="7.5" specularConstant="0.8" specularExponent="9" lightingColor="#ffffff" result="specRaw">
-                <fePointLight ref={baseSpecRef} x={LIGHT_REST.x} y={LIGHT_REST.y} z="46" />
+              <feComposite in="diffSoft" in2="H" operator="in" result="diff" />
+              <feSpecularLighting in="H" surfaceScale="15" specularConstant="0.55" specularExponent="10" lightingColor="#ffffff" result="specRaw">
+                <feDistantLight ref={baseSpecRef} azimuth={LIGHT_AZIMUTH_REST} elevation={LIGHT_ELEVATION} />
               </feSpecularLighting>
-              <feComposite in="specRaw" in2="Hclip" operator="in" result="spec" />
+              <feComposite in="specRaw" in2="H" operator="in" result="spec" />
               <feBlend in="body" in2="diff" mode="multiply" result="shaded" />
               <feComposite in="spec" in2="shaded" operator="arithmetic" k1="0" k2="0.85" k3="1" k4="0" result="lit" />
               <feComponentTransfer in="lit" result="glass">
@@ -559,7 +606,7 @@ function SealButton({ sending }) {
               <feFlood floodColor="#F1EEFA" floodOpacity="0.45" result="mtint" />
               <feComposite in="mtint" in2="Hm" operator="in" result="mbody" />
               <feDiffuseLighting in="Hm" surfaceScale="4" diffuseConstant="1" lightingColor="#e9ecf7" result="mdiffRaw">
-                <fePointLight ref={motifDiffRef} x={LIGHT_REST.x} y={LIGHT_REST.y} z="46" />
+                <feDistantLight ref={motifDiffRef} azimuth={LIGHT_AZIMUTH_REST} elevation={LIGHT_ELEVATION} />
               </feDiffuseLighting>
               <feComponentTransfer in="mdiffRaw" result="mdiffSoft">
                 <feFuncR type="linear" slope="0.6" intercept="0.35" />
@@ -568,7 +615,7 @@ function SealButton({ sending }) {
               </feComponentTransfer>
               <feComposite in="mdiffSoft" in2="Hm" operator="in" result="mdiff" />
               <feSpecularLighting in="Hm" surfaceScale="4" specularConstant="0.7" specularExponent="14" lightingColor="#ffffff" result="mspecRaw">
-                <fePointLight ref={motifSpecRef} x={LIGHT_REST.x} y={LIGHT_REST.y} z="46" />
+                <feDistantLight ref={motifSpecRef} azimuth={LIGHT_AZIMUTH_REST} elevation={LIGHT_ELEVATION} />
               </feSpecularLighting>
               <feComposite in="mspecRaw" in2="Hm" operator="in" result="mspec" />
               <feBlend in="mbody" in2="mdiff" mode="multiply" result="mshaded" />
@@ -576,17 +623,12 @@ function SealButton({ sending }) {
             </filter>
           </defs>
 
-          {/* Silhouette that becomes the BASE height map: a thin, mostly-clear
-              floor disc and a much more opaque raised rim ring. The big gap
-              between the floor's alpha (0.16) and the ring's (0.95) is what
-              gives the rim a real INNER slope too — a symmetric step down on
-              both its outer face (rim → background) and inner face (rim →
-              recessed centre), so both sides pick up their own highlight and
-              shadow instead of just the outer edge. Fill colour is irrelevant
+          {/* Silhouette that becomes the BASE height map: one circle, filled
+              by RING_STOPS so its own alpha already rises from the recessed
+              centre, over the rim, back to nothing. Fill colour is irrelevant
               — only the alpha feeds the lighting. */}
-          <g filter={`url(#${baseId})`} fill="#fff">
-            <circle cx="50" cy="50" r="43" opacity="0.16" />
-            <circle cx="50" cy="50" r="37" fill="none" stroke="#fff" strokeWidth="12" opacity="0.95" />
+          <g filter={`url(#${baseId})`}>
+            <circle cx="50" cy="50" r="49" fill={`url(#${ringGradId})`} />
           </g>
 
           {/* MOTIF layer, stamped on top: the pressed orchid + bubbles. */}
