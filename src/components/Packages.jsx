@@ -86,10 +86,11 @@ export default function Packages() {
           </div>
         </motion.div>
 
-        {/* Mobile add-ons — every add-on is visible up front as a compact
-            row (name + price), and each drops open independently to reveal
-            its description. All eight are scannable at a glance; nothing is
-            hidden behind a single group toggle. */}
+        {/* Mobile add-ons — every add-on name is visible up front, and each
+            drops open independently to reveal its description and price.
+            All eight are scannable at a glance; nothing is hidden behind a
+            single group toggle, and pricing stays tucked away until you
+            actually open one up. */}
         <motion.div {...reveal(2)} className="mt-8">
           <div className="flex items-baseline justify-between border-b border-ink pb-3">
             <h3 className="font-sentient text-xl tracking-[-0.02em] text-ink">
@@ -111,23 +112,8 @@ export default function Packages() {
                     aria-controls={`mobile-addon-${i}`}
                     className="flex w-full items-center justify-between gap-4 py-4 text-left"
                   >
-                    <span className="flex flex-col gap-1">
-                      <span className="font-sentient text-base tracking-[-0.01em] text-ink">
-                        {a.h}
-                      </span>
-                      <span className="text-xs text-rust">
-                        {a.small && (
-                          <span className="mr-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
-                            {a.small}
-                          </span>
-                        )}
-                        <span className="font-mono">{a.tag}</span>
-                        {a.extra && (
-                          <span className="ml-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
-                            {a.extra}
-                          </span>
-                        )}
-                      </span>
+                    <span className="font-sentient text-base tracking-[-0.01em] text-ink">
+                      {a.h}
                     </span>
                     <motion.span
                       animate={{ rotate: isOpen ? 45 : 0 }}
@@ -148,7 +134,20 @@ export default function Packages() {
                         transition={SPRING}
                         className="overflow-hidden"
                       >
-                        <p className="pb-4 text-xs leading-relaxed text-ink-soft">{a.p}</p>
+                        <p className="pb-3 text-xs leading-relaxed text-ink-soft">{a.p}</p>
+                        <p className="pb-4 text-xs text-rust">
+                          {a.small && (
+                            <span className="mr-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
+                              {a.small}
+                            </span>
+                          )}
+                          <span className="font-mono">{a.tag}</span>
+                          {a.extra && (
+                            <span className="ml-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
+                              {a.extra}
+                            </span>
+                          )}
+                        </p>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -252,13 +251,32 @@ export default function Packages() {
         </motion.div>
       </div>
 
-      <motion.p {...reveal()} className="mt-10 max-w-2xl text-ink-soft">
-        Got a question about any of this?{' '}
-        <a href="/faq/" className="text-ink underline underline-offset-4">
-          Check the FAQ
-        </a>
-        .
-      </motion.p>
+      {/* FAQ pointer — the eyebrow-icon + arrow-on-hover device used
+          throughout the site (Label's Drop icon, SealButton's arrow),
+          rather than a link buried mid-sentence. */}
+      <motion.a
+        href="/faq/"
+        {...reveal()}
+        whileHover={reduce ? {} : { y: -2 }}
+        transition={SPRING}
+        className="group mt-10 inline-flex items-center gap-3 rounded-full border border-line/60 bg-paper-deep/40 py-2.5 pl-2.5 pr-5 shadow-[0_10px_24px_-16px_rgba(173,98,49,0.35)] transition-colors duration-300 hover:border-terracotta/40 hover:bg-paper-deep/70"
+      >
+        <span
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-paper"
+          aria-hidden="true"
+        >
+          <Drop className="h-4 w-auto" gradient={['#C9A23A', '#C2613C']} />
+        </span>
+        <span className="font-mono text-[0.68rem] uppercase tracking-[0.15em] text-ink">
+          Got a question? Check the FAQ
+        </span>
+        <span
+          aria-hidden="true"
+          className="text-ink transition-transform duration-300 group-hover:translate-x-1"
+        >
+          →
+        </span>
+      </motion.a>
 
       <motion.p {...reveal()} className="mt-6 max-w-2xl text-sm leading-relaxed text-ink-soft">
         <b className="text-ink">A note on style.</b>{' '}
