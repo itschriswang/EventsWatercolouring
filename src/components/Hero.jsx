@@ -187,7 +187,7 @@ export default function Hero({ revealed }) {
                   initial={{ opacity: 0, y: reduce ? 0 : 55, rotate: reduce ? 0 : -6 }}
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : -6 } : { opacity: 0 }}
                   transition={{ ...SPRING_SOFT, delay: 0.8 }}
-                  className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(150,85,43,0.26),0_6px_16px_-6px_rgba(150,85,43,0.10)]"
+                  className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(173,98,49,0.30),0_6px_16px_-6px_rgba(173,98,49,0.12)]"
                 >
                   <CornerBloom from="rgba(201,140,140,0.15)" to="rgba(110,140,168,0.11)" overlay />
                   <div className="relative z-10">
@@ -219,7 +219,7 @@ export default function Hero({ revealed }) {
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : 3 } : { opacity: 0 }}
                   transition={{ ...SPRING_SOFT, delay: 0.95 }}
                   whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
-                  className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(150,85,43,0.26),0_6px_16px_-6px_rgba(150,85,43,0.10)]"
+                  className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(173,98,49,0.30),0_6px_16px_-6px_rgba(173,98,49,0.12)]"
                 >
                   <CornerBloom from="rgba(194,97,60,0.16)" to="rgba(110,140,168,0.12)" overlay />
                   <div className="relative z-10">

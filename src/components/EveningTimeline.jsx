@@ -132,14 +132,14 @@ export default function EveningTimeline() {
                     aria-hidden="true"
                   >
                     {isLast ? (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_12px_rgba(100,40,15,0.45)]">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_12px_rgba(115,46,17,0.52)]">
                         <Drop
                           className="h-5 w-auto"
                           gradient={['#C2613C', '#A4502F']}
                         />
                       </span>
                     ) : (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] text-rust shadow-[0_2px_12px_rgba(100,40,15,0.35)]">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] text-rust shadow-[0_2px_12px_rgba(115,46,17,0.40)]">
                         {beat.no}
                       </span>
                     )}
