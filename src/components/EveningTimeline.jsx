@@ -180,7 +180,12 @@ export default function EveningTimeline() {
                       aria-hidden="true"
                       className="pointer-events-none absolute inset-0 rounded-[1.1rem] ring-1 ring-inset ring-terracotta/0 transition-colors duration-500 group-hover:ring-terracotta/30"
                     />
-                    <h3 className="relative font-mono text-[clamp(1.25rem,2.4vw,1.9rem)] leading-tight tracking-[-0.01em] text-ink">
+                    {beat.time && (
+                      <span className="relative block font-mono text-[0.62rem] uppercase tracking-[0.24em] text-rust">
+                        {beat.time}
+                      </span>
+                    )}
+                    <h3 className="relative mt-1 font-mono text-[clamp(1.25rem,2.4vw,1.9rem)] leading-tight tracking-[-0.01em] text-ink">
                       {beat.title}
                     </h3>
                     <p className="relative mt-2 max-w-lg text-[0.95rem] leading-relaxed text-ink-soft">

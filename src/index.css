@@ -182,13 +182,6 @@
   }
 }
 
-/* Keepsake ribbon — one seamless loop; the track holds two copies of the
-   phrase set, so -50% lands exactly on the start of the second copy. */
-@keyframes marquee-scroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
 /* Watercolour bloom-field — soft pigment halos drifting in the margins */
 @keyframes bloom-drift1 {
   0%   { transform: translate(0, 0) scale(1) rotate(0deg); opacity: .14; }

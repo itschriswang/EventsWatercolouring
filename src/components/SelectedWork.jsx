@@ -7,6 +7,7 @@ import useMediaQuery from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset } from '../lib/site.js'
 import { WORK } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
+import BloomFilter from './WetBloom.jsx'
 
 // Every gallery entry gets a stable index up front. Several paintings reuse
 // the same source image (e.g. `art-bouquet` appears three times), so `_idx`
@@ -313,62 +314,6 @@ function Testimonial({ item, compact = false, masonry = false }) {
         </span>
       </footer>
     </blockquote>
-  )
-}
-
-/**
- * Watercolour bloom — an SVG turbulence + displacement filter that "wicks" the
- * painting into focus, like wet pigment spreading into cotton paper. The
- * displacement amplitude and a soft wet-edge blur settle to zero on mount, so
- * remounting the filter (one fresh id per painting) replays the bloom each time
- * a new piece appears. Rendered only when motion is allowed — see Lightbox.
- */
-function BloomFilter({ id }) {
-  // Organic, paper-soft easing — mirrors the site's `ease-organic` curve.
-  const ease = '0.22 0.61 0.36 1'
-  return (
-    <svg aria-hidden="true" width="0" height="0" className="absolute" style={{ position: 'absolute' }}>
-      <filter id={id} x="-12%" y="-12%" width="124%" height="124%" colorInterpolationFilters="sRGB">
-        <feTurbulence
-          type="fractalNoise"
-          baseFrequency="0.011 0.016"
-          numOctaves="2"
-          seed="7"
-          result="paper"
-        />
-        <feDisplacementMap
-          in="SourceGraphic"
-          in2="paper"
-          scale="24"
-          xChannelSelector="R"
-          yChannelSelector="G"
-          result="wet"
-        >
-          <animate
-            attributeName="scale"
-            from="24"
-            to="0"
-            dur="0.9s"
-            fill="freeze"
-            calcMode="spline"
-            keyTimes="0;1"
-            keySplines={ease}
-          />
-        </feDisplacementMap>
-        <feGaussianBlur in="wet" stdDeviation="4">
-          <animate
-            attributeName="stdDeviation"
-            from="4"
-            to="0"
-            dur="0.9s"
-            fill="freeze"
-            calcMode="spline"
-            keyTimes="0;1"
-            keySplines={ease}
-          />
-        </feGaussianBlur>
-      </filter>
-    </svg>
   )
 }
 
