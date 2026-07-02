@@ -27,12 +27,26 @@ export default function Faq() {
           <ul className="space-y-3">
             {FAQ.items.map((item, i) => {
               const isOpen = open === i
+              // Create a cohesive gradient across all FAQ items using warm editorial colors
+              const totalItems = FAQ.items.length
+              const progress = i / (totalItems - 1 || 1) // 0 to 1 across all items
+
+              // Gradient positions cycle through warm tones: terracotta → ochre → rust → blush
+              const gradients = [
+                'radial-gradient(ellipse 140% 100% at 45% -10%, rgba(201,97,60,0.08) 0%, rgba(251,248,242,0.95) 35%, rgba(244,239,230,0.98) 100%)',
+                'radial-gradient(ellipse 140% 100% at 55% -10%, rgba(201,162,58,0.07) 0%, rgba(251,248,242,0.96) 38%, rgba(244,239,230,0.98) 100%)',
+                'radial-gradient(ellipse 140% 100% at 65% -10%, rgba(164,80,47,0.08) 0%, rgba(251,248,242,0.96) 40%, rgba(244,239,230,0.99) 100%)',
+                'radial-gradient(ellipse 140% 100% at 75% -10%, rgba(228,136,156,0.07) 0%, rgba(251,248,242,0.97) 38%, rgba(244,239,230,0.99) 100%)',
+                'radial-gradient(ellipse 140% 100% at 50% -10%, rgba(201,139,140,0.06) 0%, rgba(251,248,242,0.97) 42%, rgba(244,239,230,0.99) 100%)',
+              ]
+              const backgroundGradient = gradients[i % gradients.length]
+
               return (
                 <li
                   key={i}
                   className="group relative overflow-hidden rounded-2xl border border-line/45 transition-all duration-200"
                   style={{
-                    background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FBF8F2 0%, #F4EFE6 62%)',
+                    background: backgroundGradient,
                   }}
                 >
                   <CornerBloom from="rgba(194,97,60,0.12)" to="rgba(110,140,168,0.08)" />
