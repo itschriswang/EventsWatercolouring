@@ -93,7 +93,7 @@ export default function Faq() {
                             : 'text-ink hover:text-terracotta'
                         }`}
                       >
-                        <span className="font-sentient text-[clamp(0.95rem,1.3vw,1.15rem)] tracking-[-0.01em] leading-snug">
+                        <span className="font-body text-[clamp(0.95rem,1.3vw,1.15rem)] tracking-[-0.01em] leading-snug">
                           {item.q}
                         </span>
                         <motion.span
