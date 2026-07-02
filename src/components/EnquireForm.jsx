@@ -432,7 +432,7 @@ function SealButton({ sending }) {
       aria-label="Send enquiry"
       className="group inline-flex w-fit items-center gap-4 outline-none disabled:cursor-not-allowed disabled:opacity-60"
     >
-      <span className="relative h-14 w-14 shrink-0 transition-transform duration-200 ease-organic group-hover:translate-y-0.5 group-active:translate-y-1 group-focus-visible:ring-2 group-focus-visible:ring-terracotta group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-transparent">
+      <span className="relative h-20 w-20 shrink-0 transition-transform duration-200 ease-organic group-hover:translate-y-0.5 group-active:translate-y-1 group-focus-visible:ring-2 group-focus-visible:ring-terracotta group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-transparent">
         <picture>
           <source srcSet={asset('assets/seal.webp')} type="image/webp" />
           <img
