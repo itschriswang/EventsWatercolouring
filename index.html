@@ -24,7 +24,7 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Christopher Wang | Live Event Watercolour" />
-    <meta property="og:title" content="Live Event Watercolour Painting in Melbourne" />
+    <meta property="og:title" content="Live Event Watercolour Painting in Melbourne and Sydney" />
     <meta
       property="og:description"
       content="Hand-painted watercolour keepsakes, painted live at your wedding — a portrait for the two of you and a small keepsake for your guests to take home."
@@ -36,37 +36,57 @@
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Live Wedding Watercolour Painting in Melbourne" />
+    <meta name="twitter:title" content="Live Wedding Watercolour Painting in Melbourne and Sydney" />
     <meta
       name="twitter:description"
       content="Hand-painted watercolour keepsakes, painted live at your event by Christopher Wang. Studio commissions also available."
     />
     <meta name="twitter:image" content="https://chriswangstudio.com/assets/art-bouquet.jpg" />
 
-    <!-- Structured data: who provides the service and where -->
+    <!-- Structured data: the site, who provides the service and where -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "ProfessionalService",
-        "name": "Christopher Wang | Live Event Watercolour",
-        "description": "Live event watercolour painting and studio commissions. Hand-painted keepsakes for guests and the couple painted on the night.",
-        "url": "https://chriswangstudio.com",
-        "image": "https://chriswangstudio.com/assets/art-bouquet.jpg",
-        "areaServed": [
-          { "@type": "City", "name": "Melbourne" },
-          { "@type": "State", "name": "Victoria" },
-          { "@type": "Country", "name": "Australia" }
-        ],
-        "founder": { "@type": "Person", "name": "Christopher Wang" },
-        "priceRange": "From $850 AUD",
-        "makesOffer": {
-          "@type": "Offer",
-          "priceCurrency": "AUD",
-          "price": "850",
-          "name": "Live event watercolour base package",
-          "description": "Three hours of live painting, around 24 hand-painted keepsakes and a couple portrait painted on the night."
-        },
-        "sameAs": ["https://www.instagram.com/chriswangstudio"]
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://chriswangstudio.com/#website",
+            "name": "Christopher Wang Studio",
+            "alternateName": "Christopher Wang | Live Event Watercolour",
+            "url": "https://chriswangstudio.com/"
+          },
+          {
+            "@type": "ProfessionalService",
+            "@id": "https://chriswangstudio.com/#service",
+            "name": "Christopher Wang | Live Event Watercolour",
+            "description": "Live event watercolour painting and studio commissions. Hand-painted keepsakes for guests and the couple painted on the night.",
+            "url": "https://chriswangstudio.com",
+            "image": "https://chriswangstudio.com/assets/art-bouquet.jpg",
+            "email": "create@chriswangstudio.com",
+            "areaServed": [
+              { "@type": "City", "name": "Melbourne" },
+              { "@type": "City", "name": "Sydney" },
+              { "@type": "State", "name": "Victoria" },
+              { "@type": "State", "name": "New South Wales" },
+              { "@type": "Country", "name": "Australia" }
+            ],
+            "founder": {
+              "@type": "Person",
+              "name": "Christopher Wang",
+              "jobTitle": "Watercolour artist",
+              "sameAs": ["https://www.instagram.com/chriswangstudio"]
+            },
+            "priceRange": "From $850 AUD",
+            "makesOffer": {
+              "@type": "Offer",
+              "priceCurrency": "AUD",
+              "price": "850",
+              "name": "Live event watercolour base package",
+              "description": "Three hours of live painting, around 24 hand-painted keepsakes and a couple portrait painted on the night."
+            },
+            "sameAs": ["https://www.instagram.com/chriswangstudio"]
+          }
+        ]
       }
     </script>
 
@@ -79,18 +99,24 @@
   </head>
   
   <body>
-    <div id="root"></div>
-    <noscript>
-      <div style="max-width: 36rem; margin: 0 auto; padding: 3rem 1.5rem; font-family: system-ui, sans-serif; color: #2A2724; line-height: 1.6;">
-        <h1 style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">Christopher Wang — Live Wedding Watercolour</h1>
-        <p>I paint live at events: a hand-painted watercolour keepsake for your guests, painted on the night, with packages from $850. Studio commissions from photographs are also available from $400.</p>
-        <p>This page works best with JavaScript enabled. To get in touch, email
+    <div id="root">
+      <!-- Static content for crawlers and the pre-JavaScript first paint.
+           React replaces this on mount; without JavaScript it stays visible
+           as a readable fallback page. Keep the copy in step with
+           src/content.js. -->
+      <div style="max-width: 42rem; margin: 0 auto; padding: 3.5rem 1.5rem; font-family: Georgia, 'Times New Roman', serif; color: #2A2724; background: #F4EFE6; line-height: 1.65;">
+        <h1 style="font-size: 2rem; line-height: 1.15; font-weight: 400;">Live wedding and event watercolour painting in Melbourne and Sydney</h1>
+        <p>I am Christopher Wang, a watercolour artist based in Melbourne. I paint live at weddings, corporate events, brand activations and private celebrations: a hand-painted watercolour keepsake for each of your guests, painted while the night carries on, and a portrait of the two of you painted first while everything is fresh.</p>
+        <p>The base package is <strong>from $850</strong>: three hours of live painting, around 24 keepsakes on 300gsm A5 cotton paper, every piece sleeved to take home on the night. Travel is included within about an hour of Melbourne or Sydney metro, and I travel Australia-wide for weddings and events further afield.</p>
+        <p>Studio commissions from your photographs are also available, including A3 family and bridal-party portraits from $400 and wedding bouquet illustrations from $500.</p>
+        <p><a href="/faq/" style="color: #A4502F;">Read the frequently asked questions</a> about booking, travel, timing and materials.</p>
+        <p>To get in touch, email
           <a href="mailto:create@chriswangstudio.com" style="color: #A4502F;">create@chriswangstudio.com</a>
           or find me on
-          <a href="https://www.instagram.com/chriswangstudio" style="color: #A4502F;">Instagram</a>.
+          <a href="https://www.instagram.com/chriswangstudio" style="color: #A4502F;">Instagram (@chriswangstudio)</a>.
         </p>
       </div>
-    </noscript>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
