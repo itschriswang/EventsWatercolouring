@@ -140,7 +140,11 @@ function TornPaperEdge() {
           <feDropShadow in="torn" dx="0" dy="-2.5" stdDeviation="5" floodColor="#2A1206" floodOpacity="0.42" />
         </filter>
         <filter id="keep-tear-light" x="-8%" y="-200%" width="116%" height="400%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.014" numOctaves="2" seed="9" result="noise" />
+          {/* Same noise field as #keep-tear (matching baseFrequency/seed) so the
+              light lip's wave tracks the jagged edge above it instead of
+              drifting into an uncorrelated — and visually flatter, near-straight
+              — line of its own. */}
+          <feTurbulence type="fractalNoise" baseFrequency="0.013" numOctaves="3" seed="7" result="noise" />
           <feDisplacementMap in="SourceGraphic" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G" result="torn" />
         </filter>
       </defs>

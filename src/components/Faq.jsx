@@ -24,30 +24,34 @@ export default function Faq() {
         </div>
 
         <div className="col-span-12 mt-10 lg:col-span-8 lg:mt-0">
-          <ul className="space-y-3">
+          {/*
+            One continuous gradient painted on the <ul> itself — terracotta,
+            ochre, rust and blush washing top to bottom — rather than a
+            separate gradient per item. Each <li> below is transparent, so it
+            acts as a window onto whichever slice of this gradient sits behind
+            it: the list reads as one connected wash the questions are cut
+            from, instead of five unrelated cards.
+          */}
+          <ul
+            className="space-y-3"
+            style={{
+              backgroundImage:
+                'linear-gradient(172deg, ' +
+                'rgba(194,97,60,0.16) 0%, ' +
+                'rgba(201,162,58,0.14) 26%, ' +
+                'rgba(164,80,47,0.15) 52%, ' +
+                'rgba(228,136,156,0.13) 76%, ' +
+                'rgba(201,139,140,0.12) 100%)',
+              backgroundColor: '#FBF8F2',
+            }}
+          >
             {FAQ.items.map((item, i) => {
               const isOpen = open === i
-              // Create a cohesive gradient across all FAQ items using warm editorial colors
-              const totalItems = FAQ.items.length
-              const progress = i / (totalItems - 1 || 1) // 0 to 1 across all items
-
-              // Gradient positions cycle through warm tones: terracotta → ochre → rust → blush
-              const gradients = [
-                'radial-gradient(ellipse 140% 100% at 45% -10%, rgba(201,97,60,0.08) 0%, rgba(251,248,242,0.95) 35%, rgba(244,239,230,0.98) 100%)',
-                'radial-gradient(ellipse 140% 100% at 55% -10%, rgba(201,162,58,0.07) 0%, rgba(251,248,242,0.96) 38%, rgba(244,239,230,0.98) 100%)',
-                'radial-gradient(ellipse 140% 100% at 65% -10%, rgba(164,80,47,0.08) 0%, rgba(251,248,242,0.96) 40%, rgba(244,239,230,0.99) 100%)',
-                'radial-gradient(ellipse 140% 100% at 75% -10%, rgba(228,136,156,0.07) 0%, rgba(251,248,242,0.97) 38%, rgba(244,239,230,0.99) 100%)',
-                'radial-gradient(ellipse 140% 100% at 50% -10%, rgba(201,139,140,0.06) 0%, rgba(251,248,242,0.97) 42%, rgba(244,239,230,0.99) 100%)',
-              ]
-              const backgroundGradient = gradients[i % gradients.length]
 
               return (
                 <li
                   key={i}
-                  className="group relative overflow-hidden rounded-2xl border border-line/45 transition-all duration-200"
-                  style={{
-                    background: backgroundGradient,
-                  }}
+                  className="group relative overflow-hidden rounded-2xl border border-line/45 bg-transparent transition-all duration-200"
                 >
                   <CornerBloom from="rgba(194,97,60,0.12)" to="rgba(110,140,168,0.08)" />
                   <div className="relative z-10">
@@ -70,7 +74,7 @@ export default function Faq() {
                         <motion.span
                           animate={{ rotate: isOpen ? 45 : 0 }}
                           transition={SPRING}
-                          className="shrink-0 rounded-full bg-white/40 p-2.5 transition-all duration-200 group-hover:bg-white/60"
+                          className="shrink-0 rounded-full bg-[rgba(251,248,242,0.6)] p-2.5 transition-all duration-200 group-hover:bg-[rgba(251,248,242,0.85)]"
                           aria-hidden="true"
                         >
                           <Drop className="h-4 w-auto" gradient={['#C9A23A', '#C2613C']} />
