@@ -6,6 +6,7 @@ import SiteHeader from './components/SiteHeader.jsx'
 import MobileNav from './components/MobileNav.jsx'
 import ScrollProgress from './components/ScrollProgress.jsx'
 import Hero from './components/Hero.jsx'
+import PullQuote from './components/PullQuote.jsx'
 import EveningTimeline from './components/EveningTimeline.jsx'
 import SelectedWork from './components/SelectedWork.jsx'
 import AboutMe from './components/AboutMe.jsx'
@@ -51,6 +52,11 @@ export default function App() {
       <SiteHeader revealed={revealed} />
       <MobileNav revealed={revealed} />
 
+      {/* The page is paced like the night itself: the promise (hero), a
+          couple's word for it (pull quote), the evening hour by hour (rust
+          timeline), what's left in the morning (the keepsake wall), the
+          person you're trusting with the room (the painter), then the
+          decision and the ask. */}
       <main className="relative z-10 pb-28 md:pb-0">
         <Hero revealed={revealed} />
         <div className="relative overflow-visible">
@@ -63,7 +69,7 @@ export default function App() {
               behind all content, reduced-motion safe. */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 h-[70vh]"
+            className="pointer-events-none absolute inset-x-0 top-0 h-full"
             style={{
               zIndex: 0,
               background:
@@ -74,41 +80,44 @@ export default function App() {
                 'transparent 100%)',
             }}
           />
-          <AboutMe />
-          <picture>
-            <source srcSet={asset('assets/bloom-accent-2.webp')} type="image/webp" />
-            <img
-              src={asset('assets/bloom-accent-2.png')}
-              alt=""
-              aria-hidden="true"
-              width="1200"
-              height="1028"
-              loading="lazy"
-              decoding="async"
-              className="pointer-events-none absolute bottom-0 right-0 z-20 w-[19rem] sm:w-[22rem] lg:w-[28rem]"
-            />
-          </picture>
+          <PullQuote />
         </div>
         <EveningTimeline />
         <div className="relative">
           {/* One continuous WatercolourBloom behind the gallery through
-              Packages/Enquire so the wash carries through both without a
-              seam at the section boundary — each section's own small ad-hoc
-              gradients were removed so they don't compete with it. Masked to
-              fade in over the gallery rather than switching on abruptly at
-              the Packages boundary. */}
+              the painter, Packages and Enquire so the wash carries through
+              without a seam at the section boundaries — each section's own
+              small ad-hoc gradients were removed so they don't compete with
+              it. Masked to fade in over the gallery rather than switching on
+              abruptly below it. */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 overflow-hidden"
             style={{
               zIndex: 0,
-              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 45%, black 100%)',
-              maskImage: 'linear-gradient(to bottom, transparent 0%, black 45%, black 100%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)',
+              maskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)',
             }}
           >
             <WatercolourBloom />
           </div>
           <SelectedWork />
+          <div className="relative">
+            <AboutMe />
+            <picture>
+              <source srcSet={asset('assets/bloom-accent-2.webp')} type="image/webp" />
+              <img
+                src={asset('assets/bloom-accent-2.png')}
+                alt=""
+                aria-hidden="true"
+                width="1200"
+                height="1028"
+                loading="lazy"
+                decoding="async"
+                className="pointer-events-none absolute bottom-0 right-0 z-20 w-[19rem] sm:w-[22rem] lg:w-[28rem]"
+              />
+            </picture>
+          </div>
           <Packages />
           <EnquireForm />
         </div>

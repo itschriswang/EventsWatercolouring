@@ -1,4 +1,5 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { useRef } from 'react'
+import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion'
 import Label, { Drop } from './Label.jsx'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, asset } from '../lib/site.js'
@@ -20,6 +21,18 @@ export default function EveningTimeline() {
   // translate, and the dot fills on reveal rather than animating its ring.
   const lite = reduce || !useHeavyFx()
   const beats = EVENING.beats
+
+  // The spine fills top-to-bottom as the beats scroll past — the "parcel
+  // moving through its stops" the dots already gesture at. Progress runs
+  // from the list entering mid-viewport to its end clearing the same line,
+  // smoothed with a spring so the fill trails the scroll like wet pigment
+  // wicking down the page. Lite devices keep the static spine instead.
+  const listRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: listRef,
+    offset: ['start 0.72', 'end 0.72'],
+  })
+  const spineFill = useSpring(scrollYProgress, { stiffness: 90, damping: 24 })
 
   return (
     <section
@@ -101,12 +114,20 @@ export default function EveningTimeline() {
             sits behind the dots; each step reveals on scroll and fills its dot,
             so the eye reads top-to-bottom like a delivery tracker. */}
         <div className="col-span-12 mt-12 lg:col-span-7 lg:mt-0">
-          <ol className="relative">
-            {/* Spine: a single line down the dot column. */}
+          <ol ref={listRef} className="relative">
+            {/* Spine: a faint track down the dot column, with a warm fill
+                that draws in as the beats scroll past (static when lite). */}
             <span
               aria-hidden="true"
               className="pointer-events-none absolute bottom-6 left-[1.125rem] top-3 w-px bg-paper/25"
             />
+            {!lite && (
+              <motion.span
+                aria-hidden="true"
+                className="pointer-events-none absolute bottom-6 left-[1.125rem] top-3 w-px bg-ochre-light/80"
+                style={{ scaleY: spineFill, transformOrigin: 'top' }}
+              />
+            )}
             {beats.map((beat, i) => {
               const isLast = i === beats.length - 1
               return (
@@ -159,7 +180,12 @@ export default function EveningTimeline() {
                       aria-hidden="true"
                       className="pointer-events-none absolute inset-0 rounded-[1.1rem] ring-1 ring-inset ring-terracotta/0 transition-colors duration-500 group-hover:ring-terracotta/30"
                     />
-                    <h3 className="relative font-mono text-[clamp(1.25rem,2.4vw,1.9rem)] leading-tight tracking-[-0.01em] text-ink">
+                    {beat.time && (
+                      <span className="relative block font-mono text-[0.62rem] uppercase tracking-[0.24em] text-rust">
+                        {beat.time}
+                      </span>
+                    )}
+                    <h3 className="relative mt-1 font-mono text-[clamp(1.25rem,2.4vw,1.9rem)] leading-tight tracking-[-0.01em] text-ink">
                       {beat.title}
                     </h3>
                     <p className="relative mt-2 max-w-lg text-[0.95rem] leading-relaxed text-ink-soft">
