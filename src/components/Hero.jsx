@@ -6,6 +6,7 @@ import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset, ENQUIRE_HREF } from '../lib/site.js'
 import { HERO } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
+import MobileHeroBloom from './MobileHeroBloom.jsx'
 
 // Aurora is a continuously-animating WebGL canvas built on `ogl`. It only ever
 // renders on fine-pointer desktops (heavyFx), so we code-split it: the ogl
@@ -59,6 +60,15 @@ export default function Hero({ revealed }) {
           </Suspense>
         </div>
       )}
+      {/* Mobile bloom background — cute pastel colors for mobile devices */}
+      {!reduce && !heavyFx && (
+        <div
+          aria-hidden="true"
+          style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }}
+        >
+          <MobileHeroBloom />
+        </div>
+      )}
       {/* Paper scrim — softens the aurora into the background without burying it */}
       {!reduce && (
         <div
@@ -85,12 +95,12 @@ export default function Hero({ revealed }) {
             bottom: '8vmin',
             width: '53vmin',
             height: '63vmin',
-            background: 'radial-gradient(circle at 55% 55%, #aebf56, transparent 65%)',
-            filter: 'blur(60px)',
-            opacity: 0.32,
-            mixBlendMode: 'hard-light',
-            WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
-            maskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
+            background: 'radial-gradient(circle at 55% 55%, #aebf56, transparent 70%)',
+            filter: 'blur(80px)',
+            opacity: 0.28,
+            mixBlendMode: 'soft-light',
+            WebkitMaskImage: 'radial-gradient(ellipse 85% 55% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.9) 50%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0) 100%)',
+            maskImage: 'radial-gradient(ellipse 85% 55% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.9) 50%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0) 100%)',
           }}
         />
         <div
@@ -100,12 +110,12 @@ export default function Hero({ revealed }) {
             bottom: '0vmin',
             width: '63vmin',
             height: '53vmin',
-            background: 'radial-gradient(circle at 55% 55%, #e4889c, transparent 65%)',
-            filter: 'blur(60px)',
-            opacity: 0.32,
-            mixBlendMode: 'hard-light',
-            WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
-            maskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
+            background: 'radial-gradient(circle at 55% 55%, #e4889c, transparent 70%)',
+            filter: 'blur(80px)',
+            opacity: 0.28,
+            mixBlendMode: 'soft-light',
+            WebkitMaskImage: 'radial-gradient(ellipse 85% 55% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.9) 50%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0) 100%)',
+            maskImage: 'radial-gradient(ellipse 85% 55% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.9) 50%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0) 100%)',
           }}
         />
       </div>
