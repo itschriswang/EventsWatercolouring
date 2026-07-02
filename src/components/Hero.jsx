@@ -204,7 +204,7 @@ export default function Hero({ revealed }) {
             <div className="mx-auto flex w-full max-w-[26rem] items-end px-2 sm:mr-0 sm:grow sm:mx-auto sm:w-[92%] sm:max-w-none sm:px-0 lg:mx-0 lg:w-full lg:justify-end">
 
               {/* Character — primary card, grounded anchor (left, tilts left) */}
-              <div className="relative z-0 w-[54%] shrink-0 translate-x-[2%] sm:translate-x-0 sm:w-[46%] lg:w-[52%] sm:translate-y-0 sm:-ml-[8%] lg:-ml-[10%] lg:-translate-x-[6%] lg:-translate-y-[18%]">
+              <div className="relative z-0 w-[54%] shrink-0 translate-x-[2%] translate-y-[6%] sm:translate-x-0 sm:w-[46%] lg:w-[52%] sm:translate-y-0 sm:-ml-[8%] lg:-ml-[10%] lg:-translate-x-[6%] lg:-translate-y-[18%]">
                 <motion.figure
                   initial={{ opacity: 0, y: reduce ? 0 : 55, rotate: reduce ? 0 : -6 }}
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : -6 } : { opacity: 0 }}
