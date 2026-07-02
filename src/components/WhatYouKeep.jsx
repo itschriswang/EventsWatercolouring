@@ -40,9 +40,12 @@ export default function WhatYouKeep() {
     >
       <TornPaperEdge />
 
-      {/* The paper body of the sheet: starts just under the frayed edge and
-          runs to the bottom. Sits below the content, above the torn strip. */}
-      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 top-[60px] bg-paper" />
+      {/* The paper body of the sheet: starts where the torn SVG's box ends
+          (96px, matching TornPaperEdge's height) and runs to the bottom. The
+          SVG's own fill already reaches its box's lower edge, so starting the
+          flat div any earlier would clip across the tear's jagged variance
+          with a dead-straight line wherever a valley dips past that offset. */}
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 top-[96px] bg-paper" />
 
       {/* Content rides on the sheet, clear of the torn edge. */}
       <div className="relative z-10 pt-[clamp(6rem,11vw,8rem)]">
