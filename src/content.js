@@ -336,7 +336,7 @@ export const ENQUIRY = {
 export const FOOTER = {
   cta: ['Let’s make something', 'to keep.'],
   emphasis: 'to keep.',
-  name: 'Chris Wang',
+  name: 'chris wang',
   nav: [
     { href: '#painter', label: 'The painter' },
     { href: '#night', label: 'On the night' },
