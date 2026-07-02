@@ -76,7 +76,7 @@ export default function EveningTimeline() {
             'radial-gradient(ellipse 70% 70% at 32% 72%, black 0%, black 38%, transparent 76%)',
         }}
       >
-        <WatercolourBloom blend="screen" />
+        <WatercolourBloom />
       </div>
 
       <div className="grid grid-cols-12 gap-x-8">
