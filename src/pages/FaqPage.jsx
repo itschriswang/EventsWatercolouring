@@ -49,7 +49,7 @@ export default function FaqPage() {
               </h1>
               <p className="mt-6 max-w-md leading-relaxed text-ink-soft">
                 Answers to what people usually ask before booking. Can’t find
-                yours?{' '}
+                yours?{‘ ‘}
                 <a href={ENQUIRE_HREF} className="text-ink underline underline-offset-4">
                   Send me a note
                 </a>
