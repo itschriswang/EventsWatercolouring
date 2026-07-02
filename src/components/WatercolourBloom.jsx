@@ -96,17 +96,18 @@ export default function WatercolourBloom({ className = '', blend = 'multiply' })
           {BLOOMS.map((b) => (
             <radialGradient key={b.id} id={`${uid}-g-${b.id}`} cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor={b.color} stopOpacity={b.warm ? 0.4 : 0.28} />
-              <stop offset="46%" stopColor={b.color} stopOpacity={b.warm ? 0.26 : 0.18} />
-              <stop offset="74%" stopColor={b.rim} stopOpacity={b.warm ? 0.22 : 0.15} />
+              <stop offset="38%" stopColor={b.color} stopOpacity={b.warm ? 0.32 : 0.22} />
+              <stop offset="60%" stopColor={b.rim} stopOpacity={b.warm ? 0.24 : 0.16} />
+              <stop offset="82%" stopColor={b.rim} stopOpacity={b.warm ? 0.08 : 0.05} />
               <stop offset="100%" stopColor={b.rim} stopOpacity="0" />
             </radialGradient>
           ))}
 
           {BLOOMS.map((b) => (
-            <filter key={b.id} id={`${uid}-f-${b.id}`} x="-90%" y="-90%" width="280%" height="280%">
+            <filter key={b.id} id={`${uid}-f-${b.id}`} x="-100%" y="-100%" width="300%" height="300%">
               <feTurbulence type="fractalNoise" baseFrequency={b.freq} numOctaves="3" seed={b.seed} result="warp" />
               <feDisplacementMap in="SourceGraphic" in2="warp" scale={b.scale} xChannelSelector="R" yChannelSelector="G" result="displaced" />
-              <feGaussianBlur in="displaced" stdDeviation={b.blur} result="soft" />
+              <feGaussianBlur in="displaced" stdDeviation={b.blur + 0.4} result="soft" />
               <feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="2" seed={b.seed + 5} result="grain" />
               <feComposite in="soft" in2="grain" operator="arithmetic" k1="0.09" k2="0.91" k3="0" k4="0" />
             </filter>
