@@ -411,9 +411,9 @@ function DecklePaper({ id }) {
           </filter>
         </defs>
         {/* backing sheet, peeking out below/right */}
-        <rect x="2%" y="2.6%" width="97%" height="97%" rx="3" fill="#DBCFBB" filter={`url(#${filterId})`} />
+        <rect x="2%" y="2.6%" width="97%" height="97%" rx="3" fill="#D5CFC3" filter={`url(#${filterId})`} />
         {/* front sheet — the writing surface */}
-        <rect x="0.6%" y="0.4%" width="97.4%" height="97.4%" rx="3" fill="#ECE4D6" filter={`url(#${filterId})`} />
+        <rect x="0.6%" y="0.4%" width="97.4%" height="97.4%" rx="3" fill="#E7E5DF" filter={`url(#${filterId})`} />
       </svg>
     </div>
   )
@@ -440,7 +440,10 @@ function SealButton({ sending }) {
             alt=""
             aria-hidden="true"
             className="absolute inset-0 h-full w-full object-contain"
-            style={{ filter: 'drop-shadow(0 2.5px 3px rgba(67,50,106,0.25))' }}
+            style={{
+              filter:
+                'sepia(0.15) saturate(1.05) drop-shadow(0 2.5px 3px rgba(67,50,106,0.25))',
+            }}
           />
         </picture>
 
@@ -451,11 +454,11 @@ function SealButton({ sending }) {
           className="pointer-events-none absolute inset-[10%] rounded-full opacity-60 transition-opacity duration-300 group-hover:opacity-100"
           style={{
             background: [
-              'radial-gradient(circle at 30% 20%, rgba(140,225,240,0.42) 0%, rgba(140,225,240,0) 44%)',
-              'radial-gradient(circle at 72% 24%, rgba(255,140,205,0.4) 0%, rgba(255,140,205,0) 46%)',
-              'radial-gradient(circle at 26% 76%, rgba(200,165,235,0.38) 0%, rgba(200,165,235,0) 50%)',
-              'radial-gradient(circle at 76% 78%, rgba(255,195,150,0.36) 0%, rgba(255,195,150,0) 50%)',
-              'radial-gradient(circle at 50% 55%, rgba(150,235,205,0.3) 0%, rgba(150,235,205,0) 56%)',
+              'radial-gradient(circle at 30% 20%, rgba(248,230,174,0.22) 0%, rgba(248,230,174,0) 44%)',
+              'radial-gradient(circle at 72% 24%, rgba(194,97,60,0.18) 0%, rgba(194,97,60,0) 46%)',
+              'radial-gradient(circle at 26% 76%, rgba(201,162,58,0.18) 0%, rgba(201,162,58,0) 50%)',
+              'radial-gradient(circle at 76% 78%, rgba(237,138,51,0.16) 0%, rgba(237,138,51,0) 50%)',
+              'radial-gradient(circle at 50% 55%, rgba(201,139,140,0.14) 0%, rgba(201,139,140,0) 56%)',
             ].join(', '),
             mixBlendMode: 'screen',
           }}
