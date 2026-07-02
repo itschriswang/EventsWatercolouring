@@ -6,6 +6,11 @@ import { EVENING } from '../content.js'
 import WatercolourBloom from './WatercolourBloom.jsx'
 import { withUnderline } from './Underline.jsx'
 
+// Each beat's card sits at a slight, authored tilt — like a watercolour note
+// pinned to the timeline — and settles level on hover. Same device as the
+// keepsake cards this replaced: composed scatter, not random.
+const BEAT_TILT = ['-1.6deg', '1.2deg', '-0.9deg', '1.4deg', '-0.7deg']
+
 /**
  * "How the evening runs" — a sticky split-screen. A massive section title is
  * pinned on the left while the beats run down the right as a vertical tracking
@@ -145,16 +150,23 @@ export default function EveningTimeline() {
                     )}
                   </motion.span>
 
-                  {/* Step card — minimal chrome so the column reads light. */}
+                  {/* Step card — a pinned watercolour note: paper-toned, tilted
+                      at rest, settling level on hover. Ported from the
+                      keepsake cards this timeline absorbed. */}
                   <motion.div
-                    whileHover={reduce ? {} : { y: -3 }}
+                    whileHover={reduce ? {} : { y: -6, rotate: 0 }}
                     transition={SPRING}
-                    className="-mt-px flex-1 rounded-2xl bg-paper/[0.06] p-4 sm:p-5"
+                    style={{ rotate: lite ? '0deg' : BEAT_TILT[i % BEAT_TILT.length] }}
+                    className="group relative -mt-px flex-1 rounded-[1.1rem] border border-paper/15 bg-paper-deep/95 p-4 shadow-[0_10px_30px_-18px_rgba(69,34,17,0.58)] backdrop-blur-[1px] sm:p-5"
                   >
-                    <h3 className="font-mono text-[clamp(1.25rem,2.4vw,1.9rem)] leading-tight tracking-[-0.01em]">
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 rounded-[1.1rem] ring-1 ring-inset ring-terracotta/0 transition-colors duration-500 group-hover:ring-terracotta/30"
+                    />
+                    <h3 className="relative font-mono text-[clamp(1.25rem,2.4vw,1.9rem)] leading-tight tracking-[-0.01em] text-ink">
                       {beat.title}
                     </h3>
-                    <p className="mt-2 max-w-lg text-[0.95rem] leading-relaxed text-paper">
+                    <p className="relative mt-2 max-w-lg text-[0.95rem] leading-relaxed text-ink-soft">
                       {beat.body}
                     </p>
                   </motion.div>

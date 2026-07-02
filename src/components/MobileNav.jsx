@@ -68,11 +68,11 @@ function MailIcon() {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const DOCK_ITEMS = [
-  { id: 'about',     href: '#painter',    label: 'About',    Icon: AboutIcon },
-  { id: 'gallery',   href: '#work',       label: 'Gallery',  Icon: GalleryIcon },
+  { id: 'about',     href: '/#painter',   label: 'About',    Icon: AboutIcon },
+  { id: 'gallery',   href: '/#work',      label: 'Gallery',  Icon: GalleryIcon },
   { id: 'enquiry',   href: ENQUIRE_HREF,  label: 'Enquire',  Icon: MailIcon, highlight: true },
-  { id: 'offerings', href: '#offerings',  label: 'Packages', Icon: BoxIcon },
-  { id: 'faq',       href: '#faq',        label: 'FAQ',      Icon: FaqIcon },
+  { id: 'offerings', href: '/#offerings', label: 'Packages', Icon: BoxIcon },
+  { id: 'faq',       href: '/faq/',       label: 'FAQ',      Icon: FaqIcon },
 ]
 
 // The premium easing curve used site-wide.
