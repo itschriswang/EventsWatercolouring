@@ -346,6 +346,7 @@ export const FOOTER = {
     { href: '#faq', label: 'Questions' },
   ],
   instagram: 'https://www.instagram.com/chriswangstudio',
+  instagramHandle: '@chriswangstudio',
 }
 
 export const NAV = [
