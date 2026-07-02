@@ -39,6 +39,121 @@
     />
     <meta name="twitter:image" content="https://chriswangstudio.com/assets/art-bouquet.jpg" />
 
+    <!-- Structured data: the questions and answers on this page.
+         Keep in step with FAQ.items in src/content.js. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Do you paint live, or from photographs?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Both. The base package has me at your wedding painting live through the reception, and we add to it from there. If you would rather a studio commission from your own photos, before or after the day, I do those too, priced on enquiry."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How far ahead should we book?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Right now I am booking up to about two months out, so send me your date and I will tell you what is open. Earlier is always welcome, since I only take a limited number of weddings."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do we secure our date?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A 50% retainer holds your date, with the balance due two weeks before your big day. I only confirm once the retainer is in, and then the date is yours."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What if we need to postpone or cancel?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Weddings move, and I get that. If you need to cancel or postpone, just let me know as early as you can. I try to be fair and reasonable, and the details depend on timing and whether I am able to rebook the date. Full terms sit in your booking agreement."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How long do you paint on the day?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Three hours in the base package, up to about five if you add hours, usually across the reception with short breaks. I pace myself instead of painting flat out, so the last piece gets the same care as the first."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do you travel?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Travel is included for venues within about an hour of Melbourne or Sydney metro. Further out, including regional Victoria, regional NSW, and destination weddings, I am happy to discuss it and quote travel on enquiry. Just tell me your venue."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "When do we receive the finished work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Guest portraits are done on the night and go home with your guests. Your couple portrait is painted that night too and left with you. Studio commissions from photos usually arrive within four weeks."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How many guests can you paint?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Around 8 pieces an hour, so a three-hour booking covers roughly 24 portraits. Anyone I do not get to on the night, I finish in the studio and post to you to pass on, so no guest misses out."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do you frame the work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "I do not frame the work. It comes to you on cotton paper, sleeved and ready for a frame."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How should we send photos for a commission?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The clearer the photos, the better the portrait. Send a few well-lit, high-resolution shots where your faces are clear, and tell me which one feels most like you. I will take it from there."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What materials do you use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Professional watercolours on archival 300gsm A5 cotton paper. The pigments are lightfast, so the colour holds for decades if you look after it."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What do you need from us on the day?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Not much. A table around 100 by 60cm at seated height with room for a front-facing chair underneath, a chair, and a bit of space to stand for a short break each hour. I bring everything else. A drink or a bite is always welcome but never expected."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do you paint events other than weddings?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. As well as weddings I do brand activations, corporate events and private parties across Melbourne and Australia-wide. It bends to fit the room, so tell me what you have in mind."
+            }
+          }
+        ]
+      }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -48,17 +163,22 @@
   </head>
 
   <body>
-    <div id="root"></div>
-    <noscript>
-      <div style="max-width: 36rem; margin: 0 auto; padding: 3rem 1.5rem; font-family: system-ui, sans-serif; color: #2A2724; line-height: 1.6;">
-        <h1 style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">Frequently Asked Questions</h1>
-        <p>This page works best with JavaScript enabled. To get in touch, email
+    <div id="root">
+      <!-- Static content for crawlers and the pre-JavaScript first paint.
+           React replaces this on mount; without JavaScript it stays visible
+           as a readable fallback page. Keep in step with src/content.js. -->
+      <div style="max-width: 42rem; margin: 0 auto; padding: 3.5rem 1.5rem; font-family: Georgia, 'Times New Roman', serif; color: #2A2724; background: #F4EFE6; line-height: 1.65;">
+        <h1 style="font-size: 2rem; line-height: 1.15; font-weight: 400;">Frequently asked questions</h1>
+        <p>Booking, travel, timing and materials — everything to know before booking
+          <a href="/" style="color: #A4502F;">live event watercolour painting with Christopher Wang</a>
+          in Melbourne and Sydney.</p>
+        <p>To get in touch, email
           <a href="mailto:create@chriswangstudio.com" style="color: #A4502F;">create@chriswangstudio.com</a>
           or find me on
-          <a href="https://www.instagram.com/chriswangstudio" style="color: #A4502F;">Instagram</a>.
+          <a href="https://www.instagram.com/chriswangstudio" style="color: #A4502F;">Instagram (@chriswangstudio)</a>.
         </p>
       </div>
-    </noscript>
+    </div>
     <script type="module" src="/src/faq-main.jsx"></script>
   </body>
 </html>
