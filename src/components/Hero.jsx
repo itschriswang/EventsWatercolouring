@@ -164,8 +164,7 @@ export default function Hero({ revealed }) {
           >
             <div className="relative">
               <p className="max-w-[33ch] text-[0.93rem] leading-relaxed text-ink-soft sm:max-w-md sm:text-[clamp(1rem,1.1vw,1.18rem)]">
-                    {withUnderline(HERO.lede, 'watercolour', { className: 'text-rust' })}
-                </p>
+                {withUnderline(HERO.lede, 'watercolour', { className: 'text-rust' })}
               </p>
             </div>
             <div className="mt-7 flex flex-wrap items-center gap-5 sm:mt-8">
