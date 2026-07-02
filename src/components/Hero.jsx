@@ -79,36 +79,58 @@ export default function Hero({ revealed }) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0 overflow-visible"
       >
-        <div
-          className="absolute rounded-full"
-          style={{
-            right: '-8vmin',
-            bottom: '8vmin',
-            width: '53vmin',
-            height: '63vmin',
-            background: 'radial-gradient(circle at 55% 55%, #aebf56, transparent 65%)',
-            filter: 'blur(60px)',
-            opacity: 0.32,
-            mixBlendMode: 'hard-light',
-            WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
-            maskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
-          }}
-        />
-        <div
-          className="absolute rounded-full"
-          style={{
-            right: '-18vmin',
-            bottom: '0vmin',
-            width: '63vmin',
-            height: '53vmin',
-            background: 'radial-gradient(circle at 55% 55%, #e4889c, transparent 65%)',
-            filter: 'blur(60px)',
-            opacity: 0.32,
-            mixBlendMode: 'hard-light',
-            WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
-            maskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
-          }}
-        />
+        {/* Desktop animated blooms */}
+        {!reduce && heavyFx && (
+          <>
+            <div
+              className="absolute rounded-full"
+              style={{
+                right: '-8vmin',
+                bottom: '8vmin',
+                width: '53vmin',
+                height: '63vmin',
+                background: 'radial-gradient(circle at 55% 55%, #aebf56, transparent 65%)',
+                filter: 'blur(60px)',
+                opacity: 0.32,
+                mixBlendMode: 'hard-light',
+                WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
+                maskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
+              }}
+            />
+            <div
+              className="absolute rounded-full"
+              style={{
+                right: '-18vmin',
+                bottom: '0vmin',
+                width: '63vmin',
+                height: '53vmin',
+                background: 'radial-gradient(circle at 55% 55%, #e4889c, transparent 65%)',
+                filter: 'blur(60px)',
+                opacity: 0.32,
+                mixBlendMode: 'hard-light',
+                WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
+                maskImage: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
+              }}
+            />
+          </>
+        )}
+        {/* Mobile static bloom */}
+        {isMobile && (
+          <div
+            className="absolute inset-0 rounded-full"
+            style={{
+              backgroundImage:
+                'radial-gradient(38% 32% at 16% 26%, rgba(194, 97, 60, 0.18), transparent 72%), ' +
+                'radial-gradient(30% 26% at 88% 14%, rgba(201, 162, 58, 0.16), transparent 72%), ' +
+                'radial-gradient(34% 30% at 85% 84%, rgba(228, 136, 156, 0.14), transparent 72%), ' +
+                'radial-gradient(30% 28% at 8% 88%, rgba(201, 139, 140, 0.13), transparent 72%), ' +
+                'radial-gradient(30% 26% at 62% 8%, rgba(174, 191, 86, 0.11), transparent 72%), ' +
+                'radial-gradient(32% 28% at 99% 50%, rgba(110, 140, 168, 0.12), transparent 72%), ' +
+                'radial-gradient(26% 24% at 36% 52%, rgba(164, 80, 47, 0.12), transparent 74%)',
+              pointerEvents: 'none',
+            }}
+          />
+        )}
       </div>
 
       {/* Desktop eyebrow row */}
