@@ -9,6 +9,11 @@ import CornerBloom from './CornerBloom.jsx'
 import NightPlanner from './NightPlanner.jsx'
 import { withUnderline } from './Underline.jsx'
 
+// The add-on accordion opens on a quick ease-out tween rather than the shared
+// SPRING — a spring that feels right for entrances reads as sluggish on a
+// tap-to-reveal, where the row should snap open the moment it's asked.
+const ACCORDION = { duration: 0.22, ease: [0.25, 1, 0.5, 1] }
+
 export default function Packages() {
   const reduce = useReducedMotion()
   const [openAddons, setOpenAddons] = useState(() => new Set())
@@ -118,7 +123,7 @@ export default function Packages() {
                     </span>
                     <motion.span
                       animate={{ rotate: isOpen ? 45 : 0 }}
-                      transition={SPRING}
+                      transition={ACCORDION}
                       className="shrink-0 rounded-full bg-paper-deep/70 p-2"
                       aria-hidden="true"
                     >
@@ -132,7 +137,7 @@ export default function Packages() {
                         initial={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
                         animate={reduce ? { opacity: 1 } : { height: 'auto', opacity: 1 }}
                         exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
-                        transition={SPRING}
+                        transition={ACCORDION}
                         className="overflow-hidden"
                       >
                         <p className="pb-3 text-xs leading-relaxed text-ink-soft">{a.p}</p>
@@ -254,28 +259,39 @@ export default function Packages() {
 
       <NightPlanner />
 
-      {/* FAQ pointer — the eyebrow-icon + arrow-on-hover device used
-          throughout the site (Label's Drop icon, SealButton's arrow),
-          rather than a link buried mid-sentence. */}
+      {/* FAQ pointer — a banner-scale card rather than a small pill, so it
+          reads as the obvious next stop after the packages instead of a
+          footnote. Same paper-card treatment as the package cards above so
+          it sits in their family, with a readable sentient headline in
+          place of the eyebrow-sized mono text. */}
       <motion.a
         href="/faq/"
         {...reveal()}
-        whileHover={reduce ? {} : { y: -2 }}
+        whileHover={reduce ? {} : { y: -3 }}
         transition={SPRING}
-        className="group mt-10 inline-flex items-center gap-3 rounded-full border border-line/60 bg-paper-deep/40 py-2.5 pl-2.5 pr-5 shadow-[0_10px_24px_-16px_rgba(173,98,49,0.35)] transition-colors duration-300 hover:border-terracotta/40 hover:bg-paper-deep/70"
+        className="group relative mt-12 flex w-full items-center justify-between gap-4 overflow-hidden rounded-2xl border border-terracotta/30 p-6 shadow-[0_24px_50px_-20px_rgba(173,98,49,0.32)] transition-colors duration-300 hover:border-terracotta/60 sm:p-7"
+        style={{ background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FBF8F2 0%, #F4EFE6 62%)' }}
       >
-        <span
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-paper"
-          aria-hidden="true"
-        >
-          <Drop className="h-4 w-auto" gradient={['#C9A23A', '#C2613C']} />
+        <CornerBloom from="rgba(201,162,58,0.16)" to="rgba(194,97,60,0.14)" />
+        <span className="relative z-10 flex items-center gap-4 sm:gap-5">
+          <span
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-paper shadow-[0_2px_10px_rgba(173,98,49,0.30)]"
+            aria-hidden="true"
+          >
+            <Drop className="h-5 w-auto" gradient={['#C9A23A', '#C2613C']} />
+          </span>
+          <span>
+            <span className="block font-sentient text-xl tracking-[-0.02em] text-ink sm:text-2xl">
+              Got a question? Read the FAQ
+            </span>
+            <span className="mt-1 block text-sm text-ink-soft">
+              Booking, travel, timing and materials, all answered plainly.
+            </span>
+          </span>
         </span>
-        <span className="font-mono text-[0.68rem] uppercase tracking-[0.15em] text-ink">
-          Got a question? Check the FAQ
-        </span>
         <span
           aria-hidden="true"
-          className="text-ink transition-transform duration-300 group-hover:translate-x-1"
+          className="relative z-10 shrink-0 text-2xl text-terracotta transition-transform duration-300 group-hover:translate-x-1.5"
         >
           →
         </span>

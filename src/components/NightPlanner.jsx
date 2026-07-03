@@ -5,13 +5,15 @@ import { SPRING } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 
 const PIECES_PER_HOUR = 8
-const GUESTS_PER_PIECE = 4
+// Coverage is planned at the usual two guests to a piece — groups of up to
+// four can share one, but that's a bonus on the night, not the plan.
+const GUESTS_PER_PIECE = 2
 const HOURS = [3, 4, 5]
 
 /**
  * "Will everyone get painted?" — a small planner that answers the question
  * every couple and organiser actually has. Slide to the guest list, pick the
- * hours, and the arithmetic (8 pieces an hour, up to four guests a piece,
+ * hours, and the arithmetic (8 pieces an hour, usually two guests a piece,
  * studio finishing for anyone missed) does the reassuring. The numbers are
  * the same ones the copy already commits to; this just lets people put their
  * own event into them.
