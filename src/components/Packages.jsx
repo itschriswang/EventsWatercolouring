@@ -6,6 +6,7 @@ import { Drop } from './Label.jsx'
 import { SPRING } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
+import Sparkles from './Sparkles.jsx'
 import NightPlanner from './NightPlanner.jsx'
 import { withUnderline } from './Underline.jsx'
 
@@ -32,6 +33,7 @@ export default function Packages() {
 
   return (
     <section id="offerings" className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(5rem,10vw,9rem)]">
+      <Sparkles className="absolute right-[5vw] top-[clamp(3rem,6vw,5.5rem)] hidden h-12 w-12 text-terracotta/70 md:block" />
       <Label gradient={['#C2613C', '#C9A23A']}>{PACKAGES.label}</Label>
       <SplitText
         as="h2"
