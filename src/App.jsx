@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import GrainOverlay from './components/GrainOverlay.jsx'
 import SectionWash from './components/SectionWash.jsx'
+import DeckleEdge from './components/DeckleEdge.jsx'
 import Preloader from './components/Preloader.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
 import MobileNav from './components/MobileNav.jsx'
@@ -13,7 +14,6 @@ import AboutMe from './components/AboutMe.jsx'
 import Packages from './components/Packages.jsx'
 import EnquireForm from './components/EnquireForm.jsx'
 import Footer from './components/Footer.jsx'
-import { asset } from './lib/site.js'
 
 /**
  * Live wedding watercolour — a full-bleed, immersive editorial single page.
@@ -71,37 +71,27 @@ export default function App() {
 
         <EveningTimeline />
 
-        {/* One continuous wash behind the gallery through the painter,
-            Packages and Enquire so it carries through without a seam at
-            section boundaries. Masked to fade in over the gallery rather
-            than switching on abruptly below it. */}
+        {/* One wash behind the gallery through the painter, so those three
+            read as a single continuous painting. Masked to fade in over the
+            gallery rather than switching on abruptly below it — but allowed
+            to stop dead at the bottom, where the page deliberately breaks. */}
         <SectionWash mask="linear-gradient(to bottom, transparent 0%, black 30%, black 100%)">
           <SelectedWork />
           <PullQuote />
-          <div className="relative overflow-hidden">
-            <AboutMe />
-            {/* bloom-accent-2's own art has a hard rectangular crop on its
-                bottom and right (only the top/left taper off naturally).
-                `overflow-hidden` on this wrapper pins that crop to the
-                section's own edge, so it reads as the illustration being
-                cut off by the section rather than floating loose. */}
-            <picture>
-              <source srcSet={asset('assets/bloom-accent-2.webp')} type="image/webp" />
-              <img
-                src={asset('assets/bloom-accent-2.png')}
-                alt=""
-                aria-hidden="true"
-                width="1200"
-                height="1028"
-                loading="lazy"
-                decoding="async"
-                className="pointer-events-none absolute bottom-0 right-0 z-20 w-[19rem] sm:w-[22rem] lg:w-[28rem]"
-              />
-            </picture>
-          </div>
-          <Packages />
-          <EnquireForm />
+          <AboutMe />
         </SectionWash>
+
+        {/* Hard editorial break: the painter's sheet tears off along a
+            deckled paper edge and the offerings open on a deeper ground with
+            a wash of their own, so what follows reads as a new section
+            starting — not a continuation of the same sheet. */}
+        <div className="relative bg-paper-deep">
+          <DeckleEdge className="absolute inset-x-0 top-0 z-10 h-[18px] w-full md:h-6" />
+          <SectionWash>
+            <Packages />
+            <EnquireForm />
+          </SectionWash>
+        </div>
       </main>
 
       <Footer />
