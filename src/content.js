@@ -17,6 +17,9 @@ export const PULLQUOTE = {
   quote: 'It has become the piece everyone stops at in our home. Our only regret is not having him there on the night.',
   author: 'Clare & William',
   detail: 'Post-wedding commission',
+  // The quiet link under the attribution — the one place the quote offers a
+  // next step, kept small so the moment stays a held breath, not a banner.
+  cta: 'Have him there on yours',
 }
 
 export const EVENING = {
@@ -61,33 +64,65 @@ export const WORK = {
   emphasis: 'cotton paper.',
   note: 'Painted by hand on 300gsm A5 cotton paper.',
   // ── Gallery wall — simple to edit ─────────────────────────────────────────
+  // The wall is curated into groups so the wedding pieces and the studio
+  // studies read as two rooms of one show, not a mixed pile. Each group has
+  // a small label and its own row of tiles.
+  //
   // One entry per image. `img` is the asset base name; it loads both
   // assets/<img>.webp and assets/<img>.jpg automatically, so you only name it
-  // once. Reorder entries to change placement. Set `feature: true` to make a
-  // piece fill a 2×2 block on wide screens (and stand taller on mobile).
-  // Add as many as you like — the layout flows to fit.
+  // once. Reorder entries to change placement within a group.
   //
   // The wall shows no captions — `ttl`, `meta` and `alt` are still worth filling
   // in: they label the lightbox and read out to screen readers.
   //
-  // Most pieces are upright (3:4). A landscape-orientation painting reads badly
-  // in a portrait tile, so flag it `landscape: true` and it takes the same wide
-  // 2×1 block a testimonial uses — letterbox shape, no awkward crop.
+  // `landscape: true` gives a piece the wide slot in its row.
   //
-  // A testimonial slots into the wall like any other tile — give it
+  // `venue: 'Coombe Yarra Valley'` (optional) adds a "Painted live at …" line
+  // under the piece in the lightbox. Fill these in as pieces come from real
+  // venues — couples recognise their shortlist. Leave '' to show nothing.
+  //
+  // A testimonial slots into a group like any other tile — give it
   // `testimonial: true` with `quote`, `author` and `detail` instead of `img`.
-  // The attribution sits inside the quote card. `feature: true` gives a longer
-  // quote the room it needs (a 2×2 block); use `wide: true` instead for a short
-  // one-liner in a 2×1 block.
-  gallery: [
-    { img: 'art-bouquet',        ttl: 'The bouquet',          meta: 'Watercolour · A5', feature: true, alt: 'Watercolour study of a bridal bouquet, with rust ribbon, orange roses and forget-me-not blue, painted on cotton-rag paper' },
-    { img: 'art-couple-vows',    ttl: 'The vows',             meta: 'Watercolour · A5', landscape: true, alt: 'Landscape watercolour of a bride in a white gown and a groom in a navy tuxedo holding hands among scattered confetti' },
-    { img: 'art-couple-sage',    ttl: 'The pair, in sage',    meta: 'Watercolour · A5', alt: 'Watercolour portrait of a couple, the bride in a sage-green off-shoulder gown beside a groom in a soft brown jacket' },
-    { img: 'art-character-girl', ttl: 'Little character, in green', meta: 'Studio study', alt: 'Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre' },
-    { img: 'art-couple-blush',   ttl: 'Blush & black tie',    meta: 'Watercolour · A5', alt: 'Watercolour portrait of a couple, the bride in a blush off-shoulder gown beside a groom in a black suit and glasses' },
-    { img: 'art-character-boy',  ttl: 'At the palette',       meta: 'Studio study', alt: "Small watercolour character portrait with the artist's palette alongside, in warm terracotta and ochre" },
-    { img: 'art-character-boy2', ttl: 'Warm ochre',           meta: 'Studio study', alt: 'Small watercolour character portrait of a seated figure in warm ochre tones, holding a jar' },
+  // There is a ready-to-fill template commented out below; add real client
+  // words as they come in and the wall lays them out automatically.
+  groups: [
+    {
+      key: 'live',
+      label: 'Painted live, from real nights',
+      items: [
+        { img: 'art-couple-vows',  ttl: 'The vows',          meta: 'Watercolour · A5', landscape: true, venue: '', alt: 'Landscape watercolour of a bride in a white gown and a groom in a navy tuxedo holding hands among scattered confetti' },
+        { img: 'art-couple-sage',  ttl: 'The pair, in sage', meta: 'Watercolour · A5', venue: '', alt: 'Watercolour portrait of a couple, the bride in a sage-green off-shoulder gown beside a groom in a soft brown jacket' },
+        { img: 'art-couple-blush', ttl: 'Blush & black tie', meta: 'Watercolour · A5', venue: '', alt: 'Watercolour portrait of a couple, the bride in a blush off-shoulder gown beside a groom in a black suit and glasses' },
+        // Template — swap in a real client quote, then uncomment:
+        // {
+        //   testimonial: true,
+        //   quote: 'Short, real words from a couple about the night.',
+        //   author: 'First & First',
+        //   detail: 'Married at <venue>',
+        // },
+      ],
+    },
+    {
+      key: 'studio',
+      label: 'Studio studies, between events',
+      items: [
+        { img: 'art-character-girl', ttl: 'Little character, in green', meta: 'Studio study', alt: 'Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre' },
+        { img: 'art-character-boy',  ttl: 'At the palette',             meta: 'Studio study', alt: "Small watercolour character portrait with the artist's palette alongside, in warm terracotta and ochre" },
+        { img: 'art-character-boy2', ttl: 'Warm ochre',                 meta: 'Studio study', alt: 'Small watercolour character portrait of a seated figure in warm ochre tones, holding a jar' },
+      ],
+    },
   ],
+  // ── Before & after ────────────────────────────────────────────────────────
+  // The reveal strip in the studio row: drag the handle to wipe between the
+  // piece on the easel and the finished keepsake. When you have a couple's
+  // reference photo you are allowed to show, swap it in as `before` — photo
+  // to painting is the strongest version of this.
+  reveal: {
+    ttl: 'The bouquet, easel to keepsake',
+    hint: 'Drag to reveal',
+    before: { img: 'art-bouquet', ext: 'jpg', label: 'On the easel', alt: 'The bouquet piece photographed while still on the sketchbook at the desk' },
+    after:  { img: 'art-bouquet_transparent', ext: 'png', label: 'The keepsake', alt: 'The finished bouquet painting on clean cotton paper' },
+  },
 }
 
 
@@ -104,7 +139,7 @@ export const PAINTER = {
     'Painting live at a wedding is the part I love most. Special moments with each guest, a small portrait made by hand while the night carries on, and something real to take home at the end.',
     'I travel across Melbourne and Australia-wide for weddings, corporate events, brand activations, and private celebrations.',
   ],
-  signature: '',
+  signature: 'Chris',
 }
 
 export const PACKAGES = {
@@ -187,6 +222,9 @@ export const PACKAGES = {
     fits: 'Everyone can be on a piece before the night is out.',
     overflow: 'I paint through the night, then finish the rest in the studio and post them to you, so no guest misses out.',
     small: 'Numbers to plan around, not a stopwatch. Groups and pacing vary on the night.',
+    // The planner's own next step — carries the slider numbers into the
+    // enquiry form so nobody has to retype their own maths.
+    cta: 'Enquire with these numbers',
   },
 }
 
