@@ -105,6 +105,7 @@ export const WORK = {
     {
       key: 'studio',
       label: 'Studio studies, between events',
+      note: 'This stylised character style is also available as a studio commission, painted from your own photos.',
       items: [
         { img: 'art-character-girl', ttl: 'Little character, in green', meta: 'Studio study', alt: 'Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre' },
         { img: 'art-character-boy',  ttl: 'At the palette',             meta: 'Studio study', alt: "Small watercolour character portrait with the artist's palette alongside, in warm terracotta and ochre" },
@@ -173,12 +174,12 @@ export const PACKAGES = {
     {
       h: 'Family portrait, A3',
       p: 'You and your immediate family, painted larger on A3 from photos you send after the day.',
-      tag: '$400',
+      tag: 'On enquiry',
     },
     {
       h: 'Bridal party, A3',
       p: 'A group portrait of the bridal party on A3, the people closest to you on the day.',
-      tag: '$400',
+      tag: 'On enquiry',
     },
 
     {
@@ -188,7 +189,7 @@ export const PACKAGES = {
     },
     {
       h: 'Studio commission',
-      p: 'A portrait from your photos, before or after the wedding, ready in about four weeks.',
+      p: 'A portrait from your photos, before or after the wedding, in a classic likeness or the stylised character style shown in the studio studies. Ready in about four weeks.',
       tag: 'On enquiry',
     },
     {
@@ -204,9 +205,7 @@ export const PACKAGES = {
     {
       h: 'Wedding bouquet illustration',
       p: 'Your bouquet painted from photos after the day, on A3 cotton paper. A2 on request.',
-      tag: '$500',
-      small: 'A3 from',
-      extra: '· A2 on enquiry',
+      tag: 'On enquiry',
     },
   ],
   licence:
