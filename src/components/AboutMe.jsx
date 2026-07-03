@@ -88,7 +88,10 @@ export default function AboutMe() {
                     <img
                       src={asset(PAINTER.portrait)}
                       alt="Christopher Wang, the painter."
+                      width="1000"
+                      height="1090"
                       loading="lazy"
+                      decoding="async"
                       onError={(e) => (e.currentTarget.style.display = 'none')}
                       className="h-full w-full object-cover"
                     />
@@ -107,8 +110,8 @@ export default function AboutMe() {
                     src={asset('assets/bird-accent.png')}
                     alt=""
                     aria-hidden="true"
-                    width="1200"
-                    height="1028"
+                    width="800"
+                    height="685"
                     loading="lazy"
                     decoding="async"
                     className="pointer-events-none absolute bottom-0 right-0 z-20 w-[58%]"

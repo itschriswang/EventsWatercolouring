@@ -3,8 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="alternate icon" type="image/png" href="/assets/art-bouquet_transparent.png" />
+    <link rel="alternate icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- The two hero paintings are the LCP candidates but are only discovered
+         once React renders; preload them so they arrive with the document. -->
+    <link rel="preload" as="image" href="/assets/art-character-boy.webp" type="image/webp" fetchpriority="high" />
+    <link rel="preload" as="image" href="/assets/art-bouquet.webp" type="image/webp" fetchpriority="high" />
 
     <!-- Primary SEO -->
     <title>Live Event Watercolour Painting in Melbourne and Sydney | Christopher Wang</title>
@@ -14,7 +20,7 @@
     />
     <meta
       name="keywords"
-      content="live wedding painting Melbourne, live wedding painting Sydney,wedding watercolour artist, live wedding artist, watercolour portrait, wedding keepsakes, event painter Melbourne, event painter Sydney,brand activation artist"
+      content="live wedding painting Melbourne, live wedding painting Sydney, wedding watercolour artist, live wedding artist, watercolour portrait, wedding keepsakes, event painter Melbourne, event painter Sydney, brand activation artist"
     />
     <meta name="author" content="Christopher Wang" />
     <meta name="robots" content="index, follow" />
