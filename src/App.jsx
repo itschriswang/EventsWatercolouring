@@ -47,7 +47,14 @@ export default function App() {
     // webfonts can still be settling layout, which shifts the target's
     // offset after we've already scrolled. Double-rAF covers the common
     // case, and a `load`-triggered re-scroll corrects for anything slower.
+    // If the load event has already fired by the time the preloader hands
+    // over (fast connections, cached assets), the listener would never run —
+    // fall back to a short timer for the same correction.
     requestAnimationFrame(() => requestAnimationFrame(scrollToTarget))
+    if (document.readyState === 'complete') {
+      const t = window.setTimeout(scrollToTarget, 350)
+      return () => window.clearTimeout(t)
+    }
     window.addEventListener('load', scrollToTarget)
     return () => window.removeEventListener('load', scrollToTarget)
   }, [revealed])
