@@ -57,7 +57,7 @@ export default function Hero({ revealed }) {
             'radial-gradient(30% 28% at 8% 88%, rgba(201, 139, 140, 0.12), transparent 72%), ' +
             'radial-gradient(30% 26% at 62% 8%, rgba(201, 162, 58, 0.10), transparent 72%), ' +
             'radial-gradient(32% 28% at 99% 50%, rgba(237, 138, 51, 0.09), transparent 72%), ' +
-            'radial-gradient(26% 24% at 36% 52%, rgba(164, 80, 47, 0.10), transparent 74%)',
+            'radial-gradient(26% 24% at 36% 52%, rgba(154, 74, 43, 0.10), transparent 74%)',
         }}
       />
 
@@ -91,7 +91,7 @@ export default function Hero({ revealed }) {
                 bottom: '0vmin',
                 width: '63vmin',
                 height: '53vmin',
-                background: 'radial-gradient(circle at 55% 55%, #e4889c, transparent 65%)',
+                background: 'radial-gradient(circle at 55% 55%, #E4889C, transparent 65%)',
                 filter: 'blur(60px)',
                 opacity: 0.32,
                 mixBlendMode: 'hard-light',
@@ -125,7 +125,7 @@ export default function Hero({ revealed }) {
           aria-hidden="true"
           className="block h-px w-5 shrink-0 bg-lime opacity-60"
         />
-        <span className="font-mono text-[0.59rem] uppercase tracking-[0.26em] text-ink-soft">
+        <span className="font-mono text-[0.59rem] uppercase tracking-[0.3em] text-ink-soft">
           Live event watercolour keepsakes
         </span>
       </motion.div>
@@ -168,7 +168,7 @@ export default function Hero({ revealed }) {
             <div className="mt-7 flex flex-wrap items-center gap-5 sm:mt-8">
               <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
             </div>
-            <p className="mt-4 font-mono text-[0.6rem] uppercase tracking-[0.22em] text-ink-soft/85">
+            <p className="mt-4 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft/85">
               {HERO.note}
             </p>
           </motion.div>
@@ -191,7 +191,7 @@ export default function Hero({ revealed }) {
                   whileHover={reduce ? {} : { rotate: -2, scale: 1.03 }}
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(173,98,49,0.30),0_6px_16px_-6px_rgba(173,98,49,0.12)]"
                 >
-                  <CornerBloom from="rgba(201,140,140,0.15)" to="rgba(228,136,156,0.11)" overlay />
+                  <CornerBloom from="rgba(201,139,140,0.15)" to="rgba(228,136,156,0.11)" overlay />
                   {wick && <BloomFilter id="hero-wick-1" dur="1.2s" begin="0.8s" />}
                   <div className="relative z-10">
                     <picture>

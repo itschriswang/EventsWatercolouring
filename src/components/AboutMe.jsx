@@ -71,7 +71,7 @@ export default function AboutMe() {
                   itself slowly turns rather than sitting static. */}
               <div
                 aria-hidden="true"
-                className="gradient-frame absolute -left-4 -top-4 h-full w-full rounded-[1.2rem]"
+                className="gradient-frame absolute -left-4 -top-4 h-full w-full rounded-[1.25rem]"
                 style={{
                   background: 'linear-gradient(var(--gf-angle), #C98B8C 0%, #C2613C 100%)',
                   padding: '1px',
@@ -79,7 +79,7 @@ export default function AboutMe() {
               />
               <motion.div
                 style={parallax ? { y } : {}}
-                className="relative overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep"
+                className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep"
               >
                 <CornerBloom from="rgba(194,97,60,0.15)" to="rgba(228,136,156,0.11)" overlay />
                 <div className="relative z-10">
