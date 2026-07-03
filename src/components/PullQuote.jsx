@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { Drop } from './Label.jsx'
+import Sparkles from './Sparkles.jsx'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING_SOFT, ENQUIRE_HREF } from '../lib/site.js'
 import { PULLQUOTE } from '../content.js'
@@ -65,9 +66,13 @@ export default function PullQuote() {
         <motion.span
           {...rise(0)}
           aria-hidden="true"
-          className="font-sentient text-[clamp(3.5rem,7vw,5.5rem)] leading-[0.4] text-terracotta/70"
+          className="relative font-sentient text-[clamp(3.5rem,7vw,5.5rem)] leading-[0.4] text-terracotta/70"
         >
           &ldquo;
+          <Sparkles
+            delay={0.25}
+            className="absolute -right-11 -top-3 h-8 w-8 text-ochre/90"
+          />
         </motion.span>
         <blockquote className="mt-6">
           {lite ? (

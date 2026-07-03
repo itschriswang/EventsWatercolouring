@@ -6,6 +6,7 @@ import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset, ENQUIRE_HREF } from '../lib/site.js'
 import { HERO } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
+import Sparkles from './Sparkles.jsx'
 import { withUnderline } from './Underline.jsx'
 import BloomFilter from './WetBloom.jsx'
 
@@ -133,6 +134,12 @@ export default function Hero({ revealed }) {
 
         {/* Headline + lede + actions */}
         <div className="relative z-10 order-2 mt-[min(2.5rem,4dvh)] sm:mt-0 lg:order-none lg:col-span-7 lg:col-start-1">
+          {/* Delayed past the headline entrance so the twinkle lands as a
+              finishing flick, not part of the type reveal. */}
+          <Sparkles
+            delay={1.1}
+            className="absolute -top-6 right-[6%] hidden h-12 w-12 text-ochre sm:block"
+          />
           <motion.div style={parallax ? { y: copyY } : {}}>
             {revealed && (
               <SplitText
