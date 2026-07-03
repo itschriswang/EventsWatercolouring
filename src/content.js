@@ -291,7 +291,12 @@ export const FOOTER = {
 // Root-relative hrefs (`/#offerings`, not `#offerings`) so the same nav
 // works unchanged from the homepage (same-document hash scroll) and from
 // the /faq/ subpage (a normal navigation back to that homepage anchor).
+// Kept in step with MobileNav's DOCK_ITEMS so desktop and mobile agree on
+// which sections are worth a direct link (Enquire is a CTA, not a nav item,
+// on both).
 export const NAV = [
+  { href: '/#work', label: 'Gallery' },
+  { href: '/#painter', label: 'About' },
   { href: '/#offerings', label: 'Packages' },
   { href: '/faq/', label: 'FAQ' },
 ]
