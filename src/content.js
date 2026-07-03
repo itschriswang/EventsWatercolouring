@@ -308,6 +308,124 @@ export const ENQUIRY = {
   },
 }
 
+// The corporate landing page (/corporate/). Same voice, different room:
+// planners and marketers skimming for what it does for their event, so the
+// copy leads with the effect on the room and the keepsake that leaves with
+// people, not the romance. Kept off the main nav so the wedding journey
+// stays wedding-first; reached via search, the footer, and direct links.
+export const CORPORATE = {
+  eyebrow: 'Live event watercolour · corporate & brands',
+  lines: ['The activation', 'guests queue for'],
+  emphasis: 'queue',
+  lede: 'I paint your guests live in watercolour, right in the room. It draws a crowd, gives people a reason to stay, and every guest leaves holding something made by hand.',
+  note: 'Melbourne and Sydney based, travelling Australia-wide.',
+  cta: 'Enquire about your event',
+
+  why: {
+    label: 'Why it works',
+    title: ['A drawcard, not', 'a decoration.'],
+    emphasis: 'drawcard,',
+    cards: [
+      {
+        h: 'It gathers a crowd',
+        p: 'A painter working live pulls people in the way a screen never does. Guests stop, watch a piece happen, and stay to see the next one. It gives your event a centre of gravity.',
+      },
+      {
+        h: 'The keepsake stays',
+        p: 'Most event merch is in a drawer by Monday. A hand-painted portrait gets kept, framed and shown around the office, and your event is the story behind it.',
+      },
+      {
+        h: 'Effortless to run',
+        p: 'I need a table, a chair and a corner of the room. I bring everything else, arrive before doors, and pace myself across the booking. Public liability insurance included.',
+      },
+    ],
+  },
+
+  occasions: {
+    label: 'Where it fits',
+    title: ['Any room with', 'people in it.'],
+    emphasis: 'people',
+    items: [
+      'Brand activations and product launches',
+      'Client and VIP dinners',
+      'End of year and milestone parties',
+      'Conference dinners and expo stands',
+      'Store openings and pop-ups',
+      'Private functions',
+    ],
+    note: 'Something else in mind? It bends to fit the room, so tell me what you are planning.',
+  },
+
+  how: {
+    label: 'On the night',
+    title: ['How it runs.'],
+    emphasis: 'runs.',
+    steps: [
+      {
+        no: '01',
+        h: 'I set up before doors',
+        p: 'I arrive early and set up at my table. No AV, no power, no fuss for your venue or your run sheet.',
+      },
+      {
+        no: '02',
+        h: 'Guests keep mingling',
+        p: 'Nobody has to sit still. I take a quick photo and a name as people pass, and they carry on with the event while I paint.',
+      },
+      {
+        no: '03',
+        h: 'Painted through the event',
+        p: 'Each piece takes five to ten minutes, around 8 an hour, usually two guests to a piece. Once the first few are done, word gets around the room.',
+      },
+      {
+        no: '04',
+        h: 'Sleeved and taken home',
+        p: 'Every painting goes into a clear sleeve on the spot, so it survives the trip home and turns up on desks the next week.',
+      },
+    ],
+  },
+
+  offer: {
+    label: 'The engagement',
+    title: ['Simple to book,', 'easy to scale.'],
+    emphasis: 'easy to scale.',
+    base: {
+      title: 'Live at your event',
+      priceSmall: 'From',
+      price: '$850',
+      facts: ['3 hours live', '24 keepsakes'],
+      bullets: [
+        'Guest portraits painted live on 300gsm A5 archival cotton paper',
+        'Usually two guests to a keepsake, up to four for a group',
+        'Every piece sleeved to take home on the night',
+        'Public liability insurance',
+        'Travel within about an hour of Melbourne or Sydney metro',
+      ],
+    },
+    scale: {
+      h: 'Scaling up',
+      items: [
+        {
+          h: 'Extra live hours',
+          p: 'Longer events or bigger guest lists. I stay across the event so more people get painted.',
+        },
+        {
+          h: 'After-event service',
+          p: 'Guests beyond the booked pieces painted in the studio afterwards and posted to you to pass on, at a per-portrait rate agreed before the day.',
+        },
+        {
+          h: 'Multi-day activations',
+          p: 'Campaigns, expos and store runs across several days, quoted as one engagement.',
+        },
+        {
+          h: 'Travel further afield',
+          p: 'Regional and interstate events are welcome. Tell me the venue and I will quote travel with the booking.',
+        },
+      ],
+    },
+    note: 'Every event is a little different, so tell me the shape of yours and I will put a straightforward quote together. A 50% retainer holds the date.',
+  },
+}
+
 export const FOOTER = {
   cta: ['Let’s make something', 'to keep.'],
   emphasis: 'to keep.',
@@ -317,6 +435,7 @@ export const FOOTER = {
     { href: '/#work', label: 'The work' },
     { href: '/#painter', label: 'The painter' },
     { href: '/#offerings', label: 'Packages' },
+    { href: '/corporate/', label: 'Corporate' },
     { href: '/faq/', label: 'FAQ' },
   ],
   instagram: 'https://www.instagram.com/chriswangstudio',

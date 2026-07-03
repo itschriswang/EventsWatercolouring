@@ -17,6 +17,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         faq: resolve(__dirname, 'faq/index.html'),
+        corporate: resolve(__dirname, 'corporate/index.html'),
       },
       output: {
         manualChunks: {

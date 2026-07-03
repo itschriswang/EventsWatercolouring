@@ -60,7 +60,7 @@ const mailtoFor = (data) => {
  * in lib/site.js); if the endpoint is unconfigured or the request fails it
  * falls back to opening the visitor's email client.
  */
-export default function EnquireForm() {
+export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding date' }) {
   const reduce = useReducedMotion()
   const uid = useId().replace(/:/g, '')
   const [sent, setSent] = useState(false)
@@ -74,8 +74,10 @@ export default function EnquireForm() {
   const [notice, setNotice] = useState('')
   // Message and package are controlled so the planner's "Enquire with these
   // hours" link can hand its chosen hours straight into the form.
+  // `initialPackage` lets other pages (e.g. /corporate/) open the card with
+  // their audience's option already chosen.
   const [message, setMessage] = useState('')
-  const [pkg, setPkg] = useState('')
+  const [pkg, setPkg] = useState(initialPackage)
 
   // The planner (NightPlanner.jsx) dispatches this just before the anchor
   // navigation lands here — prefill, but never overwrite words the visitor
@@ -223,7 +225,7 @@ export default function EnquireForm() {
                     className="absolute left-1/2 top-1/2 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-multiply"
                     style={{
                       background:
-                        'radial-gradient(circle at 50% 50%, #C2613C, rgba(233,136,156,0.5) 45%, transparent 72%)',
+                        'radial-gradient(circle at 50% 50%, #C2613C, rgba(228,136,156,0.5) 45%, transparent 72%)',
                       filter: 'blur(34px)',
                     }}
                   />
@@ -368,7 +370,7 @@ export default function EnquireForm() {
 
                       <div className="flex flex-col sm:col-span-2">
                         <label className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
-                          Wedding date
+                          {dateLabel}
                         </label>
                         <div className="flex flex-col gap-3">
                           <input

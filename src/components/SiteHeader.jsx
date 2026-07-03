@@ -38,7 +38,9 @@ function NavLink({ href, label, isActive }) {
   )
 }
 
-export default function SiteHeader({ revealed, className = '' }) {
+// `enquireHref` lets pages with their own reply card (e.g. /corporate/)
+// keep the CTA on-page instead of bouncing back to the homepage form.
+export default function SiteHeader({ revealed, className = '', enquireHref = ENQUIRE_HREF }) {
   const [scrolled, setScrolled] = useState(false)
   const [active, setActive] = useState(null)
 
@@ -139,7 +141,7 @@ export default function SiteHeader({ revealed, className = '' }) {
 
         {/* Enquire CTA */}
         <motion.a
-          href={ENQUIRE_HREF}
+          href={enquireHref}
           className="rounded-full bg-terracotta px-5 py-2 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-paper"
           whileHover={{ scale: 1.05, y: -1 }}
           whileTap={{ scale: 0.96 }}
