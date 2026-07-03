@@ -130,7 +130,7 @@ export default function SiteHeader({ revealed, className = '' }) {
         {/* Section nav */}
         <nav
           aria-label="Primary"
-          className="flex items-center gap-8 font-mono text-[0.66rem] uppercase tracking-[0.2em]"
+          className="flex items-center gap-6 font-mono text-[0.66rem] uppercase tracking-[0.2em]"
         >
           {NAV.map((n) => (
             <NavLink key={n.href} href={n.href} label={n.label} isActive={isNavActive(n.href)} />

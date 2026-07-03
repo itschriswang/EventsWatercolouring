@@ -127,8 +127,10 @@ export default function MobileNav({ revealed }) {
           WebkitBackdropFilter: 'blur(26px) saturate(1.15)',
           border: '1px solid rgb(var(--rgb-line) / 0.56)',
           borderRadius: 9999,
+          // Ink shadow (approved palette) for the lift, paper-tone inset for
+          // the glint — no neutral grey/white per the site's shadow rule.
           boxShadow:
-            '0 8px 32px rgba(42,39,36,0.14), 0 0 0 1px rgba(255,255,255,0.42) inset',
+            '0 8px 32px rgba(48,45,41,0.21), 0 0 0 1px rgba(244,239,230,0.55) inset',
         }}
         aria-label="Quick navigation"
       >

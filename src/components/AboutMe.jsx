@@ -62,7 +62,7 @@ export default function AboutMe() {
             transition={SPRING}
             className="col-span-12 sm:col-span-6 sm:col-start-7 lg:col-span-6 lg:col-start-7 lg:mt-16"
           >
-            <div className="relative">
+            <div className="relative sm:ml-auto sm:max-w-[20rem]">
               {/* offset accent frame — a gradient stroke, no fill, so the
                   bloom wash behind the portrait stays visible through it.
                   The angle keeps drifting via @property so the gradient
