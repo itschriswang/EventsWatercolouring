@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import GrainOverlay from './components/GrainOverlay.jsx'
-import WatercolourBloom from './components/WatercolourBloom.jsx'
+import SectionWash from './components/SectionWash.jsx'
 import Preloader from './components/Preloader.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
 import MobileNav from './components/MobileNav.jsx'
@@ -40,10 +40,16 @@ export default function App() {
     if (!revealed) return
     const id = window.location.hash.slice(1)
     if (!id) return
-    // Use requestAnimationFrame to ensure layout is complete before scrolling
-    requestAnimationFrame(() => {
+    const scrollToTarget = () => {
       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    })
+    }
+    // A single rAF isn't always enough: hero art, WatercolourBloom and
+    // webfonts can still be settling layout, which shifts the target's
+    // offset after we've already scrolled. Double-rAF covers the common
+    // case, and a `load`-triggered re-scroll corrects for anything slower.
+    requestAnimationFrame(() => requestAnimationFrame(scrollToTarget))
+    window.addEventListener('load', scrollToTarget)
+    return () => window.removeEventListener('load', scrollToTarget)
   }, [revealed])
 
   return (
@@ -55,58 +61,30 @@ export default function App() {
       <SiteHeader revealed={revealed} />
       <MobileNav revealed={revealed} />
 
-      {/* The page is paced like the night itself: the promise (hero), a
-          couple's word for it (pull quote), the evening hour by hour (rust
-          timeline), what's left in the morning (the keepsake wall), the
+      {/* The page is paced like the night itself: the promise (hero), the
+          evening hour by hour (rust timeline), the keepsake wall as proof,
+          a couple's word for it right after they've seen the work, the
           person you're trusting with the room (the painter), then the
           decision and the ask. */}
       <main className="relative z-10 pb-28 md:pb-0">
         <Hero revealed={revealed} />
-        <div className="relative overflow-visible">
-          {/* WatercolourBloom — clipped to this section, below all content */}
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
-            <WatercolourBloom />
-          </div>
-          {/* Top blend — carries the hero's warm paper down into this block so the
-              seam disappears instead of snapping to a pale aurora wash. Pure CSS,
-              behind all content, reduced-motion safe. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 h-full"
-            style={{
-              zIndex: 0,
-              background:
-                'linear-gradient(to bottom, ' +
-                '#F4EFE6 0%, ' +
-                'rgba(244,239,230,0.55) 14%, ' +
-                'rgba(228,136,156,0.05) 42%, ' +
-                'transparent 100%)',
-            }}
-          />
-          <PullQuote />
-        </div>
+
         <EveningTimeline />
-        <div className="relative">
-          {/* One continuous WatercolourBloom behind the gallery through
-              the painter, Packages and Enquire so the wash carries through
-              without a seam at the section boundaries — each section's own
-              small ad-hoc gradients were removed so they don't compete with
-              it. Masked to fade in over the gallery rather than switching on
-              abruptly below it. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 overflow-hidden"
-            style={{
-              zIndex: 0,
-              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)',
-              maskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)',
-            }}
-          >
-            <WatercolourBloom />
-          </div>
+
+        {/* One continuous wash behind the gallery through the painter,
+            Packages and Enquire so it carries through without a seam at
+            section boundaries. Masked to fade in over the gallery rather
+            than switching on abruptly below it. */}
+        <SectionWash mask="linear-gradient(to bottom, transparent 0%, black 30%, black 100%)">
           <SelectedWork />
-          <div className="relative">
+          <PullQuote />
+          <div className="relative overflow-hidden">
             <AboutMe />
+            {/* bloom-accent-2's own art has a hard rectangular crop on its
+                bottom and right (only the top/left taper off naturally).
+                `overflow-hidden` on this wrapper pins that crop to the
+                section's own edge, so it reads as the illustration being
+                cut off by the section rather than floating loose. */}
             <picture>
               <source srcSet={asset('assets/bloom-accent-2.webp')} type="image/webp" />
               <img
@@ -123,7 +101,7 @@ export default function App() {
           </div>
           <Packages />
           <EnquireForm />
-        </div>
+        </SectionWash>
       </main>
 
       <Footer />
