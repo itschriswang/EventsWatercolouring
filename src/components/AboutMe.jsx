@@ -29,7 +29,7 @@ export default function AboutMe() {
         <div className="grid grid-cols-12 items-start gap-x-8 gap-y-8">
           {/* Left column: title + bio + signature + CTA */}
           <div className="col-span-12 sm:col-span-6 sm:col-start-1 lg:col-span-6 lg:col-start-1">
-            <Label gradient={['#6E8CA8', '#C2613C']}>{PAINTER.label}</Label>
+            <Label gradient={['#C2613C', '#C9A23A']}>{PAINTER.label}</Label>
             <SplitText
               as="h2"
               unit="char"
@@ -71,7 +71,7 @@ export default function AboutMe() {
                 aria-hidden="true"
                 className="gradient-frame absolute -left-4 -top-4 h-full w-full rounded-[1.2rem]"
                 style={{
-                  background: 'linear-gradient(var(--gf-angle), #6E8CA8 0%, #C2613C 100%)',
+                  background: 'linear-gradient(var(--gf-angle), #C98B8C 0%, #C2613C 100%)',
                   padding: '1px',
                 }}
               />
@@ -79,7 +79,7 @@ export default function AboutMe() {
                 style={parallax ? { y } : {}}
                 className="relative overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep"
               >
-                <CornerBloom from="rgba(194,97,60,0.15)" to="rgba(110,140,168,0.11)" overlay />
+                <CornerBloom from="rgba(194,97,60,0.15)" to="rgba(228,136,156,0.11)" overlay />
                 <div className="relative z-10">
                   <picture>
                     <source srcSet={asset(PAINTER.portraitWebp)} type="image/webp" />

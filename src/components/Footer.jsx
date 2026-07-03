@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import SplitText from './SplitText.jsx'
-import { EMAIL } from '../lib/site.js'
+import { EMAIL, ENQUIRE_HREF } from '../lib/site.js'
 import { FOOTER } from '../content.js'
 
 // Hand-sketched, matching the mobile dock's icon set (MobileNav.jsx): a
@@ -44,20 +44,34 @@ export default function Footer() {
         style={{
           background:
             'radial-gradient(ellipse 70% 60% at 90% 5%, rgba(194,97,60,0.10) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 50% 40% at 5% 95%, rgba(110,140,168,0.08) 0%, transparent 50%), ' +
+            'radial-gradient(ellipse 50% 40% at 5% 95%, rgba(228,136,156,0.08) 0%, transparent 50%), ' +
             'radial-gradient(ellipse 45% 40% at 48% 55%, rgba(174,191,86,0.07) 0%, transparent 55%)',
         }}
       />
       <div className="flex flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">
-        <SplitText
-          as="p"
-          unit="char"
-          lines={FOOTER.cta}
-          emphasis={FOOTER.emphasis}
-          underline="keep"
-          emphasisItalic
-          className="display-lg max-w-[18ch]"
-        />
+        {/* The closing line IS the link — a visitor who scrolled this far is
+            the warmest one on the page, so the biggest words at the moment of
+            highest intent go straight to the reply card. */}
+        <a href={ENQUIRE_HREF} className="group block">
+          <SplitText
+            as="p"
+            unit="char"
+            lines={FOOTER.cta}
+            emphasis={FOOTER.emphasis}
+            underline="keep"
+            emphasisItalic
+            className="display-lg max-w-[18ch]"
+          />
+          <span className="mt-5 inline-flex items-center gap-2.5 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-paper/60 transition-colors duration-300 group-hover:text-paper">
+            Start an enquiry
+            <span
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:translate-x-1"
+            >
+              →
+            </span>
+          </span>
+        </a>
       </div>
 
       {/* Instagram — sits in the footer's middle band, right-aligned once

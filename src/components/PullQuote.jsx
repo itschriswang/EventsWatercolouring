@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { Drop } from './Label.jsx'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
-import { SPRING_SOFT } from '../lib/site.js'
+import { SPRING_SOFT, ENQUIRE_HREF } from '../lib/site.js'
 import { PULLQUOTE } from '../content.js'
 
 /**
@@ -46,7 +46,20 @@ export default function PullQuote() {
       aria-label="What a couple said"
       className="relative z-10 px-[5vw] py-[clamp(3.5rem,7vw,6rem)]"
     >
-      <figure className="mx-auto flex max-w-3xl flex-col items-center text-center">
+      {/* The lime-and-blush moment — the two fresh accents the hero used to
+          spend now frame the quote instead, as soft static washes in the
+          margins. Cheap: two gradients, no filters, no animation. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(34% 55% at 6% 22%, rgba(174,191,86,0.13), transparent 74%), ' +
+            'radial-gradient(36% 58% at 94% 78%, rgba(228,136,156,0.14), transparent 74%), ' +
+            'radial-gradient(24% 40% at 88% 12%, rgba(201,162,58,0.08), transparent 72%)',
+        }}
+      />
+      <figure className="relative mx-auto flex max-w-3xl flex-col items-center text-center">
         <motion.span
           {...rise(0)}
           aria-hidden="true"
@@ -95,6 +108,25 @@ export default function PullQuote() {
             {PULLQUOTE.detail}
           </span>
         </motion.figcaption>
+
+        {/* The quote's one next step — a quiet text link, not a banner, so
+            the regret in Clare & William's words gets an answer without the
+            moment turning into an ad break. */}
+        {PULLQUOTE.cta && (
+          <motion.a
+            {...rise(0.3)}
+            href={ENQUIRE_HREF}
+            className="group mt-7 inline-flex items-center gap-2 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-rust transition-colors duration-300 hover:text-terracotta"
+          >
+            {PULLQUOTE.cta}
+            <span
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:translate-x-1"
+            >
+              →
+            </span>
+          </motion.a>
+        )}
       </figure>
     </section>
   )
