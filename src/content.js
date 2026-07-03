@@ -23,35 +23,30 @@ export const EVENING = {
   label: 'On the night',
   title: ['How the evening', 'runs.'],
   emphasis: 'runs.',
-  lede: 'The first thing I paint is the two of you, while everything is fresh. After that I work through your guests. Say your reception kicks off at seven, here is how the night goes.',
+  lede: 'The first thing I paint is the two of you, while everything is fresh. After that I work through your guests. Here is how the night runs, start to finish.',
   beats: [
     {
       no: '01',
-      time: '6:45pm',
       title: 'I set up',
       body: 'I get there about fifteen minutes early and set up before I start. You do not need to organise much beyond a table and chair for me.',
     },
     {
       no: '02',
-      time: '7:00pm',
       title: 'No need to pose',
       body: 'Your guests keep enjoying the night. I take a quick photo and note their name as they pass, so nobody has to stop or sit still for me.',
     },
     {
       no: '03',
-      time: '7:20pm',
       title: 'I start painting',
       body: 'Each piece takes about five to ten minutes. Once the first few are done, word gets around and guests start coming over to watch the next one.',
     },
     {
       no: '04',
-      time: '9:30pm',
       title: 'Sleeved to take home',
       body: 'Every painting goes into a clear sleeve so it gets home in one piece, right about when the champagne starts flowing a little more freely.',
     },
     {
       no: '05',
-      time: 'The week after',
       title: 'A number you can count on',
       body: 'I aim for around 8 pieces an hour. The number you book is the number I plan for, and anyone I do not reach on the night, I finish in the studio afterwards and post to you.',
     },
@@ -126,7 +121,7 @@ export const PACKAGES = {
     facts: ['3 hours live', '24 keepsakes'],
     bullets: [
       'Guest portraits painted live, on 300gsm A5 archival watercolour paper',
-      'Each keepsake can feature up to four guests',
+      'Usually two guests to a keepsake, up to four if a group wants to share one',
       'You and any VIPs painted first, the rest as they pass by',
       'Every piece sleeved to take home on the night',
       'Public liability insurance',
@@ -183,12 +178,12 @@ export const PACKAGES = {
     'A note on style. What I paint is my interpretation, not a photo-exact likeness, and my style evolves over time, so no two pieces are the same. Booking means you are comfortable with that approach and my style. A 50% retainer holds your date, with the balance due two weeks before your big day.',
   planner: {
     title: 'Will everyone get painted?',
-    lede: 'Slide to your guest list and pick your hours. I paint around 8 pieces an hour, and each piece can hold up to four guests.',
+    lede: 'Slide to your guest list and pick your hours. I paint around 8 pieces an hour, usually two guests to a piece, up to four when a group shares one.',
     guestsLabel: 'Your guest list',
     hoursLabel: 'Hours booked',
     piecesUnit: 'keepsakes painted live',
-    coversUnit: 'Room for up to',
-    coversTail: 'guests on them, four to a piece',
+    coversUnit: 'Room for around',
+    coversTail: 'guests on them at two to a piece, more when groups of up to four share one',
     fits: 'Everyone can be on a piece before the night is out.',
     overflow: 'I paint through the night, then finish the rest in the studio and post them to you, so no guest misses out.',
     small: 'Numbers to plan around, not a stopwatch. Groups and pacing vary on the night.',
@@ -229,7 +224,7 @@ export const FAQ = {
     },
     {
       q: 'How many guests can you paint?',
-      a: 'Around 8 pieces an hour, so a three-hour booking covers roughly 24 portraits. Anyone I do not get to on the night, I finish in the studio and post to you to pass on, so no guest misses out.',
+      a: 'Around 8 pieces an hour, so a three-hour booking covers roughly 24 portraits. I usually paint two guests to a piece and can fit up to four, so how far that goes depends on how your guests pair up, not the size of your list. Anyone I do not get to on the night, I finish in the studio and post to you to pass on, so no guest misses out.',
     },
     {
       q: 'Do you frame the work?',
@@ -287,7 +282,7 @@ export const FOOTER = {
     { href: '/#work', label: 'The work' },
     { href: '/#painter', label: 'The painter' },
     { href: '/#offerings', label: 'Packages' },
-    { href: '/faq/', label: 'Questions' },
+    { href: '/faq/', label: 'FAQ' },
   ],
   instagram: 'https://www.instagram.com/chriswangstudio',
   instagramHandle: '@chriswangstudio',
@@ -298,5 +293,5 @@ export const FOOTER = {
 // the /faq/ subpage (a normal navigation back to that homepage anchor).
 export const NAV = [
   { href: '/#offerings', label: 'Packages' },
-  { href: '/faq/', label: 'Questions' },
+  { href: '/faq/', label: 'FAQ' },
 ]
