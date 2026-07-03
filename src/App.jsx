@@ -71,20 +71,17 @@ export default function App() {
 
         <EveningTimeline />
 
-        {/* One continuous wash behind the gallery through the painter,
-            Packages and Enquire so it carries through without a seam at
-            section boundaries. Masked to fade in over the gallery rather
-            than switching on abruptly below it. */}
+        {/* One continuous wash behind the gallery, testimonial and painter.
+            Masked to fade in over the gallery rather than switching on
+            abruptly below it. Ends right after the bird accent below, on
+            purpose: that accent's art has a hard rectangular crop on its
+            bottom/right edges, so the section needs a real boundary there
+            for the crop to read as intentional rather than floating loose. */}
         <SectionWash mask="linear-gradient(to bottom, transparent 0%, black 30%, black 100%)">
           <SelectedWork />
           <PullQuote />
           <div className="relative overflow-hidden">
             <AboutMe />
-            {/* bloom-accent-2's own art has a hard rectangular crop on its
-                bottom and right (only the top/left taper off naturally).
-                `overflow-hidden` on this wrapper pins that crop to the
-                section's own edge, so it reads as the illustration being
-                cut off by the section rather than floating loose. */}
             <picture>
               <source srcSet={asset('assets/bloom-accent-2.webp')} type="image/webp" />
               <img
@@ -99,6 +96,17 @@ export default function App() {
               />
             </picture>
           </div>
+        </SectionWash>
+
+        {/* Hairline seam marking the hand-off from the painter's section into
+            Packages, so the wash above (and the bird accent's crop inside
+            it) reads as ending here rather than being cut off arbitrarily. */}
+        <div aria-hidden="true" className="relative z-10 mx-[5vw] border-t border-line" />
+
+        {/* A fresh wash layer for Packages and Enquire — deliberately not a
+            continuation of the one above, so this reads as its own section
+            starting rather than a seamless carry-through. */}
+        <SectionWash mask="linear-gradient(to bottom, transparent 0%, black 20%, black 100%)">
           <Packages />
           <EnquireForm />
         </SectionWash>
