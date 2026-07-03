@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import CornerBloom from './CornerBloom.jsx'
 import { SPRING, ENQUIRE_HREF } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
+import { withUnderline } from './Underline.jsx'
 
 // Warm pigment pairs for the little keepsake thumbnails — cycled so the
 // grid reads as a spread of different paintings, not a repeat pattern.
@@ -51,7 +52,9 @@ export default function NightPlanner() {
         {/* Controls */}
         <div>
           <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">{p.title}</h3>
-          <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-soft">{p.lede}</p>
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-soft">
+            {withUnderline(p.lede, '8 pieces an hour', { className: 'text-terracotta' })}
+          </p>
 
           <div className="mt-7">
             <div className="flex items-baseline justify-between">

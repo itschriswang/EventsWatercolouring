@@ -282,7 +282,7 @@ export default function Packages() {
           </span>
           <span>
             <span className="block font-sentient text-xl tracking-[-0.02em] text-ink sm:text-2xl">
-              Got a question? Read the FAQ
+              {withUnderline('Got a question? Read the FAQ', 'FAQ', { className: 'text-terracotta' })}
             </span>
             <span className="mt-1 block text-sm text-ink-soft">
               Booking, travel, timing and materials, all answered plainly.
