@@ -108,6 +108,9 @@ export default function SelectedWork() {
               </h3>
               <span aria-hidden="true" className="h-px flex-1 self-center bg-line/80" />
             </div>
+            {group.note && (
+              <p className="mt-2 max-w-md text-xs leading-relaxed text-ink-soft">{group.note}</p>
+            )}
 
             {isDesktop ? (
               <div className="mt-6 grid grid-cols-12 items-end gap-x-[1.4vw] gap-y-6">
@@ -381,7 +384,19 @@ function RevealTile({ reveal, className = '' }) {
           className="absolute top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-terracotta font-mono text-[0.6rem] text-paper shadow-[0_2px_12px_rgba(115,46,17,0.40)] outline-none focus-visible:ring-2 focus-visible:ring-paper"
           style={{ left: `${pct}%` }}
         >
-          <span aria-hidden="true">↔</span>
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            className="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M8 8 4 12l4 4" />
+            <path d="M16 8l4 4-4 4" />
+          </svg>
         </div>
 
         {/* Corner labels */}
