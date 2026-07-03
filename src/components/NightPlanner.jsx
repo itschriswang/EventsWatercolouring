@@ -15,28 +15,26 @@ const THUMB_TINTS = [
 ]
 
 const PIECES_PER_HOUR = 8
-// Coverage is planned at the usual two guests to a piece — groups of up to
+// Coverage is described at the usual two guests to a piece — groups of up to
 // four can share one, but that's a bonus on the night, not the plan.
 const GUESTS_PER_PIECE = 2
 const HOURS = [3, 4, 5]
 
 /**
- * "Will everyone get painted?" — a small planner that answers the question
- * every couple and organiser actually has. Slide to the guest list, pick the
- * hours, and the arithmetic (8 pieces an hour, usually two guests a piece,
- * studio finishing for anyone missed) does the reassuring. The numbers are
- * the same ones the copy already commits to; this just lets people put their
- * own event into them.
+ * "What does a booking cover?" — a small planner that shows what the booked
+ * hours buy. Pick the hours and the arithmetic (8 pieces an hour, usually two
+ * guests a piece) shows how many keepsakes get painted live. Coverage beyond
+ * that is the after-event add-on or extra hours — the planner points there
+ * rather than promising it. The numbers are the same ones the copy already
+ * commits to; this just lets people put their own event into them.
  */
 export default function NightPlanner() {
   const reduce = useReducedMotion()
   const p = PACKAGES.planner
-  const [guests, setGuests] = useState(100)
   const [hours, setHours] = useState(3)
 
   const pieces = PIECES_PER_HOUR * hours
   const covers = pieces * GUESTS_PER_PIECE
-  const everyoneFits = guests <= covers
 
   return (
     <motion.div
@@ -57,25 +55,6 @@ export default function NightPlanner() {
           </p>
 
           <div className="mt-7">
-            <div className="flex items-baseline justify-between">
-              <label htmlFor="planner-guests" className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
-                {p.guestsLabel}
-              </label>
-              <span className="num-wide text-xl text-ink">{guests}</span>
-            </div>
-            <input
-              id="planner-guests"
-              type="range"
-              min="20"
-              max="240"
-              step="10"
-              value={guests}
-              onChange={(e) => setGuests(Number(e.target.value))}
-              className="mt-3 w-full accent-terracotta"
-            />
-          </div>
-
-          <div className="mt-6">
             <span className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
               {p.hoursLabel}
             </span>
@@ -120,8 +99,8 @@ export default function NightPlanner() {
             </span>
           </p>
           {/* The count as objects: one tiny sleeved card per keepsake, so
-              "24 pieces" is something you can see stack up as the slider
-              moves, not just a number changing. Decorative — the figures
+              "24 pieces" is something you can see stack up as the hours
+              change, not just a number changing. Decorative — the figures
               above carry the accessible version. */}
           <div aria-hidden="true" className="mt-5 flex max-w-md flex-wrap gap-1.5">
             {Array.from({ length: pieces }, (_, i) => {
@@ -147,21 +126,17 @@ export default function NightPlanner() {
           <p className="mt-4 text-sm leading-relaxed text-ink/85">
             {p.coversUnit} <b className="num-wide text-ink">{covers}</b> {p.coversTail}.
           </p>
-          <p aria-live="polite" className="mt-3 text-sm leading-relaxed text-ink/85">
-            {everyoneFits ? p.fits : p.overflow}
-          </p>
+          <p className="mt-3 text-sm leading-relaxed text-ink/85">{p.more}</p>
           <p className="mt-5 font-mono text-[0.55rem] uppercase tracking-[0.18em] text-ink-soft">
             {p.small}
           </p>
 
-          {/* Carry the slider's numbers straight into the enquiry form — the
+          {/* Carry the chosen hours straight into the enquiry form — the
               visitor has already done their maths; don't make them retype it. */}
           <a
             href={ENQUIRE_HREF}
             onClick={() =>
-              window.dispatchEvent(
-                new CustomEvent('ew:planner-enquire', { detail: { guests, hours } }),
-              )
+              window.dispatchEvent(new CustomEvent('ew:planner-enquire', { detail: { hours } }))
             }
             className="group mt-6 inline-flex w-fit items-center gap-2.5 rounded-full bg-terracotta px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-paper transition-colors duration-300 hover:bg-rust"
           >

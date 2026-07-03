@@ -73,7 +73,7 @@ export default function EnquireForm() {
   // Neutral, non-error guidance (e.g. when we hand off to the email client).
   const [notice, setNotice] = useState('')
   // Message and package are controlled so the planner's "Enquire with these
-  // numbers" link can hand its slider values straight into the form.
+  // hours" link can hand its chosen hours straight into the form.
   const [message, setMessage] = useState('')
   const [pkg, setPkg] = useState('')
 
@@ -82,9 +82,9 @@ export default function EnquireForm() {
   // has already typed.
   useEffect(() => {
     const onPlanner = (e) => {
-      const { guests, hours } = e.detail || {}
-      if (!guests || !hours) return
-      setMessage((m) => m || `Planning around ${guests} guests, thinking ${hours} hours live.`)
+      const { hours } = e.detail || {}
+      if (!hours) return
+      setMessage((m) => m || `Thinking around ${hours} hours live.`)
       setPkg((p) => p || (hours > 3 ? 'Live on the day, with add-ons' : 'Live on the day (base package)'))
     }
     window.addEventListener('ew:planner-enquire', onPlanner)
