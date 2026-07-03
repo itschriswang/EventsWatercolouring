@@ -60,8 +60,8 @@ export default function EveningTimeline() {
           <img
             src={asset('assets/bloom-accent-1.png')}
             alt=""
-            width="1100"
-            height="1374"
+            width="840"
+            height="1049"
             loading="lazy"
             decoding="async"
             className={
