@@ -7,7 +7,7 @@ export const HERO = {
   linesMobile: ['Memories', 'painted as they', 'happen'],
   emphasis: 'painted',
   emphasisMobile: 'painted',
-  lede: 'Your guests, painted live in watercolour while the night carries on. Everyone takes home something real, and they talk about it long after.',
+  lede: 'Your guests, painted live in watercolour while the night carries on. They take home something real, and they talk about it long after.',
   note: 'Every enquiry answered personally, usually within a few days.',
 }
 
@@ -51,7 +51,7 @@ export const EVENING = {
     {
       no: '05',
       title: 'A number you can count on',
-      body: 'I aim for around 8 pieces an hour. The number you book is the number I plan for, and anyone I do not reach on the night, I finish in the studio afterwards and post to you.',
+      body: 'I aim for around 8 pieces an hour. The number you book is the number I plan for and the number I paint. Want more covered? Extra live hours or the after-event service add more pieces.',
     },
   ],
 }
@@ -167,8 +167,8 @@ export const PACKAGES = {
   addonsHead: { title: 'Add-ons', note: 'Priced on enquiry' },
   addons: [
     {
-      h: 'Guests I finish afterwards',
-      p: 'Anyone I do not reach on the night gets finished in the studio and posted to you to pass on. You can also add guests beyond the booked number at this rate.',
+      h: 'After-event service',
+      p: 'Add this and guests beyond the booked pieces are painted in the studio afterwards and posted to you to pass on, at a per-portrait rate we agree before the day.',
       tag: 'Per portrait · on enquiry',
     },
     {
@@ -211,19 +211,17 @@ export const PACKAGES = {
   licence:
     'A note on style. What I paint is my interpretation, not a photo-exact likeness, and my style evolves over time, so no two pieces are the same. Booking means you are comfortable with that approach and my style. A 50% retainer holds your date, with the balance due two weeks before your big day.',
   planner: {
-    title: 'Will everyone get painted?',
-    lede: 'Slide to your guest list and pick your hours. I paint around 8 pieces an hour, usually two guests to a piece, up to four when a group shares one.',
-    guestsLabel: 'Your guest list',
+    title: 'What does a booking cover?',
+    lede: 'Pick your hours. I paint around 8 pieces an hour, usually two guests to a piece, up to four when a group shares one.',
     hoursLabel: 'Hours booked',
     piecesUnit: 'keepsakes painted live',
     coversUnit: 'Room for around',
     coversTail: 'guests on them at two to a piece, more when groups of up to four share one',
-    fits: 'Everyone can be on a piece before the night is out.',
-    overflow: 'I paint through the night, then finish the rest in the studio and post them to you, so no guest misses out.',
+    more: 'Want more covered? Add live hours, or the after-event service adds studio-painted pieces at a per-portrait rate.',
     small: 'Numbers to plan around, not a stopwatch. Groups and pacing vary on the night.',
-    // The planner's own next step — carries the slider numbers into the
+    // The planner's own next step — carries the chosen hours into the
     // enquiry form so nobody has to retype their own maths.
-    cta: 'Enquire with these numbers',
+    cta: 'Enquire with these hours',
   },
 }
 
@@ -261,7 +259,7 @@ export const FAQ = {
     },
     {
       q: 'How many guests can you paint?',
-      a: 'Around 8 pieces an hour, so a three-hour booking covers roughly 24 portraits. I usually paint two guests to a piece and can fit up to four, so how far that goes depends on how your guests pair up, not the size of your list. Anyone I do not get to on the night, I finish in the studio and post to you to pass on, so no guest misses out.',
+      a: 'Around 8 pieces an hour, so a three-hour booking covers roughly 24 portraits. I usually paint two guests to a piece and can fit up to four, so how far that goes depends on how your guests pair up, not the size of your list. The number of pieces you book is the number I paint. If you want more covered, add live hours, or add the after-event service and I paint extra pieces in the studio and post them to you to pass on.',
     },
     {
       q: 'Do you frame the work?',
