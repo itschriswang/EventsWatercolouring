@@ -1,8 +1,17 @@
 import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import CornerBloom from './CornerBloom.jsx'
-import { SPRING } from '../lib/site.js'
+import { SPRING, ENQUIRE_HREF } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
+
+// Warm pigment pairs for the little keepsake thumbnails — cycled so the
+// grid reads as a spread of different paintings, not a repeat pattern.
+const THUMB_TINTS = [
+  ['rgba(194,97,60,0.55)', 'rgba(201,162,58,0.35)'],
+  ['rgba(228,136,156,0.5)', 'rgba(194,97,60,0.3)'],
+  ['rgba(201,162,58,0.5)', 'rgba(164,80,47,0.35)'],
+  ['rgba(201,139,140,0.5)', 'rgba(237,138,51,0.3)'],
+]
 
 const PIECES_PER_HOUR = 8
 // Coverage is planned at the usual two guests to a piece — groups of up to
@@ -37,7 +46,7 @@ export default function NightPlanner() {
       className="relative mt-[clamp(2.5rem,6vw,4rem)] overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(173,98,49,0.25)]"
       style={{ background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FBF8F2 0%, #F4EFE6 62%)' }}
     >
-      <CornerBloom from="rgba(110,140,168,0.14)" to="rgba(194,97,60,0.14)" />
+      <CornerBloom from="rgba(228,136,156,0.13)" to="rgba(194,97,60,0.14)" />
       <div className="relative z-10 grid grid-cols-1 gap-8 p-7 sm:p-8 lg:grid-cols-2 lg:gap-12">
         {/* Controls */}
         <div>
@@ -107,6 +116,31 @@ export default function NightPlanner() {
               {p.piecesUnit}
             </span>
           </p>
+          {/* The count as objects: one tiny sleeved card per keepsake, so
+              "24 pieces" is something you can see stack up as the slider
+              moves, not just a number changing. Decorative — the figures
+              above carry the accessible version. */}
+          <div aria-hidden="true" className="mt-5 flex max-w-md flex-wrap gap-1.5">
+            {Array.from({ length: pieces }, (_, i) => {
+              const [a, b] = THUMB_TINTS[i % THUMB_TINTS.length]
+              return (
+                <motion.span
+                  key={i}
+                  initial={reduce ? false : { opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ ...SPRING, delay: reduce ? 0 : (i % 8) * 0.02 }}
+                  className="relative h-7 w-5 overflow-hidden rounded-[3px] border border-line bg-paper shadow-[0_2px_6px_-2px_rgba(173,98,49,0.35)]"
+                >
+                  <span
+                    className="absolute inset-0"
+                    style={{
+                      background: `radial-gradient(circle at 50% 42%, ${a}, transparent 68%), radial-gradient(circle at 60% 70%, ${b}, transparent 72%)`,
+                    }}
+                  />
+                </motion.span>
+              )
+            })}
+          </div>
           <p className="mt-4 text-sm leading-relaxed text-ink/85">
             {p.coversUnit} <b className="num-wide text-ink">{covers}</b> {p.coversTail}.
           </p>
@@ -116,6 +150,23 @@ export default function NightPlanner() {
           <p className="mt-5 font-mono text-[0.55rem] uppercase tracking-[0.18em] text-ink-soft">
             {p.small}
           </p>
+
+          {/* Carry the slider's numbers straight into the enquiry form — the
+              visitor has already done their maths; don't make them retype it. */}
+          <a
+            href={ENQUIRE_HREF}
+            onClick={() =>
+              window.dispatchEvent(
+                new CustomEvent('ew:planner-enquire', { detail: { guests, hours } }),
+              )
+            }
+            className="group mt-6 inline-flex w-fit items-center gap-2.5 rounded-full bg-terracotta px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-paper transition-colors duration-300 hover:bg-rust"
+          >
+            {p.cta}
+            <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
+              →
+            </span>
+          </a>
         </div>
       </div>
     </motion.div>

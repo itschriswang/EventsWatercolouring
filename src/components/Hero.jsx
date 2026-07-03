@@ -1,5 +1,5 @@
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
-import { lazy, Suspense, useRef } from 'react'
+import { useRef } from 'react'
 import SplitText from './SplitText.jsx'
 import MagneticButton from './MagneticButton.jsx'
 import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
@@ -8,15 +8,6 @@ import { HERO } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
 import { withUnderline } from './Underline.jsx'
 import BloomFilter from './WetBloom.jsx'
-
-// Aurora is a continuously-animating WebGL canvas built on `ogl`. It only ever
-// renders on fine-pointer desktops (heavyFx), so we code-split it: the ogl
-// bundle is fetched lazily when the hero mounts on those devices, and mobile /
-// reduced-motion visitors never download it at all.
-const Aurora = lazy(() => import('./Aurora.jsx'))
-
-// Bloomfield palette
-const AURORA_COLORS = ['#B5395B', '#AEBF56', '#C9A23A']
 
 export default function Hero({ revealed }) {
   const reduce = useReducedMotion()
@@ -48,39 +39,26 @@ export default function Hero({ revealed }) {
     <section
       id="top"
       ref={ref}
-      className="relative w-full overflow-x-clip px-[5vw] pb-[clamp(3rem,8vw,7rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-8"
+      className="relative w-full overflow-x-clip px-[5vw] pb-[clamp(2.5rem,5vw,4.5rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-8"
     >
-      {/* Aurora fluid simulation — dialled way back so it reads as a whisper of
-          colour. It's a continuously-animating WebGL canvas, so it's reserved
-          for fine-pointer desktops (heavyFx); touch devices skip it the same
-          way GrainOverlay does, and just keep the plain paper scrim below. */}
-      {!reduce && heavyFx && (
-        <div
-          aria-hidden="false"
-          style={{ position: 'absolute', inset: 0, opacity: 0.38, pointerEvents: 'none', zIndex: 0 }}
-        >
-          <Suspense fallback={null}>
-            <Aurora
-              colorStops={AURORA_COLORS}
-              amplitude={1.4}
-              blend={0.5}
-            />
-          </Suspense>
-        </div>
-      )}
-      {/* Paper scrim — softens the aurora into the background without burying it */}
-      {!reduce && (
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(160deg, rgba(244,239,230,0.5) 0%, rgba(244,239,230,0.28) 50%, rgba(244,239,230,0.45) 100%)',
-            pointerEvents: 'none',
-            zIndex: 1,
-          }}
-        />
-      )}
+      {/* Static bloom field — soft pigment halos in the site's own warm
+          pigments, settled into the margins. One cheap paint on every device;
+          the WebGL aurora it replaces cost 50KB and continuous GPU time to
+          read as a whisper nobody could name the colour of. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          backgroundImage:
+            'radial-gradient(38% 32% at 16% 26%, rgba(194, 97, 60, 0.16), transparent 72%), ' +
+            'radial-gradient(30% 26% at 88% 14%, rgba(201, 162, 58, 0.15), transparent 72%), ' +
+            'radial-gradient(34% 30% at 85% 84%, rgba(228, 136, 156, 0.13), transparent 72%), ' +
+            'radial-gradient(30% 28% at 8% 88%, rgba(201, 139, 140, 0.12), transparent 72%), ' +
+            'radial-gradient(30% 26% at 62% 8%, rgba(201, 162, 58, 0.10), transparent 72%), ' +
+            'radial-gradient(32% 28% at 99% 50%, rgba(237, 138, 51, 0.09), transparent 72%), ' +
+            'radial-gradient(26% 24% at 36% 52%, rgba(164, 80, 47, 0.10), transparent 74%)',
+        }}
+      />
 
       {/* Local hero bloom — bottom-right, behind artwork */}
       <div
@@ -97,7 +75,7 @@ export default function Hero({ revealed }) {
                 bottom: '8vmin',
                 width: '53vmin',
                 height: '63vmin',
-                background: 'radial-gradient(circle at 55% 55%, #aebf56, transparent 65%)',
+                background: 'radial-gradient(circle at 55% 55%, #c9a23a, transparent 65%)',
                 filter: 'blur(60px)',
                 opacity: 0.32,
                 mixBlendMode: 'hard-light',
@@ -122,23 +100,6 @@ export default function Hero({ revealed }) {
             />
           </>
         )}
-        {/* Mobile static bloom */}
-        {isMobile && (
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                'radial-gradient(38% 32% at 16% 26%, rgba(194, 97, 60, 0.18), transparent 72%), ' +
-                'radial-gradient(30% 26% at 88% 14%, rgba(201, 162, 58, 0.16), transparent 72%), ' +
-                'radial-gradient(34% 30% at 85% 84%, rgba(228, 136, 156, 0.14), transparent 72%), ' +
-                'radial-gradient(30% 28% at 8% 88%, rgba(201, 139, 140, 0.13), transparent 72%), ' +
-                'radial-gradient(30% 26% at 62% 8%, rgba(174, 191, 86, 0.11), transparent 72%), ' +
-                'radial-gradient(32% 28% at 99% 50%, rgba(110, 140, 168, 0.12), transparent 72%), ' +
-                'radial-gradient(26% 24% at 36% 52%, rgba(164, 80, 47, 0.12), transparent 74%)',
-              pointerEvents: 'none',
-            }}
-          />
-        )}
       </div>
 
       {/* Desktop eyebrow row */}
@@ -146,7 +107,7 @@ export default function Hero({ revealed }) {
         variants={fade}
         initial="hidden"
         animate={state}
-        className="hidden sm:flex items-center justify-between font-mono text-[0.66rem] uppercase tracking-[0.3em] text-ink-soft"
+        className="relative z-20 hidden sm:flex items-center justify-between font-mono text-[0.66rem] uppercase tracking-[0.3em] text-ink-soft"
       >
         <span>Live event watercolour keepsakes</span>
         <span>Melbourne · Sydney</span>
@@ -215,7 +176,7 @@ export default function Hero({ revealed }) {
             <div className="mx-auto flex w-full max-w-[26rem] items-end px-2 sm:mr-0 sm:grow sm:mx-auto sm:w-[92%] sm:max-w-none sm:px-0 lg:mx-0 lg:w-full lg:justify-end">
 
               {/* Character — primary card, grounded anchor (left, tilts left) */}
-              <div className="relative z-0 w-[54%] shrink-0 translate-x-[2%] translate-y-[6%] sm:translate-x-0 sm:w-[46%] lg:w-[52%] sm:translate-y-0 sm:-ml-[8%] lg:-ml-[10%] lg:-translate-x-[6%] lg:-translate-y-[18%]">
+              <div className="relative z-0 w-[54%] shrink-0 translate-x-[2%] translate-y-[6%] sm:translate-x-0 sm:w-[46%] lg:w-[52%] sm:translate-y-0 sm:-ml-[8%] lg:-ml-[10%] lg:-translate-x-[6%] lg:-translate-y-[8%]">
                 <motion.figure
                   initial={{ opacity: 0, y: reduce ? 0 : 55, rotate: reduce ? 0 : -6 }}
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : -6 } : { opacity: 0 }}
@@ -223,7 +184,7 @@ export default function Hero({ revealed }) {
                   whileHover={reduce ? {} : { rotate: -2, scale: 1.03 }}
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(173,98,49,0.30),0_6px_16px_-6px_rgba(173,98,49,0.12)]"
                 >
-                  <CornerBloom from="rgba(201,140,140,0.15)" to="rgba(110,140,168,0.11)" overlay />
+                  <CornerBloom from="rgba(201,140,140,0.15)" to="rgba(228,136,156,0.11)" overlay />
                   {wick && <BloomFilter id="hero-wick-1" dur="1.2s" begin="0.8s" />}
                   <div className="relative z-10">
                     <picture>
@@ -249,7 +210,7 @@ export default function Hero({ revealed }) {
               </div>
 
               {/* Bouquet — accent card, floats high right (tilts right) */}
-              <div className="relative z-10 -ml-[10%] w-[46%] shrink-0 -translate-y-[14%] sm:-ml-[10%] sm:w-[48%] lg:w-[54%] sm:-translate-y-[22%] lg:-translate-y-[28%]">
+              <div className="relative z-10 -ml-[10%] w-[46%] shrink-0 -translate-y-[14%] sm:-ml-[10%] sm:w-[48%] lg:w-[54%] sm:-translate-y-[22%] lg:-translate-y-[16%]">
                 <motion.figure
                   initial={{ opacity: 0, y: reduce ? 0 : 50, rotate: reduce ? 0 : 4 }}
                   animate={revealed ? { opacity: 1, y: 0, rotate: reduce ? 0 : 3 } : { opacity: 0 }}
@@ -257,7 +218,7 @@ export default function Hero({ revealed }) {
                   whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(173,98,49,0.30),0_6px_16px_-6px_rgba(173,98,49,0.12)]"
                 >
-                  <CornerBloom from="rgba(194,97,60,0.16)" to="rgba(110,140,168,0.12)" overlay />
+                  <CornerBloom from="rgba(194,97,60,0.16)" to="rgba(228,136,156,0.12)" overlay />
                   {wick && <BloomFilter id="hero-wick-2" dur="1.2s" begin="0.95s" />}
                   <div className="relative z-10">
                     <picture>
