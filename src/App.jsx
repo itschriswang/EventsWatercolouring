@@ -61,27 +61,13 @@ export default function App() {
       <SiteHeader revealed={revealed} />
       <MobileNav revealed={revealed} />
 
-      {/* The page is paced like the night itself: the promise (hero), a
-          couple's word for it (pull quote), the evening hour by hour (rust
-          timeline), what's left in the morning (the keepsake wall), the
+      {/* The page is paced like the night itself: the promise (hero), the
+          evening hour by hour (rust timeline), the keepsake wall as proof,
+          a couple's word for it right after they've seen the work, the
           person you're trusting with the room (the painter), then the
           decision and the ask. */}
       <main className="relative z-10 pb-28 md:pb-0">
         <Hero revealed={revealed} />
-
-        {/* Carries the hero's warm paper down into the pull quote so the
-            seam disappears instead of snapping to a pale aurora wash. */}
-        <SectionWash
-          seamGradient={
-            'linear-gradient(to bottom, ' +
-            '#F4EFE6 0%, ' +
-            'rgba(244,239,230,0.55) 14%, ' +
-            'rgba(228,136,156,0.05) 42%, ' +
-            'transparent 100%)'
-          }
-        >
-          <PullQuote />
-        </SectionWash>
 
         <EveningTimeline />
 
@@ -91,8 +77,14 @@ export default function App() {
             than switching on abruptly below it. */}
         <SectionWash mask="linear-gradient(to bottom, transparent 0%, black 30%, black 100%)">
           <SelectedWork />
-          <div className="relative">
+          <PullQuote />
+          <div className="relative overflow-hidden">
             <AboutMe />
+            {/* bloom-accent-2's own art has a hard rectangular crop on its
+                bottom and right (only the top/left taper off naturally).
+                `overflow-hidden` on this wrapper pins that crop to the
+                section's own edge, so it reads as the illustration being
+                cut off by the section rather than floating loose. */}
             <picture>
               <source srcSet={asset('assets/bloom-accent-2.webp')} type="image/webp" />
               <img

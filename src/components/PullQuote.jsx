@@ -5,11 +5,13 @@ import { SPRING_SOFT } from '../lib/site.js'
 import { PULLQUOTE } from '../content.js'
 
 /**
- * The Clare & William quote, set as a centred editorial moment between the
- * hero and the story — the one place the site speaks in a client's voice
- * rather than Christopher's. Every other section sits on the left-aligned
+ * The Clare & William quote, set as a centred editorial moment right after
+ * the gallery — the one place the site speaks in a client's voice rather
+ * than Christopher's. It follows SelectedWork so "the piece" it praises has
+ * already been shown, rather than asking for trust in an artefact the
+ * visitor hasn't seen yet. Every other section sits on the left-aligned
  * grid, so the centring alone marks it as a held breath rather than a
- * section. Kept transparent so the hero-to-story wash runs through it.
+ * section. Kept transparent so the surrounding wash runs through it.
  *
  * The words settle in one after another, each sharpening from a soft blur —
  * ink drying on the page. Lite devices (touch, reduced-motion) get a single
