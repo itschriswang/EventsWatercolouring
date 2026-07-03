@@ -91,7 +91,7 @@ function DockButton({ item }) {
         'flex flex-col items-center justify-center gap-[3px] rounded-full select-none',
         'px-3 py-2.5',
         highlight
-          ? 'bg-lime text-ink px-3.5'
+          ? 'bg-terracotta text-paper px-3.5'
           : 'text-ink-soft',
       ].join(' ')}
       whileTap={{ scale: 0.86 }}

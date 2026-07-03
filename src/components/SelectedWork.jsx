@@ -1,33 +1,26 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
 import useFocusTrap from '../hooks/useFocusTrap.js'
-import useMediaQuery from '../hooks/useMediaQuery.js'
+import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset } from '../lib/site.js'
 import { WORK } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
 import BloomFilter from './WetBloom.jsx'
 
-// Every gallery entry gets a stable index up front. Several paintings reuse
-// the same source image (e.g. `art-bouquet` appears three times), so `_idx`
-// — not `item.img` — is what backs each tile's layoutId. Framer Motion
-// requires layoutId to be unique among simultaneously mounted elements; a
-// shared id across lookalike tiles breaks the projection system badly enough
-// that the affected images stop painting entirely, not just the morph.
-const GALLERY = WORK.gallery.map((g, i) => ({ ...g, _idx: i }))
-
-// Thumbnail-size options for the desktop wall — swapping the column count
-// (and the row height that keeps cells roughly square) reshuffles every
-// tile's size at once. `feature`/`wide` pieces keep their 2-track span
-// regardless, so they simply read as a bigger or smaller fraction of a
-// denser or looser wall. Mobile stays a fixed 2/3-column masonry, since
-// there isn't the width to spare for a size control there.
-const DENSITIES = [
-  { key: 'compact', label: 'Compact', cols: 9, row: '11vw', row2xl: '9.5rem' },
-  { key: 'comfortable', label: 'Standard', cols: 6, row: '16vw', row2xl: '14rem' },
-  { key: 'spacious', label: 'Spacious', cols: 4, row: '22vw', row2xl: '19rem' },
-]
+// Flatten the curated groups once, giving every entry a stable index. The
+// lightbox walks this flat list, and `_idx` (not `item.img`) backs each
+// tile's layoutId: Framer Motion requires layoutId to be unique among
+// mounted elements, and reused source images would otherwise collide.
+const GROUPS = WORK.groups.map((group) => ({ ...group, items: [...group.items] }))
+{
+  let idx = 0
+  for (const group of GROUPS) {
+    group.items = group.items.map((item) => ({ ...item, _idx: idx++ }))
+  }
+}
+const ALL_ITEMS = GROUPS.flatMap((g) => g.items)
 
 // Graceful fallback when an image fails to load: hide the broken <img> so the
 // paper-toned card remains instead of a broken-image glyph.
@@ -36,33 +29,23 @@ const hideOnError = (e) => {
 }
 
 /**
- * Selected work — a gallery wall driven entirely by `WORK.gallery` (see
- * content.js). The wall carries no captions: most tiles are a bare 3:4 portrait,
- * a `landscape` piece takes a wide 2×1 letterbox tile, and a tile flagged
- * `testimonial` takes that same wide shape but holds a client quote with its
- * attribution inside the card. Wide screens lay the pieces on a six-column grid
- * where any `feature` piece fills a larger 2-wide focus block; narrower screens
- * flow into a 2/3-column masonry. Tapping a painting opens it in a lightbox.
+ * Selected work — a curated wall driven by `WORK.groups` (see content.js).
+ * The wall reads as two rooms of one show: the pieces painted live at real
+ * weddings, then the studio studies, each row under its own small label so
+ * the two styles never blur into one pile. The reveal strip (drag between
+ * the easel shot and the finished keepsake) hangs at the end of the studio
+ * row. Tapping a painting opens it in the lightbox; testimonials (when
+ * added in content.js) slot into the rows as quote cards.
  */
 export default function SelectedWork() {
   // The openable paintings (testimonials are not enlargeable). The lightbox
   // walks this list, so navigation skips quote cards automatically.
-  const paintings = GALLERY.filter((g) => !g.testimonial)
+  const paintings = ALL_ITEMS.filter((g) => !g.testimonial)
 
-  // Only one of the two grid layouts is ever mounted at a time. Both grids
-  // used to render simultaneously (one hidden via CSS per breakpoint), which
-  // meant every tile had a second, invisible sibling sharing its layoutId —
-  // the same class of bug the reused-image case above causes.
+  // Only one of the two layouts is ever mounted at a time. Mounting both
+  // (one display:none per breakpoint) would give every tile an invisible
+  // twin sharing its layoutId, which breaks the lightbox morph.
   const isDesktop = useMediaQuery('(min-width: 1024px)')
-
-  // Which thumbnail size the desktop wall is showing. Resets to the default
-  // on reload rather than persisting — a lightweight view preference, not a
-  // setting worth remembering across visits.
-  const [density, setDensity] = useState('comfortable')
-  const activeDensity = useMemo(
-    () => DENSITIES.find((d) => d.key === density) ?? DENSITIES[1],
-    [density],
-  )
 
   // Index of the painting currently enlarged in the lightbox (null when closed).
   const [activeIndex, setActiveIndex] = useState(null)
@@ -86,12 +69,14 @@ export default function SelectedWork() {
     }
   }, [open])
 
+  const openItem = (item) => setActiveIndex(paintings.indexOf(item))
+
   return (
     <section id="work" className="relative w-full px-[5vw] py-[clamp(3rem,7vw,7rem)]">
       <div className="mx-auto max-w-[88rem]">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <Label gradient={['#C98B8C', '#C2613C']}>{WORK.label}</Label>
+            <Label gradient={['#C2613C', '#C9A23A']}>{WORK.label}</Label>
             <SplitText
               as="h2"
               unit="char"
@@ -101,85 +86,62 @@ export default function SelectedWork() {
               className="display-lg mt-5 text-ink"
             />
           </div>
-          <div className="flex max-w-xs flex-col items-start gap-4 sm:items-end">
-            <div>
-              <p className="font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
-                {WORK.note}
+          <div className="max-w-xs sm:text-right">
+            <p className="font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
+              {WORK.note}
+            </p>
+            {WORK.zoomHint && (
+              <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-rust">
+                {WORK.zoomHint}
               </p>
-              {WORK.zoomHint && (
-                <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-rust">
-                  {WORK.zoomHint}
-                </p>
-              )}
-            </div>
-
-            {/* Thumbnail size control — desktop wall only. */}
-            {isDesktop && (
-              <div
-                role="group"
-                aria-label="Gallery thumbnail size"
-                className="flex items-center gap-1 rounded-full border border-line bg-paper-deep/70 p-1 font-mono text-[0.58rem] uppercase tracking-[0.15em]"
-              >
-                {DENSITIES.map((d) => (
-                  <button
-                    key={d.key}
-                    type="button"
-                    onClick={() => setDensity(d.key)}
-                    aria-pressed={density === d.key}
-                    className={
-                      'rounded-full px-3 py-1.5 transition-colors duration-300 ' +
-                      (density === d.key
-                        ? 'bg-ink text-paper'
-                        : 'text-ink-soft hover:text-ink')
-                    }
-                  >
-                    {d.label}
-                  </button>
-                ))}
-              </div>
             )}
           </div>
         </div>
 
-        {/* Wide screens get a six-column wall of 3:4 portraits (`feature` pieces
-            fill a larger 2-wide focus block, dense flow tucks the rest in
-            around them); narrower screens get a 2/3-column masonry. Only one
-            of the two ever mounts — see the `isDesktop` note above. */}
-        {isDesktop ? (
-          <div
-            className="mt-[clamp(2rem,4vw,3.5rem)] grid auto-rows-[var(--gallery-row)] grid-cols-[repeat(var(--gallery-cols),minmax(0,1fr))] gap-x-[1.4vw] gap-y-5 [grid-auto-flow:dense] 2xl:auto-rows-[var(--gallery-row-2xl)]"
-            style={{
-              '--gallery-cols': activeDensity.cols,
-              '--gallery-row': activeDensity.row,
-              '--gallery-row-2xl': activeDensity.row2xl,
-            }}
-          >
-            {GALLERY.map((item) => (
-              <Tile
-                key={item._idx}
-                item={item}
-                reflow
-                onOpen={item.testimonial ? undefined : () => setActiveIndex(paintings.indexOf(item))}
-                className={
-                  item.feature              ? 'col-span-2 row-span-2'
-                  : item.wide || item.landscape ? 'col-span-2 row-span-1'
-                  :                           'col-span-1 row-span-1'
-                }
-              />
-            ))}
+        {GROUPS.map((group) => (
+          <div key={group.key} className="mt-[clamp(2.5rem,5vw,4rem)]">
+            {/* Room label — a quiet rule with the group's name, so the wall
+                reads as curated rooms rather than one mixed pile. */}
+            <div className="flex items-baseline gap-4">
+              <h3 className="shrink-0 font-mono text-[0.62rem] uppercase tracking-[0.24em] text-ink-soft">
+                {group.label}
+              </h3>
+              <span aria-hidden="true" className="h-px flex-1 self-center bg-line/80" />
+            </div>
+
+            {isDesktop ? (
+              <div className="mt-6 grid grid-cols-12 items-end gap-x-[1.4vw] gap-y-6">
+                {group.items.map((item) => (
+                  <Tile
+                    key={item._idx}
+                    item={item}
+                    onOpen={item.testimonial ? undefined : () => openItem(item)}
+                    className={item.landscape ? 'col-span-6' : 'col-span-3'}
+                  />
+                ))}
+                {group.key === 'studio' && WORK.reveal && (
+                  <RevealTile reveal={WORK.reveal} className="col-span-3" />
+                )}
+              </div>
+            ) : (
+              <>
+                <div className="mt-5 columns-2 gap-3">
+                  {group.items.map((item) => (
+                    <Tile
+                      key={item._idx}
+                      item={item}
+                      onOpen={item.testimonial ? undefined : () => openItem(item)}
+                      masonry
+                    />
+                  ))}
+                </div>
+                {group.key === 'studio' && WORK.reveal && (
+                  <RevealTile reveal={WORK.reveal} className="mx-auto mt-5 max-w-sm" />
+                )}
+              </>
+            )}
           </div>
-        ) : (
-          <div className="mt-[clamp(2rem,8vw,3rem)] columns-2 gap-3 sm:columns-3">
-            {GALLERY.map((item) => (
-              <Tile
-                key={item._idx}
-                item={item}
-                onOpen={item.testimonial ? undefined : () => setActiveIndex(paintings.indexOf(item))}
-                masonry
-              />
-            ))}
-          </div>
-        )}
+        ))}
       </div>
 
       <Lightbox
@@ -195,38 +157,34 @@ export default function SelectedWork() {
 /**
  * A single gallery tile, captionless. For paintings it is an image card and a
  * tap target that opens the lightbox; for a testimonial it is the same card
- * shape holding a quote. In the wide grid the surrounding cell sets the height,
- * so the contents fill it; in masonry the card keeps an explicit aspect — 3:4
- * upright, or 4:3 for a `landscape` piece.
+ * shape holding a quote. Landscape pieces take the wide slot in their row
+ * (3:2); everything else is an upright 3:4.
  */
-function Tile({ item, className = '', masonry = false, onOpen, reflow = false }) {
+function Tile({ item, className = '', masonry = false, onOpen }) {
   const reduce = useReducedMotion()
 
-  const cardShape =
-    'relative overflow-hidden rounded-[1rem] border border-line ' +
-    (masonry ? (item.landscape ? 'aspect-[4/3]' : 'aspect-[3/4]') : 'min-h-0 flex-1')
+  const aspect = masonry
+    ? item.landscape ? 'aspect-[4/3]' : 'aspect-[3/4]'
+    : item.landscape ? 'aspect-[3/2]' : 'aspect-[3/4]'
+  const cardShape = 'relative overflow-hidden rounded-[1rem] border border-line ' + aspect
 
   return (
     <motion.figure
-      // `layout` lets Framer Motion FLIP each tile into its new grid cell
-      // when the desktop thumbnail-size control changes the column count,
-      // instead of it just jumping.
-      layout={reflow && !reduce ? true : undefined}
       initial={{ opacity: 0, y: reduce ? 0 : 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
-      transition={{ ...SPRING, delay: reduce ? 0 : (item._idx % 6) * 0.05 }}
+      transition={{ ...SPRING, delay: reduce ? 0 : (item._idx % 4) * 0.05 }}
       className={
         'group flex flex-col ' +
-        (masonry ? 'mb-6 break-inside-avoid ' : '') +
+        (masonry ? 'mb-3 break-inside-avoid ' : '') +
         className
       }
     >
       {item.testimonial ? (
         <div className={cardShape + ' bg-paper-deep'}>
-          <CornerBloom from="rgba(201,162,58,0.14)" to="rgba(110,140,168,0.11)" />
+          <CornerBloom from="rgba(201,162,58,0.14)" to="rgba(228,136,156,0.11)" />
           <div className="relative z-10 flex h-full flex-col">
-            <Testimonial item={item} compact={!!item.wide} masonry={masonry} />
+            <Testimonial item={item} masonry={masonry} />
           </div>
         </div>
       ) : (
@@ -255,29 +213,27 @@ function Tile({ item, className = '', masonry = false, onOpen, reflow = false })
               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
             />
           </picture>
-          <CornerBloom from="rgba(194,97,60,0.14)" to="rgba(110,140,168,0.10)" overlay />
+          <CornerBloom from="rgba(194,97,60,0.14)" to="rgba(228,136,156,0.10)" overlay />
         </button>
       )}
     </motion.figure>
   )
 }
 
-/** The quote card body — fills the card shape and scales its type to fit.
- *  `compact` is true for wide (2-col, 1-row) tiles where vertical space is halved.
- *  `masonry` squeezes the open-quote mark and tightens the gap so the text fits the half-width 3:4 card. */
-function Testimonial({ item, compact = false, masonry = false }) {
+/** The quote card body — fills the card shape and scales its type to fit. */
+function Testimonial({ item, masonry = false }) {
   return (
     <blockquote
       className={
         'flex h-full flex-col justify-start p-[clamp(1.25rem,2vw,2rem)] ' +
-        (masonry ? 'gap-0' : compact ? 'gap-0.5' : 'gap-1')
+        (masonry ? 'gap-0' : 'gap-1')
       }
     >
       <span
         aria-hidden="true"
         className={
           'font-mono leading-none text-terracotta/60 ' +
-          (masonry ? 'text-xl' : compact ? 'text-4xl' : 'text-5xl')
+          (masonry ? 'text-xl' : 'text-4xl')
         }
       >
         &ldquo;
@@ -287,19 +243,16 @@ function Testimonial({ item, compact = false, masonry = false }) {
           'font-body font-normal leading-snug text-ink ' +
           (masonry
             ? 'text-[clamp(0.6rem,1.4vw,0.75rem)]'
-            : compact
-            ? 'text-[clamp(0.9rem,1.5vw,1.35rem)]'
-            : 'text-[clamp(0.95rem,1.4vw,1.4rem)]')
+            : 'text-[clamp(0.9rem,1.3vw,1.15rem)]')
         }
       >
         {item.quote}
       </p>
-      {/* Attribution lives inside the card now that the wall carries no captions. */}
       <footer className={'mt-auto ' + (masonry ? 'pt-2' : 'pt-4')}>
         <span
           className={
             'block font-mono leading-tight text-ink ' +
-            (masonry ? 'text-[0.7rem]' : compact ? 'text-[0.95rem]' : 'text-[1.05rem]')
+            (masonry ? 'text-[0.7rem]' : 'text-[0.95rem]')
           }
         >
           {item.author}
@@ -314,6 +267,145 @@ function Testimonial({ item, compact = false, masonry = false }) {
         </span>
       </footer>
     </blockquote>
+  )
+}
+
+/**
+ * RevealTile — the before/after strip. The finished keepsake sits over the
+ * easel shot, split by a draggable seam: drag (or arrow-key) the handle to
+ * wipe between the piece mid-making and the clean scan. Pure pointer events
+ * and a clip-path — no dependencies, cheap on mobile.
+ */
+function RevealTile({ reveal, className = '' }) {
+  const reduce = useReducedMotion()
+  const ref = useRef(null)
+  const [pct, setPct] = useState(55)
+  const [touched, setTouched] = useState(false)
+  const dragging = useRef(false)
+
+  const setFromClientX = useCallback((clientX) => {
+    const rect = ref.current?.getBoundingClientRect()
+    if (!rect || rect.width === 0) return
+    const next = ((clientX - rect.left) / rect.width) * 100
+    setPct(Math.min(96, Math.max(4, next)))
+  }, [])
+
+  const onPointerDown = (e) => {
+    dragging.current = true
+    setTouched(true)
+    e.currentTarget.setPointerCapture?.(e.pointerId)
+    setFromClientX(e.clientX)
+  }
+  const onPointerMove = (e) => {
+    if (dragging.current) setFromClientX(e.clientX)
+  }
+  const endDrag = () => {
+    dragging.current = false
+  }
+  const onKeyDown = (e) => {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+      setPct((p) => Math.max(4, p - 6))
+      setTouched(true)
+      e.preventDefault()
+    } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+      setPct((p) => Math.min(96, p + 6))
+      setTouched(true)
+      e.preventDefault()
+    }
+  }
+
+  return (
+    <motion.figure
+      initial={{ opacity: 0, y: reduce ? 0 : 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={SPRING}
+      className={'group flex flex-col ' + className}
+    >
+      <div
+        ref={ref}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+        className="relative aspect-[3/4] cursor-ew-resize touch-pan-y select-none overflow-hidden rounded-[1rem] border border-line bg-paper-deep"
+      >
+        {/* Base layer — the piece still on the easel */}
+        <picture>
+          <source srcSet={asset(`assets/${reveal.before.img}.webp`)} type="image/webp" />
+          <img
+            src={asset(`assets/${reveal.before.img}.${reveal.before.ext || 'jpg'}`)}
+            alt={reveal.before.alt}
+            loading="lazy"
+            draggable="false"
+            onError={hideOnError}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        </picture>
+
+        {/* Top layer — the finished keepsake on clean paper, clipped to the
+            left of the seam. clip-path only repaints the seam, so dragging
+            stays cheap even on phones. */}
+        <div
+          className="absolute inset-0 bg-paper"
+          style={{ clipPath: `inset(0 ${100 - pct}% 0 0)` }}
+        >
+          <div className="paper-grain absolute inset-0" />
+          <picture>
+            <source srcSet={asset(`assets/${reveal.after.img}.webp`)} type="image/webp" />
+            <img
+              src={asset(`assets/${reveal.after.img}.${reveal.after.ext || 'jpg'}`)}
+              alt={reveal.after.alt}
+              loading="lazy"
+              draggable="false"
+              onError={hideOnError}
+              className="absolute inset-0 h-full w-full object-contain p-[7%]"
+            />
+          </picture>
+        </div>
+
+        {/* Seam + handle */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 w-px bg-paper shadow-[0_0_8px_rgba(69,34,17,0.45)]"
+          style={{ left: `${pct}%` }}
+        />
+        <div
+          role="slider"
+          tabIndex={0}
+          aria-label={`${reveal.ttl}: drag between ${reveal.before.label.toLowerCase()} and ${reveal.after.label.toLowerCase()}`}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(pct)}
+          onKeyDown={onKeyDown}
+          className="absolute top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-terracotta font-mono text-[0.6rem] text-paper shadow-[0_2px_12px_rgba(115,46,17,0.40)] outline-none focus-visible:ring-2 focus-visible:ring-paper"
+          style={{ left: `${pct}%` }}
+        >
+          <span aria-hidden="true">↔</span>
+        </div>
+
+        {/* Corner labels */}
+        <span className="pointer-events-none absolute bottom-2 left-2 rounded-full bg-ink/55 px-2.5 py-1 font-mono text-[0.5rem] uppercase tracking-[0.16em] text-paper">
+          {reveal.after.label}
+        </span>
+        <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-ink/55 px-2.5 py-1 font-mono text-[0.5rem] uppercase tracking-[0.16em] text-paper">
+          {reveal.before.label}
+        </span>
+
+        {/* Hint — fades once the visitor has had a go */}
+        <AnimatePresence>
+          {!touched && (
+            <motion.span
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="pointer-events-none absolute left-1/2 top-3 -translate-x-1/2 rounded-full bg-ink/55 px-3 py-1 font-mono text-[0.52rem] uppercase tracking-[0.18em] text-paper"
+            >
+              {reveal.hint}
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.figure>
   )
 }
 
@@ -342,15 +434,20 @@ function NavControl({ label, onClick, className, children }) {
 /**
  * Lightbox — an overlay that grows the selected painting to fill the screen.
  * Walks the gallery with the on-screen arrows or the ← / → keys; closes on
- * backdrop click, the close button, or Escape. The image crossfades between
- * pieces. Honours reduced-motion by skipping the scale-in and crossfade.
+ * backdrop click, the close button, or Escape. Honours reduced-motion by
+ * skipping the scale-in and crossfade. The expensive dressing — backdrop
+ * blur, the blurred pigment glow, the wet-bloom SVG filter — is reserved for
+ * fine-pointer desktops (heavyFx): phones get a plain dark backdrop and the
+ * same shared-layout morph, which is transform-only and stays smooth.
  */
 function Lightbox({ items, index, onClose, onNavigate }) {
   const reduce = useReducedMotion()
+  const heavy = useHeavyFx()
   const open = index != null
   const item = open ? items[index] : null
   const trapRef = useFocusTrap(open, onClose)
   const many = items.length > 1
+  const dressed = heavy && !reduce
 
   // Left / right arrow keys walk the wall while the lightbox is open.
   useEffect(() => {
@@ -378,7 +475,10 @@ function Lightbox({ items, index, onClose, onNavigate }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
-          className="fixed inset-0 z-[120] flex items-center justify-center bg-ink/85 p-[5vw] backdrop-blur-sm"
+          className={
+            'fixed inset-0 z-[120] flex items-center justify-center p-[5vw] ' +
+            (dressed ? 'bg-ink/85 backdrop-blur-sm' : 'bg-ink/90')
+          }
         >
           <button
             type="button"
@@ -401,21 +501,22 @@ function Lightbox({ items, index, onClose, onNavigate }) {
           )}
 
           {/* A soft pigment glow blooms in behind the enlarged piece, like light
-              coming through cotton paper. Decorative, behind the image, screen-
-              blended so it lifts the dark backdrop warmly without competing with
-              the painting. Static (no fade) under reduced-motion. */}
-          <motion.div
-            aria-hidden="true"
-            initial={reduce ? { opacity: 0.6 } : { opacity: 0, scale: 0.92 }}
-            animate={{ opacity: reduce ? 0.6 : 0.7, scale: 1 }}
-            transition={reduce ? { duration: 0 } : { duration: 0.6, ease: [0.22, 0.61, 0.36, 1] }}
-            className="pointer-events-none absolute left-1/2 top-1/2 h-[125vmin] w-[125vmin] -translate-x-1/2 -translate-y-1/2 mix-blend-screen"
-            style={{
-              background:
-                'radial-gradient(circle at 50% 50%, rgba(194,97,60,0.42), rgba(228,136,156,0.2) 42%, transparent 72%)',
-              filter: 'blur(60px)',
-            }}
-          />
+              coming through cotton paper. Desktop-only: a viewport-sized blurred,
+              blended layer is exactly the kind of paint mobile GPUs choke on. */}
+          {dressed && (
+            <motion.div
+              aria-hidden="true"
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 0.7, scale: 1 }}
+              transition={{ duration: 0.6, ease: [0.22, 0.61, 0.36, 1] }}
+              className="pointer-events-none absolute left-1/2 top-1/2 h-[125vmin] w-[125vmin] -translate-x-1/2 -translate-y-1/2 mix-blend-screen"
+              style={{
+                background:
+                  'radial-gradient(circle at 50% 50%, rgba(194,97,60,0.42), rgba(228,136,156,0.2) 42%, transparent 72%)',
+                filter: 'blur(60px)',
+              }}
+            />
+          )}
 
           <motion.figure
             onClick={(e) => e.stopPropagation()}
@@ -427,8 +528,8 @@ function Lightbox({ items, index, onClose, onNavigate }) {
             transition={SPRING_SOFT}
             className="relative z-[1] flex max-h-full max-w-5xl flex-col items-center"
           >
-            {/* Keyed by index so each painting crossfades — and re-wicks through
-                the watercolour bloom — as you move along the wall. */}
+            {/* Keyed by index so each painting crossfades as you move along
+                the wall; the wet-bloom re-wick is desktop-only dressing. */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={index}
@@ -438,18 +539,18 @@ function Lightbox({ items, index, onClose, onNavigate }) {
                 transition={{ duration: 0.22 }}
                 className="relative block"
               >
-                {!reduce && <BloomFilter id={`wc-bloom-${index}`} />}
+                {dressed && <BloomFilter id={`wc-bloom-${index}`} />}
                 <picture className="block">
                   <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
                   {/* Shared-layout target: morphs from the gallery tile of the
-                      same painting, then settles through the pigment-bloom filter. */}
+                      same painting. */}
                   <motion.img
                     layoutId={reduce ? undefined : `work-${item._idx}`}
                     transition={SPRING_SOFT}
                     src={asset(`assets/${item.img}.jpg`)}
                     alt={item.alt || item.ttl}
                     onError={hideOnError}
-                    style={reduce ? undefined : { filter: `url(#wc-bloom-${index})` }}
+                    style={dressed ? { filter: `url(#wc-bloom-${index})` } : undefined}
                     className="max-h-[80vh] w-auto rounded-[1rem] object-contain shadow-[0_28px_60px_-10px_rgba(150,85,43,0.65)]"
                   />
                 </picture>
@@ -459,6 +560,11 @@ function Lightbox({ items, index, onClose, onNavigate }) {
               <span className="block font-sentient tracking-[-0.03em] text-lg text-paper">{item.ttl}</span>
               <span className="mt-0.5 block font-mono text-[0.6rem] uppercase tracking-[0.18em] text-paper/60">
                 {item.meta}
+                {item.venue && (
+                  <span className="text-paper/80">
+                    {'  ·  '}Painted live at {item.venue}
+                  </span>
+                )}
                 {many && (
                   <span className="text-paper/40">
                     {'  ·  '}

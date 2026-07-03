@@ -75,9 +75,11 @@
     letter-spacing: -0.02em;
   }
 
+  /* Instrument Serif ships in regular (400) only — heavier weights here
+     would just trigger faux-bold synthesis, which muddies the letterforms. */
   .display-lg {
     font-family: theme('fontFamily.sentient');
-    font-weight: 500;
+    font-weight: 400;
     font-size: clamp(2rem, 4vw, 4rem);
     line-height: 0.95;
     letter-spacing: -0.02em;
@@ -85,7 +87,7 @@
 
   .display-md {
     font-family: theme('fontFamily.sentient');
-    font-weight: 600;
+    font-weight: 400;
     font-size: clamp(1.5rem, 3.5vw, 3rem);
     line-height: 0.98;
     letter-spacing: -0.015em;

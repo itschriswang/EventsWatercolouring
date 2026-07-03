@@ -1,4 +1,4 @@
-import { useId, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label, { Drop } from './Label.jsx'
 import {
@@ -72,6 +72,24 @@ export default function EnquireForm() {
   const [invalidField, setInvalidField] = useState('')
   // Neutral, non-error guidance (e.g. when we hand off to the email client).
   const [notice, setNotice] = useState('')
+  // Message and package are controlled so the planner's "Enquire with these
+  // numbers" link can hand its slider values straight into the form.
+  const [message, setMessage] = useState('')
+  const [pkg, setPkg] = useState('')
+
+  // The planner (NightPlanner.jsx) dispatches this just before the anchor
+  // navigation lands here — prefill, but never overwrite words the visitor
+  // has already typed.
+  useEffect(() => {
+    const onPlanner = (e) => {
+      const { guests, hours } = e.detail || {}
+      if (!guests || !hours) return
+      setMessage((m) => m || `Planning around ${guests} guests, thinking ${hours} hours live.`)
+      setPkg((p) => p || (hours > 3 ? 'Live on the day, with add-ons' : 'Live on the day (base package)'))
+    }
+    window.addEventListener('ew:planner-enquire', onPlanner)
+    return () => window.removeEventListener('ew:planner-enquire', onPlanner)
+  }, [])
 
   // Focus the first field that failed validation so keyboard and screen-reader
   // users land on the problem instead of hunting for it.
@@ -134,11 +152,11 @@ export default function EnquireForm() {
   }
 
   return (
-    <section id="enquiry" className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(5rem,10vw,9rem)]">
+    <section id="enquiry" className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(3.5rem,7vw,6rem)]">
       <div className="grid grid-cols-12 gap-x-8 gap-y-12">
         <div className="relative col-span-12 lg:col-span-4">
           <Label>{ENQUIRY.label}</Label>
-          <h2 className="mt-5 font-sentient text-[clamp(2.25rem,5vw,4rem)] leading-[0.95] tracking-[-0.02em] text-ink">
+          <h2 className="display-lg mt-5 text-ink">
             {ENQUIRY.title[0]}
             <br />
             <em className="text-terracotta">{ENQUIRY.title[1]}</em>
@@ -313,6 +331,8 @@ export default function EnquireForm() {
                           <select
                             id="f-package"
                             name="package"
+                            value={pkg}
+                            onChange={(e) => setPkg(e.target.value)}
                             className="w-full appearance-none border-b border-ink/30 bg-transparent py-3 pr-8 text-ink outline-none transition-colors focus:border-terracotta"
                           >
                             <option value="">Choose one</option>
@@ -339,6 +359,8 @@ export default function EnquireForm() {
                           id="f-message"
                           name="message"
                           rows={4}
+                          value={message}
+                          onChange={(e) => setMessage(e.target.value)}
                           placeholder="Tell me a little about the day, and the people who matter most."
                           className="resize-none border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft/60 focus:border-terracotta"
                         />
@@ -413,10 +435,12 @@ function DecklePaper({ id }) {
             <feDisplacementMap in="SourceGraphic" in2="noise" scale="13" xChannelSelector="R" yChannelSelector="G" />
           </filter>
         </defs>
-        {/* backing sheet, peeking out below/right */}
-        <rect x="2%" y="2.6%" width="97%" height="97%" rx="3" fill="#D5CFC3" filter={`url(#${filterId})`} />
-        {/* front sheet — the writing surface */}
-        <rect x="0.6%" y="0.4%" width="97.4%" height="97.4%" rx="3" fill="#E7E5DF" filter={`url(#${filterId})`} />
+        {/* backing sheet, peeking out below/right — warm kraft, not grey */}
+        <rect x="2%" y="2.6%" width="97%" height="97%" rx="3" fill="#E4DAC6" filter={`url(#${filterId})`} />
+        {/* front sheet — the writing surface. A touch lighter and warmer than
+            the page behind it, so the card reads as its own bright sheet of
+            cotton laid on the table rather than a cold grey insert. */}
+        <rect x="0.6%" y="0.4%" width="97.4%" height="97.4%" rx="3" fill="#FAF6EC" filter={`url(#${filterId})`} />
       </svg>
     </div>
   )

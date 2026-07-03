@@ -18,10 +18,13 @@ export default function MagneticButton({
   // plain link.
   const { ref, style } = useMagnetic()
 
+  // Terracotta is the site's single action colour — every primary control
+  // (header pill, mobile dock highlight, this button) wears it, so "warm
+  // orange means act" only has to be learned once.
   const palette =
     variant === 'paper'
       ? 'bg-paper text-ink hover:bg-terracotta hover:text-paper'
-      : 'bg-ink text-paper hover:bg-terracotta'
+      : 'bg-terracotta text-paper hover:bg-rust'
 
   return (
     <motion.a
