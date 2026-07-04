@@ -57,7 +57,7 @@ export default function Packages() {
             {PACKAGES.base.title}
           </p>
           <p className="mt-3 flex items-baseline gap-2">
-            <span className="font-mono text-[0.6rem] uppercase tracking-[0.25em] text-ink-soft">
+            <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
               {PACKAGES.base.priceSmall}
             </span>
             <span className="font-mono text-[1.4rem] leading-none text-ink">

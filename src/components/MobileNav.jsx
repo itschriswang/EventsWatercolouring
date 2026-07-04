@@ -111,7 +111,9 @@ function DockButton({ item }) {
 
 // ─── Root export ──────────────────────────────────────────────────────────────
 
-export default function MobileNav({ revealed }) {
+// `enquireHref` mirrors SiteHeader: pages with their own reply card pass a
+// local anchor so the dock's Enquire stays on-page.
+export default function MobileNav({ revealed, enquireHref = ENQUIRE_HREF }) {
   return (
     <motion.div
       initial={{ y: 96, opacity: 0 }}
@@ -139,7 +141,10 @@ export default function MobileNav({ revealed }) {
         aria-label="Quick navigation"
       >
         {DOCK_ITEMS.map((item) => (
-          <DockButton key={item.id} item={item} />
+          <DockButton
+            key={item.id}
+            item={item.id === 'enquiry' ? { ...item, href: enquireHref } : item}
+          />
         ))}
       </nav>
     </motion.div>

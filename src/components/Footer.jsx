@@ -88,7 +88,7 @@ export default function Footer() {
             <InstagramIcon />
           </span>
           <span className="flex flex-col">
-            <span className="font-mono text-[0.6rem] uppercase tracking-[0.22em] text-paper/50">
+            <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-paper/50">
               Follow along
             </span>
             <span className="font-sentient text-xl tracking-[-0.01em] text-paper transition-colors duration-300 group-hover:text-terracotta sm:text-2xl">

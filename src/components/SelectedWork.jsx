@@ -103,7 +103,7 @@ export default function SelectedWork() {
             {/* Room label — a quiet rule with the group's name, so the wall
                 reads as curated rooms rather than one mixed pile. */}
             <div className="flex items-baseline gap-4">
-              <h3 className="shrink-0 font-mono text-[0.62rem] uppercase tracking-[0.24em] text-ink-soft">
+              <h3 className="shrink-0 font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
                 {group.label}
               </h3>
               <span aria-hidden="true" className="h-px flex-1 self-center bg-line/80" />
@@ -169,7 +169,7 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
   const aspect = masonry
     ? item.landscape ? 'aspect-[4/3]' : 'aspect-[3/4]'
     : item.landscape ? 'aspect-[3/2]' : 'aspect-[3/4]'
-  const cardShape = 'relative overflow-hidden rounded-[1rem] border border-line ' + aspect
+  const cardShape = 'relative overflow-hidden rounded-2xl border border-line ' + aspect
 
   return (
     <motion.figure
@@ -262,7 +262,7 @@ function Testimonial({ item, masonry = false }) {
         </span>
         <span
           className={
-            'mt-0.5 block font-mono uppercase tracking-[0.16em] text-ink-soft ' +
+            'mt-0.5 block font-mono uppercase tracking-[0.15em] text-ink-soft ' +
             (masonry ? 'text-[0.45rem]' : 'text-[0.55rem]')
           }
         >
@@ -331,7 +331,7 @@ function RevealTile({ reveal, className = '' }) {
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
-        className="relative aspect-[3/4] cursor-ew-resize touch-pan-y select-none overflow-hidden rounded-[1rem] border border-line bg-paper-deep"
+        className="relative aspect-[3/4] cursor-ew-resize touch-pan-y select-none overflow-hidden rounded-2xl border border-line bg-paper-deep"
       >
         {/* Base layer — the piece still on the easel */}
         <picture>
@@ -400,10 +400,10 @@ function RevealTile({ reveal, className = '' }) {
         </div>
 
         {/* Corner labels */}
-        <span className="pointer-events-none absolute bottom-2 left-2 rounded-full bg-ink/55 px-2.5 py-1 font-mono text-[0.5rem] uppercase tracking-[0.16em] text-paper">
+        <span className="pointer-events-none absolute bottom-2 left-2 rounded-full bg-ink/55 px-2.5 py-1 font-mono text-[0.5rem] uppercase tracking-[0.15em] text-paper">
           {reveal.after.label}
         </span>
-        <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-ink/55 px-2.5 py-1 font-mono text-[0.5rem] uppercase tracking-[0.16em] text-paper">
+        <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-ink/55 px-2.5 py-1 font-mono text-[0.5rem] uppercase tracking-[0.15em] text-paper">
           {reveal.before.label}
         </span>
 
@@ -566,7 +566,7 @@ function Lightbox({ items, index, onClose, onNavigate }) {
                     alt={item.alt || item.ttl}
                     onError={hideOnError}
                     style={dressed ? { filter: `url(#wc-bloom-${index})` } : undefined}
-                    className="max-h-[80vh] w-auto rounded-[1rem] object-contain shadow-[0_28px_60px_-10px_rgba(150,85,43,0.65)]"
+                    className="max-h-[80vh] w-auto rounded-2xl object-contain shadow-[0_28px_60px_-10px_rgba(150,85,43,0.65)]"
                   />
                 </picture>
               </motion.div>

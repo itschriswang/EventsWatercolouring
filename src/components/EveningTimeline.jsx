@@ -174,11 +174,11 @@ export default function EveningTimeline() {
                   <motion.div
                     whileHover={reduce ? {} : { y: -6 }}
                     transition={SPRING}
-                    className="group relative -mt-px flex-1 rounded-[1.1rem] border border-paper/15 bg-paper-deep/95 p-4 shadow-[0_10px_30px_-18px_rgba(69,34,17,0.58)] backdrop-blur-[1px] sm:p-5"
+                    className="group relative -mt-px flex-1 rounded-2xl border border-paper/15 bg-paper-deep/95 p-4 shadow-[0_10px_30px_-18px_rgba(69,34,17,0.58)] backdrop-blur-[1px] sm:p-5"
                   >
                     <span
                       aria-hidden="true"
-                      className="pointer-events-none absolute inset-0 rounded-[1.1rem] ring-1 ring-inset ring-terracotta/0 transition-colors duration-500 group-hover:ring-terracotta/30"
+                      className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-terracotta/0 transition-colors duration-500 group-hover:ring-terracotta/30"
                     />
                     <h3 className="relative font-mono text-[clamp(1.25rem,2.4vw,1.9rem)] leading-tight tracking-[-0.01em] text-ink">
                       {beat.title}
