@@ -31,7 +31,7 @@ export default function AboutMe() {
           {/* Left column: title + bio + signature + CTA */}
           <div className="relative col-span-12 sm:col-span-6 sm:col-start-1 lg:col-span-6 lg:col-start-1">
             <Sparkles variant="burst" className="absolute -top-4 right-0 h-14 w-14 text-terracotta/80" />
-            <Label gradient={['#C2613C', '#C9A23A']}>{PAINTER.label}</Label>
+            <Label gradient={['#FF5A3C', '#E0A81E']}>{PAINTER.label}</Label>
             <SplitText
               as="h2"
               unit="char"
@@ -76,7 +76,7 @@ export default function AboutMe() {
                 className="pointer-events-none absolute -left-5 -top-5 h-full w-full rounded-[2.25rem]"
                 style={{
                   background:
-                    'linear-gradient(145deg, rgba(201,139,140,0.55) 0%, rgba(194,97,60,0.50) 55%, rgba(201,162,58,0.42) 100%)',
+                    'linear-gradient(145deg, rgba(201,139,140,0.55) 0%, rgba(255,90,60,0.50) 55%, rgba(224,168,30,0.42) 100%)',
                   filter: 'blur(22px)',
                   mixBlendMode: 'multiply',
                 }}
@@ -85,7 +85,7 @@ export default function AboutMe() {
                 style={parallax ? { y } : {}}
                 className="relative overflow-hidden rounded-[1.75rem] border border-line bg-paper-deep"
               >
-                <CornerBloom from="rgba(194,97,60,0.15)" to="rgba(228,136,156,0.11)" overlay />
+                <CornerBloom from="rgba(255,90,60,0.15)" to="rgba(228,136,156,0.11)" overlay />
                 <div className="relative z-10">
                   <picture>
                     <source srcSet={asset(PAINTER.portraitWebp)} type="image/webp" />
