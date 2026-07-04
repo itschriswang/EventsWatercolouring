@@ -29,16 +29,15 @@ export function flurryWillPlay() {
   return !shouldSkip()
 }
 
-const DURATION = 3 // seconds, the whole flourish
-const LAND_START = 0.5 // when survivors peel off the swirl toward the hero slots
-const LAND_T = 0.84 // when the first survivor arrives
-const LAND_STAGGER = 0.06 // the second survivor lands a beat later
+const DURATION = 2.7 // seconds — one flowing pass
+const LAND_T = 0.62 // when the first survivor arrives on its card (near the apex)
+const LAND_STAGGER = 0.05 // the second survivor lands a beat later
 
 // When (seconds after reveal) each real hero card should fade in beneath its
 // survivor as it lands, so the flying card resolves into the settled card. One
 // per survivor, staggered — imported by Hero to time the two card entrances
 // (and their wet-bloom wicks) to the exact landings.
-export const handoffDelay = (n) => DURATION * (LAND_T + n * LAND_STAGGER) - 0.15
+export const handoffDelay = (n) => DURATION * (LAND_T + n * LAND_STAGGER) - 0.12
 export const FLURRY_HANDOFF_DELAY = handoffDelay(0)
 export const FLURRY_HANDOFF_DELAY_2 = handoffDelay(1)
 
@@ -69,34 +68,72 @@ const rand = (i) => {
 const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v)
 const lerp = (a, b, t) => a + (b - a) * t
 const smooth = (t) => t * t * (3 - 2 * t) // smoothstep
-const easeOut = (t) => 1 - (1 - t) * (1 - t)
-const easeIn = (t) => t * t
-const entrance = (t) => Math.min(1, t / 0.12)
-const exit = (t) => (t < 0.74 ? 1 : Math.max(0, 1 - (t - 0.74) / 0.26))
-// Dispersing cards hold their swirl, then in the back half sink and fan out
-// toward the bottom-left and bottom-right edges.
-const disperse = (t) => (t < 0.48 ? 0 : easeIn((t - 0.48) / 0.52))
 
-// A warm paper veil that thickens on far cards, so the cylinder recedes into
+// The flow, as waypoints [x, y, depth] in viewport fractions (depth 1 = near /
+// front, 0 = far / back). One elegant pass: enter bottom-left, rise to the
+// top-right apex where the hero cards sit, wrap around the back to centre, then
+// sink and leave toward the gallery below. Two proportions — a wide arc biased
+// to the right on landscape (headline keeps the left), a taller full-width loop
+// on phones (the cards live up top).
+const FLOW_DESKTOP = [
+  [0.1, 0.92, 0.5],
+  [0.4, 0.74, 0.85],
+  [0.7, 0.5, 1.0],
+  [0.9, 0.3, 0.92], // apex — top-right, near the hero cluster
+  [0.74, 0.32, 0.55],
+  [0.56, 0.46, 0.32],
+  [0.6, 0.74, 0.3],
+  [0.66, 1.12, 0.24],
+]
+const FLOW_MOBILE = [
+  [0.08, 0.9, 0.5],
+  [0.3, 0.66, 0.82],
+  [0.58, 0.4, 0.96],
+  [0.82, 0.18, 1.0], // apex — top, where the pair of cards sit
+  [0.55, 0.24, 0.55],
+  [0.4, 0.44, 0.32],
+  [0.48, 0.72, 0.3],
+  [0.52, 1.12, 0.24],
+]
+const APEX_U = 3 / 7 // the apex sits at waypoint 3 of 0…7
+
+// Uniform Catmull-Rom through pts (each [x,y,d]); u in [0,1] → interpolated
+// [x,y,d], for a smooth flowing curve through the waypoints.
+const spline = (pts, u) => {
+  const n = pts.length - 1
+  const seg = Math.min(Math.floor(u * n), n - 1)
+  const lt = u * n - seg
+  const p0 = pts[Math.max(0, seg - 1)]
+  const p1 = pts[seg]
+  const p2 = pts[seg + 1]
+  const p3 = pts[Math.min(n, seg + 2)]
+  const lt2 = lt * lt
+  const lt3 = lt2 * lt
+  const cr = (a, b, c, d) =>
+    0.5 * (2 * b + (-a + c) * lt + (2 * a - 5 * b + 4 * c - d) * lt2 + (-a + 3 * b - 3 * c + d) * lt3)
+  return [cr(p0[0], p1[0], p2[0], p3[0]), cr(p0[1], p1[1], p2[1], p3[1]), cr(p0[2], p1[2], p2[2], p3[2])]
+}
+
+// A warm paper veil that thickens on far cards, so the current recedes into
 // the page's own ground — atmospheric depth, not a grey haze.
 const HAZE = 'rgb(245, 238, 227)'
 
 /**
  * HeroFlurry — the load flourish. On the first arrival of a session the body of
- * work swirls through an angled cylinder low across the screen: pieces travel a
- * circular path in depth but always face the camera, upright. Depth reads three
- * ways — size, layering, and a warm atmospheric veil on the far pieces — and on
- * a fine pointer the whole cloud parallaxes to the cursor, near pieces sliding
- * further than far, so the volume is felt, not just implied.
+ * work sweeps across the lower screen in one quick pass: pieces enter off the
+ * bottom-left, glide over a gentle arc and leave off the bottom-right, always
+ * facing the camera, upright. Depth reads three ways — size, layering, and a
+ * warm atmospheric veil on the far pieces — and on a fine pointer the whole
+ * current parallaxes to the cursor, near pieces sliding further than far.
  *
- * Most pieces sink and tumble out toward the bottom corners and fade. Two — the
- * character and the bouquet — instead peel off the swirl and fly to the exact
- * measured boxes of the hero's own two cards (measured from the images, so they
- * land square on them), where the real cards bloom in wet beneath: the flying
- * studies *become* the hero cards.
+ * The current passes on and leaves. Two pieces — the character and the bouquet —
+ * instead lift out of it and settle onto the exact measured boxes of the hero's
+ * own two cards (measured from the images, so they land square on them), where
+ * the real cards bloom in wet beneath: the flying studies *become* the hero
+ * cards.
  *
  * Runs on every device (transform + opacity only) but yields entirely to
- * reduced-motion. Mounts once, plays ~3.5s, then unmounts.
+ * reduced-motion. Mounts once, plays ~2.9s, then unmounts.
  *
  * @param {{ref: React.RefObject<HTMLElement>, img: string, tilt: number}[]} heroTargets
  *   The hero cards to land on — a ref to each card's image, its source, and its
@@ -163,7 +200,7 @@ export default function HeroFlurry({ heroTargets = [] }) {
     }
   }, [skip, reduce, isMobile, vp])
 
-  const count = isMobile ? 8 : 12
+  const count = isMobile ? 9 : 14
 
   // Precompute each card's whole path as sampled keyframe arrays so the run is a
   // plain transform/opacity animation.
@@ -175,44 +212,24 @@ export default function HeroFlurry({ heroTargets = [] }) {
 
     const anchorX = W * 0.5
     const anchorY = H * 0.5
-    const cx = W * 0.5
-    const cy = H * (isMobile ? 0.6 : 0.58)
-
-    // The cylinder axis, tilted a few degrees off horizontal — the angled tube
-    // running bottom-left to bottom-right.
-    const axisRad = (isMobile ? -6 : -8) * (Math.PI / 180)
-    const ax = Math.cos(axisRad)
-    const ay = Math.sin(axisRad)
-    const perpX = -ay
-    const perpY = ax
-
-    const AL = W * (isMobile ? 0.42 : 0.46)
-    const RV = H * (isMobile ? 0.2 : 0.24)
-    const FALL = H * 0.55
-    const SPIN = Math.PI * 2 * (isMobile ? 1.0 : 1.15)
+    const flow = isMobile ? FLOW_MOBILE : FLOW_DESKTOP
 
     const cardW = isMobile
       ? Math.min(150, Math.max(84, vmin * 0.3))
       : Math.min(158, Math.max(100, vmin * 0.15))
 
-    // Shared swirl geometry for a card at index i and time t.
-    const swirl = (i, t) => {
-      const angle0 = (i / count) * Math.PI * 2 + (rand(i + 2) - 0.5) * 0.9
-      const rv = RV * (0.7 + rand(i + 6) * 0.6)
-      const a = angle0 + SPIN * easeOut(t)
-      return { cosA: Math.cos(a), depth: Math.sin(a), rv }
-    }
-
     const build = []
 
-    // The dispersing crowd, drawn from the live gallery pool.
+    // The current — a ribbon of gallery pieces strung along the flow, each one
+    // offset in time so they stream through the arc rather than move as a block.
     for (let i = 0; i < count; i++) {
-      const u0 = ((i / (count - 1)) * 2 - 1) * (0.6 + rand(i + 1) * 0.5)
-      const sizeVar = 0.82 + rand(i + 5) * 0.42
-      const tilt = (rand(i + 9) - 0.5) * 9
-      const drift = (rand(i + 11) - 0.5) * 46 // tumble as it falls
-      const fallK = 0.75 + rand(i + 8) * 0.6 // varied fall speed
-      const startDelay = rand(i + 4) * 0.08
+      const off = (i / count) * 0.62 // its place along the ribbon (streamed in)
+      const travel = 0.42 + rand(i + 2) * 0.12
+      const laneX = (rand(i + 7) - 0.5) * 0.11 * W // scatter off the spine
+      const laneY = (rand(i + 8) - 0.5) * 0.08 * H
+      const sizeVar = 0.82 + rand(i + 5) * 0.36
+      const tilt = (rand(i + 9) - 0.5) * 10
+      const lean = (rand(i + 12) - 0.5) * 18 // slight lean shift along the flow
       const xs = []
       const ys = []
       const ss = []
@@ -224,39 +241,40 @@ export default function HeroFlurry({ heroTargets = [] }) {
       for (let k = 0; k < K; k++) {
         const t = k / (K - 1)
         times.push(t)
-        const { cosA, depth, rv } = swirl(i, t)
-        const spread = disperse(t)
-        const along = u0 * (1 + 1.5 * spread)
-        const px = cx + ax * (along * AL) + perpX * (cosA * rv)
-        const py = cy + ay * (along * AL) + perpY * (cosA * rv) + FALL * fallK * spread
-        const near = (depth + 1) / 2
-        xs.push(Math.round(px - anchorX))
-        ys.push(Math.round(py - anchorY))
-        ss.push(+(sizeVar * (0.58 + 0.62 * near)).toFixed(3))
+        const s = clamp01((t - off) / travel)
+        const u = smooth(s)
+        const [fx, fy, fd] = spline(flow, u)
+        const near = clamp01(fd)
+        xs.push(Math.round(fx * W + laneX - anchorX))
+        ys.push(Math.round(fy * H + laneY - anchorY))
+        ss.push(+((0.46 + 0.62 * near) * sizeVar).toFixed(3))
         zs.push(Math.round(near * 1000))
-        rs.push(+(tilt + drift * spread).toFixed(2))
-        hz.push(+((1 - near) * 0.55).toFixed(3))
-        const fade = Math.max(0, entrance(t) - (1 - exit(t)))
-        os.push(+(fade * (0.7 + 0.3 * near)).toFixed(3))
+        rs.push(+(tilt + lean * u).toFixed(2))
+        hz.push(+((1 - near) * 0.5).toFixed(3))
+        // Fade up as it enters, out as it sinks away at the end.
+        const op = Math.min(1, s / 0.1) * (s < 0.9 ? 1 : Math.max(0, 1 - (s - 0.9) / 0.1))
+        os.push(+op.toFixed(3))
       }
       build.push({
         img: GALLERY_POOL[(i * 3) % GALLERY_POOL.length],
         ar: '3 / 4',
         pw: 1, // parallax weight — the crowd reacts to the cursor
-        xs, ys, ss, os, zs, rs, hz, times, cardW, startDelay,
+        xs, ys, ss, os, zs, rs, hz, times, cardW, startDelay: 0,
       })
     }
 
-    // The survivors — one per measured hero card. They swirl among the crowd,
-    // then peel off and home in on their card's image box, growing to match.
+    // The survivors — one per measured hero card. They ride the flow up toward
+    // the apex, then in the final stretch settle onto their card's image box,
+    // growing to match: the two chosen pieces lift out of the current.
     ;(targets || []).forEach((tg, n) => {
       if (!tg) return
       const i = count + n
       const tilt = (rand(i + 9) - 0.5) * 8
       const tScale = tg.w / cardW
-      const landStart = LAND_START + n * LAND_STAGGER
       const landT = LAND_T + n * LAND_STAGGER
+      const peelStart = landT * 0.72
       const fadeStart = landT + 0.02
+      const laneX = (rand(i + 7) - 0.5) * 0.05 * W
       const xs = []
       const ys = []
       const ss = []
@@ -268,21 +286,22 @@ export default function HeroFlurry({ heroTargets = [] }) {
       for (let k = 0; k < K; k++) {
         const t = k / (K - 1)
         times.push(t)
-        const { cosA, depth, rv } = swirl(i, t)
-        const near = (depth + 1) / 2
-        const swx = cx + perpX * (cosA * rv) + ax * (rand(i + 1) - 0.5) * AL * 1.1
-        const swy = cy + perpY * (cosA * rv) + ay * (rand(i + 1) - 0.5) * AL * 1.1
-        const swScale = 0.6 + 0.55 * near
-        const w = smooth(clamp01((t - landStart) / (landT - landStart)))
-        // Clean homing on position; a small settle-overshoot on scale only.
+        // Ride the flow up to the apex by landT…
+        const u = smooth(clamp01(t / landT)) * APEX_U
+        const [fx, fy, fd] = spline(flow, u)
+        const pathX = fx * W + laneX
+        const pathY = fy * H
+        const pathScale = 0.5 + 0.6 * clamp01(fd)
+        // …then home onto the card in the final stretch.
+        const w = smooth(clamp01((t - peelStart) / (landT - peelStart)))
         const bump = Math.max(0, 1 - Math.abs((t - landT) / 0.06))
-        xs.push(Math.round(lerp(swx, tg.cx, w) - anchorX))
-        ys.push(Math.round(lerp(swy, tg.cy, w) - anchorY))
-        ss.push(+(lerp(swScale, tScale, w) * (1 + 0.045 * bump)).toFixed(3))
+        xs.push(Math.round(lerp(pathX, tg.cx, w) - anchorX))
+        ys.push(Math.round(lerp(pathY, tg.cy, w) - anchorY))
+        ss.push(+(lerp(pathScale, tScale, w) * (1 + 0.045 * bump)).toFixed(3))
         rs.push(+lerp(tilt, tg.tilt, w).toFixed(2))
         zs.push(1600) // above the crowd — these are the chosen pieces
-        hz.push(+((1 - near) * 0.4 * (1 - w)).toFixed(3))
-        const fin = Math.min(1, t / 0.1)
+        hz.push(0)
+        const fin = Math.min(1, t / 0.08)
         const fout = t < fadeStart ? 1 : Math.max(0, 1 - (t - fadeStart) / 0.1)
         os.push(+(fin * fout).toFixed(3))
       }
