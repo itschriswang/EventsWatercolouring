@@ -91,9 +91,9 @@ export default function Preloader({ onDone }) {
 function Bloom({ active, reduce }) {
   const blobs = [
     { c: '#FF2E80', x: 0,   y: 0,   s: 1 },
-    { c: '#FF7A1A', x: -22, y: 14,  s: 0.78 },
-    { c: '#0E86A0', x: 20,  y: 18,  s: 0.7 },
-    { c: '#C6F04A', x: 14,  y: -20, s: 0.6 },
+    { c: '#E8722A', x: -22, y: 14,  s: 0.78 },
+    { c: '#2B7E8C', x: 20,  y: 18,  s: 0.7 },
+    { c: '#B8D952', x: 14,  y: -20, s: 0.6 },
     { c: '#E4889C', x: -16, y: -16, s: 0.66 },
   ]
   return (

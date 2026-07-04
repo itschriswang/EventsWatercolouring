@@ -18,15 +18,15 @@
    of how tall the section behind it is. */
 .wcb-static {
   background-image:
-    radial-gradient(circle 34vw at 16% 26%, rgba(255, 90, 60, 0.20), transparent 72%),
-    radial-gradient(circle 28vw at 88% 14%, rgba(224, 168, 30, 0.18), transparent 72%),
+    radial-gradient(circle 34vw at 16% 26%, rgba(201, 139, 140, 0.20), transparent 72%),
+    radial-gradient(circle 28vw at 88% 14%, rgba(212, 161, 46, 0.18), transparent 72%),
     radial-gradient(circle 32vw at 85% 84%, rgba(228, 136, 156, 0.16), transparent 72%),
     radial-gradient(circle 29vw at 8% 88%, rgba(201, 139, 140, 0.15), transparent 72%),
     radial-gradient(circle 27vw at 62% 8%, rgba(174, 191, 86, 0.13), transparent 72%),
     radial-gradient(circle 30vw at 99% 50%, rgba(110, 140, 168, 0.14), transparent 72%),
     radial-gradient(circle 24vw at 36% 52%, rgba(164, 80, 47, 0.14), transparent 74%),
     radial-gradient(circle 22vw at 45% 96%, rgba(174, 191, 86, 0.14), transparent 74%),
-    radial-gradient(circle 20vw at 68% 42%, rgba(224, 168, 30, 0.11), transparent 74%);
+    radial-gradient(circle 20vw at 68% 42%, rgba(212, 161, 46, 0.11), transparent 74%);
 }
 
 /* Warmer recipe for sections sitting on the deeper `paper-deep` ground
@@ -35,11 +35,11 @@
    the darker base into a muddy grey. */
 .wcb-warm {
   background-image:
-    radial-gradient(circle 32vw at 14% 20%, rgba(255, 90, 60, 0.18), transparent 72%),
+    radial-gradient(circle 32vw at 14% 20%, rgba(201, 139, 140, 0.18), transparent 72%),
     radial-gradient(circle 30vw at 90% 12%, rgba(174, 191, 86, 0.20), transparent 72%),
     radial-gradient(circle 30vw at 86% 86%, rgba(228, 136, 156, 0.15), transparent 72%),
-    radial-gradient(circle 26vw at 6% 86%, rgba(224, 168, 30, 0.18), transparent 72%),
+    radial-gradient(circle 26vw at 6% 86%, rgba(212, 161, 46, 0.18), transparent 72%),
     radial-gradient(circle 24vw at 60% 6%, rgba(174, 191, 86, 0.14), transparent 72%),
-    radial-gradient(circle 22vw at 40% 98%, rgba(255, 90, 60, 0.13), transparent 74%),
-    radial-gradient(circle 20vw at 70% 46%, rgba(224, 168, 30, 0.12), transparent 74%);
+    radial-gradient(circle 22vw at 40% 98%, rgba(201, 139, 140, 0.13), transparent 74%),
+    radial-gradient(circle 20vw at 70% 46%, rgba(212, 161, 46, 0.12), transparent 74%);
 }
