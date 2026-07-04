@@ -148,7 +148,7 @@ export default function Hero({ revealed }) {
                 bottom: '0vmin',
                 width: '63vmin',
                 height: '53vmin',
-                background: 'radial-gradient(circle at 55% 55%, #e4889c, transparent 65%)',
+                background: 'radial-gradient(circle at 55% 55%, #E4889C, transparent 65%)',
                 filter: 'blur(60px)',
                 opacity: 0.32,
                 mixBlendMode: 'hard-light',
@@ -182,7 +182,7 @@ export default function Hero({ revealed }) {
           aria-hidden="true"
           className="block h-px w-5 shrink-0 bg-lime opacity-60"
         />
-        <span className="font-mono text-[0.59rem] uppercase tracking-[0.26em] text-ink-soft">
+        <span className="font-mono text-[0.59rem] uppercase tracking-[0.3em] text-ink-soft">
           Live event watercolour keepsakes
         </span>
       </motion.div>
@@ -225,7 +225,7 @@ export default function Hero({ revealed }) {
             <div className="mt-7 flex flex-wrap items-center gap-5 sm:mt-8">
               <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
             </div>
-            <p className="mt-4 font-mono text-[0.6rem] uppercase tracking-[0.22em] text-ink-soft/85">
+            <p className="mt-4 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft/85">
               {HERO.note}
             </p>
           </motion.div>
