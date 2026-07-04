@@ -8,6 +8,7 @@ import './WatercolourBloom.css'
  * recompositing, no continuous animation, so it never touches the frame
  * budget while scrolling.
  */
-export default function WatercolourBloom({ className = '' }) {
-  return <div aria-hidden="true" className={`wcb-root wcb-static ${className}`} />
+export default function WatercolourBloom({ className = '', variant = 'default' }) {
+  const recipe = variant === 'warm' ? 'wcb-warm' : 'wcb-static'
+  return <div aria-hidden="true" className={`wcb-root ${recipe} ${className}`} />
 }

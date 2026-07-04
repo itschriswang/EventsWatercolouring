@@ -18,11 +18,62 @@ const STROKES = [
   { d: 'M79 61Q81.6 66 83.8 72', delay: 0.48 },
 ]
 
-export default function Sparkles({ className = '', delay = 0 }) {
+// A second, chunkier mark for variety — a filled four-point "asteroid" star
+// (the classic ✦ sparkle silhouette) paired with one small stray twinkle tick,
+// so a burst still reads as part of the same hand-drawn family rather than a
+// stock icon. Scales/fades in rather than drawing a stroke, since it's a
+// filled shape, not a line.
+const BURST_STAR =
+  'M50 4C52.5 27 56 41 61 46C66 51 80 54.5 96 57C80 59.5 66 63 61 68C56 73 52.5 87 50 110C47.5 87 44 73 39 68C34 63 20 59.5 4 57C20 54.5 34 51 39 46C44 41 47.5 27 50 4Z'
+const BURST_TICK = { d: 'M78 20Q80.4 25.4 82.9 31.6', delay: 0.3 }
+
+export default function Sparkles({ className = '', delay = 0, variant = 'twinkle' }) {
   const reduce = useReducedMotion()
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-10% 0px' })
   const drawn = reduce || inView
+
+  if (variant === 'burst') {
+    return (
+      <svg
+        ref={ref}
+        aria-hidden="true"
+        viewBox="0 0 100 114"
+        fill="none"
+        className={'pointer-events-none ' + className}
+      >
+        <motion.path
+          d={BURST_STAR}
+          fill="currentColor"
+          initial={false}
+          animate={
+            drawn
+              ? { scale: 1, opacity: 1, rotate: 0 }
+              : { scale: 0.35, opacity: 0, rotate: -18 }
+          }
+          transition={
+            reduce
+              ? { duration: 0 }
+              : { type: 'spring', stiffness: 210, damping: 14, delay }
+          }
+          style={{ transformOrigin: '50px 57px' }}
+        />
+        <motion.path
+          d={BURST_TICK.d}
+          stroke="currentColor"
+          strokeWidth="5.5"
+          strokeLinecap="round"
+          initial={false}
+          animate={{ pathLength: drawn ? 1 : 0, opacity: drawn ? 1 : 0 }}
+          transition={
+            reduce
+              ? { duration: 0 }
+              : { duration: 0.35, delay: delay + BURST_TICK.delay, ease: [0.65, 0, 0.35, 1] }
+          }
+        />
+      </svg>
+    )
+  }
 
   return (
     <svg
