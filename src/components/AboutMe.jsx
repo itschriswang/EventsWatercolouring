@@ -30,7 +30,7 @@ export default function AboutMe() {
         <div className="grid grid-cols-12 items-start gap-x-8 gap-y-8">
           {/* Left column: title + bio + signature + CTA */}
           <div className="relative col-span-12 sm:col-span-6 sm:col-start-1 lg:col-span-6 lg:col-start-1">
-            <Sparkles className="absolute -top-4 right-0 h-14 w-14 text-terracotta/80" />
+            <Sparkles variant="burst" className="absolute -top-4 right-0 h-14 w-14 text-terracotta/80" />
             <Label gradient={['#C2613C', '#C9A23A']}>{PAINTER.label}</Label>
             <SplitText
               as="h2"
@@ -71,7 +71,7 @@ export default function AboutMe() {
                   itself slowly turns rather than sitting static. */}
               <div
                 aria-hidden="true"
-                className="gradient-frame absolute -left-4 -top-4 h-full w-full rounded-[1.2rem]"
+                className="gradient-frame absolute -left-4 -top-4 h-full w-full rounded-[1.75rem]"
                 style={{
                   background: 'linear-gradient(var(--gf-angle), #C98B8C 0%, #C2613C 100%)',
                   padding: '1px',
@@ -79,7 +79,7 @@ export default function AboutMe() {
               />
               <motion.div
                 style={parallax ? { y } : {}}
-                className="relative overflow-hidden rounded-[1.2rem] border border-line bg-paper-deep"
+                className="relative overflow-hidden rounded-[1.75rem] border border-line bg-paper-deep"
               >
                 <CornerBloom from="rgba(194,97,60,0.15)" to="rgba(228,136,156,0.11)" overlay />
                 <div className="relative z-10">
@@ -114,7 +114,7 @@ export default function AboutMe() {
                     height="685"
                     loading="lazy"
                     decoding="async"
-                    className="pointer-events-none absolute bottom-0 right-0 z-20 w-[58%]"
+                    className="pointer-events-none absolute bottom-0 right-0 z-20 w-[70%]"
                     style={{ filter: 'drop-shadow(0 6px 14px rgba(115,46,17,0.30))' }}
                   />
                 </picture>
