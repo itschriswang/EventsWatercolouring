@@ -70,6 +70,7 @@ export default function PullQuote() {
         >
           &ldquo;
           <Sparkles
+            variant="burst"
             delay={0.25}
             className="absolute -right-11 -top-3 h-8 w-8 text-ochre/90"
           />

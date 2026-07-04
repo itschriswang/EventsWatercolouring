@@ -9,7 +9,7 @@ import WatercolourBloom from './WatercolourBloom.jsx'
  * into whatever comes immediately before (e.g. carrying the hero's paper
  * tone down into the next section so there's no visible seam).
  */
-export default function SectionWash({ mask, seamGradient, children }) {
+export default function SectionWash({ mask, seamGradient, variant, children }) {
   return (
     <div className="relative overflow-visible">
       <div
@@ -20,7 +20,7 @@ export default function SectionWash({ mask, seamGradient, children }) {
           ...(mask ? { WebkitMaskImage: mask, maskImage: mask } : {}),
         }}
       >
-        <WatercolourBloom />
+        <WatercolourBloom variant={variant} />
       </div>
       {seamGradient && (
         <div
