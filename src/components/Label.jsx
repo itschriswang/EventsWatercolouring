@@ -1,6 +1,6 @@
 import { useId } from 'react'
 
-export function Drop({ className = '', fill = '#FF5A3C', gradient }) {
+export function Drop({ className = '', fill = '#C98B8C', gradient }) {
   const uid = useId()
   const maskId = `orchid-mask-${uid.replace(/:/g, '')}`
   const gradId = `orchid-grad-${uid.replace(/:/g, '')}`

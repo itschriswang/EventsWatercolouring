@@ -108,12 +108,12 @@ export default function Hero({ revealed }) {
         className="pointer-events-none absolute inset-0 z-0"
         style={{
           backgroundImage:
-            'radial-gradient(38% 32% at 16% 26%, rgba(255, 90, 60, 0.16), transparent 72%), ' +
-            'radial-gradient(30% 26% at 88% 14%, rgba(224, 168, 30, 0.15), transparent 72%), ' +
+            'radial-gradient(38% 32% at 16% 26%, rgba(201, 139, 140, 0.16), transparent 72%), ' +
+            'radial-gradient(30% 26% at 88% 14%, rgba(212, 161, 46, 0.15), transparent 72%), ' +
             'radial-gradient(34% 30% at 85% 84%, rgba(228, 136, 156, 0.13), transparent 72%), ' +
             'radial-gradient(30% 28% at 8% 88%, rgba(201, 139, 140, 0.12), transparent 72%), ' +
-            'radial-gradient(30% 26% at 62% 8%, rgba(224, 168, 30, 0.10), transparent 72%), ' +
-            'radial-gradient(32% 28% at 99% 50%, rgba(255, 122, 26, 0.09), transparent 72%), ' +
+            'radial-gradient(30% 26% at 62% 8%, rgba(212, 161, 46, 0.10), transparent 72%), ' +
+            'radial-gradient(32% 28% at 99% 50%, rgba(232, 114, 42, 0.09), transparent 72%), ' +
             'radial-gradient(26% 24% at 36% 52%, rgba(164, 80, 47, 0.10), transparent 74%)',
         }}
       />
@@ -289,7 +289,7 @@ export default function Hero({ revealed }) {
                   whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(173,98,49,0.30),0_6px_16px_-6px_rgba(173,98,49,0.12)]"
                 >
-                  <CornerBloom from="rgba(255,90,60,0.16)" to="rgba(228,136,156,0.12)" overlay />
+                  <CornerBloom from="rgba(201,139,140,0.16)" to="rgba(228,136,156,0.12)" overlay />
                   {wick && (
                     <BloomFilter
                       id="hero-wick-2"

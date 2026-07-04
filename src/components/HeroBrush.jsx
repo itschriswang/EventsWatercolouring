@@ -46,10 +46,10 @@ const FRAG = `
 
   // Warm hero pigments only — terracotta, rose, ochre, orange, blush.
   vec3 pigment(float s){
-    vec3 terracotta = vec3(1.000, 0.353, 0.235);
+    vec3 terracotta = vec3(0.788, 0.545, 0.549);
     vec3 rose       = vec3(0.788, 0.545, 0.549);
-    vec3 ochre      = vec3(0.878, 0.659, 0.118);
-    vec3 orange     = vec3(1.000, 0.478, 0.102);
+    vec3 ochre      = vec3(0.831, 0.631, 0.180);
+    vec3 orange     = vec3(0.910, 0.447, 0.165);
     vec3 blush      = vec3(0.894, 0.533, 0.612);
     s = fract(s) * 4.0;
     if (s < 1.0) return mix(terracotta, rose, s);
