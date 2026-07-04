@@ -21,44 +21,58 @@ const shouldSkip = () => {
   return window.location.hash.length > 1
 }
 
-// The whole body of work, swirled. The hero's own two studies (character-boy,
-// bouquet) are deliberately absent — they are what stays once the flurry has
-// drifted off toward the gallery. A few pieces repeat so the ring reads full
-// without demanding more source images; at this speed the reprise is invisible.
+// The body of work, swirled. The hero's own two studies (character-boy,
+// bouquet) are intentionally left out — this is decoration floating over the
+// page, never something that lands on or becomes the two cards below. A few
+// pieces repeat so the cloud reads full without more source images; at this
+// speed the reprise is invisible.
 const PIECES = [
   'art-couple-vows',
   'art-couple-sage',
   'art-couple-blush',
   'art-character-girl',
   'art-character-boy2',
-  'art-couple-sage',
-  'art-couple-vows',
   'art-couple-blush',
+  'art-couple-vows',
+  'art-couple-sage',
   'art-character-girl',
   'art-character-boy2',
-  'art-couple-sage',
   'art-couple-blush',
+  'art-couple-vows',
+  'art-couple-sage',
+  'art-character-girl',
 ]
 
-// Deterministic per-card jitter (height along the cylinder wall, spin phase,
-// scale) so the ring reads as a scattered flurry rather than a rigid carousel.
-// Seeded, not random, so the composition is the same every arrival.
-const jitter = (i) => {
-  const s = Math.sin(i * 12.9898) * 43758.5453
+// Deterministic per-card pseudo-random in [0,1) — seeded, not random, so the
+// composition is identical on every arrival.
+const rand = (i) => {
+  const s = Math.sin(i * 127.1 + 311.7) * 43758.5453
   return s - Math.floor(s)
 }
 
+// Timeline envelopes, t in [0,1].
+const easeOut = (t) => 1 - (1 - t) * (1 - t)
+const easeIn = (t) => t * t
+// Fade in fast at the start, hold, then fade out as the cloud drifts off.
+const entrance = (t) => Math.min(1, t / 0.12)
+const exit = (t) => (t < 0.74 ? 1 : Math.max(0, 1 - (t - 0.74) / 0.26))
+// Cards hold their swirl, then in the back half sink and fan outward along the
+// tube — sweeping off toward the bottom-left and bottom-right edges.
+const disperse = (t) => (t < 0.48 ? 0 : easeIn((t - 0.48) / 0.52))
+
 /**
  * HeroFlurry — the load flourish. On the first arrival of a session the body
- * of work fans onto an invisible vertical cylinder and orbits through a
- * half-turn of layered depth, then each piece cascades downward — toward the
- * gallery waiting below the fold — and fades, leaving only the two hero
- * studies settling into place beneath.
+ * of work swirls through an *angled* cylinder low across the screen: pieces
+ * travel a circular path in depth, but always face the camera — they never
+ * rotate away. Depth reads through size and layering (near pieces larger and
+ * in front, far pieces smaller and behind), the cards staying upright
+ * throughout. They swirl, then sink and fan out toward the bottom corners and
+ * fade, a pure overlay that floats over the page and leaves the hero's own two
+ * studies untouched beneath it.
  *
- * Runs on every device (the motion is transform + opacity only, which phones
- * handle well), but yields entirely to reduced-motion: no swirl, just the
- * hero's own quiet entrance. It mounts once, plays for ~3s, then unmounts so
- * it costs nothing for the rest of the visit.
+ * Runs on every device (transform + opacity only) but yields entirely to
+ * reduced-motion. It mounts once, plays ~3s, then unmounts so it costs nothing
+ * for the rest of the visit.
  */
 export default function HeroFlurry() {
   const reduce = useReducedMotion()
@@ -66,32 +80,86 @@ export default function HeroFlurry() {
   const [skip] = useState(shouldSkip)
   const [done, setDone] = useState(false)
 
-  // Fewer, tighter cards on phones — lighter to paint and better proportioned
-  // to a narrow viewport. Fixed once on mount; a 3s flourish needn't chase
-  // resizes mid-flight.
-  const count = isMobile ? 7 : PIECES.length
-  const radius = isMobile ? '30vmin' : '35vmin'
-
-  const cards = useMemo(
-    () =>
-      Array.from({ length: count }, (_, i) => {
-        const angle = (i / count) * 360
-        const j = jitter(i)
-        return {
-          img: PIECES[i % PIECES.length],
-          angle,
-          // Scatter each piece up or down the cylinder wall, and vary size so
-          // near pieces read heavier than far ones.
-          lift: (j - 0.5) * 34, // % of card height, up or down the wall
-          scale: 0.82 + jitter(i + 7) * 0.4,
-          delay: jitter(i + 3) * 0.5, // staggered dispersal, seeded
-        }
-      }),
-    [count],
+  // Viewport pinned once for the run — a 3s flourish needn't chase resizes.
+  const [vp] = useState(() =>
+    typeof window === 'undefined'
+      ? { w: 1200, h: 800 }
+      : { w: window.innerWidth, h: window.innerHeight },
   )
 
-  // Retire the overlay once the last piece has fallen. Skips straight to done
-  // when there's nothing to play, so no timer runs under reduced-motion / skip.
+  const count = isMobile ? 9 : 14
+
+  // Precompute each card's whole path as sampled keyframe arrays (position,
+  // scale, opacity, stacking) so the run is a plain transform/opacity animation
+  // with no per-frame trig on the main thread beyond what the compositor does.
+  const cards = useMemo(() => {
+    const K = 36
+    const W = vp.w
+    const H = vp.h
+    const vmin = Math.min(W, H)
+
+    // Anchor is the viewport centre (cards sit at left/top 50%); the cloud's
+    // centre is pushed low so it sweeps the bottom, not the hero.
+    const anchorX = W * 0.5
+    const anchorY = H * 0.5
+    const cx = W * 0.5
+    const cy = H * (isMobile ? 0.6 : 0.58)
+
+    // The cylinder axis, tilted a few degrees off horizontal — the "angled"
+    // tube running bottom-left to bottom-right.
+    const axisRad = (isMobile ? -6 : -8) * (Math.PI / 180)
+    const ax = Math.cos(axisRad)
+    const ay = Math.sin(axisRad)
+    const perpX = -ay
+    const perpY = ax
+
+    const AL = W * (isMobile ? 0.42 : 0.46) // axis half-length (horizontal reach)
+    const RV = H * (isMobile ? 0.2 : 0.24) // vertical orbit radius on screen
+    const FALL = H * 0.55
+    const SPIN = Math.PI * 2 * (isMobile ? 1.0 : 1.15)
+
+    const cardW = isMobile
+      ? Math.min(150, Math.max(84, vmin * 0.3))
+      : Math.min(158, Math.max(100, vmin * 0.15))
+
+    return Array.from({ length: count }, (_, i) => {
+      const u0 = ((i / (count - 1)) * 2 - 1) * (0.6 + rand(i + 1) * 0.5) // spread along tube
+      const angle0 = (i / count) * Math.PI * 2 + (rand(i + 2) - 0.5) * 0.9
+      const sizeVar = 0.82 + rand(i + 5) * 0.42
+      const tilt = (rand(i + 9) - 0.5) * 9 // slight upright wobble, in-plane only
+      const startDelay = rand(i + 4) * 0.08
+      const rv = RV * (0.7 + rand(i + 6) * 0.6) // per-card orbit height, so it scatters
+
+      const xs = []
+      const ys = []
+      const ss = []
+      const os = []
+      const zs = []
+      const times = []
+      for (let k = 0; k < K; k++) {
+        const t = k / (K - 1)
+        times.push(t)
+        const a = angle0 + SPIN * easeOut(t)
+        const cosA = Math.cos(a)
+        const depth = Math.sin(a) // +1 nearest camera, -1 farthest
+        const spread = disperse(t)
+        const along = u0 * (1 + 1.5 * spread)
+        const px = cx + ax * (along * AL) + perpX * (cosA * rv)
+        const py = cy + ay * (along * AL) + perpY * (cosA * rv) + FALL * spread
+        const near = (depth + 1) / 2 // 0..1
+        xs.push(Math.round(px - anchorX))
+        ys.push(Math.round(py - anchorY))
+        ss.push(+(sizeVar * (0.58 + 0.62 * near)).toFixed(3))
+        zs.push(Math.round(near * 1000))
+        const fade = Math.max(0, entrance(t) - (1 - exit(t)))
+        os.push(+(fade * (0.68 + 0.32 * near)).toFixed(3))
+      }
+      return { img: PIECES[i % PIECES.length], xs, ys, ss, os, zs, times, tilt, cardW, startDelay }
+    })
+  }, [count, isMobile, vp])
+
+  // Retire the overlay once the last piece has left. Skip straight to done when
+  // there's nothing to play, so no timer runs under reduced-motion / skip.
   useEffect(() => {
     if (skip || reduce) {
       setDone(true)
@@ -102,75 +170,50 @@ export default function HeroFlurry() {
     } catch {
       // Best effort — without storage the flurry simply replays next visit.
     }
-    const t = window.setTimeout(() => setDone(true), 3200)
+    const t = window.setTimeout(() => setDone(true), 3600)
     return () => window.clearTimeout(t)
   }, [skip, reduce])
 
   if (skip || reduce || done) return null
 
-  const fall = typeof window !== 'undefined' ? window.innerHeight * 0.95 : 900
-
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-30 grid place-items-center overflow-hidden"
-      style={{ perspective: isMobile ? '900px' : '1200px' }}
+      className="pointer-events-none fixed inset-0 z-30 overflow-hidden"
+      style={{ isolation: 'isolate' }}
     >
-      <motion.div
-        className="relative"
-        style={{ transformStyle: 'preserve-3d' }}
-        initial={{ rotateY: -34 }}
-        animate={{ rotateY: 188 }}
-        transition={{ duration: 1.5, ease: [0.22, 0.61, 0.36, 1] }}
-      >
-        {cards.map((card, i) => (
-          <div
-            key={i}
-            className="absolute left-1/2 top-1/2"
-            style={{
-              // Place on the cylinder wall: face radially outward (rotateY),
-              // push out to the wall (translateZ), then scatter up/down it.
-              transform: `translate(-50%, -50%) rotateY(${card.angle}deg) translateZ(${radius}) translateY(${card.lift}%)`,
-              transformStyle: 'preserve-3d',
-              backfaceVisibility: 'hidden',
-            }}
-          >
-            <motion.figure
-              className="overflow-hidden rounded-[0.9rem] border border-line bg-paper-deep shadow-[0_12px_30px_-12px_rgba(173,98,49,0.38),0_3px_10px_-4px_rgba(115,46,17,0.30)]"
-              style={{
-                width: isMobile ? 'clamp(72px,24vw,116px)' : 'clamp(96px,13vmin,152px)',
-                willChange: 'transform, opacity',
-              }}
-              initial={{ opacity: 0, y: 0, scale: card.scale * 0.6 }}
-              animate={{
-                opacity: [0, 1, 1, 0],
-                // Orbit first, then fall toward the gallery and fade.
-                y: [0, 0, 0, fall],
-                scale: [card.scale * 0.6, card.scale, card.scale, card.scale * 0.78],
-              }}
-              transition={{
-                duration: 2.1,
-                delay: 0.1 + card.delay,
-                times: [0, 0.16, 0.52, 1],
-                ease: [0.4, 0, 0.7, 1],
-              }}
-            >
-              <picture>
-                <source srcSet={asset(`assets/${card.img}.webp`)} type="image/webp" />
-                <img
-                  src={asset(`assets/${card.img}.jpg`)}
-                  alt=""
-                  loading="eager"
-                  fetchpriority="low"
-                  decoding="async"
-                  onError={(e) => (e.currentTarget.style.display = 'none')}
-                  className="aspect-[3/4] w-full object-cover"
-                />
-              </picture>
-            </motion.figure>
-          </div>
-        ))}
-      </motion.div>
+      {cards.map((card, i) => (
+        <motion.figure
+          key={i}
+          className="absolute left-1/2 top-1/2 overflow-hidden rounded-[0.9rem] border border-line bg-paper-deep shadow-[0_12px_30px_-12px_rgba(173,98,49,0.38),0_3px_10px_-4px_rgba(115,46,17,0.30)]"
+          style={{ width: card.cardW, willChange: 'transform, opacity' }}
+          initial={{ x: card.xs[0], y: card.ys[0], scale: card.ss[0], opacity: 0, zIndex: card.zs[0] }}
+          animate={{ x: card.xs, y: card.ys, scale: card.ss, opacity: card.os, zIndex: card.zs }}
+          transition={{
+            duration: 3,
+            delay: card.startDelay,
+            ease: 'linear',
+            times: card.times,
+          }}
+          // Centre the card on its point, then scale, tilt upright, and place —
+          // a 2D transform only, so the card always faces the camera.
+          transformTemplate={(latest) =>
+            `translate(${latest.x}, ${latest.y}) rotate(${card.tilt}deg) scale(${latest.scale}) translate(-50%, -50%)`
+          }
+        >
+          <picture>
+            <source srcSet={asset(`assets/${card.img}.webp`)} type="image/webp" />
+            <img
+              src={asset(`assets/${card.img}.jpg`)}
+              alt=""
+              loading="eager"
+              decoding="async"
+              onError={(e) => (e.currentTarget.style.display = 'none')}
+              className="aspect-[3/4] w-full object-cover"
+            />
+          </picture>
+        </motion.figure>
+      ))}
     </div>
   )
 }
