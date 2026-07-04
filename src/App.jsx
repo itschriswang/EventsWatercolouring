@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import GrainOverlay from './components/GrainOverlay.jsx'
+import GrainCanvas from './components/GrainCanvas.jsx'
+import BloomCanvas from './components/BloomCanvas.jsx'
 import SectionWash from './components/SectionWash.jsx'
 import DeckleEdge from './components/DeckleEdge.jsx'
 import Preloader from './components/Preloader.jsx'
@@ -61,7 +62,11 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-paper">
-      <GrainOverlay />
+      {/* Live watercolour wash behind the whole page (one shared WebGL
+          context), with the GPU paper grain over the top. Both degrade to the
+          static CSS washes / SVG grain on mobile, reduced-motion or no-WebGL. */}
+      <BloomCanvas revealed={revealed} />
+      <GrainCanvas />
       <Preloader onDone={() => setRevealed(true)} />
 
       <ScrollProgress />
@@ -73,7 +78,7 @@ export default function App() {
           a couple's word for it right after they've seen the work, the
           person you're trusting with the room (the painter), then the
           decision and the ask. */}
-      <main className="relative z-10 pb-28 md:pb-0">
+      <main className="relative z-10">
         <Hero revealed={revealed} />
 
         <EveningTimeline />
@@ -94,7 +99,7 @@ export default function App() {
             starting — not a continuation of the same sheet. */}
         <div className="relative bg-paper-deep">
           <DeckleEdge className="absolute inset-x-0 top-0 z-10 h-[18px] w-full md:h-6" />
-          <SectionWash>
+          <SectionWash variant="warm">
             <Packages />
             <EnquireForm />
           </SectionWash>

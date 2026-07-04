@@ -202,8 +202,8 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                   arrives. Sits above the paper, below the content. */}
               <div className="pointer-events-none absolute inset-[3%] z-[1] overflow-hidden rounded-[3px]">
                 {[
-                  { c: '#C2613C', pos: '-right-10 -top-12 h-52 w-52', o: 0.1 },
-                  { c: '#6E8CA8', pos: '-left-10 bottom-0 h-44 w-44', o: 0.09 },
+                  { c: '#C98B8C', pos: '-right-10 -top-12 h-52 w-52', o: 0.1 },
+                  { c: '#2E5FA8', pos: '-left-10 bottom-0 h-44 w-44', o: 0.09 },
                 ].map((b, i) => (
                   <span
                     key={i}
@@ -225,7 +225,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                     className="absolute left-1/2 top-1/2 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-multiply"
                     style={{
                       background:
-                        'radial-gradient(circle at 50% 50%, #C2613C, rgba(228,136,156,0.5) 45%, transparent 72%)',
+                        'radial-gradient(circle at 50% 50%, #C98B8C, rgba(233,136,156,0.5) 45%, transparent 72%)',
                       filter: 'blur(34px)',
                     }}
                   />
@@ -238,7 +238,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                     both states so the confirmation stays on the same stationery. */}
                 <div className="mb-7 flex items-baseline justify-between border-b border-line/80 pb-4">
                   <span className="eyebrow inline-flex items-center gap-2">
-                    <Drop className="h-5 w-auto" fill="#C2613C" />
+                    <Drop className="h-5 w-auto" fill="#C98B8C" />
                     Reply card
                   </span>
                   <span className="font-mono text-xs lowercase tracking-wide text-ink-soft">
@@ -484,9 +484,9 @@ function SealButton({ sending }) {
           style={{
             background: [
               'radial-gradient(circle at 30% 20%, rgba(248,230,174,0.22) 0%, rgba(248,230,174,0) 44%)',
-              'radial-gradient(circle at 72% 24%, rgba(194,97,60,0.18) 0%, rgba(194,97,60,0) 46%)',
-              'radial-gradient(circle at 26% 76%, rgba(201,162,58,0.18) 0%, rgba(201,162,58,0) 50%)',
-              'radial-gradient(circle at 76% 78%, rgba(237,138,51,0.16) 0%, rgba(237,138,51,0) 50%)',
+              'radial-gradient(circle at 72% 24%, rgba(201,139,140,0.18) 0%, rgba(201,139,140,0) 46%)',
+              'radial-gradient(circle at 26% 76%, rgba(212,161,46,0.18) 0%, rgba(212,161,46,0) 50%)',
+              'radial-gradient(circle at 76% 78%, rgba(232,114,42,0.16) 0%, rgba(232,114,42,0) 50%)',
               'radial-gradient(circle at 50% 55%, rgba(201,139,140,0.14) 0%, rgba(201,139,140,0) 56%)',
             ].join(', '),
             mixBlendMode: 'screen',
