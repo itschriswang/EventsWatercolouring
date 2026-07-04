@@ -11,7 +11,11 @@ import WatercolourBloom from './WatercolourBloom.jsx'
  */
 export default function SectionWash({ mask, seamGradient, variant, children }) {
   return (
-    <div className="relative overflow-visible">
+    <div
+      className="relative overflow-visible"
+      data-wash=""
+      {...(variant === 'warm' ? { 'data-warm': '' } : {})}
+    >
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 overflow-hidden"
