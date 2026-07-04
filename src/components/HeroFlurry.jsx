@@ -1,7 +1,8 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import useMediaQuery from '../hooks/useMediaQuery.js'
 import { asset } from '../lib/site.js'
+import { WORK } from '../content.js'
 
 // A once-per-session flag so the flurry, like the preloader, plays on the
 // first honest arrival and never replays on internal navigation.
@@ -30,29 +31,33 @@ export function flurryWillPlay() {
 
 const DURATION = 3 // seconds, the whole flourish
 const LAND_START = 0.5 // when survivors peel off the swirl toward the hero slots
-const LAND_T = 0.84 // when they arrive, matched to the hero-card fade-in below
-// When (seconds after reveal) the real hero cards should fade in beneath the
-// survivor as it lands, so the flying card resolves into the settled card.
-export const FLURRY_HANDOFF_DELAY = DURATION * LAND_T - 0.15
+const LAND_T = 0.84 // when the first survivor arrives
+const LAND_STAGGER = 0.06 // the second survivor lands a beat later
 
-// The dispersing crowd. The two hero studies (character-boy, bouquet) are not
-// here — they are the survivors, added separately below, and they land on the
-// real hero cards rather than drifting off. A few pieces repeat so the cloud
-// reads full; at this speed the reprise is invisible.
-const PIECES = [
-  'art-couple-vows',
-  'art-couple-sage',
-  'art-couple-blush',
-  'art-character-girl',
-  'art-couple-blush',
-  'art-couple-vows',
-  'art-couple-sage',
-  'art-character-girl',
-  'art-couple-blush',
-  'art-couple-vows',
-  'art-couple-sage',
-  'art-character-girl',
-]
+// When (seconds after reveal) each real hero card should fade in beneath its
+// survivor as it lands, so the flying card resolves into the settled card. One
+// per survivor, staggered — imported by Hero to time the two card entrances
+// (and their wet-bloom wicks) to the exact landings.
+export const handoffDelay = (n) => DURATION * (LAND_T + n * LAND_STAGGER) - 0.15
+export const FLURRY_HANDOFF_DELAY = handoffDelay(0)
+export const FLURRY_HANDOFF_DELAY_2 = handoffDelay(1)
+
+// The dispersing crowd is drawn live from the real gallery (content.js) so the
+// flurry always mirrors the current collection — add a piece to WORK and it
+// joins the swirl. The two hero studies are excluded: they're the survivors,
+// added separately, and they land on the hero cards rather than drifting off.
+const HERO_IMGS = new Set(['art-character-boy', 'art-bouquet'])
+const GALLERY_POOL = (() => {
+  const imgs = []
+  for (const g of WORK.groups) {
+    for (const it of g.items) {
+      if (it.img && !HERO_IMGS.has(it.img)) imgs.push(it.img)
+    }
+  }
+  return imgs.length
+    ? imgs
+    : ['art-couple-vows', 'art-couple-sage', 'art-couple-blush', 'art-character-girl', 'art-character-boy2']
+})()
 
 // Deterministic per-card pseudo-random in [0,1) — seeded, not random, so the
 // composition is identical on every arrival.
@@ -72,29 +77,37 @@ const exit = (t) => (t < 0.74 ? 1 : Math.max(0, 1 - (t - 0.74) / 0.26))
 // toward the bottom-left and bottom-right edges.
 const disperse = (t) => (t < 0.48 ? 0 : easeIn((t - 0.48) / 0.52))
 
+// A warm paper veil that thickens on far cards, so the cylinder recedes into
+// the page's own ground — atmospheric depth, not a grey haze.
+const HAZE = 'rgb(245, 238, 227)'
+
 /**
  * HeroFlurry — the load flourish. On the first arrival of a session the body of
  * work swirls through an angled cylinder low across the screen: pieces travel a
- * circular path in depth but always face the camera, upright, depth reading
- * through size and layering rather than rotation.
+ * circular path in depth but always face the camera, upright. Depth reads three
+ * ways — size, layering, and a warm atmospheric veil on the far pieces — and on
+ * a fine pointer the whole cloud parallaxes to the cursor, near pieces sliding
+ * further than far, so the volume is felt, not just implied.
  *
- * Most pieces sink and fan out toward the bottom corners and fade. Two — the
+ * Most pieces sink and tumble out toward the bottom corners and fade. Two — the
  * character and the bouquet — instead peel off the swirl and fly to the exact
- * measured positions of the hero's own two cards, growing to match, where the
- * real cards fade in beneath them: the flying studies *become* the hero cards.
+ * measured boxes of the hero's own two cards (measured from the images, so they
+ * land square on them), where the real cards bloom in wet beneath: the flying
+ * studies *become* the hero cards.
  *
  * Runs on every device (transform + opacity only) but yields entirely to
  * reduced-motion. Mounts once, plays ~3.5s, then unmounts.
  *
  * @param {{ref: React.RefObject<HTMLElement>, img: string, tilt: number}[]} heroTargets
- *   The hero cards to land on — a ref to each card's box, its source image, and
- *   its resting tilt in degrees.
+ *   The hero cards to land on — a ref to each card's image, its source, and its
+ *   resting tilt in degrees.
  */
 export default function HeroFlurry({ heroTargets = [] }) {
   const reduce = useReducedMotion()
   const isMobile = useMediaQuery('(max-width: 639px)')
   const [skip] = useState(shouldSkip)
   const [done, setDone] = useState(false)
+  const rootRef = useRef(null)
 
   // Viewport pinned once for the run — a 3s flourish needn't chase resizes.
   const [vp] = useState(() =>
@@ -103,10 +116,11 @@ export default function HeroFlurry({ heroTargets = [] }) {
       : { w: window.innerWidth, h: window.innerHeight },
   )
 
-  // Measure the real hero cards' on-screen boxes so the survivors can land on
-  // them exactly. Read before paint; the cards hold their layout box from the
-  // first frame (they only fade in), so the measurement is their final resting
-  // position even though they're not yet visible.
+  // Measure the real hero cards so the survivors land square on them. Measure
+  // the *image* (not the card box, which includes the caption bar): a rotated
+  // element's bounding-rect centre still equals its true centre, and
+  // offset{Width,Height} give the un-rotated size — so centre + size + aspect
+  // all come out right despite the card's tilt.
   const [targets, setTargets] = useState(null)
   useLayoutEffect(() => {
     if (skip || reduce) return
@@ -114,12 +128,40 @@ export default function HeroFlurry({ heroTargets = [] }) {
       const el = t.ref?.current
       if (!el) return null
       const r = el.getBoundingClientRect()
-      if (!r.width || !r.height) return null
-      return { cx: r.left + r.width / 2, cy: r.top + r.height / 2, w: r.width, tilt: t.tilt, img: t.img }
+      const w = el.offsetWidth
+      const h = el.offsetHeight
+      if (!w || !h) return null
+      return { cx: r.left + r.width / 2, cy: r.top + r.height / 2, w, h, tilt: t.tilt, img: t.img }
     })
     setTargets(measured)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skip, reduce])
+
+  // Depth-weighted cursor parallax: publish the pointer offset as CSS vars the
+  // card transforms multiply by their own scale, so nearer (larger) pieces
+  // slide further. Fine-pointer only; touch devices keep the static depth.
+  useEffect(() => {
+    if (skip || reduce || isMobile || typeof window === 'undefined') return
+    if (!window.matchMedia('(pointer: fine)').matches) return
+    let raf = 0
+    const onMove = (e) => {
+      if (raf) return
+      raf = requestAnimationFrame(() => {
+        raf = 0
+        const nx = (e.clientX / vp.w - 0.5) * 2
+        const ny = (e.clientY / vp.h - 0.5) * 2
+        const el = rootRef.current
+        if (!el) return
+        el.style.setProperty('--fx-mx', `${(nx * 16).toFixed(1)}px`)
+        el.style.setProperty('--fx-my', `${(ny * 16).toFixed(1)}px`)
+      })
+    }
+    window.addEventListener('pointermove', onMove, { passive: true })
+    return () => {
+      window.removeEventListener('pointermove', onMove)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [skip, reduce, isMobile, vp])
 
   const count = isMobile ? 8 : 12
 
@@ -153,23 +195,23 @@ export default function HeroFlurry({ heroTargets = [] }) {
       ? Math.min(150, Math.max(84, vmin * 0.3))
       : Math.min(158, Math.max(100, vmin * 0.15))
 
-    // Shared swirl position for a card at index i and time t.
+    // Shared swirl geometry for a card at index i and time t.
     const swirl = (i, t) => {
       const angle0 = (i / count) * Math.PI * 2 + (rand(i + 2) - 0.5) * 0.9
       const rv = RV * (0.7 + rand(i + 6) * 0.6)
       const a = angle0 + SPIN * easeOut(t)
-      const cosA = Math.cos(a)
-      const depth = Math.sin(a)
-      return { cosA, depth, rv, angle0 }
+      return { cosA: Math.cos(a), depth: Math.sin(a), rv }
     }
 
     const build = []
 
-    // The dispersing crowd.
+    // The dispersing crowd, drawn from the live gallery pool.
     for (let i = 0; i < count; i++) {
       const u0 = ((i / (count - 1)) * 2 - 1) * (0.6 + rand(i + 1) * 0.5)
       const sizeVar = 0.82 + rand(i + 5) * 0.42
       const tilt = (rand(i + 9) - 0.5) * 9
+      const drift = (rand(i + 11) - 0.5) * 46 // tumble as it falls
+      const fallK = 0.75 + rand(i + 8) * 0.6 // varied fall speed
       const startDelay = rand(i + 4) * 0.08
       const xs = []
       const ys = []
@@ -177,6 +219,7 @@ export default function HeroFlurry({ heroTargets = [] }) {
       const os = []
       const zs = []
       const rs = []
+      const hz = []
       const times = []
       for (let k = 0; k < K; k++) {
         const t = k / (K - 1)
@@ -185,33 +228,42 @@ export default function HeroFlurry({ heroTargets = [] }) {
         const spread = disperse(t)
         const along = u0 * (1 + 1.5 * spread)
         const px = cx + ax * (along * AL) + perpX * (cosA * rv)
-        const py = cy + ay * (along * AL) + perpY * (cosA * rv) + FALL * spread
+        const py = cy + ay * (along * AL) + perpY * (cosA * rv) + FALL * fallK * spread
         const near = (depth + 1) / 2
         xs.push(Math.round(px - anchorX))
         ys.push(Math.round(py - anchorY))
         ss.push(+(sizeVar * (0.58 + 0.62 * near)).toFixed(3))
         zs.push(Math.round(near * 1000))
-        rs.push(tilt)
+        rs.push(+(tilt + drift * spread).toFixed(2))
+        hz.push(+((1 - near) * 0.55).toFixed(3))
         const fade = Math.max(0, entrance(t) - (1 - exit(t)))
-        os.push(+(fade * (0.68 + 0.32 * near)).toFixed(3))
+        os.push(+(fade * (0.7 + 0.3 * near)).toFixed(3))
       }
-      build.push({ img: PIECES[i % PIECES.length], ar: '3 / 4', xs, ys, ss, os, zs, rs, times, cardW, startDelay })
+      build.push({
+        img: GALLERY_POOL[(i * 3) % GALLERY_POOL.length],
+        ar: '3 / 4',
+        pw: 1, // parallax weight — the crowd reacts to the cursor
+        xs, ys, ss, os, zs, rs, hz, times, cardW, startDelay,
+      })
     }
 
     // The survivors — one per measured hero card. They swirl among the crowd,
-    // then fly to their card's box and grow to fill it, always facing camera.
+    // then peel off and home in on their card's image box, growing to match.
     ;(targets || []).forEach((tg, n) => {
       if (!tg) return
-      const i = count + n // distinct swirl phase from the crowd
-      const sizeVar = 1
+      const i = count + n
       const tilt = (rand(i + 9) - 0.5) * 8
       const tScale = tg.w / cardW
+      const landStart = LAND_START + n * LAND_STAGGER
+      const landT = LAND_T + n * LAND_STAGGER
+      const fadeStart = landT + 0.02
       const xs = []
       const ys = []
       const ss = []
       const os = []
       const zs = []
       const rs = []
+      const hz = []
       const times = []
       for (let k = 0; k < K; k++) {
         const t = k / (K - 1)
@@ -220,22 +272,27 @@ export default function HeroFlurry({ heroTargets = [] }) {
         const near = (depth + 1) / 2
         const swx = cx + perpX * (cosA * rv) + ax * (rand(i + 1) - 0.5) * AL * 1.1
         const swy = cy + perpY * (cosA * rv) + ay * (rand(i + 1) - 0.5) * AL * 1.1
-        const swScale = sizeVar * (0.6 + 0.55 * near)
-        // Peel off and home in on the hero card's box.
-        const w = smooth(clamp01((t - LAND_START) / (LAND_T - LAND_START)))
-        const px = lerp(swx, tg.cx, w)
-        const py = lerp(swy, tg.cy, w)
-        xs.push(Math.round(px - anchorX))
-        ys.push(Math.round(py - anchorY))
-        ss.push(+lerp(swScale, tScale, w).toFixed(3))
+        const swScale = 0.6 + 0.55 * near
+        const w = smooth(clamp01((t - landStart) / (landT - landStart)))
+        // Clean homing on position; a small settle-overshoot on scale only.
+        const bump = Math.max(0, 1 - Math.abs((t - landT) / 0.06))
+        xs.push(Math.round(lerp(swx, tg.cx, w) - anchorX))
+        ys.push(Math.round(lerp(swy, tg.cy, w) - anchorY))
+        ss.push(+(lerp(swScale, tScale, w) * (1 + 0.045 * bump)).toFixed(3))
         rs.push(+lerp(tilt, tg.tilt, w).toFixed(2))
         zs.push(1600) // above the crowd — these are the chosen pieces
-        // Hold full through the landing, then dissolve as the real card solidifies.
+        hz.push(+((1 - near) * 0.4 * (1 - w)).toFixed(3))
         const fin = Math.min(1, t / 0.1)
-        const fout = t < 0.9 ? 1 : Math.max(0, 1 - (t - 0.9) / 0.1)
+        const fout = t < fadeStart ? 1 : Math.max(0, 1 - (t - fadeStart) / 0.1)
         os.push(+(fin * fout).toFixed(3))
       }
-      build.push({ img: tg.img, ar: '4 / 5', survivor: true, xs, ys, ss, os, zs, rs, times, cardW, startDelay: 0 })
+      build.push({
+        img: tg.img,
+        ar: `${tg.w} / ${tg.h}`,
+        survivor: true,
+        pw: 0, // survivors ignore the cursor so they land dead-on
+        xs, ys, ss, os, zs, rs, hz, times, cardW, startDelay: 0,
+      })
     })
 
     return build
@@ -261,9 +318,10 @@ export default function HeroFlurry({ heroTargets = [] }) {
 
   return (
     <div
+      ref={rootRef}
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 z-30 overflow-hidden"
-      style={{ isolation: 'isolate' }}
+      style={{ isolation: 'isolate', '--fx-mx': '0px', '--fx-my': '0px' }}
     >
       {cards.map((card, i) => (
         <motion.figure
@@ -278,10 +336,13 @@ export default function HeroFlurry({ heroTargets = [] }) {
           initial={{ x: card.xs[0], y: card.ys[0], scale: card.ss[0], rotate: card.rs[0], opacity: 0, zIndex: card.zs[0] }}
           animate={{ x: card.xs, y: card.ys, scale: card.ss, rotate: card.rs, opacity: card.os, zIndex: card.zs }}
           transition={{ duration: DURATION, delay: card.startDelay, ease: 'linear', times: card.times }}
-          // Centre on the point, then scale, tilt upright, and place — a 2D
-          // transform only, so the card always faces the camera.
+          // Centre on the point, add depth-weighted cursor parallax, then scale,
+          // tilt upright, and place — a 2D transform only, always facing camera.
           transformTemplate={(latest) =>
-            `translate(${latest.x}, ${latest.y}) rotate(${latest.rotate}) scale(${latest.scale}) translate(-50%, -50%)`
+            `translate(` +
+            `calc(${latest.x} + var(--fx-mx,0px) * ${card.pw} * ${latest.scale}), ` +
+            `calc(${latest.y} + var(--fx-my,0px) * ${card.pw} * ${latest.scale})` +
+            `) rotate(${latest.rotate}) scale(${latest.scale}) translate(-50%, -50%)`
           }
         >
           <picture>
@@ -296,6 +357,16 @@ export default function HeroFlurry({ heroTargets = [] }) {
               style={{ aspectRatio: card.ar }}
             />
           </picture>
+          {/* Atmospheric veil — thicker on far pieces, gone by the time a
+              survivor lands. */}
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{ background: HAZE }}
+            initial={{ opacity: card.hz[0] }}
+            animate={{ opacity: card.hz }}
+            transition={{ duration: DURATION, delay: card.startDelay, ease: 'linear', times: card.times }}
+          />
         </motion.figure>
       ))}
     </div>

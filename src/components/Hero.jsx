@@ -6,7 +6,7 @@ import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset, ENQUIRE_HREF } from '../lib/site.js'
 import { HERO } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
-import HeroFlurry, { flurryWillPlay, FLURRY_HANDOFF_DELAY } from './HeroFlurry.jsx'
+import HeroFlurry, { flurryWillPlay, FLURRY_HANDOFF_DELAY, FLURRY_HANDOFF_DELAY_2 } from './HeroFlurry.jsx'
 import Sparkles from './Sparkles.jsx'
 import { withUnderline } from './Underline.jsx'
 import BloomFilter from './WetBloom.jsx'
@@ -33,7 +33,7 @@ export default function Hero({ revealed }) {
 
   // The hero card entrance. Under the flurry it's a quiet fade in place (the
   // survivor supplies the motion); otherwise the original rise-and-settle.
-  const cardEntrance = (rot, delay) => {
+  const cardEntrance = (rot, delay, handoff) => {
     if (!revealed) {
       return {
         initial: { opacity: 0, y: reduce ? 0 : 52, rotate: reduce ? 0 : rot },
@@ -45,7 +45,7 @@ export default function Hero({ revealed }) {
       return {
         initial: { opacity: 0, y: 0, rotate: rot },
         animate: { opacity: 1, y: 0, rotate: rot },
-        transition: { duration: 0.55, delay: FLURRY_HANDOFF_DELAY, ease: [0.22, 0.61, 0.36, 1] },
+        transition: { duration: 0.55, delay: handoff, ease: [0.22, 0.61, 0.36, 1] },
       }
     }
     return {
@@ -54,8 +54,8 @@ export default function Hero({ revealed }) {
       transition: { ...SPRING_SOFT, delay },
     }
   }
-  const charEntrance = cardEntrance(-6, 0.8)
-  const bouquetEntrance = cardEntrance(3, 0.95)
+  const charEntrance = cardEntrance(-6, 0.8, FLURRY_HANDOFF_DELAY)
+  const bouquetEntrance = cardEntrance(3, 0.95, FLURRY_HANDOFF_DELAY_2)
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end start'],
@@ -240,7 +240,7 @@ export default function Hero({ revealed }) {
             <div className="mx-auto flex w-full max-w-[26rem] items-end px-2 sm:mr-0 sm:grow sm:mx-auto sm:w-[92%] sm:max-w-none sm:px-0 lg:mx-0 lg:w-full lg:justify-end">
 
               {/* Character — primary card, grounded anchor (left, tilts left) */}
-              <div ref={charRef} className="relative z-0 w-[54%] shrink-0 translate-x-[2%] translate-y-[6%] sm:translate-x-0 sm:w-[46%] lg:w-[52%] sm:translate-y-0 sm:-ml-[8%] lg:-ml-[10%] lg:-translate-x-[6%] lg:-translate-y-[8%]">
+              <div className="relative z-0 w-[54%] shrink-0 translate-x-[2%] translate-y-[6%] sm:translate-x-0 sm:w-[46%] lg:w-[52%] sm:translate-y-0 sm:-ml-[8%] lg:-ml-[10%] lg:-translate-x-[6%] lg:-translate-y-[8%]">
                 <motion.figure
                   initial={charEntrance.initial}
                   animate={charEntrance.animate}
@@ -249,11 +249,18 @@ export default function Hero({ revealed }) {
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(173,98,49,0.30),0_6px_16px_-6px_rgba(173,98,49,0.12)]"
                 >
                   <CornerBloom from="rgba(201,140,140,0.15)" to="rgba(228,136,156,0.11)" overlay />
-                  {wick && <BloomFilter id="hero-wick-1" dur="1.2s" begin="0.8s" />}
+                  {wick && (
+                    <BloomFilter
+                      id="hero-wick-1"
+                      dur="1.2s"
+                      begin={flurryPlays ? `${FLURRY_HANDOFF_DELAY}s` : '0.8s'}
+                    />
+                  )}
                   <div className="relative z-10">
                     <picture>
                       <source srcSet={asset('assets/art-character-boy.webp')} type="image/webp" />
                       <img
+                        ref={charRef}
                         src={asset('assets/art-character-boy.jpg')}
                         alt="A small watercolour character study at the palette."
                         style={wick ? { filter: 'url(#hero-wick-1)' } : undefined}
@@ -274,7 +281,7 @@ export default function Hero({ revealed }) {
               </div>
 
               {/* Bouquet — accent card, floats high right (tilts right) */}
-              <div ref={bouquetRef} className="relative z-10 -ml-[10%] w-[46%] shrink-0 -translate-y-[14%] sm:-ml-[10%] sm:w-[48%] lg:w-[54%] sm:-translate-y-[22%] lg:-translate-y-[16%]">
+              <div className="relative z-10 -ml-[10%] w-[46%] shrink-0 -translate-y-[14%] sm:-ml-[10%] sm:w-[48%] lg:w-[54%] sm:-translate-y-[22%] lg:-translate-y-[16%]">
                 <motion.figure
                   initial={bouquetEntrance.initial}
                   animate={bouquetEntrance.animate}
@@ -283,11 +290,18 @@ export default function Hero({ revealed }) {
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(173,98,49,0.30),0_6px_16px_-6px_rgba(173,98,49,0.12)]"
                 >
                   <CornerBloom from="rgba(194,97,60,0.16)" to="rgba(228,136,156,0.12)" overlay />
-                  {wick && <BloomFilter id="hero-wick-2" dur="1.2s" begin="0.95s" />}
+                  {wick && (
+                    <BloomFilter
+                      id="hero-wick-2"
+                      dur="1.2s"
+                      begin={flurryPlays ? `${FLURRY_HANDOFF_DELAY_2}s` : '0.95s'}
+                    />
+                  )}
                   <div className="relative z-10">
                     <picture>
                       <source srcSet={asset('assets/art-bouquet.webp')} type="image/webp" />
                       <img
+                        ref={bouquetRef}
                         src={asset('assets/art-bouquet.jpg')}
                         alt="A watercolour bouquet study held to the light."
                         style={wick ? { filter: 'url(#hero-wick-2)' } : undefined}
