@@ -4,32 +4,25 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Warm editorial base — the organic paper colour from the original site.
-        paper: '#F4EFE6',
+        // Bold Poster palette — vibrant, high-saturation contemporary aesthetic
+        paper: '#F6F1E7',
         'paper-deep': '#EAE2D4',
-        ink: '#2A2724',
+        ink: '#1E1B18',
         'ink-soft': '#6B6258',
         line: '#D8CFBF',
-        // Pigments sampled from the bouquet painting (reused from the legacy site).
-        terracotta: '#C2613C',
-        // Deepened from #A4502F so body-size `text-rust` clears WCAG AA (4.5:1)
-        // on the warm paper/card backgrounds, and the timeline section it backs
-        // (`bg-rust`) sits a touch richer.
-        rust: '#9A4A2B',
-        orange: '#ED8A33',
-        ochre: '#C9A23A',
-        // Light ochre for emphasis set on the dark rust timeline — a mid ochre
-        // sits too close to rust to read (2.6:1); this clears AA (~5:1).
+        // Primary pigments — punchy, saturated
+        terracotta: '#FF5A3C',
+        rust: '#B32617',
+        orange: '#FF7A1A',
+        ochre: '#E0A81E',
         'ochre-light': '#F8E6AE',
         sage: '#6E7E4E',
-        // Darker sage for sage used as *text* (chips, section numerals): the
-        // base sage is a fill/accent green and only reaches 3.85:1 on paper.
         'sage-deep': '#566443',
-        lime: '#AEBF56',
-        cornflower: '#6E8CA8',
-        teal: '#3A7F9D',
+        lime: '#C6F04A',
+        cornflower: '#1E5BE0',
+        teal: '#0E86A0',
         rose: '#C98B8C',
-        magenta: '#B5395B',
+        magenta: '#FF2E80',
         blush: '#E4889C',
         wine: '#6C2A3E',
       },
