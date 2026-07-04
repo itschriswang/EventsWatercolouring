@@ -184,6 +184,14 @@
   }
 }
 
+/* When the live WebGL wash (BloomCanvas) is running it owns the pigment, so
+   the static CSS washes fade out to avoid double-painting. Fades back in
+   cleanly if the canvas ever tears down (context loss, tab returns). */
+[data-live-blooms] .wcb-root {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
 /* Watercolour bloom-field — soft pigment halos drifting in the margins */
 @keyframes bloom-drift1 {
   0%   { transform: translate(0, 0) scale(1) rotate(0deg); opacity: .14; }
