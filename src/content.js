@@ -19,7 +19,7 @@ export const PULLQUOTE = {
   detail: 'Post-wedding commission',
   // The quiet link under the attribution — the one place the quote offers a
   // next step, kept small so the moment stays a held breath, not a banner.
-  cta: 'Have him there on yours',
+  cta: 'Have me there for yours',
 }
 
 export const EVENING = {

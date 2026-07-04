@@ -59,7 +59,7 @@ export default function PullQuote() {
           background:
             'radial-gradient(34% 55% at 6% 22%, rgba(174,191,86,0.13), transparent 74%), ' +
             'radial-gradient(36% 58% at 94% 78%, rgba(228,136,156,0.14), transparent 74%), ' +
-            'radial-gradient(24% 40% at 88% 12%, rgba(201,162,58,0.08), transparent 72%)',
+            'radial-gradient(24% 40% at 88% 12%, rgba(212,161,46,0.08), transparent 72%)',
         }}
       />
       <figure className="relative mx-auto flex max-w-3xl flex-col items-center text-center">
@@ -70,6 +70,7 @@ export default function PullQuote() {
         >
           &ldquo;
           <Sparkles
+            variant="burst"
             delay={0.25}
             className="absolute -right-11 -top-3 h-8 w-8 text-ochre/90"
           />
@@ -109,7 +110,7 @@ export default function PullQuote() {
           {...rise(0.2)}
           className="mt-7 flex flex-col items-center gap-1.5"
         >
-          <Drop className="h-5 w-auto opacity-80" gradient={['#C2613C', '#C9A23A']} />
+          <Drop className="h-5 w-auto opacity-80" gradient={['#C98B8C', '#D4A12E']} />
           <span className="font-mono text-[0.95rem] text-ink">{PULLQUOTE.author}</span>
           <span className="font-mono text-[0.55rem] uppercase tracking-[0.2em] text-ink-soft">
             {PULLQUOTE.detail}
