@@ -6,6 +6,7 @@ import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset, ENQUIRE_HREF } from '../lib/site.js'
 import { HERO } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
+import HeroFlurry from './HeroFlurry.jsx'
 import Sparkles from './Sparkles.jsx'
 import { withUnderline } from './Underline.jsx'
 import BloomFilter from './WetBloom.jsx'
@@ -42,6 +43,11 @@ export default function Hero({ revealed }) {
       ref={ref}
       className="relative w-full overflow-x-clip px-[5vw] pb-[clamp(2.5rem,5vw,4.5rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-8"
     >
+      {/* Load flourish: the body of work swirls in a cylinder and drifts down
+          toward the gallery, leaving the two studies below. Self-gating —
+          plays once per session, sits out reduced-motion, and unmounts after. */}
+      {revealed && <HeroFlurry />}
+
       {/* Static bloom field — soft pigment halos in the site's own warm
           pigments, settled into the margins. One cheap paint on every device;
           the WebGL aurora it replaces cost 50KB and continuous GPU time to
