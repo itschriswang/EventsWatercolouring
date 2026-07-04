@@ -8,10 +8,10 @@ import { withUnderline } from './Underline.jsx'
 // Warm pigment pairs for the little keepsake thumbnails — cycled so the
 // grid reads as a spread of different paintings, not a repeat pattern.
 const THUMB_TINTS = [
-  ['rgba(194,97,60,0.55)', 'rgba(201,162,58,0.35)'],
-  ['rgba(228,136,156,0.5)', 'rgba(194,97,60,0.3)'],
-  ['rgba(201,162,58,0.5)', 'rgba(164,80,47,0.35)'],
-  ['rgba(201,139,140,0.5)', 'rgba(237,138,51,0.3)'],
+  ['rgba(255,90,60,0.55)', 'rgba(224,168,30,0.35)'],
+  ['rgba(228,136,156,0.5)', 'rgba(255,90,60,0.3)'],
+  ['rgba(224,168,30,0.5)', 'rgba(179,38,23,0.35)'],
+  ['rgba(201,139,140,0.5)', 'rgba(255,122,26,0.3)'],
 ]
 
 const PIECES_PER_HOUR = 8
@@ -45,7 +45,7 @@ export default function NightPlanner() {
       className="relative mt-[clamp(2.5rem,6vw,4rem)] overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(173,98,49,0.25)]"
       style={{ background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FBF8F2 0%, #F4EFE6 62%)' }}
     >
-      <CornerBloom from="rgba(228,136,156,0.13)" to="rgba(194,97,60,0.14)" />
+      <CornerBloom from="rgba(228,136,156,0.13)" to="rgba(255,90,60,0.14)" />
       <div className="relative z-10 grid grid-cols-1 gap-8 p-7 sm:p-8 lg:grid-cols-2 lg:gap-12">
         {/* Controls */}
         <div>

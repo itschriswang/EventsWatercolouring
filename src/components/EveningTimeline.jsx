@@ -44,7 +44,7 @@ export default function EveningTimeline() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(201,162,58,0.14) 0%, transparent 60%), ' +
+            'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(224,168,30,0.14) 0%, transparent 60%), ' +
             'radial-gradient(ellipse 60% 50% at 92% 90%, rgba(108,42,62,0.20) 0%, transparent 55%)',
         }}
       />
@@ -96,7 +96,7 @@ export default function EveningTimeline() {
         {/* Sticky title rail */}
         <div className="col-span-12 lg:col-span-5">
           <div className="lg:sticky lg:top-24 lg:h-fit">
-            <Label gradient={['#C9A23A', '#F4EFE6']} className="!text-paper/90">
+            <Label gradient={['#E0A81E', '#F4EFE6']} className="!text-paper/90">
               {EVENING.label}
             </Label>
             <h2 className="display-lg mt-1">
@@ -156,7 +156,7 @@ export default function EveningTimeline() {
                       <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_12px_rgba(115,46,17,0.52)]">
                         <Drop
                           className="h-5 w-auto"
-                          gradient={['#C2613C', '#A4502F']}
+                          gradient={['#FF5A3C', '#B32617']}
                         />
                       </span>
                     ) : (

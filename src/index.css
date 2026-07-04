@@ -26,11 +26,11 @@
      re-typing hex. The `--rgb-*` triplets feed `rgb(... / <alpha>)` for the
      translucent nav chrome. */
   :root {
-    --c-paper: #F4EFE6;
-    --c-ink: #2A2724;
-    --c-terracotta: #C2613C;
-    --rgb-paper: 244 239 230;
-    --rgb-ink: 42 39 36;
+    --c-paper: #F6F1E7;
+    --c-ink: #1E1B18;
+    --c-terracotta: #FF5A3C;
+    --rgb-paper: 246 241 231;
+    --rgb-ink: 30 27 24;
     --rgb-ink-soft: 107 98 88;
     --rgb-line: 216 207 191;
   }
