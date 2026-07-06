@@ -64,7 +64,7 @@ const FRAG = `
     float aspect = u_res.x / u_res.y;
 
     vec3 acc = vec3(0.0);
-    float alpha = 0.0;
+    float cover = 0.0;
     for (int i = 0; i < ${N}; i++){
       if (i >= u_count) break;
       vec4 pt = u_pts[i];
@@ -78,13 +78,15 @@ const FRAG = `
       float radius = mix(0.075, 0.15, age);
       float body = smoothstep(radius, 0.0, dist) * (1.0 - age);
       vec3 col = pigment(pt.w + age * 0.15);
-      acc += col * body;
-      alpha += body;
+      // Layer this bloom over what's built up so far (oldest to newest, so
+      // fresh pigment sits on top) rather than summing colour. Summation blew
+      // overlapping strokes past white — reading as a neon "screen" glow
+      // instead of pigment deepening where wet strokes cross.
+      acc = mix(acc, col, body);
+      cover = body + cover * (1.0 - body);
     }
-    float cover = clamp(alpha, 0.0, 1.0);
-    alpha = cover * 0.5;
+    float alpha = cover * 0.5;
     if (alpha < 0.003) discard;
-    acc = acc / max(cover, 0.0001);           // normalise colour by coverage
     gl_FragColor = vec4(acc * alpha, alpha);  // premultiplied
   }
 `
