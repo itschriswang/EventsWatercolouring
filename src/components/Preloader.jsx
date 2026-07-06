@@ -90,11 +90,11 @@ export default function Preloader({ onDone }) {
  */
 function Bloom({ active, reduce }) {
   const blobs = [
-    { c: '#FF2E80', x: 0,   y: 0,   s: 1 },
-    { c: '#E8722A', x: -22, y: 14,  s: 0.78 },
-    { c: '#2B7E8C', x: 20,  y: 18,  s: 0.7 },
-    { c: '#B8D952', x: 14,  y: -20, s: 0.6 },
-    { c: '#E4889C', x: -16, y: -16, s: 0.66 },
+    { c: '#A82E6E', x: 0,   y: 0,   s: 1 },
+    { c: '#C97A2E', x: -22, y: 14,  s: 0.78 },
+    { c: '#1F6E7E', x: 20,  y: 18,  s: 0.7 },
+    { c: '#A8BF3C', x: 14,  y: -20, s: 0.6 },
+    { c: '#C97A94', x: -16, y: -16, s: 0.66 },
   ]
   return (
     <div className="relative h-full w-full">
