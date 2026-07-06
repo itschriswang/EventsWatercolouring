@@ -109,13 +109,13 @@ export default function Hero({ revealed }) {
         className="pointer-events-none absolute inset-0 z-0"
         style={{
           backgroundImage:
-            'radial-gradient(38% 32% at 16% 26%, rgba(46,92,140, 0.16), transparent 72%), ' +
-            'radial-gradient(30% 26% at 88% 14%, rgba(214,166,60, 0.15), transparent 72%), ' +
-            'radial-gradient(34% 30% at 85% 84%, rgba(74,94,140, 0.13), transparent 72%), ' +
-            'radial-gradient(30% 28% at 8% 88%, rgba(46,92,140, 0.12), transparent 72%), ' +
-            'radial-gradient(30% 26% at 62% 8%, rgba(214,166,60, 0.10), transparent 72%), ' +
-            'radial-gradient(32% 28% at 99% 50%, rgba(201,122,46, 0.09), transparent 72%), ' +
-            'radial-gradient(26% 24% at 36% 52%, rgba(140,46,60, 0.10), transparent 74%)',
+            'radial-gradient(38% 32% at 16% 26%, rgba(56,109,180, 0.16), transparent 72%), ' +
+            'radial-gradient(30% 26% at 88% 14%, rgba(223,164,85, 0.15), transparent 72%), ' +
+            'radial-gradient(34% 30% at 85% 84%, rgba(110,128,192, 0.13), transparent 72%), ' +
+            'radial-gradient(30% 28% at 8% 88%, rgba(56,109,180, 0.12), transparent 72%), ' +
+            'radial-gradient(30% 26% at 62% 8%, rgba(223,164,85, 0.10), transparent 72%), ' +
+            'radial-gradient(32% 28% at 99% 50%, rgba(216,154,94, 0.09), transparent 72%), ' +
+            'radial-gradient(26% 24% at 36% 52%, rgba(156,74,98, 0.10), transparent 74%)',
         }}
       />
 
@@ -134,7 +134,7 @@ export default function Hero({ revealed }) {
                 bottom: '8vmin',
                 width: '53vmin',
                 height: '63vmin',
-                background: 'radial-gradient(circle at 55% 55%, #c9a23a, transparent 65%)',
+                background: 'radial-gradient(circle at 55% 55%, #ECB874, transparent 65%)',
                 filter: 'blur(60px)',
                 opacity: 0.32,
                 mixBlendMode: 'hard-light',
@@ -149,7 +149,7 @@ export default function Hero({ revealed }) {
                 bottom: '0vmin',
                 width: '63vmin',
                 height: '53vmin',
-                background: 'radial-gradient(circle at 55% 55%, #C97A94, transparent 65%)',
+                background: 'radial-gradient(circle at 55% 55%, #EBAFC2, transparent 65%)',
                 filter: 'blur(60px)',
                 opacity: 0.32,
                 mixBlendMode: 'hard-light',
@@ -253,9 +253,9 @@ export default function Hero({ revealed }) {
                   animate={charEntrance.animate}
                   transition={charEntrance.transition}
                   whileHover={reduce ? {} : { rotate: -2, scale: 1.03 }}
-                  className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(173,98,49,0.30),0_6px_16px_-6px_rgba(173,98,49,0.12)]"
+                  className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(61,101,158,0.30),0_6px_16px_-6px_rgba(61,101,158,0.12)]"
                 >
-                  <CornerBloom from="rgba(201,140,140,0.15)" to="rgba(74,94,140,0.11)" overlay />
+                  <CornerBloom from="rgba(242,194,207,0.15)" to="rgba(110,128,192,0.11)" overlay />
                   {wick && (
                     <BloomFilter
                       id="hero-wick-1"
@@ -294,9 +294,9 @@ export default function Hero({ revealed }) {
                   animate={bouquetEntrance.animate}
                   transition={bouquetEntrance.transition}
                   whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
-                  className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(173,98,49,0.30),0_6px_16px_-6px_rgba(173,98,49,0.12)]"
+                  className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(61,101,158,0.30),0_6px_16px_-6px_rgba(61,101,158,0.12)]"
                 >
-                  <CornerBloom from="rgba(46,92,140,0.16)" to="rgba(74,94,140,0.12)" overlay />
+                  <CornerBloom from="rgba(56,109,180,0.16)" to="rgba(110,128,192,0.12)" overlay />
                   {wick && (
                     <BloomFilter
                       id="hero-wick-2"

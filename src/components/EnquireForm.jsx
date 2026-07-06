@@ -287,8 +287,8 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                   arrives. Sits above the paper, below the content. */}
               <div className="pointer-events-none absolute inset-[3%] z-[1] overflow-hidden rounded-[3px]">
                 {[
-                  { c: '#2E5C8C', pos: '-right-10 -top-12 h-52 w-52', o: 0.1 },
-                  { c: '#4A5E8C', pos: '-left-10 bottom-0 h-44 w-44', o: 0.09 },
+                  { c: '#386DB4', pos: '-right-10 -top-12 h-52 w-52', o: 0.1 },
+                  { c: '#6E80C0', pos: '-left-10 bottom-0 h-44 w-44', o: 0.09 },
                 ].map((b, i) => (
                   <span
                     key={i}
@@ -310,7 +310,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                     className="absolute left-1/2 top-1/2 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-multiply"
                     style={{
                       background:
-                        'radial-gradient(circle at 50% 50%, #2E5C8C, rgba(74,94,140,0.5) 45%, transparent 72%)',
+                        'radial-gradient(circle at 50% 50%, #386DB4, rgba(110,128,192,0.5) 45%, transparent 72%)',
                       filter: 'blur(34px)',
                     }}
                   />
@@ -325,7 +325,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                     the same stationery. */}
                 <div className="mb-7 flex items-baseline justify-between border-b border-line/80 pb-4">
                   <span className="eyebrow inline-flex items-center gap-2">
-                    <Drop className="h-5 w-auto" fill="#2E5C8C" />
+                    <Drop className="h-5 w-auto" fill="#386DB4" />
                     Reply card
                   </span>
                   <span className="font-mono text-xs lowercase tracking-wide text-ink-soft">
@@ -621,7 +621,7 @@ function DecklePaper({ id }) {
     <div
       aria-hidden="true"
       className="absolute inset-0"
-      style={{ filter: 'drop-shadow(0 18px 38px rgba(48,45,41,0.21))' }}
+      style={{ filter: 'drop-shadow(0 18px 38px rgba(47,52,80,0.21))' }}
     >
       <svg className="h-full w-full" preserveAspectRatio="none">
         <defs>
@@ -631,11 +631,11 @@ function DecklePaper({ id }) {
           </filter>
         </defs>
         {/* backing sheet, peeking out below/right — warm kraft, not grey */}
-        <rect x="2%" y="2.6%" width="97%" height="97%" rx="3" fill="#E4DAC6" filter={`url(#${filterId})`} />
+        <rect x="2%" y="2.6%" width="97%" height="97%" rx="3" fill="#E2DFE9" filter={`url(#${filterId})`} />
         {/* front sheet — the writing surface. A touch lighter and warmer than
             the page behind it, so the card reads as its own bright sheet of
             cotton laid on the table rather than a cold grey insert. */}
-        <rect x="0.6%" y="0.4%" width="97.4%" height="97.4%" rx="3" fill="#FAF6EC" filter={`url(#${filterId})`} />
+        <rect x="0.6%" y="0.4%" width="97.4%" height="97.4%" rx="3" fill="#FBF9F4" filter={`url(#${filterId})`} />
       </svg>
     </div>
   )
@@ -664,7 +664,7 @@ function SealButton({ sending }) {
             className="absolute inset-0 h-full w-full object-contain"
             style={{
               filter:
-                'sepia(0.15) saturate(1.05) drop-shadow(0 2.5px 3px rgba(67,50,106,0.25))',
+                'sepia(0.15) saturate(1.05) drop-shadow(0 2.5px 3px rgba(94,74,140,0.25))',
             }}
           />
         </picture>
@@ -676,11 +676,11 @@ function SealButton({ sending }) {
           className="pointer-events-none absolute inset-[10%] rounded-full opacity-60 transition-opacity duration-300 group-hover:opacity-100"
           style={{
             background: [
-              'radial-gradient(circle at 30% 20%, rgba(240,220,160,0.22) 0%, rgba(240,220,160,0) 44%)',
-              'radial-gradient(circle at 72% 24%, rgba(46,92,140,0.18) 0%, rgba(46,92,140,0) 46%)',
-              'radial-gradient(circle at 26% 76%, rgba(214,166,60,0.18) 0%, rgba(214,166,60,0) 50%)',
-              'radial-gradient(circle at 76% 78%, rgba(201,122,46,0.16) 0%, rgba(201,122,46,0) 50%)',
-              'radial-gradient(circle at 50% 55%, rgba(46,92,140,0.14) 0%, rgba(46,92,140,0) 56%)',
+              'radial-gradient(circle at 30% 20%, rgba(247,212,174,0.22) 0%, rgba(247,212,174,0) 44%)',
+              'radial-gradient(circle at 72% 24%, rgba(56,109,180,0.18) 0%, rgba(56,109,180,0) 46%)',
+              'radial-gradient(circle at 26% 76%, rgba(223,164,85,0.18) 0%, rgba(223,164,85,0) 50%)',
+              'radial-gradient(circle at 76% 78%, rgba(216,154,94,0.16) 0%, rgba(216,154,94,0) 50%)',
+              'radial-gradient(circle at 50% 55%, rgba(56,109,180,0.14) 0%, rgba(56,109,180,0) 56%)',
             ].join(', '),
             mixBlendMode: 'screen',
           }}

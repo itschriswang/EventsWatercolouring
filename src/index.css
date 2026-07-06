@@ -26,13 +26,13 @@
      re-typing hex. The `--rgb-*` triplets feed `rgb(... / <alpha>)` for the
      translucent nav chrome. */
   :root {
-    --c-paper: #ECEEF2;
-    --c-ink: #241F2E;
-    --c-terracotta: #2E5C8C;
-    --rgb-paper: 236 238 242;
-    --rgb-ink: 36 31 46;
-    --rgb-ink-soft: 92 86 104;
-    --rgb-line: 199 202 214;
+    --c-paper: #F7F4EF;
+    --c-ink: #2F3450;
+    --c-terracotta: #386DB4;
+    --rgb-paper: 247 244 239;
+    --rgb-ink: 47 52 80;
+    --rgb-ink-soft: 100 108 136;
+    --rgb-line: 207 213 225;
   }
 
   html {
@@ -101,7 +101,7 @@
     /* Darker than ink-soft (5.2:1) on purpose: this text is tiny and often
        sits over the watercolour bloom washes, so it needs headroom above
        the 4.5:1 AA minimum rather than just clearing it. ~7.45:1 on paper. */
-    color: #544B41;
+    color: #4A4E63;
   }
 }
 
