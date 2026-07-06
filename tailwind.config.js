@@ -31,10 +31,10 @@ export default {
         //  body     — Manrope, the neutral, legible narrative voice.
         //  mono     — Mynerve, the handwritten voice for UI/logistics and
         //             numerals.
-        //  sentient — Instrument Serif, for all titles and wordmarks.
+        //  sentient — Gochi Hand, for all titles and wordmarks.
         body: ['"Manrope"', 'system-ui', 'sans-serif'],
         mono: ['"Mynerve"', 'cursive'],
-        sentient: ['"Instrument Serif"', 'Georgia', 'serif'],
+        sentient: ['"Gochi Hand"', 'cursive'],
       },
       letterSpacing: {
         tightest: '-0.04em',
