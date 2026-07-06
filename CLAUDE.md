@@ -13,7 +13,7 @@ All shadows must use these RGBA values (or derived variants at +15% vibrancy):
 
 | Colour | Use Case | RGBA |
 |--------|----------|------|
-| **Azure** (token: terracotta) | Primary lift shadows, cards, general elevation | `rgba(61,101,158,0.30)` |
+| **Lilac** (deep) | Primary lift shadows, cards, general elevation | `rgba(94,74,140,0.30)` |
 | **Dusty Rose** (token: rust) | Timeline markers, strong shadows | `rgba(122,54,74,0.52)` |
 | **Deep Ink** | Deep shadows on overlays, keepsake cards | `rgba(47,52,80,0.58)` |
 | **Ink** | Paper shadows, subtle depth | `rgba(47,52,80,0.21)` |
@@ -23,7 +23,7 @@ All shadows must use these RGBA values (or derived variants at +15% vibrancy):
 
 **Hero Cards** (primary & accent):
 ```
-shadow-[0_28px_52px_-18px_rgba(61,101,158,0.30),0_6px_16px_-6px_rgba(61,101,158,0.12)]
+shadow-[0_28px_52px_-18px_rgba(94,74,140,0.30),0_6px_16px_-6px_rgba(94,74,140,0.12)]
 ```
 
 **Timeline Markers**:
@@ -34,13 +34,13 @@ shadow-[0_2px_12px_rgba(122,54,74,0.40)]  /* Numbered dots */
 
 **Gallery/Lightbox Images**:
 ```
-shadow-[0_28px_60px_-10px_rgba(61,101,158,0.65)]  /* Strong azure for modal */
+shadow-[0_28px_60px_-10px_rgba(94,74,140,0.65)]  /* Strong lilac for modal */
 ```
 
 **Package Cards**:
 ```
-shadow-[0_24px_50px_-20px_rgba(61,101,158,0.32)]  /* Primary shadow */
-shadow-[0_24px_50px_-20px_rgba(61,101,158,0.25)]  /* Secondary shadow */
+shadow-[0_24px_50px_-20px_rgba(94,74,140,0.32)]  /* Primary shadow */
+shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]  /* Secondary shadow */
 ```
 
 **Keepsake Cards** (What You Keep):
@@ -59,7 +59,7 @@ drop-shadow(0 2.5px 3px rgba(94,74,140,0.25))    /* Accent shadow */
 When adding shadows to new components:
 
 1. **Pick a base colour** from the approved list above
-2. **Match the site's aesthetic**: Use azure or dusty rose for most cases
+2. **Match the site's aesthetic**: Use lilac or dusty rose for most cases
 3. **Adjust opacity as needed**, but keep RGB values within the palette
 4. **Test on dark backgrounds** (like the rust timeline) to ensure visibility
 5. **Never use**: `rgba(0,0,0,...)`, `rgba(128,128,128,...)`, or any neutral greys

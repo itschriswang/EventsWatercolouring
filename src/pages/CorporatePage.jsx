@@ -20,7 +20,7 @@ import { CORPORATE } from '../content.js'
 
 // The card ground shared with the homepage's package cards, so the two pages
 // read as one paper system.
-const CARD_BG = { background: 'linear-gradient(150deg, rgba(158,201,223,0.18) 0%, rgba(216,198,234,0.13) 48%, rgba(242,194,207,0.14) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }
+const CARD_BG = { background: 'linear-gradient(150deg, rgba(216,198,234,0.18) 0%, rgba(242,194,207,0.14) 48%, rgba(217,222,193,0.16) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }
 
 /**
  * The corporate landing page (/corporate/) — a standalone static page like
@@ -56,11 +56,11 @@ export default function CorporatePage() {
             className="pointer-events-none absolute inset-0 z-0"
             style={{
               backgroundImage:
-                'radial-gradient(42% 36% at 14% 22%, rgba(158,201,223, 0.32), transparent 72%), ' +
-                'radial-gradient(32% 28% at 88% 12%, rgba(216,198,234, 0.30), transparent 72%), ' +
-                'radial-gradient(34% 30% at 86% 84%, rgba(140,158,214, 0.24), transparent 72%), ' +
-                'radial-gradient(30% 28% at 6% 88%, rgba(93,157,218, 0.20), transparent 72%), ' +
-                'radial-gradient(28% 24% at 60% 6%, rgba(247,212,174, 0.22), transparent 72%)',
+                'radial-gradient(42% 36% at 14% 22%, rgba(216,198,234, 0.34), transparent 72%), ' +
+                'radial-gradient(32% 28% at 88% 12%, rgba(242,194,207, 0.30), transparent 72%), ' +
+                'radial-gradient(34% 30% at 86% 84%, rgba(217,222,193, 0.26), transparent 72%), ' +
+                'radial-gradient(30% 28% at 6% 88%, rgba(158,201,223, 0.18), transparent 72%), ' +
+                'radial-gradient(28% 24% at 60% 6%, rgba(247,212,174, 0.24), transparent 72%)',
             }}
           />
           <div className="relative z-10 grid grid-cols-12 items-end gap-x-8 gap-y-12">
@@ -100,9 +100,9 @@ export default function CorporatePage() {
               animate={{ opacity: 1, y: 0, rotate: reduce ? 0 : 3 }}
               transition={{ ...SPRING, delay: 0.35 }}
               whileHover={reduce ? {} : { rotate: 0, scale: 1.02 }}
-              className="relative col-span-8 col-start-3 sm:col-span-5 sm:col-start-7 lg:col-span-3 lg:col-start-9 overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(61,101,158,0.30),0_6px_16px_-6px_rgba(61,101,158,0.12)]"
+              className="relative col-span-8 col-start-3 sm:col-span-5 sm:col-start-7 lg:col-span-3 lg:col-start-9 overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(94,74,140,0.30),0_6px_16px_-6px_rgba(94,74,140,0.12)]"
             >
-              <CornerBloom from="rgba(56,109,180,0.16)" to="rgba(110,128,192,0.12)" overlay />
+              <CornerBloom from="rgba(216,198,234,0.20)" to="rgba(242,194,207,0.14)" overlay />
               <div className="relative z-10">
                 <picture>
                   <source srcSet={asset('assets/art-character-girl.webp')} type="image/webp" />
@@ -141,10 +141,10 @@ export default function CorporatePage() {
                 <motion.article
                   key={c.h}
                   {...rise(i)}
-                  className="relative overflow-hidden rounded-2xl border border-line/45 p-6 shadow-[0_24px_50px_-20px_rgba(61,101,158,0.25)] sm:p-7"
+                  className="relative overflow-hidden rounded-2xl border border-line/45 p-6 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)] sm:p-7"
                   style={CARD_BG}
                 >
-                  <CornerBloom from="rgba(56,109,180,0.16)" to="rgba(110,128,192,0.11)" />
+                  <CornerBloom from="rgba(216,198,234,0.18)" to="rgba(217,222,193,0.14)" />
                   <div className="relative z-10">
                     <Drop className="h-5 w-auto" gradient={['#386DB4', '#DFA455']} />
                     <h3 className="mt-4 font-sentient text-2xl tracking-[-0.02em] text-ink">{c.h}</h3>
@@ -233,7 +233,7 @@ export default function CorporatePage() {
               <div className="mt-[clamp(2rem,5vw,3.5rem)] grid grid-cols-12 gap-8">
                 <motion.article
                   {...rise()}
-                  className="relative col-span-12 flex flex-col overflow-hidden rounded-2xl border border-line/45 p-7 shadow-[0_24px_50px_-20px_rgba(61,101,158,0.32)] lg:col-span-5"
+                  className="relative col-span-12 flex flex-col overflow-hidden rounded-2xl border border-line/45 p-7 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.32)] lg:col-span-5"
                   style={CARD_BG}
                 >
                   <CornerBloom from="rgba(56,109,180,0.18)" to="rgba(110,128,192,0.12)" />
@@ -274,7 +274,7 @@ export default function CorporatePage() {
 
                 <motion.div
                   {...rise(1)}
-                  className="relative col-span-12 overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(61,101,158,0.25)] lg:col-span-7"
+                  className="relative col-span-12 overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)] lg:col-span-7"
                   style={CARD_BG}
                 >
                   <CornerBloom from="rgba(223,164,85,0.16)" to="rgba(110,128,192,0.12)" />

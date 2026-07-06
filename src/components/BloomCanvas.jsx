@@ -62,7 +62,7 @@ const FRAG = `
     vec3 rose       = vec3(0.847, 0.776, 0.918);
     vec3 lime       = vec3(0.851, 0.871, 0.757);
     vec3 cool       = mix(vec3(0.549, 0.620, 0.839), vec3(0.851, 0.871, 0.757), warm);
-    vec3 rust       = vec3(0.620, 0.788, 0.875);
+    vec3 rust       = vec3(0.949, 0.761, 0.812);
     t = fract(t) * 6.0;
     if (t < 1.0) return mix(terracotta, ochre, t);
     if (t < 2.0) return mix(ochre, blush, t - 1.0);

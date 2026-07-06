@@ -42,8 +42,8 @@ export default function NightPlanner() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={SPRING}
-      className="relative mt-[clamp(2.5rem,6vw,4rem)] overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(61,101,158,0.25)]"
-      style={{ background: 'linear-gradient(150deg, rgba(158,201,223,0.18) 0%, rgba(216,198,234,0.13) 48%, rgba(242,194,207,0.14) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
+      className="relative mt-[clamp(2.5rem,6vw,4rem)] overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
+      style={{ background: 'linear-gradient(150deg, rgba(216,198,234,0.18) 0%, rgba(242,194,207,0.14) 48%, rgba(217,222,193,0.16) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
     >
       <CornerBloom from="rgba(110,128,192,0.13)" to="rgba(56,109,180,0.14)" />
       <div className="relative z-10 grid grid-cols-1 gap-8 p-7 sm:p-8 lg:grid-cols-2 lg:gap-12">
@@ -111,7 +111,7 @@ export default function NightPlanner() {
                   initial={reduce ? false : { opacity: 0, scale: 0.5 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ ...SPRING, delay: reduce ? 0 : (i % 8) * 0.02 }}
-                  className="relative h-7 w-5 overflow-hidden rounded-[3px] border border-line bg-paper shadow-[0_2px_6px_-2px_rgba(61,101,158,0.35)]"
+                  className="relative h-7 w-5 overflow-hidden rounded-[3px] border border-line bg-paper shadow-[0_2px_6px_-2px_rgba(94,74,140,0.35)]"
                 >
                   <span
                     className="absolute inset-0"

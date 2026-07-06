@@ -28,7 +28,7 @@ export default function DeckleEdge({ className = '' }) {
       viewBox="0 0 1440 24"
       preserveAspectRatio="none"
       className={className}
-      style={{ filter: 'drop-shadow(0 5px 10px rgba(61,101,158,0.22))' }}
+      style={{ filter: 'drop-shadow(0 5px 10px rgba(94,74,140,0.22))' }}
     >
       <path d={FRINGE} fill="#F7F4EF" fillOpacity="0.55" />
       <path d={SHEET} fill="#F7F4EF" />
