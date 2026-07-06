@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { Drop } from './Label.jsx'
+import { SmileyThumbsUpIcon } from './icons/FreehandIcons.jsx'
 import Sparkles from './Sparkles.jsx'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING_SOFT, ENQUIRE_HREF } from '../lib/site.js'
@@ -111,7 +112,10 @@ export default function PullQuote() {
           className="mt-7 flex flex-col items-center gap-1.5"
         >
           <Drop className="h-5 w-auto opacity-80" gradient={['#C98B8C', '#D4A12E']} />
-          <span className="font-mono text-[0.95rem] text-ink">{PULLQUOTE.author}</span>
+          <span className="flex items-center gap-1.5 font-mono text-[0.95rem] text-ink">
+            {PULLQUOTE.author}
+            <SmileyThumbsUpIcon width={16} height={16} className="text-ochre" />
+          </span>
           <span className="font-mono text-[0.55rem] uppercase tracking-[0.2em] text-ink-soft">
             {PULLQUOTE.detail}
           </span>

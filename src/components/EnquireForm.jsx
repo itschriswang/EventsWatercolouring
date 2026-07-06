@@ -1,6 +1,7 @@
 import { useEffect, useId, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label, { Drop } from './Label.jsx'
+import { CalendarDateIcon } from './icons/FreehandIcons.jsx'
 import {
   SPRING,
   EMAIL,
@@ -369,7 +370,8 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                       </div>
 
                       <div className="flex flex-col sm:col-span-2">
-                        <label className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
+                        <label className="mb-2 flex items-center gap-1.5 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
+                          <CalendarDateIcon width={15} height={15} className="text-terracotta" />
                           {dateLabel}
                         </label>
                         <div className="flex flex-col gap-3">
