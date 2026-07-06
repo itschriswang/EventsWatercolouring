@@ -291,10 +291,7 @@ export const ENQUIRY = {
   intro:
     'Just a few details to start. I read and answer every enquiry myself, usually within a few days.',
   packageOptions: [
-    'Live on the day (base package)',
-    'Live on the day, with add-ons',
-    'After-Event Service for guests',
-    'Studio commission from photographs',
+    'Live on the day',
     'Corporate event or brand activation',
     'Private celebration',
     'Not sure yet',
