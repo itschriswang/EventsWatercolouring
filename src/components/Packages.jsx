@@ -34,7 +34,7 @@ export default function Packages() {
   return (
     <section id="offerings" className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(5rem,10vw,9rem)]">
       <Sparkles className="absolute right-[5vw] top-[clamp(3rem,6vw,5.5rem)] hidden h-12 w-12 text-terracotta/70 md:block" />
-      <Label gradient={['#386DB4', '#DFA455']}>{PACKAGES.label}</Label>
+      <Label gradient={['#9E5789', '#DFA455']}>{PACKAGES.label}</Label>
       <SplitText
         as="h2"
         unit="char"
@@ -70,7 +70,7 @@ export default function Packages() {
           className="relative z-20 mt-4 max-w-[calc(100vw-5vw*2)] overflow-hidden rounded-2xl border border-line/45 p-6 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.32)]"
           style={{ background: 'linear-gradient(150deg, rgba(216,198,234,0.18) 0%, rgba(242,194,207,0.14) 48%, rgba(217,222,193,0.16) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
         >
-          <CornerBloom from="rgba(56,109,180,0.18)" to="rgba(110,128,192,0.12)" />
+          <CornerBloom from="rgba(158,87,137,0.18)" to="rgba(144,120,190,0.12)" />
           <div className="relative z-10">
             <p className="text-sm text-ink-soft">{PACKAGES.base.note}</p>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -86,7 +86,7 @@ export default function Packages() {
             <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
               {PACKAGES.base.bullets.map((b) => (
                 <li key={b} className="flex gap-3">
-                  <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#386DB4', '#DFA455']} />
+                  <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#9E5789', '#DFA455']} />
                   {b}
                 </li>
               ))}
@@ -129,7 +129,7 @@ export default function Packages() {
                       className="shrink-0 rounded-full bg-paper-deep/70 p-2"
                       aria-hidden="true"
                     >
-                      <Drop className="h-3.5 w-auto" gradient={['#386DB4', '#DFA455']} />
+                      <Drop className="h-3.5 w-auto" gradient={['#9E5789', '#DFA455']} />
                     </motion.span>
                   </button>
                   <AnimatePresence initial={false}>
@@ -174,7 +174,7 @@ export default function Packages() {
           className="relative col-span-5 flex flex-col overflow-hidden rounded-2xl border border-line/45 p-7 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
           style={{ background: 'linear-gradient(150deg, rgba(216,198,234,0.18) 0%, rgba(242,194,207,0.14) 48%, rgba(217,222,193,0.16) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
         >
-          <CornerBloom from="rgba(56,109,180,0.18)" to="rgba(110,128,192,0.12)" />
+          <CornerBloom from="rgba(158,87,137,0.18)" to="rgba(144,120,190,0.12)" />
           <div className="relative z-10 flex flex-1 flex-col">
             <div className="flex items-baseline justify-between gap-4">
               <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
@@ -203,7 +203,7 @@ export default function Packages() {
             <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
               {PACKAGES.base.bullets.map((b) => (
                 <li key={b} className="flex gap-3">
-                  <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#386DB4', '#DFA455']} />
+                  <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#9E5789', '#DFA455']} />
                   {b}
                 </li>
               ))}
@@ -217,7 +217,7 @@ export default function Packages() {
           className="relative col-span-7 overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
           style={{ background: 'linear-gradient(150deg, rgba(216,198,234,0.18) 0%, rgba(242,194,207,0.14) 48%, rgba(217,222,193,0.16) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
         >
-          <CornerBloom from="rgba(223,164,85,0.16)" to="rgba(110,128,192,0.12)" />
+          <CornerBloom from="rgba(223,164,85,0.16)" to="rgba(144,120,190,0.12)" />
           <div className="relative z-10 flex h-full flex-col">
             <div className="flex items-baseline justify-between border-b border-line/50 px-8 pb-5 pt-8">
               <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
@@ -274,13 +274,13 @@ export default function Packages() {
         className="group relative mt-12 flex w-full items-center justify-between gap-4 overflow-hidden rounded-2xl border border-terracotta/30 p-6 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.32)] transition-colors duration-300 hover:border-terracotta/60 sm:p-7"
         style={{ background: 'linear-gradient(150deg, rgba(216,198,234,0.18) 0%, rgba(242,194,207,0.14) 48%, rgba(217,222,193,0.16) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
       >
-        <CornerBloom from="rgba(223,164,85,0.16)" to="rgba(56,109,180,0.14)" />
+        <CornerBloom from="rgba(223,164,85,0.16)" to="rgba(158,87,137,0.14)" />
         <span className="relative z-10 flex items-center gap-4 sm:gap-5">
           <span
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-paper shadow-[0_2px_10px_rgba(94,74,140,0.30)]"
             aria-hidden="true"
           >
-            <Drop className="h-5 w-auto" gradient={['#386DB4', '#DFA455']} />
+            <Drop className="h-5 w-auto" gradient={['#9E5789', '#DFA455']} />
           </span>
           <span>
             <span className="block font-sentient text-xl tracking-[-0.02em] text-ink sm:text-2xl">

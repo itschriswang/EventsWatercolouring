@@ -112,7 +112,7 @@ export default function Hero({ revealed }) {
             'radial-gradient(42% 36% at 14% 22%, rgba(216,198,234, 0.38), transparent 72%), ' +
             'radial-gradient(34% 30% at 88% 12%, rgba(242,194,207, 0.34), transparent 72%), ' +
             'radial-gradient(36% 32% at 86% 82%, rgba(217,222,193, 0.30), transparent 72%), ' +
-            'radial-gradient(32% 30% at 6% 86%, rgba(158,201,223, 0.20), transparent 72%), ' +
+            'radial-gradient(32% 30% at 6% 86%, rgba(217,222,193, 0.20), transparent 72%), ' +
             'radial-gradient(30% 26% at 60% 6%, rgba(247,212,174, 0.28), transparent 72%), ' +
             'radial-gradient(32% 28% at 100% 48%, rgba(216,198,234, 0.26), transparent 72%), ' +
             'radial-gradient(26% 24% at 34% 54%, rgba(242,194,207, 0.18), transparent 74%)',
@@ -126,7 +126,7 @@ export default function Hero({ revealed }) {
       >
         {/* The aurora orb — the reference image itself, rebuilt in gradients:
             a lilac-crowned body crossed by a sage-lit diagonal band,
-            periwinkle pooling low-left, and that blush / apricot glint
+            mauve pooling low-left, and that blush / apricot glint
             catching the lower-right rim. It hangs behind the
             artwork cluster like a low sun. Desktop only: the big blur is the
             costly part, so touch devices keep the flat wash field above. */}
@@ -140,7 +140,7 @@ export default function Hero({ revealed }) {
               height: '74vmin',
               background:
                 'radial-gradient(48% 48% at 66% 28%, rgba(216,198,234,0.95), transparent 78%), ' +
-                'radial-gradient(42% 42% at 26% 68%, rgba(140,158,214,0.8), transparent 76%), ' +
+                'radial-gradient(42% 42% at 26% 68%, rgba(180,156,216,0.8), transparent 76%), ' +
                 'radial-gradient(34% 34% at 76% 78%, rgba(242,194,207,0.95), transparent 74%), ' +
                 'radial-gradient(24% 24% at 88% 62%, rgba(247,212,174,0.85), transparent 70%), ' +
                 'linear-gradient(135deg, rgba(217,222,193,0.6) 10%, rgba(240,242,235,0.9) 34%, rgba(216,198,234,0.8) 58%, rgba(242,194,207,0.7) 84%)',
@@ -249,7 +249,7 @@ export default function Hero({ revealed }) {
                   whileHover={reduce ? {} : { rotate: -2, scale: 1.03 }}
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(94,74,140,0.30),0_6px_16px_-6px_rgba(94,74,140,0.12)]"
                 >
-                  <CornerBloom from="rgba(242,194,207,0.15)" to="rgba(110,128,192,0.11)" overlay />
+                  <CornerBloom from="rgba(242,194,207,0.15)" to="rgba(144,120,190,0.11)" overlay />
                   {wick && (
                     <BloomFilter
                       id="hero-wick-1"

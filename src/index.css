@@ -27,11 +27,11 @@
      translucent nav chrome. */
   :root {
     --c-paper: #F7F4EF;
-    --c-ink: #2F3450;
-    --c-terracotta: #386DB4;
+    --c-ink: #3A2F4A;
+    --c-terracotta: #9E5789;
     --rgb-paper: 247 244 239;
-    --rgb-ink: 47 52 80;
-    --rgb-ink-soft: 100 108 136;
+    --rgb-ink: 58 47 74;
+    --rgb-ink-soft: 119 108 136;
     --rgb-line: 213 210 225;
   }
 
@@ -55,7 +55,7 @@
 
   /* Aurora veil — the reference orb's light, spread across the whole page as
      a fixed, viewport-sized wash: lilac and blush pooling at the top
-     corners, sage glow and powder blue warming the lower edges. Sits behind all content
+     corners, sage glow and apricot warming the lower edges. Sits behind all content
      (negative z-index) but over the paper ground, and stays translucent
      enough that text contrast on paper is untouched. */
   body::before {
@@ -68,7 +68,7 @@
       radial-gradient(58% 44% at 10% -4%, rgba(216, 198, 234, 0.34), transparent 72%),
       radial-gradient(52% 40% at 96% 4%, rgba(242, 194, 207, 0.28), transparent 72%),
       radial-gradient(46% 38% at 102% 88%, rgba(217, 222, 193, 0.28), transparent 70%),
-      radial-gradient(44% 36% at -4% 82%, rgba(158, 201, 223, 0.18), transparent 70%),
+      radial-gradient(44% 36% at -4% 82%, rgba(217,222,193, 0.18), transparent 70%),
       radial-gradient(36% 30% at 55% 106%, rgba(247, 212, 174, 0.18), transparent 72%);
   }
 
@@ -133,22 +133,22 @@
 
 @layer utilities {
   /* Primary action surface — the aurora orb's blend bottled as a button:
-     azure melting through violet into rose, with a periwinkle-lifted,
+     orchid melting through rose into coral, with a mauve-lifted,
      blush-rimmed glow instead of a flat fill. Oversized background-size so
      hover can drift the light across the surface rather than swap colours. */
   .btn-aurora {
     background-image: linear-gradient(
       115deg,
-      #3D6FB2 0%,
-      #5E68B0 30%,
-      #7E62A8 58%,
-      #96609E 80%,
-      #A85E93 100%
+      #96609E 0%,
+      #A85E93 28%,
+      #B4638B 55%,
+      #C06E72 80%,
+      #CE8258 100%
     );
     background-size: 200% 100%;
     background-position: 0% 50%;
     box-shadow:
-      0 14px 30px -12px rgba(140, 158, 214, 0.5),
+      0 14px 30px -12px rgba(180,156,216, 0.5),
       0 4px 14px -8px rgba(242, 194, 207, 0.6);
     transition:
       background-position 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
