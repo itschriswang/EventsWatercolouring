@@ -116,7 +116,7 @@ const spline = (pts, u) => {
 
 // A warm paper veil that thickens on far cards, so the current recedes into
 // the page's own ground — atmospheric depth, not a grey haze.
-const HAZE = 'rgb(245, 238, 227)'
+const HAZE = 'rgb(236,238,242)'
 
 /**
  * HeroFlurry — the load flourish. On the first arrival of a session a small,
