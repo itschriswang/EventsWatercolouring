@@ -161,6 +161,20 @@
       href="https://fonts.googleapis.com/css2?family=Mynerve&family=Manrope:wght@400;500;600;700&family=Gochi+Hand&display=swap"
       rel="stylesheet"
     />
+
+    <!-- The #root fallback below is kept in the HTML for crawlers and no-JS
+         visitors, but hiding it at first paint stops it flashing as raw serif
+         text while the React bundle loads and mounts. The noscript rule brings
+         it back when JavaScript is unavailable, so it still works as a
+         readable fallback page. -->
+    <style>
+      #ssr-fallback { display: none; }
+    </style>
+    <noscript>
+      <style>
+        #ssr-fallback { display: block; }
+      </style>
+    </noscript>
   </head>
 
   <body>
@@ -169,6 +183,7 @@
            React replaces this on mount; without JavaScript it stays visible
            as a readable fallback page. Keep in step with src/content.js. -->
       <div style="max-width: 42rem; margin: 0 auto; padding: 3.5rem 1.5rem; font-family: Georgia, 'Times New Roman', serif; color: #2F3450; background: #F7F4EF; line-height: 1.65;">
+      <div id="ssr-fallback" style="max-width: 42rem; margin: 0 auto; padding: 3.5rem 1.5rem; font-family: Georgia, 'Times New Roman', serif; color: #2A2724; background: #F4EFE6; line-height: 1.65;">
         <h1 style="font-size: 2rem; line-height: 1.15; font-weight: 400;">Frequently asked questions</h1>
         <p>Booking, travel, timing and materials — everything to know before booking
           <a href="/" style="color: #386DB4;">live event watercolour painting with Christopher Wang</a>
