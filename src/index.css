@@ -9,13 +9,13 @@
 }
 
 .instrument-serif-regular {
-  font-family: "Instrument Serif", serif;
+  font-family: "Gochi Hand", cursive;
   font-weight: 400;
   font-style: normal;
 }
 
 .instrument-serif-regular-italic {
-  font-family: "Instrument Serif", serif;
+  font-family: "Gochi Hand", cursive;
   font-weight: 400;
   font-style: italic;
 }
@@ -75,7 +75,7 @@
     letter-spacing: -0.02em;
   }
 
-  /* Instrument Serif ships in regular (400) only — heavier weights here
+  /* Gochi Hand ships in regular (400) only — heavier weights here
      would just trigger faux-bold synthesis, which muddies the letterforms. */
   .display-lg {
     font-family: theme('fontFamily.sentient');
