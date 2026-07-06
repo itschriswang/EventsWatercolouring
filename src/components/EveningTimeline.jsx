@@ -39,18 +39,18 @@ export default function EveningTimeline() {
       id="night"
       className="relative w-full bg-wine px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper"
     >
-      {/* Dusk sky — the aurora orb's colours after dark: azure light pooling
-          top-left, lilac drifting in high-right, a blush rim glowing along
-          the bottom edge like the last of the sunset. */}
+      {/* Dusk sky — the aurora orb's colours after dark: lilac light pooling
+          top-left, a blush drift high-right, a low azure ember along the
+          bottom edge like the last of the sunset. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(93,157,218,0.26) 0%, transparent 60%), ' +
-            'radial-gradient(ellipse 55% 45% at 90% 10%, rgba(216,198,234,0.18) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 60% 50% at 92% 92%, rgba(242,194,207,0.16) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 45% 40% at 30% 100%, rgba(247,212,174,0.10) 0%, transparent 60%), ' +
+            'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(216,198,234,0.26) 0%, transparent 60%), ' +
+            'radial-gradient(ellipse 55% 45% at 90% 10%, rgba(242,194,207,0.20) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 60% 50% at 92% 92%, rgba(93,157,218,0.14) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 45% 40% at 30% 100%, rgba(247,212,174,0.12) 0%, transparent 60%), ' +
             'linear-gradient(170deg, rgba(47,52,80,0.35) 0%, rgba(69,61,102,0) 45%, rgba(69,61,102,0.25) 100%)',
         }}
       />

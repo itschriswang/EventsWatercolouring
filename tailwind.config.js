@@ -10,10 +10,10 @@ export default {
         // apricot #F7D4AE, sage glow #D9DEC1. Text/UI tokens use deepened
         // anchors of the same hues so contrast holds on the ivory ground.
         paper: '#F7F4EF',
-        'paper-deep': '#E6EBF1',
+        'paper-deep': '#ECE9F2',
         ink: '#2F3450',
         'ink-soft': '#646C88',
-        line: '#CFD5E1',
+        line: '#D5D2E1',
         // Primary pigments — azure, dusty rose, apricot, sage, periwinkle
         terracotta: '#386DB4',
         rust: '#9C4A62',
