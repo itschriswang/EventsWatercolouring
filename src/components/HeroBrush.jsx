@@ -79,15 +79,18 @@ const FRAG = `
       float body = smoothstep(radius, 0.0, dist) * (1.0 - age);
       vec3 col = pigment(pt.w + age * 0.15);
       // Layer this bloom over what's built up so far (oldest to newest, so
-      // fresh pigment sits on top) rather than summing colour. Summation blew
-      // overlapping strokes past white — reading as a neon "screen" glow
-      // instead of pigment deepening where wet strokes cross.
-      acc = mix(acc, col, body);
+      // fresh pigment sits on top) using premultiplied "over" compositing —
+      // not summing colour (which blew overlapping strokes past white, a
+      // neon "screen" glow) and not mixing straight colour toward black at
+      // low coverage (which greyed out the feathered, low-opacity rim).
+      // Premultiplied `over` keeps a faint edge at full hue, just more
+      // transparent, the way a dilute wash of pigment actually looks.
+      acc = col * body + acc * (1.0 - body);
       cover = body + cover * (1.0 - body);
     }
     float alpha = cover * 0.5;
     if (alpha < 0.003) discard;
-    gl_FragColor = vec4(acc * alpha, alpha);  // premultiplied
+    gl_FragColor = vec4(acc * 0.5, alpha);  // premultiplied, same 0.5 dampening
   }
 `
 
