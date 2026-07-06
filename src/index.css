@@ -26,13 +26,13 @@
      re-typing hex. The `--rgb-*` triplets feed `rgb(... / <alpha>)` for the
      translucent nav chrome. */
   :root {
-    --c-paper: #ECEEF2;
-    --c-ink: #241F2E;
-    --c-terracotta: #2E5C8C;
-    --rgb-paper: 236 238 242;
-    --rgb-ink: 36 31 46;
-    --rgb-ink-soft: 92 86 104;
-    --rgb-line: 199 202 214;
+    --c-paper: #F7F4EF;
+    --c-ink: #2F3450;
+    --c-terracotta: #386DB4;
+    --rgb-paper: 247 244 239;
+    --rgb-ink: 47 52 80;
+    --rgb-ink-soft: 100 108 136;
+    --rgb-line: 207 213 225;
   }
 
   html {
@@ -51,6 +51,25 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
+  }
+
+  /* Aurora veil — the reference orb's light, spread across the whole page as
+     a fixed, viewport-sized wash: powder blue and lilac pooling at the top
+     corners, azure and blush warming the lower edges. Sits behind all content
+     (negative z-index) but over the paper ground, and stays translucent
+     enough that text contrast on paper is untouched. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      radial-gradient(58% 44% at 10% -4%, rgba(158, 201, 223, 0.34), transparent 72%),
+      radial-gradient(52% 40% at 96% 4%, rgba(216, 198, 234, 0.30), transparent 72%),
+      radial-gradient(46% 38% at 102% 88%, rgba(242, 194, 207, 0.22), transparent 70%),
+      radial-gradient(44% 36% at -4% 82%, rgba(93, 157, 218, 0.16), transparent 70%),
+      radial-gradient(36% 30% at 55% 106%, rgba(247, 212, 174, 0.16), transparent 72%);
   }
 
   ::selection {
@@ -108,11 +127,41 @@
     /* Darker than ink-soft (5.2:1) on purpose: this text is tiny and often
        sits over the watercolour bloom washes, so it needs headroom above
        the 4.5:1 AA minimum rather than just clearing it. ~7.45:1 on paper. */
-    color: #544B41;
+    color: #4A4E63;
   }
 }
 
 @layer utilities {
+  /* Primary action surface — the aurora orb's blend bottled as a button:
+     azure melting through periwinkle into lilac, with a blue-lifted,
+     blush-rimmed glow instead of a flat fill. Oversized background-size so
+     hover can drift the light across the surface rather than swap colours. */
+  .btn-aurora {
+    background-image: linear-gradient(
+      115deg,
+      #2F5E9E 0%,
+      #3D6FB2 28%,
+      #5573C2 55%,
+      #7D68B4 82%,
+      #9E6FA8 100%
+    );
+    background-size: 200% 100%;
+    background-position: 0% 50%;
+    box-shadow:
+      0 14px 30px -12px rgba(93, 157, 218, 0.55),
+      0 4px 14px -8px rgba(216, 198, 234, 0.6);
+    transition:
+      background-position 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+      box-shadow 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .btn-aurora:hover {
+    background-position: 100% 50%;
+    box-shadow:
+      0 16px 34px -12px rgba(93, 157, 218, 0.65),
+      0 6px 18px -8px rgba(242, 194, 207, 0.6);
+  }
+
   /* Subtle paper grain so the bone background reads as stock, not flat #fff. */
   .paper-grain {
     background-image: radial-gradient(
