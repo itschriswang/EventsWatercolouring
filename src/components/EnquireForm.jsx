@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label, { Drop } from './Label.jsx'
 import {
@@ -44,6 +44,31 @@ const mailtoFor = (data) => {
   )}&body=${encodeURIComponent(body)}`
 }
 
+// The three sheets of the reply card, in order.
+const LAST_STEP = 2
+const STEP_COUNT = LAST_STEP + 1
+
+// Steps switch on a quick ease-out tween — a spring that feels right for
+// entrances reads as sluggish between quiz questions, where the next sheet
+// should arrive the moment it's asked for.
+const STEP_TWEEN = { duration: 0.26, ease: [0.25, 1, 0.5, 1] }
+
+// Slide direction follows navigation: forward pulls the next sheet in from
+// the right, Back returns it from the left. Zeroed under reduced motion.
+const stepVariants = (reduce) => ({
+  enter: (d) => ({ opacity: 0, x: reduce ? 0 : 28 * d }),
+  center: { opacity: 1, x: 0 },
+  exit: (d) => ({ opacity: 0, x: reduce ? 0 : -28 * d }),
+})
+
+// Tappable answer chip — same family as the planner's hour buttons, so the
+// quiz reads as more of the site's existing language, not a new widget.
+const chipClass = (on) =>
+  'rounded-full border px-4 py-2 text-left text-sm transition-colors duration-300 ' +
+  (on
+    ? 'border-terracotta bg-terracotta text-paper'
+    : 'border-ink/25 text-ink-soft hover:border-terracotta/60 hover:text-ink')
+
 /**
  * Enquiry form, staged as a hand-placed reply card.
  *
@@ -53,6 +78,13 @@ const mailtoFor = (data) => {
  * sheet and cast in a soft shadow so it reads as a physical object laid on the
  * table. The card is tilted at rest and straightens (`focus-within`) when the
  * visitor starts filling it in. Submitting presses a terracotta wax seal.
+ *
+ * The card asks its questions one sheet at a time — what are you after (a
+ * tap), when and where (mostly skippable), then a name and an email — so the
+ * enquiry feels like three small answers rather than one long form. Because
+ * earlier sheets are unmounted by the time the seal is pressed, every answer
+ * lives in state and submit builds its own FormData, with the exact field
+ * names the old one-sheet form posted — the Formspree payload is unchanged.
  *
  * Form and confirmation share the SAME card: on a confirmed send the sheet
  * floods with pigment and becomes the handwritten thank-you, so the note never
@@ -72,12 +104,43 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
   const [invalidField, setInvalidField] = useState('')
   // Neutral, non-error guidance (e.g. when we hand off to the email client).
   const [notice, setNotice] = useState('')
-  // Message and package are controlled so the planner's "Enquire with these
-  // hours" link can hand its chosen hours straight into the form.
-  // `initialPackage` lets other pages (e.g. /corporate/) open the card with
-  // their audience's option already chosen.
-  const [message, setMessage] = useState('')
-  const [pkg, setPkg] = useState(initialPackage)
+
+  // Every answer, across all three sheets. `initialPackage` lets other pages
+  // (e.g. /corporate/) open the card with their audience's option already
+  // chosen; the planner event below prefills package and message the same way.
+  const [f, setF] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    contactMethod: '',
+    venue: '',
+    package: initialPackage,
+    date: '',
+    dateUnknown: false,
+    message: '',
+  })
+  const set = (key) => (e) => {
+    const v = e.target.value
+    setF((p) => ({ ...p, [key]: v }))
+  }
+
+  const [step, setStep] = useState(0)
+  const [dir, setDir] = useState(1)
+  // Focus follows the step change so keyboard and screen-reader users land on
+  // the fresh sheet — but never on first mount, which would yank the page.
+  const navigated = useRef(false)
+  const stepRef = useRef(null)
+  const goto = (next) => {
+    navigated.current = true
+    setDir(next > step ? 1 : -1)
+    setStep(next)
+    setError('')
+    setInvalidField('')
+  }
+  useEffect(() => {
+    if (!navigated.current) return
+    stepRef.current?.focus({ preventScroll: true })
+  }, [step])
 
   // The planner (NightPlanner.jsx) dispatches this just before the anchor
   // navigation lands here — prefill, but never overwrite words the visitor
@@ -86,8 +149,13 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
     const onPlanner = (e) => {
       const { hours } = e.detail || {}
       if (!hours) return
-      setMessage((m) => m || `Thinking around ${hours} hours live.`)
-      setPkg((p) => p || (hours > 3 ? 'Live on the day, with add-ons' : 'Live on the day (base package)'))
+      setF((p) => ({
+        ...p,
+        message: p.message || `Thinking around ${hours} hours live.`,
+        package:
+          p.package ||
+          (hours > 3 ? 'Live on the day, with add-ons' : 'Live on the day (base package)'),
+      }))
     }
     window.addEventListener('ew:planner-enquire', onPlanner)
     return () => window.removeEventListener('ew:planner-enquire', onPlanner)
@@ -101,7 +169,14 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
     e.preventDefault()
     const form = e.currentTarget
     if (form._gotcha.value) return // honeypot tripped
-    const data = Object.fromEntries(new FormData(form).entries())
+    // Enter partway through the quiz means "continue", not "send" — the seal
+    // only exists on the last sheet, but implicit submission doesn't care.
+    if (step < LAST_STEP) {
+      goto(step + 1)
+      return
+    }
+
+    const data = { ...f, date_unknown: f.dateUnknown ? 'true' : '' }
 
     setNotice('')
     if (!data.name?.trim()) {
@@ -132,10 +207,18 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
 
     setSending(true)
     try {
+      // Same field set the one-sheet form used to post, rebuilt from state
+      // (earlier sheets are unmounted, so the DOM no longer holds them).
+      const fd = new FormData()
+      fd.append('_gotcha', form._gotcha.value)
+      for (const k of ['name', 'phone', 'email', 'contactMethod', 'date', 'venue', 'package', 'message']) {
+        fd.append(k, f[k])
+      }
+      if (f.dateUnknown) fd.append('date_unknown', 'true')
       const res = await fetch(FORMSPREE_ENDPOINT, {
         method: 'POST',
         headers: { Accept: 'application/json' },
-        body: new FormData(form),
+        body: fd,
       })
       if (!res.ok) throw new Error('Bad response')
       // Only now, on a confirmed send, do we show the thank-you — greeted by
@@ -152,6 +235,8 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
       setSending(false)
     }
   }
+
+  const S = ENQUIRY.steps
 
   return (
     <section id="enquiry" className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(3.5rem,7vw,6rem)]">
@@ -234,15 +319,17 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
 
               {/* Content sits above paper + wash, textured with the site grain. */}
               <div className="paper-grain relative z-10 px-[clamp(1.75rem,4vw,3rem)] py-[clamp(1.75rem,4vw,2.75rem)]">
-                {/* Card header — reads the sheet as a reply card. Persists across
-                    both states so the confirmation stays on the same stationery. */}
+                {/* Card header — reads the sheet as a reply card, and counts
+                    the sheets so the visitor always knows how little is left.
+                    Persists across both states so the confirmation stays on
+                    the same stationery. */}
                 <div className="mb-7 flex items-baseline justify-between border-b border-line/80 pb-4">
                   <span className="eyebrow inline-flex items-center gap-2">
                     <Drop className="h-5 w-auto" fill="#C98B8C" />
                     Reply card
                   </span>
                   <span className="font-mono text-xs lowercase tracking-wide text-ink-soft">
-                    fill freely
+                    {sent ? 'sealed' : `${step + 1} of ${STEP_COUNT}`}
                   </span>
                 </div>
 
@@ -274,135 +361,215 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                       )}
                     </motion.div>
                   ) : (
-                    <motion.form
-                      key="form"
-                      noValidate
-                      onSubmit={onSubmit}
-                      initial={false}
-                      className="grid grid-cols-1 gap-x-8 gap-y-7 sm:grid-cols-2"
-                    >
-                      {/* honeypot */}
+                    <motion.form key="form" noValidate onSubmit={onSubmit} initial={false}>
+                      {/* honeypot — lives outside the sheets so it's always
+                          mounted, whatever step is showing */}
                       <label className="absolute left-[-9999px]" aria-hidden="true">
                         Leave this empty
                         <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" />
                       </label>
 
-                      <Field name="name" label="Your name" required autoComplete="name" invalid={invalidField === 'name'} />
-                      <Field
-                        name="phone"
-                        label="Phone number"
-                        type="tel"
-                        autoComplete="tel"
-                        placeholder="e.g. 0400 000 000"
-                      />
-                      <Field name="email" label="Email" type="email" required autoComplete="email" invalid={invalidField === 'email'} />
-                      <div className="flex flex-col sm:col-span-2">
-                        <label
-                          htmlFor="f-contactMethod"
-                          className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink"
+                      <AnimatePresence mode="wait" initial={false} custom={dir}>
+                        <motion.div
+                          key={step}
+                          ref={stepRef}
+                          tabIndex={-1}
+                          custom={dir}
+                          variants={stepVariants(reduce)}
+                          initial="enter"
+                          animate="center"
+                          exit="exit"
+                          transition={STEP_TWEEN}
+                          className="outline-none"
                         >
-                          Preferred contact method
-                        </label>
-                        <div className="relative">
-                          <select
-                            id="f-contactMethod"
-                            name="contactMethod"
-                            className="w-full appearance-none border-b border-ink/30 bg-transparent py-3 pr-8 text-ink outline-none transition-colors focus:border-terracotta"
-                          >
-                            <option value="">Choose one</option>
-                            <option>Email</option>
-                            <option>Phone</option>
-                          </select>
-                          <svg
-                            className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/60 transition-colors"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                          </svg>
-                        </div>
-                      </div>
-                      <Field name="venue" label="Venue or city" placeholder="e.g. Melbourne" />
+                          {step > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => goto(step - 1)}
+                              className="mb-5 inline-flex items-center gap-2 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink"
+                            >
+                              <span aria-hidden="true">←</span>
+                              {S.back}
+                            </button>
+                          )}
 
-                      <div className="flex flex-col">
-                        <label htmlFor="f-package" className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
-                          What are you after?
-                        </label>
-                        <div className="relative">
-                          <select
-                            id="f-package"
-                            name="package"
-                            value={pkg}
-                            onChange={(e) => setPkg(e.target.value)}
-                            className="w-full appearance-none border-b border-ink/30 bg-transparent py-3 pr-8 text-ink outline-none transition-colors focus:border-terracotta"
-                          >
-                            <option value="">Choose one</option>
-                            {ENQUIRY.packageOptions.map((o) => (
-                              <option key={o}>{o}</option>
-                            ))}
-                          </select>
-                          <svg
-                            className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/60 transition-colors"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                          </svg>
-                        </div>
-                      </div>
+                          {step === 0 && (
+                            <>
+                              <StepHeading q={S.what.q} hint={S.what.hint} />
+                              <div
+                                role="group"
+                                aria-label={S.what.q}
+                                className="mt-6 flex flex-wrap gap-2"
+                              >
+                                {ENQUIRY.packageOptions.map((o) => (
+                                  <button
+                                    key={o}
+                                    type="button"
+                                    aria-pressed={f.package === o}
+                                    onClick={() => {
+                                      setF((p) => ({ ...p, package: o }))
+                                      goto(1)
+                                    }}
+                                    className={chipClass(f.package === o)}
+                                  >
+                                    {o}
+                                  </button>
+                                ))}
+                              </div>
+                              {/* A tap advances on its own; the button only
+                                  appears when the answer arrived prefilled
+                                  (planner, /corporate/) or via Back. */}
+                              {f.package && (
+                                <div className="mt-8">
+                                  <NextButton onClick={() => goto(1)} label={S.next} />
+                                </div>
+                              )}
+                            </>
+                          )}
 
-                      <div className="flex flex-col sm:col-span-2">
-                        <label htmlFor="f-message" className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
-                          Message
-                        </label>
-                        <textarea
-                          id="f-message"
-                          name="message"
-                          rows={4}
-                          value={message}
-                          onChange={(e) => setMessage(e.target.value)}
-                          placeholder="Tell me a little about the day, and the people who matter most."
-                          className="resize-none border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft/60 focus:border-terracotta"
-                        />
-                      </div>
+                          {step === 1 && (
+                            <>
+                              <StepHeading q={S.when.q} hint={S.when.hint} />
+                              <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-7 sm:grid-cols-2">
+                                <div className="flex flex-col">
+                                  <label
+                                    htmlFor="f-date"
+                                    className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink"
+                                  >
+                                    {dateLabel}
+                                  </label>
+                                  <input
+                                    id="f-date"
+                                    type="date"
+                                    name="date"
+                                    value={f.date}
+                                    onChange={(e) =>
+                                      // A real date and "not sure yet" can't
+                                      // both be true — picking one clears the other.
+                                      setF((p) => ({ ...p, date: e.target.value, dateUnknown: false }))
+                                    }
+                                    className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors focus:border-terracotta"
+                                  />
+                                  <button
+                                    type="button"
+                                    aria-pressed={f.dateUnknown}
+                                    onClick={() =>
+                                      setF((p) => ({ ...p, dateUnknown: !p.dateUnknown, date: '' }))
+                                    }
+                                    className={'mt-4 w-fit ' + chipClass(f.dateUnknown)}
+                                  >
+                                    {S.notSure}
+                                  </button>
+                                </div>
+                                <Field
+                                  name="venue"
+                                  label="Venue or city"
+                                  placeholder="e.g. Melbourne"
+                                  value={f.venue}
+                                  onChange={set('venue')}
+                                />
+                              </div>
+                              <div className="mt-8">
+                                <NextButton onClick={() => goto(2)} label={S.next} />
+                              </div>
+                            </>
+                          )}
 
-                      <div className="flex flex-col sm:col-span-2">
-                        <label className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
-                          {dateLabel}
-                        </label>
-                        <div className="flex flex-col gap-3">
-                          <input
-                            type="date"
-                            name="date"
-                            className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors focus:border-terracotta"
-                          />
-                          <label className="flex items-center gap-3 cursor-pointer group">
-                            <input
-                              type="checkbox"
-                              name="date_unknown"
-                              value="true"
-                              className="h-5 w-5 rounded border border-ink/30 bg-transparent accent-terracotta cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-terracotta focus:ring-offset-0"
-                            />
-                            <span className="text-sm text-ink transition-colors group-hover:text-terracotta">Not sure yet</span>
-                          </label>
-                        </div>
-                      </div>
+                          {step === 2 && (
+                            <>
+                              <StepHeading q={S.who.q} hint={S.who.hint} />
+                              <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-7 sm:grid-cols-2">
+                                <Field
+                                  name="name"
+                                  label="Your name"
+                                  required
+                                  autoComplete="name"
+                                  invalid={invalidField === 'name'}
+                                  value={f.name}
+                                  onChange={set('name')}
+                                />
+                                <Field
+                                  name="email"
+                                  label="Email"
+                                  type="email"
+                                  required
+                                  autoComplete="email"
+                                  invalid={invalidField === 'email'}
+                                  value={f.email}
+                                  onChange={set('email')}
+                                />
+                                <Field
+                                  name="phone"
+                                  label="Phone number"
+                                  type="tel"
+                                  autoComplete="tel"
+                                  placeholder="e.g. 0400 000 000"
+                                  value={f.phone}
+                                  onChange={set('phone')}
+                                />
+                                <div className="flex flex-col">
+                                  <span className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
+                                    Preferred contact method
+                                  </span>
+                                  <div
+                                    role="group"
+                                    aria-label="Preferred contact method"
+                                    className="flex gap-2 py-1"
+                                  >
+                                    {['Email', 'Phone'].map((m) => (
+                                      <button
+                                        key={m}
+                                        type="button"
+                                        aria-pressed={f.contactMethod === m}
+                                        onClick={() =>
+                                          setF((p) => ({
+                                            ...p,
+                                            contactMethod: p.contactMethod === m ? '' : m,
+                                          }))
+                                        }
+                                        className={chipClass(f.contactMethod === m)}
+                                      >
+                                        {m}
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
+                                <div className="flex flex-col sm:col-span-2">
+                                  <label
+                                    htmlFor="f-message"
+                                    className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink"
+                                  >
+                                    Message <span className="font-normal text-ink-soft">(optional)</span>
+                                  </label>
+                                  <textarea
+                                    id="f-message"
+                                    name="message"
+                                    rows={3}
+                                    value={f.message}
+                                    onChange={set('message')}
+                                    placeholder="Tell me a little about the day, and the people who matter most."
+                                    className="resize-none border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft/60 focus:border-terracotta"
+                                  />
+                                </div>
+                              </div>
 
-                      <div className="flex flex-col gap-4 sm:col-span-2">
-                        <SealButton sending={sending} />
-                        {error && (
-                          <p id="enquire-error" role="alert" className="font-mono text-xs text-rust">
-                            {error}
-                          </p>
-                        )}
-                        {notice && !error && (
-                          <p role="status" className="max-w-md font-mono text-xs leading-relaxed text-ink-soft">
-                            {notice}
-                          </p>
-                        )}
-                      </div>
+                              <div className="mt-8 flex flex-col gap-4">
+                                <SealButton sending={sending} />
+                                {error && (
+                                  <p id="enquire-error" role="alert" className="font-mono text-xs text-rust">
+                                    {error}
+                                  </p>
+                                )}
+                                {notice && !error && (
+                                  <p role="status" className="max-w-md font-mono text-xs leading-relaxed text-ink-soft">
+                                    {notice}
+                                  </p>
+                                )}
+                              </div>
+                            </>
+                          )}
+                        </motion.div>
+                      </AnimatePresence>
                     </motion.form>
                   )}
                 </AnimatePresence>
@@ -412,6 +579,32 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
         </div>
       </div>
     </section>
+  )
+}
+
+/** The question each sheet asks, in the card's own voice. */
+function StepHeading({ q, hint }) {
+  return (
+    <>
+      <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">{q}</h3>
+      <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-soft">{hint}</p>
+    </>
+  )
+}
+
+/** Forward control between sheets — same pill as the planner's CTA. */
+function NextButton({ onClick, label }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group inline-flex items-center gap-2.5 rounded-full bg-terracotta px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-paper transition-colors duration-300 hover:bg-rust"
+    >
+      {label}
+      <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
+        →
+      </span>
+    </button>
   )
 }
 
