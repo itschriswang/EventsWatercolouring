@@ -27,12 +27,12 @@
      translucent nav chrome. */
   :root {
     --c-paper: #F7F4EF;
-    --c-ink: #3A2F4A;
-    --c-terracotta: #9E5789;
+    --c-ink: #42333B;
+    --c-terracotta: #A85450;
     --rgb-paper: 247 244 239;
-    --rgb-ink: 58 47 74;
-    --rgb-ink-soft: 119 108 136;
-    --rgb-line: 213 210 225;
+    --rgb-ink: 66 51 59;
+    --rgb-ink-soft: 129 107 105;
+    --rgb-line: 224 213 210;
   }
 
   html {
@@ -54,8 +54,9 @@
   }
 
   /* Aurora veil — the reference orb's light, spread across the whole page as
-     a fixed, viewport-sized wash: lilac and blush pooling at the top
-     corners, sage glow and apricot warming the lower edges. Sits behind all content
+     a fixed, viewport-sized wash: peach and blush pooling at the top
+     corners, sage glow warming the lower edges and a lilac breath
+     low-left as the one cool accent. Sits behind all content
      (negative z-index) but over the paper ground, and stays translucent
      enough that text contrast on paper is untouched. */
   body::before {
@@ -65,10 +66,10 @@
     z-index: -1;
     pointer-events: none;
     background-image:
-      radial-gradient(58% 44% at 10% -4%, rgba(216, 198, 234, 0.34), transparent 72%),
+      radial-gradient(58% 44% at 10% -4%, rgba(246,206,196, 0.34), transparent 72%),
       radial-gradient(52% 40% at 96% 4%, rgba(242, 194, 207, 0.28), transparent 72%),
       radial-gradient(46% 38% at 102% 88%, rgba(217, 222, 193, 0.28), transparent 70%),
-      radial-gradient(44% 36% at -4% 82%, rgba(217,222,193, 0.18), transparent 70%),
+      radial-gradient(44% 36% at -4% 82%, rgba(216, 198, 234, 0.20), transparent 70%),
       radial-gradient(36% 30% at 55% 106%, rgba(247, 212, 174, 0.18), transparent 72%);
   }
 
@@ -133,22 +134,22 @@
 
 @layer utilities {
   /* Primary action surface — the aurora orb's blend bottled as a button:
-     orchid melting through rose into coral, with a mauve-lifted,
+     rosewood melting through coral into apricot, with a coral-lifted,
      blush-rimmed glow instead of a flat fill. Oversized background-size so
      hover can drift the light across the surface rather than swap colours. */
   .btn-aurora {
     background-image: linear-gradient(
       115deg,
-      #96609E 0%,
-      #A85E93 28%,
-      #B4638B 55%,
-      #C06E72 80%,
-      #CE8258 100%
+      #9E4A48 0%,
+      #A85450 28%,
+      #B0585A 55%,
+      #C47058 80%,
+      #D08A5A 100%
     );
     background-size: 200% 100%;
     background-position: 0% 50%;
     box-shadow:
-      0 14px 30px -12px rgba(180,156,216, 0.5),
+      0 14px 30px -12px rgba(232,167,148, 0.5),
       0 4px 14px -8px rgba(242, 194, 207, 0.6);
     transition:
       background-position 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
@@ -158,7 +159,7 @@
   .btn-aurora:hover {
     background-position: 100% 50%;
     box-shadow:
-      0 16px 34px -12px rgba(216, 198, 234, 0.65),
+      0 16px 34px -12px rgba(246,206,196, 0.65),
       0 6px 18px -8px rgba(242, 194, 207, 0.65);
   }
 

@@ -76,7 +76,7 @@ export default function SelectedWork() {
       <div className="mx-auto max-w-[88rem]">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <Label gradient={['#C2CB93', '#9E5789']}>{WORK.label}</Label>
+            <Label gradient={['#C2CB93', '#A85450']}>{WORK.label}</Label>
             <SplitText
               as="h2"
               unit="char"
@@ -185,7 +185,7 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
     >
       {item.testimonial ? (
         <div className={cardShape + ' bg-paper-deep'}>
-          <CornerBloom from="rgba(223,164,85,0.14)" to="rgba(144,120,190,0.11)" />
+          <CornerBloom from="rgba(223,164,85,0.14)" to="rgba(198,138,102,0.11)" />
           <div className="relative z-10 flex h-full flex-col">
             <Testimonial item={item} masonry={masonry} />
           </div>
@@ -216,7 +216,7 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
             />
           </picture>
-          <CornerBloom from="rgba(158,87,137,0.14)" to="rgba(144,120,190,0.10)" overlay />
+          <CornerBloom from="rgba(168,84,80,0.14)" to="rgba(198,138,102,0.10)" overlay />
         </button>
       )}
     </motion.figure>
@@ -370,7 +370,7 @@ function RevealTile({ reveal, className = '' }) {
         {/* Seam + handle */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 w-px bg-paper shadow-[0_0_8px_rgba(58,47,74,0.45)]"
+          className="pointer-events-none absolute inset-y-0 w-px bg-paper shadow-[0_0_8px_rgba(66,51,59,0.45)]"
           style={{ left: `${pct}%` }}
         />
         <div
@@ -527,7 +527,7 @@ function Lightbox({ items, index, onClose, onNavigate }) {
               className="pointer-events-none absolute left-1/2 top-1/2 h-[125vmin] w-[125vmin] -translate-x-1/2 -translate-y-1/2 mix-blend-screen"
               style={{
                 background:
-                  'radial-gradient(circle at 50% 50%, rgba(158,87,137,0.42), rgba(144,120,190,0.2) 42%, transparent 72%)',
+                  'radial-gradient(circle at 50% 50%, rgba(168,84,80,0.42), rgba(198,138,102,0.2) 42%, transparent 72%)',
                 filter: 'blur(60px)',
               }}
             />
