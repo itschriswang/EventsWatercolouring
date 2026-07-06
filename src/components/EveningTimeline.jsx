@@ -12,8 +12,8 @@ import { withUnderline } from './Underline.jsx'
  * pinned on the left while the beats run down the right as a vertical tracking
  * timeline: a spine, numbered dots that fill as each beat scrolls into view
  * (like watching a parcel move through its stops), and a destination marker on
- * the final beat. Rust-drenched, single layout from phone to desktop so the
- * two never drift apart.
+ * the final beat. Dusk-drenched — the aurora palette after sundown — single
+ * layout from phone to desktop so the two never drift apart.
  */
 export default function EveningTimeline() {
   const reduce = useReducedMotion()
@@ -37,15 +37,21 @@ export default function EveningTimeline() {
   return (
     <section
       id="night"
-      className="relative w-full bg-rust px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper"
+      className="relative w-full bg-wine px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper"
     >
+      {/* Dusk sky — the aurora orb's colours after dark: azure light pooling
+          top-left, lilac drifting in high-right, a blush rim glowing along
+          the bottom edge like the last of the sunset. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(214,166,60,0.14) 0%, transparent 60%), ' +
-            'radial-gradient(ellipse 60% 50% at 92% 90%, rgba(108,42,62,0.20) 0%, transparent 55%)',
+            'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(93,157,218,0.26) 0%, transparent 60%), ' +
+            'radial-gradient(ellipse 55% 45% at 90% 10%, rgba(216,198,234,0.18) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 60% 50% at 92% 92%, rgba(242,194,207,0.16) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 45% 40% at 30% 100%, rgba(247,212,174,0.10) 0%, transparent 60%), ' +
+            'linear-gradient(170deg, rgba(47,52,80,0.35) 0%, rgba(69,61,102,0) 45%, rgba(69,61,102,0.25) 100%)',
         }}
       />
       {/* faint bouquet cut, top-right. Clipped by its own wrapper rather than
@@ -74,11 +80,11 @@ export default function EveningTimeline() {
 
       {/* Watercolour pigment wash, bottom-left — the title rail leaves that
           corner empty once the beats run long down the right, and screen
-          blend reads as a warm glow lifting off the dark rust rather than a
+          blend reads as a soft glow lifting off the dusk indigo rather than a
           fill. Anchored to the section's own bottom-left padding edge (not
           pushed past it) so the wash never bleeds into the section below,
           and masked to a soft radial fade so its clipping box never reads
-          as a hard-edged square against the rust background. */}
+          as a hard-edged square against the dusk background. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -left-[8vw] bottom-0 h-[52vw] w-[52vw] max-h-[560px] max-w-[560px] overflow-hidden opacity-70"
@@ -96,7 +102,7 @@ export default function EveningTimeline() {
         {/* Sticky title rail */}
         <div className="col-span-12 lg:col-span-5">
           <div className="lg:sticky lg:top-24 lg:h-fit">
-            <Label gradient={['#D6A63C', '#ECEEF2']} className="!text-paper/90">
+            <Label gradient={['#DFA455', '#F7F4EF']} className="!text-paper/90">
               {EVENING.label}
             </Label>
             <h2 className="display-lg mt-1">
@@ -153,14 +159,14 @@ export default function EveningTimeline() {
                     aria-hidden="true"
                   >
                     {isLast ? (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_12px_rgba(115,46,17,0.52)]">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_12px_rgba(47,52,80,0.55)]">
                         <Drop
                           className="h-5 w-auto"
-                          gradient={['#2E5C8C', '#8C2E3C']}
+                          gradient={['#5D9DDA', '#8C9ED6']}
                         />
                       </span>
                     ) : (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] text-rust shadow-[0_2px_12px_rgba(115,46,17,0.40)]">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] text-wine shadow-[0_2px_12px_rgba(47,52,80,0.42)]">
                         {beat.no}
                       </span>
                     )}
@@ -174,7 +180,7 @@ export default function EveningTimeline() {
                   <motion.div
                     whileHover={reduce ? {} : { y: -6 }}
                     transition={SPRING}
-                    className="group relative -mt-px flex-1 rounded-2xl border border-paper/15 bg-paper-deep/95 p-4 shadow-[0_10px_30px_-18px_rgba(69,34,17,0.58)] backdrop-blur-[1px] sm:p-5"
+                    className="group relative -mt-px flex-1 rounded-2xl border border-paper/15 bg-paper-deep/95 p-4 shadow-[0_10px_30px_-18px_rgba(47,52,80,0.58)] backdrop-blur-[1px] sm:p-5"
                   >
                     <span
                       aria-hidden="true"

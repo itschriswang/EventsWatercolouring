@@ -94,7 +94,7 @@ function DockButton({ item }) {
         'flex flex-col items-center justify-center gap-[3px] rounded-full select-none',
         'px-3 py-2.5',
         highlight
-          ? 'bg-terracotta text-paper px-3.5'
+          ? 'btn-aurora text-paper px-3.5'
           : 'text-ink-soft',
       ].join(' ')}
       whileTap={{ scale: 0.86 }}
@@ -136,7 +136,7 @@ export default function MobileNav({ revealed, enquireHref = ENQUIRE_HREF }) {
           // Ink shadow (approved palette) for the lift, paper-tone inset for
           // the glint — no neutral grey/white per the site's shadow rule.
           boxShadow:
-            '0 8px 32px rgba(48,45,41,0.21), 0 0 0 1px rgba(236,238,242,0.55) inset',
+            '0 8px 32px rgba(47,52,80,0.21), 0 0 0 1px rgba(247,244,239,0.55) inset',
         }}
         aria-label="Quick navigation"
       >
