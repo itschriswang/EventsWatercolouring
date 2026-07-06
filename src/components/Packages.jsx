@@ -68,7 +68,7 @@ export default function Packages() {
         <motion.div
           {...reveal(1)}
           className="relative z-20 mt-4 max-w-[calc(100vw-5vw*2)] overflow-hidden rounded-2xl border border-line/45 p-6 shadow-[0_24px_50px_-20px_rgba(61,101,158,0.32)]"
-          style={{ background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
+          style={{ background: 'linear-gradient(150deg, rgba(158,201,223,0.18) 0%, rgba(216,198,234,0.13) 48%, rgba(242,194,207,0.14) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
         >
           <CornerBloom from="rgba(56,109,180,0.18)" to="rgba(110,128,192,0.12)" />
           <div className="relative z-10">
@@ -172,7 +172,7 @@ export default function Packages() {
         <motion.article
           {...reveal()}
           className="relative col-span-5 flex flex-col overflow-hidden rounded-2xl border border-line/45 p-7 shadow-[0_24px_50px_-20px_rgba(61,101,158,0.25)]"
-          style={{ background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
+          style={{ background: 'linear-gradient(150deg, rgba(158,201,223,0.18) 0%, rgba(216,198,234,0.13) 48%, rgba(242,194,207,0.14) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
         >
           <CornerBloom from="rgba(56,109,180,0.18)" to="rgba(110,128,192,0.12)" />
           <div className="relative z-10 flex flex-1 flex-col">
@@ -215,7 +215,7 @@ export default function Packages() {
         <motion.div
           {...reveal(1)}
           className="relative col-span-7 overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(61,101,158,0.25)]"
-          style={{ background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
+          style={{ background: 'linear-gradient(150deg, rgba(158,201,223,0.18) 0%, rgba(216,198,234,0.13) 48%, rgba(242,194,207,0.14) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
         >
           <CornerBloom from="rgba(223,164,85,0.16)" to="rgba(110,128,192,0.12)" />
           <div className="relative z-10 flex h-full flex-col">
@@ -272,7 +272,7 @@ export default function Packages() {
         whileHover={reduce ? {} : { y: -3 }}
         transition={SPRING}
         className="group relative mt-12 flex w-full items-center justify-between gap-4 overflow-hidden rounded-2xl border border-terracotta/30 p-6 shadow-[0_24px_50px_-20px_rgba(61,101,158,0.32)] transition-colors duration-300 hover:border-terracotta/60 sm:p-7"
-        style={{ background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
+        style={{ background: 'linear-gradient(150deg, rgba(158,201,223,0.18) 0%, rgba(216,198,234,0.13) 48%, rgba(242,194,207,0.14) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
       >
         <CornerBloom from="rgba(223,164,85,0.16)" to="rgba(56,109,180,0.14)" />
         <span className="relative z-10 flex items-center gap-4 sm:gap-5">

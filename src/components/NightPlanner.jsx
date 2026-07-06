@@ -43,7 +43,7 @@ export default function NightPlanner() {
       viewport={{ once: true, margin: '-60px' }}
       transition={SPRING}
       className="relative mt-[clamp(2.5rem,6vw,4rem)] overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(61,101,158,0.25)]"
-      style={{ background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
+      style={{ background: 'linear-gradient(150deg, rgba(158,201,223,0.18) 0%, rgba(216,198,234,0.13) 48%, rgba(242,194,207,0.14) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
     >
       <CornerBloom from="rgba(110,128,192,0.13)" to="rgba(56,109,180,0.14)" />
       <div className="relative z-10 grid grid-cols-1 gap-8 p-7 sm:p-8 lg:grid-cols-2 lg:gap-12">

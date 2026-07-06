@@ -18,13 +18,13 @@ export default function MagneticButton({
   // plain link.
   const { ref, style } = useMagnetic()
 
-  // Terracotta is the site's single action colour — every primary control
-  // (header pill, mobile dock highlight, this button) wears it, so "warm
-  // orange means act" only has to be learned once.
+  // The aurora gradient is the site's single action surface — every primary
+  // control (header pill, mobile dock highlight, this button) wears it, so
+  // "aurora light means act" only has to be learned once.
   const palette =
     variant === 'paper'
       ? 'bg-paper text-ink hover:bg-terracotta hover:text-paper'
-      : 'bg-terracotta text-paper hover:bg-rust'
+      : 'btn-aurora text-paper'
 
   return (
     <motion.a
