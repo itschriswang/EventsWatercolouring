@@ -56,13 +56,13 @@ const FRAG = `
   // Ordered pigment ramp sampled from the site palette. Warm (1.0) swaps the
   // cool cornflower slot for extra lime, matching WatercolourBloom's .wcb-warm.
   vec3 pigment(float t, float warm){
-    vec3 terracotta = vec3(0.180, 0.361, 0.549);
-    vec3 ochre      = vec3(0.839, 0.651, 0.235);
-    vec3 blush      = vec3(0.788, 0.478, 0.580);
-    vec3 rose       = vec3(0.549, 0.290, 0.431);
-    vec3 lime       = vec3(0.659, 0.749, 0.235);
-    vec3 cool       = mix(vec3(0.290, 0.369, 0.549), vec3(0.659, 0.749, 0.235), warm);
-    vec3 rust       = vec3(0.549, 0.180, 0.235);
+    vec3 terracotta = vec3(0.365, 0.616, 0.855);
+    vec3 ochre      = vec3(0.969, 0.831, 0.682);
+    vec3 blush      = vec3(0.949, 0.761, 0.812);
+    vec3 rose       = vec3(0.847, 0.776, 0.918);
+    vec3 lime       = vec3(0.851, 0.871, 0.757);
+    vec3 cool       = mix(vec3(0.549, 0.620, 0.839), vec3(0.851, 0.871, 0.757), warm);
+    vec3 rust       = vec3(0.620, 0.788, 0.875);
     t = fract(t) * 6.0;
     if (t < 1.0) return mix(terracotta, ochre, t);
     if (t < 2.0) return mix(ochre, blush, t - 1.0);

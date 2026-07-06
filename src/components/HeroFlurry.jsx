@@ -116,7 +116,7 @@ const spline = (pts, u) => {
 
 // A warm paper veil that thickens on far cards, so the current recedes into
 // the page's own ground — atmospheric depth, not a grey haze.
-const HAZE = 'rgb(236,238,242)'
+const HAZE = 'rgb(247,244,239)'
 
 /**
  * HeroFlurry — the load flourish. On the first arrival of a session a small,
@@ -354,8 +354,8 @@ export default function HeroFlurry({ heroTargets = [] }) {
           className={
             'absolute left-1/2 top-1/2 overflow-hidden border border-line bg-paper-deep ' +
             (card.survivor
-              ? 'rounded-[1.25rem] shadow-[0_28px_52px_-18px_rgba(173,98,49,0.30),0_6px_16px_-6px_rgba(173,98,49,0.12)]'
-              : 'rounded-[0.9rem] shadow-[0_12px_30px_-12px_rgba(173,98,49,0.38),0_3px_10px_-4px_rgba(115,46,17,0.30)]')
+              ? 'rounded-[1.25rem] shadow-[0_28px_52px_-18px_rgba(61,101,158,0.30),0_6px_16px_-6px_rgba(61,101,158,0.12)]'
+              : 'rounded-[0.9rem] shadow-[0_12px_30px_-12px_rgba(61,101,158,0.38),0_3px_10px_-4px_rgba(122,54,74,0.30)]')
           }
           style={{ width: card.cardW, willChange: 'transform, opacity' }}
           initial={{ x: card.xs[0], y: card.ys[0], scale: card.ss[0], rotate: card.rs[0], opacity: 0, zIndex: card.zs[0] }}

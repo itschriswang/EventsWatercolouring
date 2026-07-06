@@ -30,14 +30,14 @@ export default function Faq() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ ...SPRING, delay: reduce ? 0 : Math.min(i, 5) * 0.05 }}
-              className="paper-grain relative overflow-hidden rounded-2xl border border-line/60 bg-paper shadow-[0_18px_36px_-24px_rgba(69,34,17,0.4)]"
+              className="paper-grain relative overflow-hidden rounded-2xl border border-line/60 bg-paper shadow-[0_18px_36px_-24px_rgba(47,52,80,0.4)]"
             >
               <div className="relative z-10 flex items-start gap-4 px-6 py-5 sm:gap-5">
                 <span
                   className="mt-0.5 shrink-0 rounded-full bg-paper-deep/80 p-2.5"
                   aria-hidden="true"
                 >
-                  <Drop className="h-4 w-auto" gradient={['#D6A63C', '#2E5C8C']} />
+                  <Drop className="h-4 w-auto" gradient={['#DFA455', '#386DB4']} />
                 </span>
                 <div>
                   <h3 className="font-body text-[clamp(0.95rem,1.3vw,1.15rem)] tracking-[-0.01em] leading-snug text-ink">
