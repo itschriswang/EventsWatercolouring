@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { webglSupported, getContext, createQuadProgram, resizeCanvas } from '../lib/webgl.js'
 
 // Session flag so the intro plays once per visit, not once per page load —
 // coming back from /faq/ (or any internal navigation) skips straight to the
@@ -33,6 +34,7 @@ export default function Preloader({ onDone }) {
   const [skip] = useState(shouldSkip)
   const [bloom, setBloom] = useState(false)
   const [gone, setGone] = useState(false)
+  const [glOK] = useState(() => !reduce && webglSupported())
 
   useEffect(() => {
     try {
@@ -71,7 +73,7 @@ export default function Preloader({ onDone }) {
           style={{ clipPath: 'circle(150% at 50% 45%)' }}
         >
           <div className="relative grid h-40 w-40 place-items-center sm:h-48 sm:w-48">
-            <Bloom active={bloom} reduce={reduce} />
+            {glOK ? <PigmentCreature active={bloom} /> : <Bloom active={bloom} reduce={reduce} />}
           </div>
 
           <p className="mt-8 font-sentient text-xl tracking-[-0.01em] text-ink">
@@ -134,4 +136,138 @@ function Bloom({ active, reduce }) {
       })}
     </div>
   )
+}
+
+// Same domain-warped fbm bleed as BloomCanvas (src/lib/webgl.js's caller),
+// so the intro reads as the same pigment as the rest of the site rather than
+// a separate, flatter effect — just aimed at a single small silhouette
+// instead of full-viewport wash bands.
+const CREATURE_FRAG = `
+precision mediump float;
+uniform vec2 u_res;
+uniform float u_time;
+uniform float u_appear;
+uniform float u_active;
+
+float hash(vec2 p){
+  p = fract(p * vec2(123.34, 456.21));
+  p += dot(p, p + 45.32);
+  return fract(p.x * p.y);
+}
+float vnoise(vec2 p){
+  vec2 i = floor(p), f = fract(p);
+  float a = hash(i), b = hash(i + vec2(1.0, 0.0));
+  float c = hash(i + vec2(0.0, 1.0)), d = hash(i + vec2(1.0, 1.0));
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+}
+float fbm(vec2 p){
+  float v = 0.0, a = 0.5;
+  for (int i = 0; i < 4; i++){ v += a * vnoise(p); p *= 2.03; a *= 0.5; }
+  return v;
+}
+
+void main(){
+  vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / min(u_res.x, u_res.y) * 2.0;
+
+  float t = u_time;
+  float breathe = sin(t * 1.5) * 0.02;
+  float grow = 1.0 + breathe + u_active * 2.1;
+  vec2 p = uv / grow;
+
+  // Wet-on-wet: warp the sampling domain so the silhouette's edge bleeds and
+  // breathes rather than tracing a clean geometric curve.
+  vec2 warp = vec2(fbm(p * 1.7 + t * 0.18), fbm(p.yx * 1.7 - t * 0.15));
+  vec2 q = p + warp * 0.24;
+
+  float body = length(q * vec2(1.0, 1.1));
+  float edgeWobble = fbm(q * 2.6 + t * 0.12) * 0.16;
+  float radius = 0.44 + edgeWobble;
+  float mask = 1.0 - smoothstep(radius - 0.14, radius + 0.09, body);
+
+  // Granulation — pigment settles unevenly rather than filling as a flat tint.
+  float grain = fbm(q * 4.2 + 3.1);
+  float density = mix(0.6, 1.0, grain);
+
+  vec3 terracotta = vec3(0.788, 0.463, 0.318);
+  vec3 rust = vec3(0.549, 0.235, 0.129);
+  vec3 ochre = vec3(0.792, 0.596, 0.263);
+  float pool = smoothstep(0.15, -0.35, q.y);
+  float glow = smoothstep(0.35, -0.15, q.y) * 0.25;
+  vec3 color = mix(terracotta, rust, pool * 0.55);
+  color = mix(color, ochre, glow);
+  color *= density;
+
+  // Two soft ink marks — the only concession to a face, deliberately quiet.
+  vec2 eyeOff = vec2(0.115, 0.05) + 0.008 * fbm(vec2(t * 0.25, 1.0));
+  float eyeL = length(q - vec2(-eyeOff.x, eyeOff.y));
+  float eyeR = length(q - vec2(eyeOff.x, eyeOff.y));
+  float eyes = 1.0 - smoothstep(0.018, 0.05, min(eyeL, eyeR));
+  vec3 ink = vec3(0.29, 0.22, 0.17);
+
+  vec3 finalColor = mix(color, ink, eyes * 0.8 * mask);
+  float alpha = mask * density * u_appear * (1.0 - u_active * u_active * 0.92);
+
+  gl_FragColor = vec4(finalColor * alpha, alpha);
+}
+`
+
+/**
+ * The WebGL stand-in for Bloom: one small watercolour wash, painted with the
+ * same domain-warped fbm bleed as the site's live background bloom, carrying
+ * just two soft ink marks for a face. Breathes in, then grows and fades on
+ * the same schedule as Bloom's exit so the two are interchangeable.
+ */
+function PigmentCreature({ active }) {
+  const canvasRef = useRef(null)
+  const activeRef = useRef(active)
+
+  useEffect(() => {
+    activeRef.current = active
+  }, [active])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const gl = getContext(canvas)
+    if (!gl) return
+    const prog = createQuadProgram(gl, CREATURE_FRAG)
+    if (!prog) return
+
+    gl.enable(gl.BLEND)
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
+
+    const start = performance.now()
+    let activeStart = null
+    let raf
+
+    const frame = (now) => {
+      resizeCanvas(gl, canvas, 1, 2)
+      if (activeRef.current && activeStart === null) activeStart = now
+
+      const appear = Math.min((now - start) / 450, 1)
+      let activeProgress = 0
+      if (activeStart !== null) {
+        const linear = Math.min((now - activeStart) / 550, 1)
+        activeProgress = 1 - Math.pow(1 - linear, 3)
+      }
+
+      gl.useProgram(prog.program)
+      gl.uniform2f(prog.uniforms('u_res'), canvas.width, canvas.height)
+      gl.uniform1f(prog.uniforms('u_time'), (now - start) / 1000)
+      gl.uniform1f(prog.uniforms('u_appear'), 1 - Math.pow(1 - appear, 3))
+      gl.uniform1f(prog.uniforms('u_active'), activeProgress)
+      gl.clearColor(0, 0, 0, 0)
+      gl.clear(gl.COLOR_BUFFER_BIT)
+      prog.draw()
+      raf = requestAnimationFrame(frame)
+    }
+    raf = requestAnimationFrame(frame)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      gl.getExtension('WEBGL_lose_context')?.loseContext()
+    }
+  }, [])
+
+  return <canvas ref={canvasRef} className="h-full w-full" />
 }
