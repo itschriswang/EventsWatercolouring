@@ -299,6 +299,25 @@ export const ENQUIRY = {
     'Private celebration',
     'Not sure yet',
   ],
+  // The reply card asks its questions a step at a time (see EnquireForm.jsx)
+  // — one tap-question per sheet, contact details last.
+  steps: {
+    back: 'Back',
+    next: 'Continue',
+    what: {
+      q: 'What are you after?',
+      hint: 'Pick whatever’s closest — you can say more in a moment.',
+    },
+    when: {
+      q: 'When, and where?',
+      hint: 'A rough idea is plenty. Skip what you don’t know yet.',
+    },
+    who: {
+      q: 'Where do I send my reply?',
+      hint: 'Just a name and an email — everything else is optional.',
+    },
+    notSure: 'Not sure yet',
+  },
   confirm: {
     // `title` is composed with the sender's first name in EnquireForm, e.g.
     // "Thank you, Sarah." — so it carries no trailing full stop here.

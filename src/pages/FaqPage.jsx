@@ -5,8 +5,8 @@ import MobileNav from '../components/MobileNav.jsx'
 import WatercolourBloom from '../components/WatercolourBloom.jsx'
 import Label from '../components/Label.jsx'
 import Faq from '../components/Faq.jsx'
+import EnquireForm from '../components/EnquireForm.jsx'
 import Footer from '../components/Footer.jsx'
-import { ENQUIRE_HREF } from '../lib/site.js'
 import { FAQ } from '../content.js'
 
 /**
@@ -14,14 +14,19 @@ import { FAQ } from '../content.js'
  * homepage section. There's no preloader gate here: chrome is revealed
  * immediately so a direct visit (or a nav click from the homepage) doesn't
  * replay the hero's load animation for a page that's all text.
+ *
+ * The reply card lives at the bottom of this page too — someone who has just
+ * read every answer is the warmest visitor there is, so Enquire (header, dock,
+ * footer, the "send me a note" line) stays on-page instead of routing them
+ * back through the homepage.
  */
 export default function FaqPage() {
   return (
     <div className="relative min-h-screen bg-paper">
       <GrainOverlay />
       <ScrollProgress />
-      <SiteHeader revealed />
-      <MobileNav revealed />
+      <SiteHeader revealed enquireHref="#enquiry" />
+      <MobileNav revealed enquireHref="#enquiry" />
 
       <main className="relative z-10 pb-28 md:pb-0">
         {/* One continuous wash behind the hero and the whole FAQ list — the
@@ -50,7 +55,7 @@ export default function FaqPage() {
               <p className="mt-6 max-w-md leading-relaxed text-ink-soft">
                 Answers to what people usually ask before booking. Can’t find
                 yours?{' '}
-                <a href={ENQUIRE_HREF} className="text-ink underline underline-offset-4">
+                <a href="#enquiry" className="text-ink underline underline-offset-4">
                   Send me a note
                 </a>
                 .
@@ -60,9 +65,11 @@ export default function FaqPage() {
 
           <Faq />
         </div>
+
+        <EnquireForm />
       </main>
 
-      <Footer />
+      <Footer enquireHref="#enquiry" />
     </div>
   )
 }
