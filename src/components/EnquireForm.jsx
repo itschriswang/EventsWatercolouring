@@ -152,9 +152,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
       setF((p) => ({
         ...p,
         message: p.message || `Thinking around ${hours} hours live.`,
-        package:
-          p.package ||
-          (hours > 3 ? 'Live on the day, with add-ons' : 'Live on the day (base package)'),
+        package: p.package || 'Live on the day',
       }))
     }
     window.addEventListener('ew:planner-enquire', onPlanner)
