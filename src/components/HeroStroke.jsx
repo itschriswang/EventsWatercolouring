@@ -54,9 +54,9 @@ export default function HeroStroke({ scrollYProgress, className = '' }) {
     >
       <defs>
         <linearGradient id={`hero-stroke-grad-${uid}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#D4A12E" />
-          <stop offset="55%" stopColor="#C98B8C" />
-          <stop offset="100%" stopColor="#A82E1F" />
+          <stop offset="0%" stopColor="#D6A63C" />
+          <stop offset="55%" stopColor="#2E5C8C" />
+          <stop offset="100%" stopColor="#8C2E3C" />
         </linearGradient>
       </defs>
 
@@ -64,7 +64,7 @@ export default function HeroStroke({ scrollYProgress, className = '' }) {
       <path
         d={STROKE_D}
         fill="none"
-        stroke="#D8CFBF"
+        stroke="#C7CAD6"
         strokeWidth="2.5"
         strokeLinecap="round"
         opacity="0.35"

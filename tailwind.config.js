@@ -4,27 +4,27 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Warm but calm palette — softer, desaturated contemporary aesthetic
-        paper: '#F6F1E7',
-        'paper-deep': '#EAE2D4',
-        ink: '#1E1B18',
-        'ink-soft': '#6B6258',
-        line: '#D8CFBF',
-        // Primary pigments — muted, editorial warmth
-        terracotta: '#C98B8C',
-        rust: '#A82E1F',
-        orange: '#E8722A',
-        ochre: '#D4A12E',
-        'ochre-light': '#F8E6AE',
-        sage: '#6E7E4E',
-        'sage-deep': '#566443',
-        lime: '#B8D952',
-        cornflower: '#2E5FA8',
-        teal: '#2B7E8C',
-        rose: '#C98B8C',
-        magenta: '#FF2E80',
-        blush: '#E4889C',
-        wine: '#6C2A3E',
+        // Twilight Jewels palette — cool dusty paper with deep jewel pigments
+        paper: '#ECEEF2',
+        'paper-deep': '#DCE0E8',
+        ink: '#241F2E',
+        'ink-soft': '#5C5668',
+        line: '#C7CAD6',
+        // Primary pigments — sapphire, garnet, gold, emerald, plum
+        terracotta: '#2E5C8C',
+        rust: '#8C2E3C',
+        orange: '#C97A2E',
+        ochre: '#D6A63C',
+        'ochre-light': '#F0DCA0',
+        sage: '#1F6E5C',
+        'sage-deep': '#1B5745',
+        lime: '#A8BF3C',
+        cornflower: '#4A5E8C',
+        teal: '#1F6E7E',
+        rose: '#8C4A6E',
+        magenta: '#A82E6E',
+        blush: '#C97A94',
+        wine: '#4A1F3C',
       },
       fontFamily: {
         // Three-font editorial system:

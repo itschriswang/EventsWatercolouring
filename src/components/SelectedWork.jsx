@@ -76,7 +76,7 @@ export default function SelectedWork() {
       <div className="mx-auto max-w-[88rem]">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <Label gradient={['#B8D952', '#C98B8C']}>{WORK.label}</Label>
+            <Label gradient={['#A8BF3C', '#2E5C8C']}>{WORK.label}</Label>
             <SplitText
               as="h2"
               unit="char"
@@ -185,7 +185,7 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
     >
       {item.testimonial ? (
         <div className={cardShape + ' bg-paper-deep'}>
-          <CornerBloom from="rgba(212,161,46,0.14)" to="rgba(228,136,156,0.11)" />
+          <CornerBloom from="rgba(214,166,60,0.14)" to="rgba(74,94,140,0.11)" />
           <div className="relative z-10 flex h-full flex-col">
             <Testimonial item={item} masonry={masonry} />
           </div>
@@ -216,7 +216,7 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
             />
           </picture>
-          <CornerBloom from="rgba(201,139,140,0.14)" to="rgba(228,136,156,0.10)" overlay />
+          <CornerBloom from="rgba(46,92,140,0.14)" to="rgba(74,94,140,0.10)" overlay />
         </button>
       )}
     </motion.figure>
@@ -527,7 +527,7 @@ function Lightbox({ items, index, onClose, onNavigate }) {
               className="pointer-events-none absolute left-1/2 top-1/2 h-[125vmin] w-[125vmin] -translate-x-1/2 -translate-y-1/2 mix-blend-screen"
               style={{
                 background:
-                  'radial-gradient(circle at 50% 50%, rgba(201,139,140,0.42), rgba(228,136,156,0.2) 42%, transparent 72%)',
+                  'radial-gradient(circle at 50% 50%, rgba(46,92,140,0.42), rgba(74,94,140,0.2) 42%, transparent 72%)',
                 filter: 'blur(60px)',
               }}
             />
