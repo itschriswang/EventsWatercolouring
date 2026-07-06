@@ -30,8 +30,8 @@ export default function DeckleEdge({ className = '' }) {
       className={className}
       style={{ filter: 'drop-shadow(0 5px 10px rgba(173,98,49,0.22))' }}
     >
-      <path d={FRINGE} fill="#F4EFE6" fillOpacity="0.55" />
-      <path d={SHEET} fill="#F4EFE6" />
+      <path d={FRINGE} fill="#ECEEF2" fillOpacity="0.55" />
+      <path d={SHEET} fill="#ECEEF2" />
     </svg>
   )
 }

@@ -136,7 +136,7 @@ export default function MobileNav({ revealed, enquireHref = ENQUIRE_HREF }) {
           // Ink shadow (approved palette) for the lift, paper-tone inset for
           // the glint — no neutral grey/white per the site's shadow rule.
           boxShadow:
-            '0 8px 32px rgba(48,45,41,0.21), 0 0 0 1px rgba(244,239,230,0.55) inset',
+            '0 8px 32px rgba(48,45,41,0.21), 0 0 0 1px rgba(236,238,242,0.55) inset',
         }}
         aria-label="Quick navigation"
       >
