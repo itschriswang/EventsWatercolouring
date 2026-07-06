@@ -83,8 +83,8 @@ const FRAG = `
       // not summing colour (which blew overlapping strokes past white, a
       // neon "screen" glow) and not mixing straight colour toward black at
       // low coverage (which greyed out the feathered, low-opacity rim).
-      // Premultiplied `over` keeps a faint edge at full hue, just more
-      // transparent, the way a dilute wash of pigment actually looks.
+      // Premultiplied over-compositing keeps a faint edge at full hue, just
+      // more transparent, the way a dilute wash of pigment actually looks.
       acc = col * body + acc * (1.0 - body);
       cover = body + cover * (1.0 - body);
     }
