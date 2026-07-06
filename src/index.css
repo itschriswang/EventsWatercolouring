@@ -66,13 +66,18 @@
 
 @layer components {
   /* Fluid display type — raw clamp() so headers behave as graphic art,
-     not as rigid Tailwind steps. Tight leading + negative tracking. */
+     not as rigid Tailwind steps. Tight leading + negative tracking.
+     `filter: url(#stamp-distress)` (defined in StampFilters.jsx, mounted
+     once per page root) wobbles the glyph edges and presses a paper-grain
+     texture into the ink via hard-light, so titles read as stamped onto the
+     page rather than set in flawless digital type. */
   .display-xl {
     font-family: theme('fontFamily.sentient');
     font-weight: 400;
     font-size: clamp(2.25rem, 6vw, 6rem);
     line-height: 0.95;
     letter-spacing: -0.02em;
+    filter: url(#stamp-distress);
   }
 
   /* Gochi Hand ships in regular (400) only — heavier weights here
@@ -83,6 +88,7 @@
     font-size: clamp(2rem, 4vw, 4rem);
     line-height: 0.95;
     letter-spacing: -0.02em;
+    filter: url(#stamp-distress);
   }
 
   .display-md {
@@ -91,6 +97,7 @@
     font-size: clamp(1.5rem, 3.5vw, 3rem);
     line-height: 0.98;
     letter-spacing: -0.015em;
+    filter: url(#stamp-distress);
   }
 
   .eyebrow {
@@ -164,6 +171,19 @@
 @media (pointer: coarse) {
   .gradient-frame {
     animation: none;
+  }
+}
+
+/* The stamped-title filter (feTurbulence + feDisplacementMap + feBlend) is
+   rasterised fresh on every repaint, which is a lot to ask of small touch
+   GPUs mid-scroll for a purely decorative flourish — drop titles back to
+   flawless-but-cheap flat type there and for anyone who's asked for less
+   motion/effect overall. */
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .display-xl,
+  .display-lg,
+  .display-md {
+    filter: none;
   }
 }
 
