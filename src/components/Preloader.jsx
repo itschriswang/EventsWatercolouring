@@ -90,7 +90,7 @@ export default function Preloader({ onDone }) {
  */
 function Bloom({ active, reduce }) {
   const blobs = [
-    { c: '#A0568E', x: 0,   y: 0,   s: 1 },
+    { c: '#BA5E78', x: 0,   y: 0,   s: 1 },
     { c: '#D89A5E', x: -22, y: 14,  s: 0.78 },
     { c: '#6E8D74', x: 20,  y: 18,  s: 0.7 },
     { c: '#C2CB93', x: 14,  y: -20, s: 0.6 },

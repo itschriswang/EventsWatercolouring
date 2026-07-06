@@ -49,7 +49,7 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 70% 60% at 90% 5%, rgba(216,198,234,0.22) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 70% 60% at 90% 5%, rgba(246,206,196,0.22) 0%, transparent 55%), ' +
             'radial-gradient(ellipse 50% 40% at 5% 95%, rgba(242,194,207,0.18) 0%, transparent 50%), ' +
             'radial-gradient(ellipse 45% 40% at 48% 55%, rgba(180,156,216,0.14) 0%, transparent 55%), ' +
             'radial-gradient(ellipse 34% 30% at 72% 82%, rgba(217,222,193,0.12) 0%, transparent 60%)',

@@ -20,7 +20,7 @@ import { CORPORATE } from '../content.js'
 
 // The card ground shared with the homepage's package cards, so the two pages
 // read as one paper system.
-const CARD_BG = { background: 'linear-gradient(150deg, rgba(216,198,234,0.18) 0%, rgba(242,194,207,0.14) 48%, rgba(217,222,193,0.16) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }
+const CARD_BG = { background: 'linear-gradient(150deg, rgba(246,206,196,0.18) 0%, rgba(242,194,207,0.14) 48%, rgba(217,222,193,0.16) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }
 
 /**
  * The corporate landing page (/corporate/) — a standalone static page like
@@ -56,7 +56,7 @@ export default function CorporatePage() {
             className="pointer-events-none absolute inset-0 z-0"
             style={{
               backgroundImage:
-                'radial-gradient(42% 36% at 14% 22%, rgba(216,198,234, 0.34), transparent 72%), ' +
+                'radial-gradient(42% 36% at 14% 22%, rgba(246,206,196, 0.34), transparent 72%), ' +
                 'radial-gradient(32% 28% at 88% 12%, rgba(242,194,207, 0.30), transparent 72%), ' +
                 'radial-gradient(34% 30% at 86% 84%, rgba(217,222,193, 0.26), transparent 72%), ' +
                 'radial-gradient(30% 28% at 6% 88%, rgba(217,222,193, 0.18), transparent 72%), ' +
@@ -102,7 +102,7 @@ export default function CorporatePage() {
               whileHover={reduce ? {} : { rotate: 0, scale: 1.02 }}
               className="relative col-span-8 col-start-3 sm:col-span-5 sm:col-start-7 lg:col-span-3 lg:col-start-9 overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(94,74,140,0.30),0_6px_16px_-6px_rgba(94,74,140,0.12)]"
             >
-              <CornerBloom from="rgba(216,198,234,0.20)" to="rgba(242,194,207,0.14)" overlay />
+              <CornerBloom from="rgba(246,206,196,0.20)" to="rgba(242,194,207,0.14)" overlay />
               <div className="relative z-10">
                 <picture>
                   <source srcSet={asset('assets/art-character-girl.webp')} type="image/webp" />
@@ -127,7 +127,7 @@ export default function CorporatePage() {
         <SectionWash mask="linear-gradient(to bottom, transparent 0%, black 25%, black 100%)">
           {/* ── Why it works ───────────────────────────────────────────── */}
           <section className="relative w-full px-[5vw] py-[clamp(3rem,7vw,6rem)]">
-            <Label gradient={['#9E5789', '#DFA455']}>{CORPORATE.why.label}</Label>
+            <Label gradient={['#A85450', '#DFA455']}>{CORPORATE.why.label}</Label>
             <SplitText
               as="h2"
               unit="char"
@@ -144,9 +144,9 @@ export default function CorporatePage() {
                   className="relative overflow-hidden rounded-2xl border border-line/45 p-6 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)] sm:p-7"
                   style={CARD_BG}
                 >
-                  <CornerBloom from="rgba(216,198,234,0.18)" to="rgba(217,222,193,0.14)" />
+                  <CornerBloom from="rgba(246,206,196,0.18)" to="rgba(217,222,193,0.14)" />
                   <div className="relative z-10">
-                    <Drop className="h-5 w-auto" gradient={['#9E5789', '#DFA455']} />
+                    <Drop className="h-5 w-auto" gradient={['#A85450', '#DFA455']} />
                     <h3 className="mt-4 font-sentient text-2xl tracking-[-0.02em] text-ink">{c.h}</h3>
                     <p className="mt-3 text-sm leading-relaxed text-ink-soft">{c.p}</p>
                   </div>
@@ -159,7 +159,7 @@ export default function CorporatePage() {
           <section className="relative w-full px-[5vw] py-[clamp(2.5rem,6vw,5rem)]">
             <div className="grid grid-cols-12 gap-x-8 gap-y-10">
               <div className="col-span-12 lg:col-span-5">
-                <Label gradient={['#DFA455', '#9E5789']}>{CORPORATE.occasions.label}</Label>
+                <Label gradient={['#DFA455', '#A85450']}>{CORPORATE.occasions.label}</Label>
                 <SplitText
                   as="h2"
                   unit="char"
@@ -180,7 +180,7 @@ export default function CorporatePage() {
                       {...rise(i % 3)}
                       className="flex items-center gap-4 border-b border-line py-4 first:border-t"
                     >
-                      <Drop className="h-4 w-auto shrink-0" gradient={['#9E5789', '#DFA455']} />
+                      <Drop className="h-4 w-auto shrink-0" gradient={['#A85450', '#DFA455']} />
                       <span className="font-sentient text-xl tracking-[-0.01em] text-ink sm:text-2xl">
                         {item}
                       </span>
@@ -199,7 +199,7 @@ export default function CorporatePage() {
           <SectionWash>
             {/* ── How it runs ──────────────────────────────────────────── */}
             <section className="relative w-full px-[5vw] pt-[clamp(3.5rem,7vw,6rem)] pb-[clamp(1rem,3vw,2rem)]">
-              <Label gradient={['#9E5789', '#DFA455']}>{CORPORATE.how.label}</Label>
+              <Label gradient={['#A85450', '#DFA455']}>{CORPORATE.how.label}</Label>
               <SplitText
                 as="h2"
                 unit="char"
@@ -221,7 +221,7 @@ export default function CorporatePage() {
 
             {/* ── The engagement ───────────────────────────────────────── */}
             <section className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5rem)] pb-[clamp(2rem,4vw,3rem)]">
-              <Label gradient={['#9E5789', '#DFA455']}>{CORPORATE.offer.label}</Label>
+              <Label gradient={['#A85450', '#DFA455']}>{CORPORATE.offer.label}</Label>
               <SplitText
                 as="h2"
                 unit="char"
@@ -236,7 +236,7 @@ export default function CorporatePage() {
                   className="relative col-span-12 flex flex-col overflow-hidden rounded-2xl border border-line/45 p-7 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.32)] lg:col-span-5"
                   style={CARD_BG}
                 >
-                  <CornerBloom from="rgba(158,87,137,0.18)" to="rgba(144,120,190,0.12)" />
+                  <CornerBloom from="rgba(168,84,80,0.18)" to="rgba(198,138,102,0.12)" />
                   <div className="relative z-10 flex flex-1 flex-col">
                     <div className="flex items-baseline justify-between gap-4">
                       <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
@@ -264,7 +264,7 @@ export default function CorporatePage() {
                     <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
                       {CORPORATE.offer.base.bullets.map((b) => (
                         <li key={b} className="flex gap-3">
-                          <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#9E5789', '#DFA455']} />
+                          <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#A85450', '#DFA455']} />
                           {b}
                         </li>
                       ))}
@@ -277,7 +277,7 @@ export default function CorporatePage() {
                   className="relative col-span-12 overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)] lg:col-span-7"
                   style={CARD_BG}
                 >
-                  <CornerBloom from="rgba(223,164,85,0.16)" to="rgba(144,120,190,0.12)" />
+                  <CornerBloom from="rgba(223,164,85,0.16)" to="rgba(198,138,102,0.12)" />
                   <div className="relative z-10 flex h-full flex-col">
                     <div className="border-b border-line/50 px-7 pb-5 pt-7">
                       <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
