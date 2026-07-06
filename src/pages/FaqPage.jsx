@@ -1,4 +1,5 @@
 import GrainOverlay from '../components/GrainOverlay.jsx'
+import StampFilters from '../components/StampFilters.jsx'
 import ScrollProgress from '../components/ScrollProgress.jsx'
 import SiteHeader from '../components/SiteHeader.jsx'
 import MobileNav from '../components/MobileNav.jsx'
@@ -23,6 +24,7 @@ import { FAQ } from '../content.js'
 export default function FaqPage() {
   return (
     <div className="relative min-h-screen bg-paper">
+      <StampFilters />
       <GrainOverlay />
       <ScrollProgress />
       <SiteHeader revealed enquireHref="#enquiry" />

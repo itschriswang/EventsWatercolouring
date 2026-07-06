@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import GrainCanvas from './components/GrainCanvas.jsx'
 import BloomCanvas from './components/BloomCanvas.jsx'
+import StampFilters from './components/StampFilters.jsx'
 import SectionWash from './components/SectionWash.jsx'
 import DeckleEdge from './components/DeckleEdge.jsx'
 import Preloader from './components/Preloader.jsx'
@@ -65,6 +66,7 @@ export default function App() {
       {/* Live watercolour wash behind the whole page (one shared WebGL
           context), with the GPU paper grain over the top. Both degrade to the
           static CSS washes / SVG grain on mobile, reduced-motion or no-WebGL. */}
+      <StampFilters />
       <BloomCanvas revealed={revealed} />
       <GrainCanvas />
       <Preloader onDone={() => setRevealed(true)} />
