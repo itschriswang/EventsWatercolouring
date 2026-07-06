@@ -29,7 +29,7 @@ export function flurryWillPlay() {
   return !shouldSkip()
 }
 
-const DURATION = 2.7 // seconds — one flowing pass
+const DURATION = 3.3 // seconds — one flowing pass, unhurried
 const LAND_T = 0.62 // when the first survivor arrives on its card (near the apex)
 const LAND_STAGGER = 0.05 // the second survivor lands a beat later
 
@@ -119,12 +119,15 @@ const spline = (pts, u) => {
 const HAZE = 'rgb(245, 238, 227)'
 
 /**
- * HeroFlurry — the load flourish. On the first arrival of a session the body of
- * work sweeps across the lower screen in one quick pass: pieces enter off the
- * bottom-left, glide over a gentle arc and leave off the bottom-right, always
- * facing the camera, upright. Depth reads three ways — size, layering, and a
- * warm atmospheric veil on the far pieces — and on a fine pointer the whole
- * current parallaxes to the cursor, near pieces sliding further than far.
+ * HeroFlurry — the load flourish. On the first arrival of a session a small,
+ * unhurried procession of the body of work glides across the lower screen in
+ * one calm pass: pieces enter off the bottom-left, follow a single gentle arc
+ * and leave off the bottom-right, always facing the camera, upright, with a
+ * steady near-level tilt rather than a spin. Depth reads three ways — size,
+ * layering, and a warm atmospheric veil on the far pieces — and on a fine
+ * pointer the whole current parallaxes to the cursor, near pieces sliding
+ * further than far. Few enough pieces are in motion at once that the arc
+ * reads as one legible current, not a scatter.
  *
  * The current passes on and leaves. Two pieces — the character and the bouquet —
  * instead lift out of it and settle onto the exact measured boxes of the hero's
@@ -133,7 +136,7 @@ const HAZE = 'rgb(245, 238, 227)'
  * cards.
  *
  * Runs on every device (transform + opacity only) but yields entirely to
- * reduced-motion. Mounts once, plays ~2.9s, then unmounts.
+ * reduced-motion. Mounts once, plays ~3.5s, then unmounts.
  *
  * @param {{ref: React.RefObject<HTMLElement>, img: string, tilt: number}[]} heroTargets
  *   The hero cards to land on — a ref to each card's image, its source, and its
@@ -200,7 +203,9 @@ export default function HeroFlurry({ heroTargets = [] }) {
     }
   }, [skip, reduce, isMobile, vp])
 
-  const count = isMobile ? 9 : 14
+  // Kept deliberately small — few enough pieces are aloft at any one moment
+  // that the arc reads as a single legible current rather than a scatter.
+  const count = isMobile ? 6 : 8
 
   // Precompute each card's whole path as sampled keyframe arrays so the run is a
   // plain transform/opacity animation.
@@ -225,11 +230,11 @@ export default function HeroFlurry({ heroTargets = [] }) {
     for (let i = 0; i < count; i++) {
       const off = (i / count) * 0.62 // its place along the ribbon (streamed in)
       const travel = 0.42 + rand(i + 2) * 0.12
-      const laneX = (rand(i + 7) - 0.5) * 0.11 * W // scatter off the spine
-      const laneY = (rand(i + 8) - 0.5) * 0.08 * H
-      const sizeVar = 0.82 + rand(i + 5) * 0.36
-      const tilt = (rand(i + 9) - 0.5) * 10
-      const lean = (rand(i + 12) - 0.5) * 18 // slight lean shift along the flow
+      const laneX = (rand(i + 7) - 0.5) * 0.05 * W // a tight scatter off the spine
+      const laneY = (rand(i + 8) - 0.5) * 0.04 * H
+      const sizeVar = 0.94 + rand(i + 5) * 0.14
+      const tilt = (rand(i + 9) - 0.5) * 6
+      const lean = (rand(i + 12) - 0.5) * 8 // a gentle lean, not a spin, along the flow
       const xs = []
       const ys = []
       const ss = []
@@ -251,8 +256,9 @@ export default function HeroFlurry({ heroTargets = [] }) {
         zs.push(Math.round(near * 1000))
         rs.push(+(tilt + lean * u).toFixed(2))
         hz.push(+((1 - near) * 0.5).toFixed(3))
-        // Fade up as it enters, out as it sinks away at the end.
-        const op = Math.min(1, s / 0.1) * (s < 0.9 ? 1 : Math.max(0, 1 - (s - 0.9) / 0.1))
+        // Fade up as it enters, out as it sinks away at the end — long, soft
+        // edges so nothing snaps in or out.
+        const op = Math.min(1, s / 0.16) * (s < 0.86 ? 1 : Math.max(0, 1 - (s - 0.86) / 0.16))
         os.push(+op.toFixed(3))
       }
       build.push({
