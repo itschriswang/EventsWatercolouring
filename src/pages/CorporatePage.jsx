@@ -311,7 +311,7 @@ export default function CorporatePage() {
         </div>
       </main>
 
-      <Footer />
+      <Footer enquireHref="#enquiry" />
     </div>
   )
 }
