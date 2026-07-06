@@ -15,8 +15,8 @@ All shadows must use these RGBA values (or derived variants at +15% vibrancy):
 |--------|----------|------|
 | **Lilac** (deep) | Primary lift shadows, cards, general elevation | `rgba(94,74,140,0.30)` |
 | **Dusty Rose** (token: rust) | Timeline markers, strong shadows | `rgba(122,54,74,0.52)` |
-| **Deep Ink** | Deep shadows on overlays, keepsake cards | `rgba(47,52,80,0.58)` |
-| **Ink** | Paper shadows, subtle depth | `rgba(47,52,80,0.21)` |
+| **Deep Ink** | Deep shadows on overlays, keepsake cards | `rgba(58,47,74,0.58)` |
+| **Ink** | Paper shadows, subtle depth | `rgba(58,47,74,0.21)` |
 | **Lilac** | Accent shadows (form elements, special cases) | `rgba(94,74,140,0.25)` |
 
 ### Component Shadow Reference
@@ -45,12 +45,12 @@ shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]  /* Secondary shadow */
 
 **Keepsake Cards** (What You Keep):
 ```
-shadow-[0_10px_30px_-18px_rgba(47,52,80,0.58)]
+shadow-[0_10px_30px_-18px_rgba(58,47,74,0.58)]
 ```
 
 **Enquire Form**:
 ```
-drop-shadow(0 18px 38px rgba(47,52,80,0.21))     /* Paper drop shadow */
+drop-shadow(0 18px 38px rgba(58,47,74,0.21))     /* Paper drop shadow */
 drop-shadow(0 2.5px 3px rgba(94,74,140,0.25))    /* Accent shadow */
 ```
 

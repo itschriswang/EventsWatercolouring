@@ -40,8 +40,8 @@ export default function EveningTimeline() {
       className="relative w-full bg-wine px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper"
     >
       {/* Dusk sky — the aurora orb's colours after dark: lilac light pooling
-          top-left, a blush drift high-right, a low azure ember along the
-          bottom edge like the last of the sunset. */}
+          top-left, a blush drift high-right, a low wisteria ember along
+          the bottom edge like the last of the sunset. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
@@ -49,9 +49,9 @@ export default function EveningTimeline() {
           background:
             'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(216,198,234,0.26) 0%, transparent 60%), ' +
             'radial-gradient(ellipse 55% 45% at 90% 10%, rgba(242,194,207,0.20) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 60% 50% at 92% 92%, rgba(93,157,218,0.14) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 60% 50% at 92% 92%, rgba(196,168,224,0.14) 0%, transparent 55%), ' +
             'radial-gradient(ellipse 45% 40% at 30% 100%, rgba(247,212,174,0.12) 0%, transparent 60%), ' +
-            'linear-gradient(170deg, rgba(47,52,80,0.35) 0%, rgba(69,61,102,0) 45%, rgba(69,61,102,0.25) 100%)',
+            'linear-gradient(170deg, rgba(58,47,74,0.35) 0%, rgba(81,64,102,0) 45%, rgba(81,64,102,0.25) 100%)',
         }}
       />
       {/* faint bouquet cut, top-right. Clipped by its own wrapper rather than
@@ -159,14 +159,14 @@ export default function EveningTimeline() {
                     aria-hidden="true"
                   >
                     {isLast ? (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_12px_rgba(47,52,80,0.55)]">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_12px_rgba(58,47,74,0.55)]">
                         <Drop
                           className="h-5 w-auto"
-                          gradient={['#5D9DDA', '#8C9ED6']}
+                          gradient={['#9E5789', '#B4638B']}
                         />
                       </span>
                     ) : (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] text-wine shadow-[0_2px_12px_rgba(47,52,80,0.42)]">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] text-wine shadow-[0_2px_12px_rgba(58,47,74,0.42)]">
                         {beat.no}
                       </span>
                     )}
@@ -180,7 +180,7 @@ export default function EveningTimeline() {
                   <motion.div
                     whileHover={reduce ? {} : { y: -6 }}
                     transition={SPRING}
-                    className="group relative -mt-px flex-1 rounded-2xl border border-paper/15 bg-paper-deep/95 p-4 shadow-[0_10px_30px_-18px_rgba(47,52,80,0.58)] backdrop-blur-[1px] sm:p-5"
+                    className="group relative -mt-px flex-1 rounded-2xl border border-paper/15 bg-paper-deep/95 p-4 shadow-[0_10px_30px_-18px_rgba(58,47,74,0.58)] backdrop-blur-[1px] sm:p-5"
                   >
                     <span
                       aria-hidden="true"
