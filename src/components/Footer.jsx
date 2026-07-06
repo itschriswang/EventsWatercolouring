@@ -32,8 +32,14 @@ function InstagramIcon() {
   )
 }
 
-/** Closing CTA band — dark, full-bleed, with nav and signature. */
-export default function Footer() {
+/**
+ * Closing CTA band — dark, full-bleed, with nav and signature.
+ *
+ * `enquireHref` mirrors SiteHeader and MobileNav: pages with their own reply
+ * card (e.g. /corporate/, /faq/) pass a local anchor so the closing line
+ * scrolls up to the on-page form instead of bouncing through the homepage.
+ */
+export default function Footer({ enquireHref = ENQUIRE_HREF }) {
   const reduce = useReducedMotion()
 
   return (
@@ -52,7 +58,7 @@ export default function Footer() {
         {/* The closing line IS the link — a visitor who scrolled this far is
             the warmest one on the page, so the biggest words at the moment of
             highest intent go straight to the reply card. */}
-        <a href={ENQUIRE_HREF} className="group block">
+        <a href={enquireHref} className="group block">
           <SplitText
             as="p"
             unit="char"
