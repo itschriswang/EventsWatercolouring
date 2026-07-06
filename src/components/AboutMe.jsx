@@ -82,7 +82,16 @@ export default function AboutMe() {
                 }}
               />
               <motion.div
-                style={parallax ? { y } : {}}
+                style={{
+                  ...(parallax ? { y } : {}),
+                  // overflow-hidden + border-radius alone doesn't clip the
+                  // bird's rounded corner below — its own `filter` (the rust
+                  // drop-shadow) puts it on a separate composited layer that
+                  // the ancestor's rounded overflow clip fails to mask, so
+                  // the bird's hard bottom/right crop shows past the curve.
+                  // clip-path clips that layer correctly.
+                  clipPath: 'inset(0 round 1.75rem)',
+                }}
                 className="relative overflow-hidden rounded-[1.75rem] border border-line bg-paper-deep"
               >
                 <CornerBloom from="rgba(168,84,80,0.15)" to="rgba(198,138,102,0.11)" overlay />
@@ -101,14 +110,13 @@ export default function AboutMe() {
                     />
                   </picture>
                 </div>
-                {/* The watercolour bird perches in the portrait's corner. Its
-                    source art has a hard rectangular crop on its bottom and
-                    right; a two-axis mask feathers those two edges to nothing
-                    so the bird bleeds softly into the photograph like wet
-                    pigment instead of reading as a square sticker. The rust
-                    drop-shadow (palette, no greys) sits on the wrapper — not
-                    the image — so it traces the feathered silhouette rather
-                    than the hidden rectangle. */}
+                {/* The watercolour bird perches in the portrait's corner,
+                    fully opaque. The wrapper's clip-path (matching its
+                    rounded corners) clips the bird's hard rectangular crop
+                    so it stays inside the card's curved shape instead of
+                    sticking out past it. The rust drop-shadow (palette, no
+                    greys) sits on the wrapper so it traces the bird's own
+                    silhouette. */}
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute bottom-0 right-0 z-20 w-[72%]"
@@ -125,14 +133,6 @@ export default function AboutMe() {
                       loading="lazy"
                       decoding="async"
                       className="block w-full"
-                      style={{
-                        WebkitMaskImage:
-                          'linear-gradient(to top, transparent 0%, #000 15%), linear-gradient(to left, transparent 0%, #000 15%)',
-                        maskImage:
-                          'linear-gradient(to top, transparent 0%, #000 15%), linear-gradient(to left, transparent 0%, #000 15%)',
-                        WebkitMaskComposite: 'source-in',
-                        maskComposite: 'intersect',
-                      }}
                     />
                   </picture>
                 </div>
