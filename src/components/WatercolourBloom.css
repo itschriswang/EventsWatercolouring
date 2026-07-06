@@ -18,28 +18,28 @@
    of how tall the section behind it is. */
 .wcb-static {
   background-image:
-    radial-gradient(circle 34vw at 16% 26%, rgba(56,109,180, 0.20), transparent 72%),
-    radial-gradient(circle 28vw at 88% 14%, rgba(223,164,85, 0.18), transparent 72%),
-    radial-gradient(circle 32vw at 85% 84%, rgba(110,128,192, 0.16), transparent 72%),
-    radial-gradient(circle 29vw at 8% 88%, rgba(56,109,180, 0.15), transparent 72%),
-    radial-gradient(circle 27vw at 62% 8%, rgba(194,203,147, 0.13), transparent 72%),
-    radial-gradient(circle 30vw at 99% 50%, rgba(158,201,223, 0.14), transparent 72%),
-    radial-gradient(circle 24vw at 36% 52%, rgba(156,74,98, 0.14), transparent 74%),
-    radial-gradient(circle 22vw at 45% 96%, rgba(194,203,147, 0.14), transparent 74%),
-    radial-gradient(circle 20vw at 68% 42%, rgba(223,164,85, 0.11), transparent 74%);
+    radial-gradient(circle 34vw at 16% 26%, rgba(158,201,223, 0.38), transparent 72%),
+    radial-gradient(circle 28vw at 88% 14%, rgba(216,198,234, 0.36), transparent 72%),
+    radial-gradient(circle 32vw at 85% 84%, rgba(140,158,214, 0.28), transparent 72%),
+    radial-gradient(circle 29vw at 8% 88%, rgba(93,157,218, 0.24), transparent 72%),
+    radial-gradient(circle 27vw at 62% 8%, rgba(217,222,193, 0.26), transparent 72%),
+    radial-gradient(circle 30vw at 99% 50%, rgba(242,194,207, 0.28), transparent 72%),
+    radial-gradient(circle 24vw at 36% 52%, rgba(216,198,234, 0.22), transparent 74%),
+    radial-gradient(circle 22vw at 45% 96%, rgba(247,212,174, 0.24), transparent 74%),
+    radial-gradient(circle 20vw at 68% 42%, rgba(158,201,223, 0.20), transparent 74%);
 }
 
 /* Warmer recipe for sections sitting on the deeper `paper-deep` ground
-   (Packages/Enquire) — swaps the cool cornflower-blue bloom for extra lime
-   and ochre so the wash reads as sunlit pigment rather than compounding with
-   the darker base into a muddy grey. */
+   (Packages/Enquire) — leans on the palette's sunlit side (apricot, blush,
+   sage glow) so the wash reads as warm light rather than compounding with
+   the cooler base into a muddy grey. */
 .wcb-warm {
   background-image:
-    radial-gradient(circle 32vw at 14% 20%, rgba(56,109,180, 0.18), transparent 72%),
-    radial-gradient(circle 30vw at 90% 12%, rgba(194,203,147, 0.20), transparent 72%),
-    radial-gradient(circle 30vw at 86% 86%, rgba(110,128,192, 0.15), transparent 72%),
-    radial-gradient(circle 26vw at 6% 86%, rgba(223,164,85, 0.18), transparent 72%),
-    radial-gradient(circle 24vw at 60% 6%, rgba(194,203,147, 0.14), transparent 72%),
-    radial-gradient(circle 22vw at 40% 98%, rgba(56,109,180, 0.13), transparent 74%),
-    radial-gradient(circle 20vw at 70% 46%, rgba(223,164,85, 0.12), transparent 74%);
+    radial-gradient(circle 32vw at 14% 20%, rgba(158,201,223, 0.32), transparent 72%),
+    radial-gradient(circle 30vw at 90% 12%, rgba(247,212,174, 0.34), transparent 72%),
+    radial-gradient(circle 30vw at 86% 86%, rgba(216,198,234, 0.26), transparent 72%),
+    radial-gradient(circle 26vw at 6% 86%, rgba(242,194,207, 0.28), transparent 72%),
+    radial-gradient(circle 24vw at 60% 6%, rgba(217,222,193, 0.26), transparent 72%),
+    radial-gradient(circle 22vw at 40% 98%, rgba(93,157,218, 0.20), transparent 74%),
+    radial-gradient(circle 20vw at 70% 46%, rgba(247,212,174, 0.22), transparent 74%);
 }

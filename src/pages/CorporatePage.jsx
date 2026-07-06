@@ -19,7 +19,7 @@ import { CORPORATE } from '../content.js'
 
 // The card ground shared with the homepage's package cards, so the two pages
 // read as one paper system.
-const CARD_BG = { background: 'radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }
+const CARD_BG = { background: 'linear-gradient(150deg, rgba(158,201,223,0.18) 0%, rgba(216,198,234,0.13) 48%, rgba(242,194,207,0.14) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }
 
 /**
  * The corporate landing page (/corporate/) — a standalone static page like
@@ -54,10 +54,11 @@ export default function CorporatePage() {
             className="pointer-events-none absolute inset-0 z-0"
             style={{
               backgroundImage:
-                'radial-gradient(38% 32% at 16% 26%, rgba(56,109,180, 0.14), transparent 72%), ' +
-                'radial-gradient(30% 26% at 88% 14%, rgba(223,164,85, 0.13), transparent 72%), ' +
-                'radial-gradient(34% 30% at 85% 84%, rgba(110,128,192, 0.11), transparent 72%), ' +
-                'radial-gradient(30% 28% at 8% 88%, rgba(56,109,180, 0.10), transparent 72%)',
+                'radial-gradient(42% 36% at 14% 22%, rgba(158,201,223, 0.32), transparent 72%), ' +
+                'radial-gradient(32% 28% at 88% 12%, rgba(216,198,234, 0.30), transparent 72%), ' +
+                'radial-gradient(34% 30% at 86% 84%, rgba(140,158,214, 0.24), transparent 72%), ' +
+                'radial-gradient(30% 28% at 6% 88%, rgba(93,157,218, 0.20), transparent 72%), ' +
+                'radial-gradient(28% 24% at 60% 6%, rgba(247,212,174, 0.22), transparent 72%)',
             }}
           />
           <div className="relative z-10 grid grid-cols-12 items-end gap-x-8 gap-y-12">

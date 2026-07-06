@@ -49,9 +49,10 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 70% 60% at 90% 5%, rgba(56,109,180,0.10) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 50% 40% at 5% 95%, rgba(110,128,192,0.08) 0%, transparent 50%), ' +
-            'radial-gradient(ellipse 45% 40% at 48% 55%, rgba(194,203,147,0.07) 0%, transparent 55%)',
+            'radial-gradient(ellipse 70% 60% at 90% 5%, rgba(93,157,218,0.22) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 50% 40% at 5% 95%, rgba(140,158,214,0.20) 0%, transparent 50%), ' +
+            'radial-gradient(ellipse 45% 40% at 48% 55%, rgba(216,198,234,0.12) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 34% 30% at 72% 82%, rgba(242,194,207,0.12) 0%, transparent 60%)',
         }}
       />
       <div className="flex flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">
