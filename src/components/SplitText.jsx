@@ -163,16 +163,16 @@ export default function SplitText({
         // a fresh jitter sample — neighbours never share an angle.
         let glyphIdx = 0
 
-        // An italic emphasis group at the very start of a line leans into the
-        // mask's overflow-hidden edge, clipping its leading stroke. Nudge the
-        // clip box left and the content right by the same amount so the
-        // italic overhang has room without moving the visible text.
-        const lineStartsWithItalic = emphasisItalic && groupedWords[0]?.isGroup
-
+        // The reveal mask clips at its padding edge, so anything that paints
+        // past the glyph box — a leading italic overhang, a tilted ascender,
+        // the display styles' soft shadow bloom — needs bleed room or it
+        // slices into a visible rectangle. Pad the mask out on every side and
+        // pull the same distance back with negative margins so the layout
+        // (including the original 0.08em line gap) doesn't move.
         return (
           <span
             key={li}
-            className={`block overflow-hidden pb-[0.08em] pt-[0.1em] -mt-[0.1em]${lineStartsWithItalic ? ' -ml-[0.12em] pl-[0.12em]' : ''}`}
+            className="block overflow-hidden pb-[0.18em] -mb-[0.1em] pt-[0.12em] -mt-[0.12em] -ml-[0.12em] pl-[0.12em]"
           >
             {unit === 'char'
               ? groupedWords.flatMap((group, gi) => {
