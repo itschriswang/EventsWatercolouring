@@ -17,13 +17,17 @@ export default {
         ink: '#3F3552',
         'ink-soft': '#756A7C',
         line: '#E1D6E0',
-        // Primary accent pigments. The dominant UI accent is a deep pine /
-        // teal — masculine and editorial — replacing the former candy-rose /
-        // rose-plum. Token names stay (legacy slots); their values now anchor
-        // the pine scheme. The soft pastel bloom washes keep the reference
-        // photo's warm hues (they read as gradient light, not accent colour).
-        terracotta: '#3B5F52',
-        rust: '#2C4A40',
+        // Primary accent pigments. GRADIENT COMPARISON TEST: the two accent
+        // slots are now driven by CSS custom properties (`--rgb-terracotta` /
+        // `--rgb-rust`, defined in index.css) so the accent can be re-anchored
+        // per page region without editing every `text-terracotta` call site.
+        // The top half of the page reads MOSS green (mostly moss, with blue and
+        // purple/pink kissing the gradient edges); the bottom half (wrapped in
+        // `.accent-neon`) reads a BRIGHT NEON purple/blue/sand — so the two
+        // treatments sit on the same page for a side-by-side comparison. Token
+        // names stay (legacy slots). The soft pastel bloom washes are untouched.
+        terracotta: 'rgb(var(--rgb-terracotta) / <alpha-value>)',
+        rust: 'rgb(var(--rgb-rust) / <alpha-value>)',
         orange: '#E89B63',
         ochre: '#C9A94B',
         'ochre-light': '#F5E9AC',

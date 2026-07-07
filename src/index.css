@@ -28,11 +28,51 @@
   :root {
     --c-paper: #F7F4EF;
     --c-ink: #3F3552;
-    --c-terracotta: #3B5F52;
     --rgb-paper: 247 244 239;
     --rgb-ink: 63 53 82;
     --rgb-ink-soft: 117 106 124;
     --rgb-line: 225 214 224;
+
+    /* ACCENT — GRADIENT COMPARISON TEST (default = MOSS half).
+       The accent slots (`terracotta` / `rust` in tailwind.config.js) resolve
+       to these triplets, so every solid `text-terracotta` / `bg-terracotta`
+       / `border-rust` accent reads moss here. Deepened enough to hold ≥4.5:1
+       as text on the ivory ground. `.accent-neon` (below) re-anchors the same
+       slots to the neon treatment for the bottom half of the page. */
+    --rgb-terracotta: 76 106 58; /* moss #4C6A3A */
+    --rgb-rust: 55 80 42; /* deep moss #37502A */
+    --c-terracotta: #4C6A3A; /* inline-style / SVG mirror of the accent */
+
+    /* The single action surface (`.btn-aurora`) as a full gradient. The MOSS
+       treatment is largely moss green with a cool blue hint on the leading
+       edge and a soft purple/pink hint on the trailing edge, per the brief. */
+    --btn-aurora-gradient: linear-gradient(
+      115deg,
+      #3D6E78 0%,
+      #4C6A3A 20%,
+      #47692F 50%,
+      #55663B 78%,
+      #7E5580 100%
+    );
+  }
+
+  /* ACCENT — NEON half. Wraps the bottom of the page (offerings → enquiry →
+     footer) so the same accent slots flip to a bright neon purple/blue and
+     the button gradient runs neon purple → electric blue → warm sand. The
+     solid anchors stay dark enough to hold as text on the light offerings
+     ground and pop against the dark footer. */
+  .accent-neon {
+    --rgb-terracotta: 138 43 226; /* neon purple #8A2BE2 */
+    --rgb-rust: 91 43 234; /* electric indigo #5B2BEA */
+    --c-terracotta: #8A2BE2;
+    --btn-aurora-gradient: linear-gradient(
+      115deg,
+      #8A1FE6 0%,
+      #6A2BEE 24%,
+      #2E5BFF 52%,
+      #3E86E0 76%,
+      #E7C879 100%
+    );
   }
 
   html {
@@ -200,26 +240,20 @@
 }
 
 @layer utilities {
-  /* Primary action surface — the site's single action surface, now a deep
-     pine / teal arc rather than the former rose→lilac: forest green melting
-     through a deeper pine and back up to a lit teal, with a soft pine-tinted
-     glow instead of a flat fill. Every stop stays ≥4.5:1 under the
-     paper-coloured label. Oversized background-size so hover can drift the
-     light across the surface rather than swap colours. */
+  /* Primary action surface — the site's single action surface. The gradient
+     itself is driven by `--btn-aurora-gradient` (moss by default, neon inside
+     `.accent-neon`) so a button carries whichever accent treatment its region
+     is testing. The lift shadow stays in the approved lilac shadow palette
+     (per CLAUDE.md — no green/neutral shadows) so it works under both hues.
+     Oversized background-size so hover can drift the light across the surface
+     rather than swap colours. */
   .btn-aurora {
-    background-image: linear-gradient(
-      115deg,
-      #3F6558 0%,
-      #37594D 30%,
-      #2C4A40 55%,
-      #33604F 80%,
-      #3C6E58 100%
-    );
+    background-image: var(--btn-aurora-gradient);
     background-size: 200% 100%;
     background-position: 0% 50%;
     box-shadow:
-      0 14px 30px -12px rgba(47, 90, 76, 0.5),
-      0 4px 14px -8px rgba(60, 110, 88, 0.5);
+      0 14px 30px -12px rgba(94, 74, 140, 0.5),
+      0 4px 14px -8px rgba(94, 74, 140, 0.45);
     transition:
       background-position 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
       box-shadow 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -228,8 +262,8 @@
   .btn-aurora:hover {
     background-position: 100% 50%;
     box-shadow:
-      0 16px 34px -12px rgba(47, 90, 76, 0.62),
-      0 6px 18px -8px rgba(60, 110, 88, 0.6);
+      0 16px 34px -12px rgba(94, 74, 140, 0.62),
+      0 6px 18px -8px rgba(94, 74, 140, 0.55);
   }
 
   /* Subtle paper grain so the bone background reads as stock, not flat #fff. */
