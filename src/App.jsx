@@ -100,13 +100,8 @@ export default function App() {
         {/* Hard editorial break: the painter's sheet tears off along a
             deckled paper edge and the offerings open on a deeper ground with
             a wash of their own, so what follows reads as a new section
-            starting — not a continuation of the same sheet.
-
-            ACCENT COMPARISON: everything from here down (offerings, enquiry,
-            footer) is wrapped in `.accent-neon`, so the bottom half of the
-            page wears the bright neon purple/blue/sand accent while the top
-            half above stays moss — the two treatments side by side. */}
-        <div className="relative bg-paper-deep accent-neon">
+            starting — not a continuation of the same sheet. */}
+        <div className="relative bg-paper-deep">
           <DeckleEdge className="absolute inset-x-0 top-0 z-10 h-[18px] w-full md:h-6" />
           <SectionWash variant="warm">
             <Packages />
@@ -115,9 +110,7 @@ export default function App() {
         </div>
       </main>
 
-      <div className="accent-neon">
-        <Footer />
-      </div>
+      <Footer />
     </div>
   )
 }
