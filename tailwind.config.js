@@ -17,10 +17,10 @@ export default {
         ink: '#3F3552',
         'ink-soft': '#756A7C',
         line: '#E1D6E0',
-        // Primary accent pigments. The dominant UI accent is a muted, dusty
-        // yellow-green sourced from the palette's own `sage` / `sage-deep`
-        // anchors below (chic and photographic, not a saturated invented
-        // chartreuse). Driven by CSS custom properties (`--rgb-terracotta` /
+        // Primary accent pigments. The dominant UI accent is Lemon Lime
+        // (#D8DB7A), one of the client's reference swatches, deepened just
+        // enough to read as text — see the full swatch-to-hex mapping in
+        // index.css. Driven by CSS custom properties (`--rgb-terracotta` /
         // `--rgb-rust`, defined in index.css) so the whole site's accent can
         // be retuned from one place. Token names stay (legacy slots); the
         // soft pastel bloom washes are untouched.
@@ -37,7 +37,9 @@ export default {
         rose: '#C1608C',
         magenta: '#C0559A',
         blush: '#F2C2CF',
-        wine: '#1F2E2A',
+        wine: '#241E33', // deep plum-ink night ground (was pine #1F2E2A) — the
+        // dark "nightfall" sections (evening timeline, footer) now sit on the
+        // palette's own deep violet-ink rather than the old masculine forest.
       },
       fontFamily: {
         // Three-font editorial system:

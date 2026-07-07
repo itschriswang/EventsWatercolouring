@@ -33,31 +33,33 @@
     --rgb-ink-soft: 117 106 124;
     --rgb-line: 225 214 224;
 
-    /* ACCENT — a muted, dusty yellow-green pulled straight from the site's
-       existing Pastel Bloom anchors (`sage` / `sage-deep` in
-       tailwind.config.js) rather than an invented, over-saturated chartreuse
-       — chic and photographic, not neon. The accent slots (`terracotta` /
-       `rust`) resolve to these triplets, so every solid `text-terracotta` /
-       `bg-terracotta` / `border-rust` accent reads this soft sage. Deepened
-       just enough to hold ≥4.5:1 as text on the ivory ground. */
-    --rgb-terracotta: 95 102 43; /* sage-deep #5F662B */
-    --rgb-rust: 71 80 31; /* deeper sage #47501F, for hover/dark-ground use */
-    --c-terracotta: #5F662B; /* inline-style / SVG mirror of the accent */
+    /* ACCENT — sourced verbatim from the client's reference swatch sheet:
+         Lemon Lime #D8DB7A · Seafoam #BFDCD1 · Lavender #D4B6E6 ·
+         Blossom #F2A6C1 · Mist #F2EEE9
+       (Peach/Apricot/Butter/Rose round out the sheet but aren't needed here.)
+       The solid accent (`terracotta`/`rust`, used as small text/borders) is
+       Lemon Lime's own hue and saturation carried down to a legible
+       lightness — same pigment, just deep enough to hold ≥4.5:1 on the
+       ivory ground; the raw swatch (#D8DB7A) is far too light to read as
+       text. Everything decorative (the button below) uses the swatches at
+       full, unaltered brightness. */
+    --rgb-terracotta: 102 104 28; /* deepened Lemon Lime #66681C */
+    --rgb-rust: 78 80 22; /* deeper Lemon Lime #4E5016, hover/dark-ground */
+    --c-terracotta: #66681C; /* inline-style / SVG mirror of the accent */
 
     /* The single action surface (`.btn-aurora`). Built entirely from soft,
-       elliptical radial blooms — never a straight linear sweep — so the
-       colour pools the way it does in the reference photograph (out-of-focus
-       light gathering in round patches) and so the light gathers toward the
-       pill's own rounded ends rather than cutting a diagonal band across it.
-       A periwinkle bloom (`cornflower`) sits at the leading rounded cap, a
-       candy-rose bloom (`rose`) at the trailing one, both pulled straight
-       from the existing palette tokens; the body between is a soft
-       lime → sage → sage-deep glow, the same anchors as the solid accent
-       above, so button and text read as one family. */
+       elliptical radial blooms — never a straight linear sweep — so colour
+       gathers in round patches the way it does in the reference photograph,
+       toward the pill's own rounded ends rather than in a diagonal band.
+       Reads, left to right: a Lavender bloom on the leading cap, a Seafoam
+       glow bridging across the top, the Lemon Lime body (full-brightness at
+       its highlight, deepened only where the paper-coloured label needs to
+       stay legible), and a Blossom bloom on the trailing cap. */
     --btn-aurora-gradient:
-      radial-gradient(42% 150% at 12% 40%, rgba(155, 163, 204, 0.6) 0%, rgba(155, 163, 204, 0) 62%),
-      radial-gradient(42% 150% at 88% 62%, rgba(193, 96, 140, 0.5) 0%, rgba(193, 96, 140, 0) 62%),
-      radial-gradient(90% 190% at 42% 28%, #D8DC8F 0%, #8A9143 38%, #5F662B 75%, #47501F 100%);
+      radial-gradient(38% 145% at 8% 34%, rgba(212, 182, 230, 0.62) 0%, rgba(212, 182, 230, 0) 60%),
+      radial-gradient(52% 165% at 32% 8%, rgba(191, 220, 209, 0.55) 0%, rgba(191, 220, 209, 0) 66%),
+      radial-gradient(38% 145% at 92% 68%, rgba(242, 166, 193, 0.58) 0%, rgba(242, 166, 193, 0) 60%),
+      radial-gradient(95% 210% at 42% 30%, #D8DB7A 0%, #A6A94E 32%, #66681C 66%, #4E5016 100%);
   }
 
   html {
@@ -226,12 +228,13 @@
 
 @layer utilities {
   /* Primary action surface — the site's single action surface, driven by
-     `--btn-aurora-gradient` (defined above: soft radial sage blooms with
-     periwinkle/candy-rose caps, not a linear sweep). The lift shadow stays in
-     the approved lilac shadow palette (per CLAUDE.md — no green/neutral
-     shadows). Oversized background-size so hover drifts the whole painted
-     bloom-field across the surface rather than swapping flat colours — the
-     periwinkle cap sits at rest, the rose cap slides in on hover. */
+     `--btn-aurora-gradient` (defined above: Lemon Lime body with Lavender,
+     Seafoam and Blossom radial blooms — the client's reference swatches,
+     not a linear sweep). The lift shadow stays in the approved lilac shadow
+     palette (per CLAUDE.md — no green/neutral shadows). Oversized
+     background-size so hover drifts the whole painted bloom-field across the
+     surface rather than swapping flat colours — the Lavender cap sits at
+     rest, the Blossom cap slides in on hover. */
   .btn-aurora {
     background-image: var(--btn-aurora-gradient);
     background-size: 200% 100%;

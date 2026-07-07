@@ -241,7 +241,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
     <section id="enquiry" className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(3.5rem,7vw,6rem)]">
       <div className="grid grid-cols-12 gap-x-8 gap-y-12">
         <div className="relative col-span-12 lg:col-span-4">
-          <Label>{ENQUIRY.label}</Label>
+          <Label gradient={['#F2A6C1', '#DB6E97']}>{ENQUIRY.label}</Label>
           <h2 className="display-lg mt-5 text-ink">
             {ENQUIRY.title[0]}
             <br />
@@ -286,8 +286,8 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                   arrives. Sits above the paper, below the content. */}
               <div className="pointer-events-none absolute inset-[3%] z-[1] overflow-hidden rounded-[3px]">
                 {[
-                  { c: '#B04A76', pos: '-right-10 -top-12 h-52 w-52', o: 0.1 },
-                  { c: '#8E63B8', pos: '-left-10 bottom-0 h-44 w-44', o: 0.09 },
+                  { c: '#F2A6C1', pos: '-right-10 -top-12 h-52 w-52', o: 0.14 },
+                  { c: '#D4B6E6', pos: '-left-10 bottom-0 h-44 w-44', o: 0.12 },
                 ].map((b, i) => (
                   <span
                     key={i}
@@ -309,7 +309,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                     className="absolute left-1/2 top-1/2 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-multiply"
                     style={{
                       background:
-                        'radial-gradient(circle at 50% 50%, #B04A76, rgba(142,99,184,0.5) 45%, transparent 72%)',
+                        'radial-gradient(circle at 50% 50%, #F2A6C1, rgba(212,182,230,0.5) 45%, transparent 72%)',
                       filter: 'blur(34px)',
                     }}
                   />
@@ -324,7 +324,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                     the same stationery. */}
                 <div className="mb-7 flex items-baseline justify-between border-b border-line/80 pb-4">
                   <span className="eyebrow inline-flex items-center gap-2">
-                    <Drop className="h-5 w-auto" fill="#B04A76" />
+                    <Drop className="h-5 w-auto" gradient={['#F2A6C1', '#DB6E97']} />
                     Reply card
                   </span>
                   <span className="font-mono text-xs lowercase tracking-wide text-ink-soft">
