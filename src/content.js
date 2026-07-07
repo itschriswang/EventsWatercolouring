@@ -294,6 +294,7 @@ export const ENQUIRY = {
     'Live on the day',
     'Corporate event or brand activation',
     'Private celebration',
+    'Studio commission',
     'Not sure yet',
   ],
   // The reply card asks its questions a step at a time (see EnquireForm.jsx)
