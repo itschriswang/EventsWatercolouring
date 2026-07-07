@@ -17,58 +17,30 @@ import { SPRING } from '../lib/site.js'
  * In char mode, each word's characters are wrapped in an inline-block container
  * so the browser never breaks a word mid-character across lines.
  *
- * Char mode also hand-places every glyph — a small deterministic rotation and
- * baseline shift per letter — so titles land agitated and human, like sticker
- * letters pressed down one at a time, never digitally flush. Pass `knockout`
- * to flip one small joining word into the wordmark's negative-space accent:
- * shrunk, paper-filled with an ink stroke, tucked between its neighbours
- * (see `.knockout-word` in index.css).
+ * Char mode also hand-places every glyph — a small deterministic baseline
+ * shift per letter — so titles land agitated and human, like sticker
+ * letters pressed down one at a time, never digitally flush. Letter spacing
+ * itself comes only from the display face's own CSS (`.display-xl/-lg/-md`
+ * in index.css), same as any plain display heading. Pass `knockout` to flip
+ * one small joining word into the wordmark's negative-space accent: shrunk,
+ * paper-filled with an ink stroke, tucked between its neighbours (see
+ * `.knockout-word` in index.css).
  */
 
-// Deterministic per-glyph agitation, seeded by line + glyph position so the
-// scatter is stable across renders (no re-jumbling on hover or route change).
-// Rotation in degrees, lift in em.
-//
-// The lean alternates direction letter-to-letter (offset by line so lines don't
-// all open the same way): hand-painted signage zig-zags rather than drifting
-// one way, and a plain hash tends to clump several same-sign tilts in a row —
-// especially visible under the italic emphasis cut, where a run of right-leaning
-// glyphs reads as the whole word tipping over. The hash still sets each letter's
-// magnitude and baseline lift, so the alternation stays organic rather than a
-// perfect metronome.
-//
-// Angle magnitude is kept gentle (2°–7°). Rotating a glyph about its centre
-// doesn't change its average advance — it swings the top one way and the foot
-// the other, so counter-leaning neighbours meet in a wedge (a gap that opens at
-// the cap and pinches at the baseline). Wide angles turn that wedge severe and
-// the line reads as scattered debris; a gentle tilt keeps the hand-lettered
-// life while the letters still nest cleanly, the way the reference wordmark
-// does.
+// Deterministic per-glyph baseline lift, seeded by line + glyph position so
+// the scatter is stable across renders (no re-jumbling on hover or route
+// change). In em.
 const jitter = (li, gi) => {
-  const h1 = Math.sin((li + 1) * 127.1 + (gi + 1) * 311.7) * 43758.5453
   const h2 = Math.sin((li + 1) * 269.5 + (gi + 1) * 183.3) * 24634.6345
-  const r1 = h1 - Math.floor(h1)
   const r2 = h2 - Math.floor(h2)
-  const dir = (gi + li) % 2 === 0 ? 1 : -1
-  return { rotate: dir * (2 + r1 * 5), lift: (r2 - 0.5) * 0.07 }
+  return { lift: (r2 - 0.5) * 0.07 }
 }
-
-// Overlap. The reference wordmark isn't a row of spaced letters — successive
-// characters tuck into one another so the title reads as one drawn mark. The
-// display face already carries heavy negative tracking (.display-xl: -0.11em),
-// but the round marker glyphs still want more to genuinely overlap, so every
-// split glyph gets a small extra negative margin on each side. It rides on top
-// of letter-spacing (not instead of it) and is symmetric so it never shoves a
-// glyph off its own centre — it only closes the seams. word-spacing on the face
-// buys the inter-word gaps back, so tightening here nestles letters without
-// running the words together.
-const OVERLAP = 0.038 // em pulled off each side of every glyph
 
 // Sample a colour flowing across a list of hex stops at fraction f in [0,1].
 // Used by `emphasisColors` to run the action-surface's cool → green → warm
-// wash across an emphasis word letter-by-letter — solid per-glyph pigment (so
-// it survives the per-glyph rotations and keeps AA contrast at display sizes)
-// rather than a background-clip:text fill.
+// wash across an emphasis word letter-by-letter — solid per-glyph pigment
+// (so it keeps AA contrast at display sizes) rather than a
+// background-clip:text fill.
 const hexToRgb = (h) => {
   const n = parseInt(h.slice(1), 16)
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
@@ -105,18 +77,11 @@ export default function SplitText({
   const isWordUnderlined = (word) => underline !== null && normalise(word) === normalise(underline)
   const isWordKnockout = (word) => knockout !== null && normalise(word) === normalise(knockout)
 
-  // The agitation is styling, not motion — `rotate` merges with the variant's
-  // animated y in framer's transform, and the baseline lift rides on
-  // position:relative/top so it never fights the y spring. Spaces stay unshifted.
+  // The baseline lift rides on position:relative/top so it never fights the
+  // variant's animated y spring. Spaces stay unshifted.
   const glyphStyle = (li, gi) => {
     const j = jitter(li, gi)
-    return {
-      rotate: j.rotate,
-      position: 'relative',
-      top: `${j.lift}em`,
-      marginLeft: `-${OVERLAP}em`,
-      marginRight: `-${OVERLAP}em`,
-    }
+    return { position: 'relative', top: `${j.lift}em` }
   }
 
   const emphasisList = emphasis
