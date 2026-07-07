@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion'
 import Label, { Drop } from './Label.jsx'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
-import { SPRING, asset } from '../lib/site.js'
+import { SPRING } from '../lib/site.js'
 import { EVENING } from '../content.js'
 import WatercolourBloom from './WatercolourBloom.jsx'
 import { withUnderline } from './Underline.jsx'
@@ -55,30 +55,6 @@ export default function EveningTimeline() {
             'linear-gradient(170deg, rgba(63,53,82,0.35) 0%, rgba(84,64,107,0) 45%, rgba(84,64,107,0.25) 100%)',
         }}
       />
-      {/* faint bouquet cut, top-right. Clipped by its own wrapper rather than
-          the section: putting overflow-hidden on the <section> would make it a
-          scroll container and silently break the sticky title rail below. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 overflow-hidden"
-      >
-        <picture>
-          <source srcSet={asset('assets/bloom-accent-1.webp')} type="image/webp" />
-          <img
-            src={asset('assets/bloom-accent-1.png')}
-            alt=""
-            width="840"
-            height="1049"
-            loading="lazy"
-            decoding="async"
-            className={
-              'absolute -right-[6vw] -top-[6vw] w-[34vw] max-w-[420px] opacity-20' +
-              (lite ? '' : ' mix-blend-screen')
-            }
-          />
-        </picture>
-      </div>
-
       {/* Watercolour pigment wash, bottom-left — the title rail leaves that
           corner empty once the beats run long down the right, and screen
           blend reads as a soft glow lifting off the dusk indigo rather than a
@@ -106,7 +82,11 @@ export default function EveningTimeline() {
             <Label gradient={['#F5E9AC', '#F7F4EF']} className="!text-paper/90">
               {EVENING.label}
             </Label>
-            <h2 className="display-lg mt-1">
+            {/* No backlight glow here: the section runs light type on the
+                dark dusk ground, so the display glow (a warm near-white) would
+                read as the same colour as the letters and just blur them.
+                Dropped for crisp type. */}
+            <h2 className="display-lg mt-1 [text-shadow:none]">
               {EVENING.title[0]}
               <br />
               <em>{EVENING.title[1]}</em>
@@ -163,7 +143,7 @@ export default function EveningTimeline() {
                       <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_12px_rgba(63,53,82,0.55)]">
                         <Drop
                           className="h-5 w-auto"
-                          gradient={['#B04A76', '#C0559A']}
+                          gradient={['#4A7566', '#2C4A40']}
                         />
                       </span>
                     ) : (
