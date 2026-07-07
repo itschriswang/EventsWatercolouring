@@ -60,7 +60,11 @@ export default function Underline({ children, seed, className = '' }) {
         <motion.path
           d={d}
           fill="none"
-          stroke="currentColor"
+          // Defaults to the text colour (so a coloured phrase underlines to
+          // match), but a caller can paint just the stroke via
+          // `--underline-stroke` — used in the footer, where the word itself
+          // is paper-white and a currentColor underline would vanish into it.
+          stroke="var(--underline-stroke, currentColor)"
           strokeWidth="10"
           strokeLinecap="round"
           initial={false}
