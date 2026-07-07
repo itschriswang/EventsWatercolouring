@@ -28,41 +28,13 @@ export default function AboutMe() {
     >
       <div className="relative pb-[clamp(5rem,10vw,8rem)]">
         <div className="grid grid-cols-12 items-start gap-x-8 gap-y-8">
-          {/* Left column: title + bio + signature + CTA */}
-          <div className="relative col-span-12 sm:col-span-6 sm:col-start-1 lg:col-span-6 lg:col-start-1">
-            <Sparkles variant="burst" className="absolute -top-4 right-0 h-14 w-14 text-terracotta/80" />
-            <Label gradient={['#A85450', '#DFA455']}>{PAINTER.label}</Label>
-            <SplitText
-              as="h2"
-              unit="char"
-              lines={PAINTER.title}
-              emphasis={PAINTER.emphasis}
-              emphasisItalic
-              className="display-lg mt-5 text-ink"
-            />
-            <div className="mt-8 flex flex-col gap-5 text-[clamp(1rem,1.1vw,1.15rem)] leading-relaxed text-ink-soft">
-              {PAINTER.body.map((p, i) => (
-                <p key={i}>
-                  {i === 1
-                    ? withUnderline(p, 'something real to take home', { className: 'text-rust' })
-                    : p}
-                </p>
-              ))}
-            </div>
-            {PAINTER.signature && (
-              <p className="mt-6 font-mono text-4xl text-terracotta">
-                {PAINTER.signature}
-              </p>
-            )}
-          </div>
-  
-          {/* Right column: portrait, top aligned near the "me" line */}
+          {/* Portrait — left on desktop, right on mobile */}
           <motion.figure
             initial={{ opacity: 0, y: reduce ? 0 : 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}
             transition={SPRING}
-            className="col-span-12 sm:col-span-6 sm:col-start-7 lg:col-span-6 lg:col-start-7 lg:mt-16"
+            className="col-span-12 sm:col-span-6 sm:col-start-7 lg:col-span-6 lg:col-start-1 lg:mt-0 order-2 sm:order-none lg:order-none"
           >
             <div className="relative sm:ml-auto sm:max-w-[20rem]">
               {/* A soft watercolour swatch rests behind the portrait, offset
@@ -139,6 +111,34 @@ export default function AboutMe() {
               </motion.div>
             </div>
           </motion.figure>
+
+          {/* Title + bio + signature — left on mobile, right on desktop */}
+          <div className="relative col-span-12 sm:col-span-6 sm:col-start-1 lg:col-span-6 lg:col-start-7 order-1 sm:order-none lg:order-none lg:pl-4">
+            <Sparkles variant="burst" className="absolute -top-4 right-0 h-14 w-14 text-terracotta/80 lg:hidden" />
+            <Label gradient={['#A85450', '#DFA455']}>{PAINTER.label}</Label>
+            <SplitText
+              as="h2"
+              unit="char"
+              lines={PAINTER.title}
+              emphasis={PAINTER.emphasis}
+              emphasisItalic
+              className="display-lg mt-5 text-ink"
+            />
+            <div className="mt-8 flex flex-col gap-5 text-[clamp(1rem,1.1vw,1.15rem)] leading-relaxed text-ink-soft">
+              {PAINTER.body.map((p, i) => (
+                <p key={i}>
+                  {i === 1
+                    ? withUnderline(p, 'something real to take home', { className: 'text-rust' })
+                    : p}
+                </p>
+              ))}
+            </div>
+            {PAINTER.signature && (
+              <p className="mt-6 font-mono text-4xl text-terracotta">
+                {PAINTER.signature}
+              </p>
+            )}
+          </div>
         </div>
       </div>
 

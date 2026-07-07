@@ -10,7 +10,6 @@ import HeroFlurry, { flurryWillPlay, FLURRY_HANDOFF_DELAY, FLURRY_HANDOFF_DELAY_
 import Sparkles from './Sparkles.jsx'
 import { withUnderline } from './Underline.jsx'
 import BloomFilter from './WetBloom.jsx'
-import HeroBrush from './HeroBrush.jsx'
 import HeroStroke from './HeroStroke.jsx'
 
 export default function Hero({ revealed }) {
@@ -83,11 +82,6 @@ export default function Hero({ revealed }) {
       ref={ref}
       className="relative w-full overflow-x-clip px-[5vw] pb-[clamp(2.5rem,5vw,4.5rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-8"
     >
-      {/* Pigment that trails the cursor across the hero — perceivable, and
-          asleep (no render loop) until the pointer moves. Desktop / motion /
-          WebGL only; renders nothing elsewhere. */}
-      <HeroBrush />
-
       {/* Load flourish: the body of work swirls in a cylinder and drifts down
           toward the gallery, leaving the two studies below. Self-gating —
           plays once per session, sits out reduced-motion, and unmounts after. */}
