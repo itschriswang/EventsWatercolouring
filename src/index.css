@@ -33,45 +33,32 @@
     --rgb-ink-soft: 117 106 124;
     --rgb-line: 225 214 224;
 
-    /* ACCENT — GRADIENT COMPARISON TEST (default = MOSS half).
-       The accent slots (`terracotta` / `rust` in tailwind.config.js) resolve
-       to these triplets, so every solid `text-terracotta` / `bg-terracotta`
-       / `border-rust` accent reads moss here. Deepened enough to hold ≥4.5:1
-       as text on the ivory ground. `.accent-neon` (below) re-anchors the same
-       slots to the neon treatment for the bottom half of the page. */
-    --rgb-terracotta: 76 106 58; /* moss #4C6A3A */
-    --rgb-rust: 55 80 42; /* deep moss #37502A */
-    --c-terracotta: #4C6A3A; /* inline-style / SVG mirror of the accent */
+    /* ACCENT — a bright, saturated yellow-green (the palette's protected
+       "chartreuse glow" anchor — see CLAUDE.md), replacing the earlier dull,
+       near-black moss. The accent slots (`terracotta` / `rust` in
+       tailwind.config.js) resolve to these triplets, so every solid
+       `text-terracotta` / `bg-terracotta` / `border-rust` accent reads this
+       chartreuse-olive. Deepened just enough to hold ≥4.5:1 as text on the
+       ivory ground — any lighter and it stops being legible there. */
+    --rgb-terracotta: 79 122 28; /* bright chartreuse-olive #4F7A1C */
+    --rgb-rust: 62 100 21; /* deeper chartreuse #3E6415 */
+    --c-terracotta: #4F7A1C; /* inline-style / SVG mirror of the accent */
 
-    /* The single action surface (`.btn-aurora`) as a full gradient. The MOSS
-       treatment is largely moss green with a cool blue hint on the leading
-       edge and a soft purple/pink hint on the trailing edge, per the brief. */
+    /* The single action surface (`.btn-aurora`) as a full gradient. Mostly
+       the bright yellow-green above, with a periwinkle/blue-purple hint on
+       the leading corner and a candy-rose/pink hint on the trailing corner —
+       each bridged through a light butter-cream stop first (anti-mud rule:
+       neighbours on the Pastel Bloom arc, high-lightness at the seam) rather
+       than blending straight into the green. */
     --btn-aurora-gradient: linear-gradient(
       115deg,
-      #3D6E78 0%,
-      #4C6A3A 20%,
-      #47692F 50%,
-      #55663B 78%,
-      #7E5580 100%
-    );
-  }
-
-  /* ACCENT — NEON half. Wraps the bottom of the page (offerings → enquiry →
-     footer) so the same accent slots flip to a bright neon purple/blue and
-     the button gradient runs neon purple → electric blue → warm sand. The
-     solid anchors stay dark enough to hold as text on the light offerings
-     ground and pop against the dark footer. */
-  .accent-neon {
-    --rgb-terracotta: 138 43 226; /* neon purple #8A2BE2 */
-    --rgb-rust: 91 43 234; /* electric indigo #5B2BEA */
-    --c-terracotta: #8A2BE2;
-    --btn-aurora-gradient: linear-gradient(
-      115deg,
-      #8A1FE6 0%,
-      #6A2BEE 24%,
-      #2E5BFF 52%,
-      #3E86E0 76%,
-      #E7C879 100%
+      #7B86D6 0%,
+      #EDE6B0 14%,
+      #6B9A22 30%,
+      #588016 50%,
+      #6B9A22 70%,
+      #F0E3C0 86%,
+      #D98BC0 100%
     );
   }
 
@@ -240,13 +227,12 @@
 }
 
 @layer utilities {
-  /* Primary action surface — the site's single action surface. The gradient
-     itself is driven by `--btn-aurora-gradient` (moss by default, neon inside
-     `.accent-neon`) so a button carries whichever accent treatment its region
-     is testing. The lift shadow stays in the approved lilac shadow palette
-     (per CLAUDE.md — no green/neutral shadows) so it works under both hues.
-     Oversized background-size so hover can drift the light across the surface
-     rather than swap colours. */
+  /* Primary action surface — the site's single action surface, driven by
+     `--btn-aurora-gradient` (defined above: bright yellow-green with
+     periwinkle/blue-purple and candy-rose corner hints). The lift shadow
+     stays in the approved lilac shadow palette (per CLAUDE.md — no
+     green/neutral shadows). Oversized background-size so hover can drift the
+     light across the surface rather than swap colours. */
   .btn-aurora {
     background-image: var(--btn-aurora-gradient);
     background-size: 200% 100%;
