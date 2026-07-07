@@ -10,8 +10,6 @@ import HeroFlurry, { flurryWillPlay, FLURRY_HANDOFF_DELAY, FLURRY_HANDOFF_DELAY_
 import Sparkles from './Sparkles.jsx'
 import { withUnderline } from './Underline.jsx'
 import BloomFilter from './WetBloom.jsx'
-import HeroBrush from './HeroBrush.jsx'
-import HeroStroke from './HeroStroke.jsx'
 
 export default function Hero({ revealed }) {
   const reduce = useReducedMotion()
@@ -83,11 +81,6 @@ export default function Hero({ revealed }) {
       ref={ref}
       className="relative w-full overflow-x-clip px-[5vw] pb-[clamp(2.5rem,5vw,4.5rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-8"
     >
-      {/* Pigment that trails the cursor across the hero — perceivable, and
-          asleep (no render loop) until the pointer moves. Desktop / motion /
-          WebGL only; renders nothing elsewhere. */}
-      <HeroBrush />
-
       {/* Load flourish: the body of work swirls in a cylinder and drifts down
           toward the gallery, leaving the two studies below. Self-gating —
           plays once per session, sits out reduced-motion, and unmounts after. */}
@@ -186,12 +179,6 @@ export default function Hero({ revealed }) {
 
         {/* Headline + lede + actions */}
         <div className="relative z-10 order-2 mt-[min(2.5rem,4dvh)] sm:mt-0 lg:order-none lg:col-span-7 lg:col-start-1">
-          {/* Scroll-drawn vine, tucked behind the headline (negative z keeps
-              it under the static title/lede/CTA regardless of paint order) */}
-          <HeroStroke
-            scrollYProgress={scrollYProgress}
-            className="pointer-events-none absolute -z-10 -right-[6%] top-[6%] h-[85%] w-[34%] opacity-60 sm:-right-[4%] sm:w-[26%] lg:-right-[9%] lg:top-0 lg:h-full lg:w-[22%] lg:opacity-70"
-          />
           {/* Delayed past the headline entrance so the twinkle lands as a
               finishing flick, not part of the type reveal. */}
           <Sparkles

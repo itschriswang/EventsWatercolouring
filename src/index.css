@@ -9,13 +9,13 @@
 }
 
 .instrument-serif-regular {
-  font-family: "Gochi Hand", cursive;
+  font-family: "Darumadrop One", cursive;
   font-weight: 400;
   font-style: normal;
 }
 
 .instrument-serif-regular-italic {
-  font-family: "Gochi Hand", cursive;
+  font-family: "Darumadrop One", cursive;
   font-weight: 400;
   font-style: italic;
 }
@@ -100,23 +100,36 @@
      once per page root) wobbles the glyph edges and presses a paper-grain
      texture into the ink via hard-light, so titles read as stamped onto the
      page rather than set in flawless digital type. */
+  /* Darumadrop One is a rounded, chunky marker face, so titles get the
+     playful, overlapping-letter treatment from the reference: negative
+     tracking nestles the round glyphs into one another, and a soft lilac
+     bloom (the palette's primary lift shadow — never grey, per CLAUDE.md)
+     pools beneath the letters like wet pigment under paper cut-outs — a
+     blurred watercolour halo, not a hard offset drop. em-based offsets and
+     blur keep the bloom in proportion across the fluid clamp. */
   .display-xl {
     font-family: theme('fontFamily.sentient');
     font-weight: 400;
     font-size: clamp(2.25rem, 6vw, 6rem);
     line-height: 0.95;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.04em;
+    text-shadow:
+      0.03em 0.05em 0.09em rgba(94, 74, 140, 0.45),
+      0.012em 0.02em 0.04em rgba(94, 74, 140, 0.30);
     filter: url(#stamp-distress);
   }
 
-  /* Gochi Hand ships in regular (400) only — heavier weights here
+  /* Darumadrop One ships in regular (400) only — heavier weights here
      would just trigger faux-bold synthesis, which muddies the letterforms. */
   .display-lg {
     font-family: theme('fontFamily.sentient');
     font-weight: 400;
     font-size: clamp(2rem, 4vw, 4rem);
     line-height: 0.95;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.035em;
+    text-shadow:
+      0.028em 0.045em 0.085em rgba(94, 74, 140, 0.42),
+      0.01em 0.018em 0.04em rgba(94, 74, 140, 0.28);
     filter: url(#stamp-distress);
   }
 
@@ -125,8 +138,35 @@
     font-weight: 400;
     font-size: clamp(1.5rem, 3.5vw, 3rem);
     line-height: 0.98;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.03em;
+    text-shadow:
+      0.025em 0.04em 0.08em rgba(94, 74, 140, 0.40),
+      0.01em 0.016em 0.035em rgba(94, 74, 140, 0.26);
     filter: url(#stamp-distress);
+  }
+
+  /* The reference wordmark's cute connector ("make *it* happen"): one small
+     joining word flipped to negative space — paper fill, ink stroke — shrunk
+     and tucked between its big neighbours so the title reads as one drawn
+     mark. Applied by SplitText's `knockout` prop. Only use it on a word that
+     genuinely bridges the two words around it — mid-phrase, with a big word
+     tight on BOTH sides; anywhere else the inversion reads as a stray mark,
+     not a wordmark. Its own text-shadow matters:
+     the inherited display shadow computes em against the parent's size and
+     would swamp the little word; this one stays in scale (and in the approved
+     lilac, never grey). paint-order keeps the paper fill clean on top of the
+     centred ink stroke. */
+  .knockout-word {
+    position: relative;
+    z-index: 1;
+    font-size: 0.48em;
+    color: theme('colors.paper');
+    -webkit-text-stroke: 0.07em theme('colors.ink');
+    paint-order: stroke fill;
+    margin-inline: -0.1em;
+    vertical-align: 0.28em;
+    rotate: -5deg;
+    text-shadow: 0.06em 0.1em 0.14em rgba(94, 74, 140, 0.45);
   }
 
   .eyebrow {
