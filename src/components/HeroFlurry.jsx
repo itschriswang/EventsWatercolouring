@@ -29,7 +29,7 @@ export function flurryWillPlay() {
   return !shouldSkip()
 }
 
-const DURATION = 3.3 // seconds — one flowing pass, unhurried
+const DURATION = 2.8 // seconds — one flowing pass, brisk enough not to outstay the headline
 const LAND_T = 0.62 // when the first survivor arrives on its card (near the apex)
 const LAND_STAGGER = 0.05 // the second survivor lands a beat later
 
@@ -123,11 +123,15 @@ const HAZE = 'rgb(247,244,239)'
  * unhurried procession of the body of work glides across the lower screen in
  * one calm pass: pieces enter off the bottom-left, follow a single gentle arc
  * and leave off the bottom-right, always facing the camera, upright, with a
- * steady near-level tilt rather than a spin. Depth reads three ways — size,
- * layering, and a warm atmospheric veil on the far pieces — and on a fine
- * pointer the whole current parallaxes to the cursor, near pieces sliding
- * further than far. Few enough pieces are in motion at once that the arc
- * reads as one legible current, not a scatter.
+ * steady near-level tilt rather than a spin. The crowd travels *behind* the
+ * page copy (below the headline's z), so it reads as an atmospheric current
+ * moving through the paper while the type settles above it — never as
+ * confetti over the words. Depth reads three ways — size, layering, and a
+ * warm atmospheric veil on the far pieces — and on a fine pointer the whole
+ * current parallaxes to the cursor, near pieces sliding further than far.
+ * Few enough pieces are in motion at once that the arc reads as one legible
+ * current, not a scatter, and each piece keeps a fixed layer for its whole
+ * flight so the stack never reshuffles mid-air.
  *
  * The current passes on and leaves. Two pieces — the character and the bouquet —
  * instead lift out of it and settle onto the exact measured boxes of the hero's
@@ -203,9 +207,9 @@ export default function HeroFlurry({ heroTargets = [] }) {
     }
   }, [skip, reduce, isMobile, vp])
 
-  // Kept deliberately small — few enough pieces are aloft at any one moment
-  // that the arc reads as a single legible current rather than a scatter.
-  const count = isMobile ? 6 : 8
+  // Kept deliberately small — at most two or three pieces are aloft at any
+  // one moment, so the arc reads as a single legible current, not a scatter.
+  const count = isMobile ? 4 : 5
 
   // Precompute each card's whole path as sampled keyframe arrays so the run is a
   // plain transform/opacity animation.
@@ -232,14 +236,13 @@ export default function HeroFlurry({ heroTargets = [] }) {
       const travel = 0.42 + rand(i + 2) * 0.12
       const laneX = (rand(i + 7) - 0.5) * 0.05 * W // a tight scatter off the spine
       const laneY = (rand(i + 8) - 0.5) * 0.04 * H
-      const sizeVar = 0.94 + rand(i + 5) * 0.14
-      const tilt = (rand(i + 9) - 0.5) * 6
-      const lean = (rand(i + 12) - 0.5) * 8 // a gentle lean, not a spin, along the flow
+      const sizeVar = 0.96 + rand(i + 5) * 0.08
+      const tilt = (rand(i + 9) - 0.5) * 4
+      const lean = (rand(i + 12) - 0.5) * 5 // a gentle lean, not a spin, along the flow
       const xs = []
       const ys = []
       const ss = []
       const os = []
-      const zs = []
       const rs = []
       const hz = []
       const times = []
@@ -253,7 +256,6 @@ export default function HeroFlurry({ heroTargets = [] }) {
         xs.push(Math.round(fx * W + laneX - anchorX))
         ys.push(Math.round(fy * H + laneY - anchorY))
         ss.push(+((0.46 + 0.62 * near) * sizeVar).toFixed(3))
-        zs.push(Math.round(near * 1000))
         rs.push(+(tilt + lean * u).toFixed(2))
         hz.push(+((1 - near) * 0.5).toFixed(3))
         // Fade up as it enters, out as it sinks away at the end — long, soft
@@ -265,7 +267,11 @@ export default function HeroFlurry({ heroTargets = [] }) {
         img: GALLERY_POOL[(i * 3) % GALLERY_POOL.length],
         ar: '3 / 4',
         pw: 1, // parallax weight — the crowd reacts to the cursor
-        xs, ys, ss, os, zs, rs, hz, times, cardW, startDelay: 0,
+        // A fixed layer per piece (larger pieces in front) — z-index is
+        // discrete, so animating it makes the stack visibly reshuffle
+        // mid-flight; a settled order reads far calmer.
+        z: Math.round(sizeVar * 100),
+        xs, ys, ss, os, rs, hz, times, cardW,
       })
     }
 
@@ -285,7 +291,6 @@ export default function HeroFlurry({ heroTargets = [] }) {
       const ys = []
       const ss = []
       const os = []
-      const zs = []
       const rs = []
       const hz = []
       const times = []
@@ -305,7 +310,6 @@ export default function HeroFlurry({ heroTargets = [] }) {
         ys.push(Math.round(lerp(pathY, tg.cy, w) - anchorY))
         ss.push(+(lerp(pathScale, tScale, w) * (1 + 0.045 * bump)).toFixed(3))
         rs.push(+lerp(tilt, tg.tilt, w).toFixed(2))
-        zs.push(1600) // above the crowd — these are the chosen pieces
         hz.push(0)
         const fin = Math.min(1, t / 0.08)
         const fout = t < fadeStart ? 1 : Math.max(0, 1 - (t - fadeStart) / 0.1)
@@ -316,7 +320,8 @@ export default function HeroFlurry({ heroTargets = [] }) {
         ar: `${tg.w} / ${tg.h}`,
         survivor: true,
         pw: 0, // survivors ignore the cursor so they land dead-on
-        xs, ys, ss, os, zs, rs, hz, times, cardW, startDelay: 0,
+        z: 1600 + n, // above the crowd — these are the chosen pieces
+        xs, ys, ss, os, rs, hz, times, cardW,
       })
     })
 
@@ -341,59 +346,75 @@ export default function HeroFlurry({ heroTargets = [] }) {
 
   if (skip || reduce || done) return null
 
-  return (
-    <div
-      ref={rootRef}
-      aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-30 overflow-hidden"
-      style={{ isolation: 'isolate', '--fx-mx': '0px', '--fx-my': '0px' }}
+  const renderCard = (card, i) => (
+    <motion.figure
+      key={`${card.img}-${i}`}
+      className={
+        'absolute left-1/2 top-1/2 overflow-hidden border border-line bg-paper-deep ' +
+        (card.survivor
+          ? 'rounded-[1.25rem] shadow-[0_28px_52px_-18px_rgba(94,74,140,0.30),0_6px_16px_-6px_rgba(94,74,140,0.12)]'
+          : 'rounded-[0.9rem] shadow-[0_12px_30px_-12px_rgba(94,74,140,0.38),0_3px_10px_-4px_rgba(122,54,74,0.30)]')
+      }
+      style={{ width: card.cardW, zIndex: card.z, willChange: 'transform, opacity' }}
+      initial={{ x: card.xs[0], y: card.ys[0], scale: card.ss[0], rotate: card.rs[0], opacity: 0 }}
+      animate={{ x: card.xs, y: card.ys, scale: card.ss, rotate: card.rs, opacity: card.os }}
+      transition={{ duration: DURATION, ease: 'linear', times: card.times }}
+      // Centre on the point, add depth-weighted cursor parallax, then scale,
+      // tilt upright, and place — a 2D transform only, always facing camera.
+      transformTemplate={(latest) =>
+        `translate(` +
+        `calc(${latest.x} + var(--fx-mx,0px) * ${card.pw} * ${latest.scale}), ` +
+        `calc(${latest.y} + var(--fx-my,0px) * ${card.pw} * ${latest.scale})` +
+        `) rotate(${latest.rotate}) scale(${latest.scale}) translate(-50%, -50%)`
+      }
     >
-      {cards.map((card, i) => (
-        <motion.figure
-          key={i}
-          className={
-            'absolute left-1/2 top-1/2 overflow-hidden border border-line bg-paper-deep ' +
-            (card.survivor
-              ? 'rounded-[1.25rem] shadow-[0_28px_52px_-18px_rgba(94,74,140,0.30),0_6px_16px_-6px_rgba(94,74,140,0.12)]'
-              : 'rounded-[0.9rem] shadow-[0_12px_30px_-12px_rgba(94,74,140,0.38),0_3px_10px_-4px_rgba(122,54,74,0.30)]')
-          }
-          style={{ width: card.cardW, willChange: 'transform, opacity' }}
-          initial={{ x: card.xs[0], y: card.ys[0], scale: card.ss[0], rotate: card.rs[0], opacity: 0, zIndex: card.zs[0] }}
-          animate={{ x: card.xs, y: card.ys, scale: card.ss, rotate: card.rs, opacity: card.os, zIndex: card.zs }}
-          transition={{ duration: DURATION, delay: card.startDelay, ease: 'linear', times: card.times }}
-          // Centre on the point, add depth-weighted cursor parallax, then scale,
-          // tilt upright, and place — a 2D transform only, always facing camera.
-          transformTemplate={(latest) =>
-            `translate(` +
-            `calc(${latest.x} + var(--fx-mx,0px) * ${card.pw} * ${latest.scale}), ` +
-            `calc(${latest.y} + var(--fx-my,0px) * ${card.pw} * ${latest.scale})` +
-            `) rotate(${latest.rotate}) scale(${latest.scale}) translate(-50%, -50%)`
-          }
-        >
-          <picture>
-            <source srcSet={asset(`assets/${card.img}.webp`)} type="image/webp" />
-            <img
-              src={asset(`assets/${card.img}.jpg`)}
-              alt=""
-              loading="eager"
-              decoding="async"
-              onError={(e) => (e.currentTarget.style.display = 'none')}
-              className="w-full object-cover"
-              style={{ aspectRatio: card.ar }}
-            />
-          </picture>
-          {/* Atmospheric veil — thicker on far pieces, gone by the time a
-              survivor lands. */}
-          <motion.div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0"
-            style={{ background: HAZE }}
-            initial={{ opacity: card.hz[0] }}
-            animate={{ opacity: card.hz }}
-            transition={{ duration: DURATION, delay: card.startDelay, ease: 'linear', times: card.times }}
-          />
-        </motion.figure>
-      ))}
-    </div>
+      <picture>
+        <source srcSet={asset(`assets/${card.img}.webp`)} type="image/webp" />
+        <img
+          src={asset(`assets/${card.img}.jpg`)}
+          alt=""
+          loading="eager"
+          decoding="async"
+          onError={(e) => (e.currentTarget.style.display = 'none')}
+          className="w-full object-cover"
+          style={{ aspectRatio: card.ar }}
+        />
+      </picture>
+      {/* Atmospheric veil — thicker on far pieces, gone by the time a
+          survivor lands. */}
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{ background: HAZE }}
+        initial={{ opacity: card.hz[0] }}
+        animate={{ opacity: card.hz }}
+        transition={{ duration: DURATION, ease: 'linear', times: card.times }}
+      />
+    </motion.figure>
+  )
+
+  return (
+    <>
+      {/* The current — layered *beneath* the hero copy and cards (z below
+          their z-10), so the crowd drifts through the page's ground while the
+          headline stays legible above it. */}
+      <div
+        ref={rootRef}
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 z-[5] overflow-hidden"
+        style={{ isolation: 'isolate', '--fx-mx': '0px', '--fx-my': '0px' }}
+      >
+        {cards.filter((c) => !c.survivor).map(renderCard)}
+      </div>
+      {/* The survivors — the only pieces allowed above the copy, since they
+          must cross the page to land on the hero cards. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 z-30 overflow-hidden"
+        style={{ isolation: 'isolate' }}
+      >
+        {cards.filter((c) => c.survivor).map(renderCard)}
+      </div>
+    </>
   )
 }
