@@ -199,11 +199,19 @@ export default function Hero({ revealed }) {
                 emphasis={isMobile ? HERO.emphasisMobile : HERO.emphasis}
                 emphasisItalic
                 // The accent word carries the action-surface's continuous
-                // flow, run letter-by-letter cool → green → warm: deepened
-                // Seafoam, Lavender, Lemon Lime, Blossom and Rose — the same
-                // swatch voices as the button and orb, dropped to display-size
-                // AA contrast on the ivory ground.
-                emphasisColors={['#35705F', '#5E4A8C', '#66681C', '#9E4A78', '#B0455C']}
+                // flow, run letter-by-letter cool → green → warm in the true
+                // swatch voices — Seafoam, Lavender, Lemon Lime, Blossom, Rose,
+                // exactly as the button and orb. Those pastels are too light
+                // for the display face's warm backlit glow, so the accent
+                // swaps that glow for a dark tinted drop (approved shadow
+                // palette) and the letters lift off it, reference-style.
+                emphasisColors={['#BFDCD1', '#D4B6E6', '#D8DB7A', '#F2A6C1', '#E88FA4']}
+                emphasisShadow={
+                  '0 0 0.02em rgba(63,53,82,0.9), ' +
+                  '0 0.014em 0.05em rgba(63,53,82,0.72), ' +
+                  '0.01em 0.03em 0.14em rgba(94,74,140,0.55), ' +
+                  '0 0.04em 0.34em rgba(63,53,82,0.32)'
+                }
                 className="display-xl text-ink [line-height:0.86] [font-size:clamp(2.75rem,13vw,4.5rem)] lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)]"
               />
             )}
