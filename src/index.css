@@ -47,45 +47,28 @@
     --rgb-rust: 78 80 22; /* deeper Lemon Lime #4E5016, hover/dark-ground */
     --c-terracotta: #66681C; /* inline-style / SVG mirror of the accent */
 
-    /* The single action surface (`.btn-aurora`). Built entirely from soft,
-       elliptical radial blooms — never a straight linear sweep — so colour
-       gathers in round patches the way it does in the reference photograph,
-       toward the pill's own rounded ends rather than in a diagonal band.
-       The saturated swatch voices (Lavender purple, Seafoam blue, Blossom
-       pink, Rose red) are pulled to the OUTSKIRTS — hugging the caps and the
-       top/bottom shoulders — and carried at near-opaque strength so they read
-       as pigment, not the washed grey you get when a thin pastel drifts over
-       the deepened olive rim. Each rim bloom falls off steeply (fully faded by
-       ~52%) so its blend with the green stays a narrow seam rather than a wide
-       50/50 mix that muddies. The Lemon Lime glow stays protected in the core,
-       but its highlight is a saturated chartreuse (#CCD06A), not the pale
-       near-white it used to be — the centre reads as pigment, and the
-       paper-coloured label gains contrast. Reads, around the rim: Lavender on
-       the leading cap, a Seafoam glow on the top-left shoulder, Blossom on the
-       trailing cap, and a Rose breath tucked into the trailing-bottom corner
-       beside it. Cool hues (lavender/seafoam) neighbour the green on the
-       leading side; the warm pink/rose stay concentrated at the far cap so
-       they never average with the green into mud. */
+    /* The single action surface (`.btn-aurora`). Colour is painted as two
+       large watercolour washes anchored on the pill's rounded ends — never a
+       straight linear sweep — so each hue wraps the whole curved cap and
+       bleeds inward as one continuous flow rather than sitting as an isolated
+       bloom. The LEADING cap flows Seafoam (blue) high into Lavender (purple)
+       low; the TRAILING cap flows Blossom (pink) high into Rose (red) low.
+       Both wash toward the centre and dissolve into the protected Lemon Lime
+       core (a saturated chartreuse, #CCD06A, deepened under the label so the
+       paper-coloured text keeps contrast). Because the washes are keyed to the
+       caps (x at ±4%/±104%) rather than to fixed points along a fixed-width
+       arc, the whole field scales gracefully — a short nav pill just shows a
+       compressed-but-coherent version of the same cool-left / green-centre /
+       warm-right flow, with no warping. Cool hues (seafoam/lavender) meet the
+       green on the leading side, warm hues (blossom/rose) on the trailing side;
+       the green core stays luminous through the middle so the meeting seams
+       read as watercolour bleed, not grey. */
     --btn-aurora-gradient:
-      radial-gradient(30% 130% at 2% 50%, rgba(212, 182, 230, 0.95) 0%, rgba(212, 182, 230, 0.35) 26%, rgba(212, 182, 230, 0) 52%),
-      radial-gradient(30% 125% at 24% -8%, rgba(191, 220, 209, 0.92) 0%, rgba(191, 220, 209, 0.28) 30%, rgba(191, 220, 209, 0) 56%),
-      radial-gradient(30% 130% at 98% 50%, rgba(242, 166, 193, 0.95) 0%, rgba(242, 166, 193, 0.35) 26%, rgba(242, 166, 193, 0) 52%),
-      radial-gradient(26% 120% at 92% 106%, rgba(232, 143, 164, 0.85) 0%, rgba(232, 143, 164, 0.28) 28%, rgba(232, 143, 164, 0) 52%),
-      radial-gradient(58% 175% at 50% 46%, #CCD06A 0%, #A9AC50 34%, #71731F 70%, #52541A 100%);
-
-    /* Compact variant of the action surface, for the small near-square nav
-       dock highlight. The full-size gradient's caps sit at 2%/98% and its
-       core radial is 175% tall — proportions tuned for a long pill. Compress
-       that into a ~72px square and the whole arc crams together and warps.
-       Here the blooms are re-keyed to a square: one Lavender hint in the
-       top-left corner, one Blossom hint in the bottom-right, over the same
-       saturated Lemon Lime field — the calm, coherent read the small button
-       needs while still echoing the big button's purple-cool / pink-warm
-       diagonal. */
-    --btn-aurora-compact-gradient:
-      radial-gradient(62% 62% at 16% 18%, rgba(212, 182, 230, 0.82) 0%, rgba(212, 182, 230, 0) 60%),
-      radial-gradient(62% 62% at 86% 86%, rgba(242, 166, 193, 0.82) 0%, rgba(242, 166, 193, 0) 60%),
-      radial-gradient(125% 125% at 50% 42%, #CCD06A 0%, #A9AC50 42%, #71731F 84%, #52541A 100%);
+      radial-gradient(58% 135% at 6% 6%, #BFDCD1 0%, rgba(191, 220, 209, 0) 58%),
+      radial-gradient(72% 180% at -4% 60%, #D4B6E6 0%, rgba(212, 182, 230, 0.5) 26%, rgba(212, 182, 230, 0) 56%),
+      radial-gradient(58% 135% at 94% 8%, #F2A6C1 0%, rgba(242, 166, 193, 0) 58%),
+      radial-gradient(72% 180% at 104% 64%, #E88FA4 0%, rgba(232, 143, 164, 0.5) 26%, rgba(232, 143, 164, 0) 56%),
+      radial-gradient(56% 165% at 50% 46%, #CCD06A 0%, #A9AC50 42%, #71731F 80%, #52541A 100%);
   }
 
   html {
@@ -279,15 +262,6 @@
     box-shadow:
       0 16px 34px -12px rgba(94, 74, 140, 0.62),
       0 6px 18px -8px rgba(94, 74, 140, 0.55);
-  }
-
-  /* Small near-square action surface (nav dock highlight). Pairs with
-     `.btn-aurora` — inherits its shadow, transition and hover — and only
-     swaps in the square-tuned bloom field so the gradient stays coherent
-     instead of warping when compressed. Applied after `.btn-aurora` so its
-     background-image wins. */
-  .btn-aurora-compact {
-    background-image: var(--btn-aurora-compact-gradient);
   }
 
   /* Subtle paper grain so the bone background reads as stock, not flat #fff. */
