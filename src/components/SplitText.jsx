@@ -28,12 +28,21 @@ import { SPRING } from '../lib/site.js'
 // Deterministic per-glyph agitation, seeded by line + glyph position so the
 // scatter is stable across renders (no re-jumbling on hover or route change).
 // Rotation in degrees, lift in em.
+//
+// The lean alternates direction letter-to-letter (offset by line so lines don't
+// all open the same way): hand-painted signage zig-zags rather than drifting
+// one way, and a plain hash tends to clump several same-sign tilts in a row —
+// especially visible under the italic emphasis cut, where a run of right-leaning
+// glyphs reads as the whole word tipping over. The hash still sets each letter's
+// magnitude (2.5°–12°) and baseline lift, so the alternation stays organic
+// rather than a perfect metronome.
 const jitter = (li, gi) => {
   const h1 = Math.sin((li + 1) * 127.1 + (gi + 1) * 311.7) * 43758.5453
   const h2 = Math.sin((li + 1) * 269.5 + (gi + 1) * 183.3) * 24634.6345
   const r1 = h1 - Math.floor(h1)
   const r2 = h2 - Math.floor(h2)
-  return { rotate: (r1 - 0.5) * 11, lift: (r2 - 0.5) * 0.09 }
+  const dir = (gi + li) % 2 === 0 ? 1 : -1
+  return { rotate: dir * (2.5 + r1 * 9.5), lift: (r2 - 0.5) * 0.09 }
 }
 
 export default function SplitText({
