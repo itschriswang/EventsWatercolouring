@@ -1,11 +1,38 @@
 # EventsWatercolouring Design System Guide
 
+## Palette: Pastel Bloom
+
+The site's colour scheme is drawn from a single reference photograph — a soft,
+blurred pastel field. Its hue arc, in blending order:
+
+**apricot → butter yellow → yellow-green (chartreuse glow) → pale periwinkle →
+soft lilac → blush → candy rose → (wraps to apricot)**
+
+Everything stays light and luminous. The yellow-green glow is a deliberate,
+protected voice — do not lose it when adding or retuning washes. **Never
+introduce terracotta / brick / burnt-orange tones anywhere.** Token names in
+code (`terracotta`, `rust`, `ochre`, …) are legacy slot names — their values
+point at the pastel scheme's anchors (see `tailwind.config.js`).
+
+### Anti-mud rules for overlapping blooms/gradients
+
+1. Blooms whose soft edges overlap must be neighbours on the arc above —
+   never complements. Yellow-green may touch butter and periwinkle, never
+   rose/blush directly (bridge with butter or a cream gap).
+2. Keep overlap zones high-lightness; where 3+ blooms meet, lay a near-white
+   cream radial (`rgba(255,252,242,…)`) on top so the centre glows instead of
+   averaging to grey.
+3. `CornerBloom` multiplies into the card ground — its `from`/`to` pair must
+   be hue-adjacent (rose+lilac, apricot+butter, butter+yellow-green…).
+4. `BloomCanvas.jsx`'s shader ramp is ordered along the arc so every
+   interpolation segment blends neighbours; keep it that way.
+
 ## Shadow Palette: No Grey Shadows
 
 **Critical Rule: Never use grey, black, or neutral shadows. All shadows must use tinted, editorial colours from the site's palette.**
 
 ### Why
-The site uses a soft, watercolour-inspired aesthetic (Pastel Aurora: powder blue, azure, dusty periwinkle, soft lilac, blush rose, warm apricot, sage glow). Grey/black shadows break the editorial feel and read as dead pixels against the tinted pastel palette. Token names in code (terracotta, rust, ochre, ...) are legacy slot names — their values now point at the pastel scheme's anchors.
+Grey/black shadows break the editorial feel and read as dead pixels against the tinted pastel palette.
 
 ### Approved Shadow Colours
 
@@ -14,9 +41,9 @@ All shadows must use these RGBA values (or derived variants at +15% vibrancy):
 | Colour | Use Case | RGBA |
 |--------|----------|------|
 | **Lilac** (deep) | Primary lift shadows, cards, general elevation | `rgba(94,74,140,0.30)` |
-| **Dusty Rose** (token: rust) | Timeline markers, strong shadows | `rgba(122,54,74,0.52)` |
-| **Deep Ink** | Deep shadows on overlays, keepsake cards | `rgba(66,51,59,0.58)` |
-| **Ink** | Paper shadows, subtle depth | `rgba(66,51,59,0.21)` |
+| **Candy Rose** (token: rust) | Timeline markers, strong shadows | `rgba(142,68,112,0.52)` |
+| **Deep Ink** | Deep shadows on overlays, keepsake cards | `rgba(63,53,82,0.58)` |
+| **Ink** | Paper shadows, subtle depth | `rgba(63,53,82,0.21)` |
 | **Lilac** | Accent shadows (form elements, special cases) | `rgba(94,74,140,0.25)` |
 
 ### Component Shadow Reference
@@ -28,8 +55,8 @@ shadow-[0_28px_52px_-18px_rgba(94,74,140,0.30),0_6px_16px_-6px_rgba(94,74,140,0.
 
 **Timeline Markers**:
 ```
-shadow-[0_2px_12px_rgba(122,54,74,0.52)]  /* Primary marker */
-shadow-[0_2px_12px_rgba(122,54,74,0.40)]  /* Numbered dots */
+shadow-[0_2px_12px_rgba(142,68,112,0.52)]  /* Primary marker */
+shadow-[0_2px_12px_rgba(142,68,112,0.40)]  /* Numbered dots */
 ```
 
 **Gallery/Lightbox Images**:
@@ -45,12 +72,12 @@ shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]  /* Secondary shadow */
 
 **Keepsake Cards** (What You Keep):
 ```
-shadow-[0_10px_30px_-18px_rgba(66,51,59,0.58)]
+shadow-[0_10px_30px_-18px_rgba(63,53,82,0.58)]
 ```
 
 **Enquire Form**:
 ```
-drop-shadow(0 18px 38px rgba(66,51,59,0.21))     /* Paper drop shadow */
+drop-shadow(0 18px 38px rgba(63,53,82,0.21))     /* Paper drop shadow */
 drop-shadow(0 2.5px 3px rgba(94,74,140,0.25))    /* Accent shadow */
 ```
 
@@ -59,9 +86,9 @@ drop-shadow(0 2.5px 3px rgba(94,74,140,0.25))    /* Accent shadow */
 When adding shadows to new components:
 
 1. **Pick a base colour** from the approved list above
-2. **Match the site's aesthetic**: Use lilac or dusty rose for most cases
+2. **Match the site's aesthetic**: Use lilac or candy rose for most cases
 3. **Adjust opacity as needed**, but keep RGB values within the palette
-4. **Test on dark backgrounds** (like the rust timeline) to ensure visibility
+4. **Test on dark backgrounds** (like the dusk timeline and footer) to ensure visibility
 5. **Never use**: `rgba(0,0,0,...)`, `rgba(128,128,128,...)`, or any neutral greys
 
 ### Vibrancy Guidelines

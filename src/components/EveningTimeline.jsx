@@ -39,19 +39,20 @@ export default function EveningTimeline() {
       id="night"
       className="relative w-full bg-wine px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper"
     >
-      {/* Dusk sky — the sunset colours after dark: peach light pooling
-          top-left, a blush drift high-right, and a low wisteria ember —
-          the palette's deliberate purple accent — along the bottom edge. */}
+      {/* Dusk sky — the reference's pigments after dark: apricot light
+          pooling top-left, a blush drift high-right, the yellow-green glow
+          breathing mid-band, and a low lilac ember along the bottom edge. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(246,206,196,0.26) 0%, transparent 60%), ' +
-            'radial-gradient(ellipse 55% 45% at 90% 10%, rgba(242,194,207,0.20) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 60% 50% at 92% 92%, rgba(196,168,224,0.14) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 45% 40% at 30% 100%, rgba(247,212,174,0.12) 0%, transparent 60%), ' +
-            'linear-gradient(170deg, rgba(66,51,59,0.35) 0%, rgba(94,58,72,0) 45%, rgba(94,58,72,0.25) 100%)',
+            'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(255,165,95,0.34) 0%, transparent 60%), ' +
+            'radial-gradient(ellipse 55% 45% at 90% 10%, rgba(250,170,200,0.26) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 60% 50% at 92% 92%, rgba(175,140,230,0.24) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 45% 40% at 30% 100%, rgba(250,225,120,0.18) 0%, transparent 60%), ' +
+            'radial-gradient(ellipse 48% 40% at 55% 48%, rgba(205,215,80,0.22) 0%, transparent 55%), ' +
+            'linear-gradient(170deg, rgba(63,53,82,0.35) 0%, rgba(84,64,107,0) 45%, rgba(84,64,107,0.25) 100%)',
         }}
       />
       {/* faint bouquet cut, top-right. Clipped by its own wrapper rather than
@@ -102,7 +103,7 @@ export default function EveningTimeline() {
         {/* Sticky title rail */}
         <div className="col-span-12 lg:col-span-5">
           <div className="lg:sticky lg:top-24 lg:h-fit">
-            <Label gradient={['#DFA455', '#F7F4EF']} className="!text-paper/90">
+            <Label gradient={['#F5E9AC', '#F7F4EF']} className="!text-paper/90">
               {EVENING.label}
             </Label>
             <h2 className="display-lg mt-1">
@@ -159,14 +160,14 @@ export default function EveningTimeline() {
                     aria-hidden="true"
                   >
                     {isLast ? (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_12px_rgba(66,51,59,0.55)]">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_12px_rgba(63,53,82,0.55)]">
                         <Drop
                           className="h-5 w-auto"
-                          gradient={['#A85450', '#BA5E78']}
+                          gradient={['#B04A76', '#C0559A']}
                         />
                       </span>
                     ) : (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] text-wine shadow-[0_2px_12px_rgba(66,51,59,0.42)]">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] text-wine shadow-[0_2px_12px_rgba(63,53,82,0.42)]">
                         {beat.no}
                       </span>
                     )}
@@ -180,7 +181,7 @@ export default function EveningTimeline() {
                   <motion.div
                     whileHover={reduce ? {} : { y: -6 }}
                     transition={SPRING}
-                    className="group relative -mt-px flex-1 rounded-2xl border border-paper/15 bg-paper-deep/95 p-4 shadow-[0_10px_30px_-18px_rgba(66,51,59,0.58)] backdrop-blur-[1px] sm:p-5"
+                    className="group relative -mt-px flex-1 rounded-2xl border border-paper/15 bg-paper-deep/95 p-4 shadow-[0_10px_30px_-18px_rgba(63,53,82,0.58)] backdrop-blur-[1px] sm:p-5"
                   >
                     <span
                       aria-hidden="true"
