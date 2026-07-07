@@ -165,14 +165,16 @@ export default function SplitText({
 
         // The reveal mask clips at its padding edge, so anything that paints
         // past the glyph box — a leading italic overhang, a tilted ascender,
-        // the display styles' soft shadow bloom — needs bleed room or it
-        // slices into a visible rectangle. Pad the mask out on every side and
-        // pull the same distance back with negative margins so the layout
-        // (including the original 0.08em line gap) doesn't move.
+        // the display styles' soft light bloom — needs bleed room or it
+        // slices into a visible rectangle. The backlit glow spreads further
+        // than the old drop shadow did, so the bleed is generous. Pad the mask
+        // out on every side and pull the same distance back with negative
+        // margins so the layout (including the original 0.08em line gap)
+        // doesn't move.
         return (
           <span
             key={li}
-            className="block overflow-hidden pb-[0.18em] -mb-[0.1em] pt-[0.12em] -mt-[0.12em] -ml-[0.12em] pl-[0.12em]"
+            className="block overflow-hidden pb-[0.28em] -mb-[0.2em] pt-[0.22em] -mt-[0.22em] -ml-[0.22em] pl-[0.22em]"
           >
             {unit === 'char'
               ? groupedWords.flatMap((group, gi) => {
