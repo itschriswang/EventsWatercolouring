@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
+import { useLayoutEffect, useRef } from 'react'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import Underline from './Underline.jsx'
 import { SPRING } from '../lib/site.js'
@@ -36,24 +37,62 @@ const jitter = (li, gi) => {
   return { lift: (r2 - 0.5) * 0.07 }
 }
 
-// Sample a colour flowing across a list of hex stops at fraction f in [0,1].
-// Used by `emphasisColors` to run the action-surface's cool → green → warm
-// wash across an emphasis word letter-by-letter — solid per-glyph pigment
-// (so it keeps AA contrast at display sizes) rather than a
-// background-clip:text fill.
-const hexToRgb = (h) => {
-  const n = parseInt(h.slice(1), 16)
-  return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+// Build a CSS linear-gradient string from a list of hex stops, each
+// optionally pinned to its own position (0-1) rather than spaced uniformly.
+// Used by `emphasisColors` to paint the action-surface's cool → green → warm
+// wash as one real, continuously-blended gradient across an emphasis word —
+// clipped per glyph in `applyEmphasisFlow` below so it reads as pigment
+// flowing through the letters rather than a strip of solid per-letter
+// swatches. Pinning positions (`emphasisColorStops`) lets a stop repeat
+// back-to-back to hold a flat plateau — e.g. green at both 0.38 and 0.62 —
+// so the flow reads as "mostly green" with the other hues only bleeding in
+// at the edges.
+const buildFlowGradientCss = (colors, positions) => {
+  const pos = positions || colors.map((_, i) => i / (colors.length - 1))
+  const stops = colors.map((c, i) => `${c} ${(pos[i] * 100).toFixed(2)}%`).join(', ')
+  return `linear-gradient(to right, ${stops})`
 }
-const mixByte = (a, b, t) => Math.round(a + (b - a) * t)
-const flowColour = (stops, f) => {
-  if (stops.length === 1) return stops[0]
-  const x = Math.max(0, Math.min(1, f)) * (stops.length - 1)
-  const i = Math.min(Math.floor(x), stops.length - 2)
-  const [r1, g1, b1] = hexToRgb(stops[i])
-  const [r2, g2, b2] = hexToRgb(stops[i + 1])
-  const t = x - i
-  return `rgb(${mixByte(r1, r2, t)}, ${mixByte(g1, g2, t)}, ${mixByte(b1, b2, t)})`
+
+// Clips that gradient across an emphasis group's letters so it blends
+// continuously — including right through the tight negative-tracking overlap
+// between glyphs — instead of each glyph carrying its own flat, discrete
+// colour. Sizes the gradient to the group's own rendered width and offsets
+// each glyph's background by its position within the group, so adjacent
+// glyphs' slices line up into one unbroken wash. Re-measures on resize since
+// the display face's clamp() sizing changes glyph pixel widths.
+const applyEmphasisFlow = (root, gradientCss) => {
+  if (!root) return undefined
+  const groups = root.querySelectorAll('[data-emph-group]')
+  if (groups.length === 0) return undefined
+
+  const layout = () => {
+    groups.forEach((group) => {
+      const groupRect = group.getBoundingClientRect()
+      if (groupRect.width === 0) return
+      group.querySelectorAll('[data-emph-glyph]').forEach((glyph) => {
+        const glyphRect = glyph.getBoundingClientRect()
+        const offset = glyphRect.left - groupRect.left
+        glyph.style.backgroundImage = gradientCss
+        glyph.style.backgroundSize = `${groupRect.width}px 100%`
+        glyph.style.backgroundPosition = `${-offset}px 0`
+        glyph.style.backgroundRepeat = 'no-repeat'
+        // Camel-case `style.webkitBackgroundClip =` silently no-ops in this
+        // engine (only the unprefixed property lands) and unprefixed
+        // `background-clip: text` alone doesn't clip in every browser this
+        // site targets — set both vendor-prefixed properties explicitly via
+        // `setProperty` so the text-fill actually clips to the glyph shape.
+        glyph.style.setProperty('-webkit-background-clip', 'text')
+        glyph.style.setProperty('background-clip', 'text')
+        glyph.style.setProperty('-webkit-text-fill-color', 'transparent')
+        glyph.style.color = 'transparent'
+      })
+    })
+  }
+
+  layout()
+  const observer = new ResizeObserver(layout)
+  groups.forEach((group) => observer.observe(group))
+  return () => observer.disconnect()
 }
 
 export default function SplitText({
@@ -61,6 +100,7 @@ export default function SplitText({
   emphasis = null,
   emphasisItalic = false,
   emphasisColors = null,
+  emphasisColorStops = null,
   emphasisShadow = null,
   underline = null,
   knockout = null,
@@ -73,6 +113,19 @@ export default function SplitText({
   const reduce = useReducedMotion()
   const lite = reduce || !useHeavyFx()
   const MotionTag = motion(Tag)
+  const rootRef = useRef(null)
+
+  // Real gradient-clip flow (see `applyEmphasisFlow`) needs post-layout glyph
+  // measurements the render pass can't produce, so it runs as a DOM
+  // side-effect rather than inline styles. Re-runs whenever the emphasis
+  // wash's own inputs change; `applyEmphasisFlow` itself re-measures on
+  // resize via ResizeObserver.
+  useLayoutEffect(() => {
+    if (!emphasisColors) return undefined
+    const gradientCss = buildFlowGradientCss(emphasisColors, emphasisColorStops)
+    return applyEmphasisFlow(rootRef.current, gradientCss)
+  }, [emphasisColors, emphasisColorStops, lines, emphasis])
+
   const normalise = s => s.toLowerCase().replace(/[^a-z]/g, '')
   const isWordUnderlined = (word) => underline !== null && normalise(word) === normalise(underline)
   const isWordKnockout = (word) => knockout !== null && normalise(word) === normalise(knockout)
@@ -164,6 +217,7 @@ export default function SplitText({
 
   return (
     <MotionTag
+      ref={rootRef}
       className={className}
       variants={container}
       {...animateProps}
@@ -200,54 +254,51 @@ export default function SplitText({
             {unit === 'char'
               ? groupedWords.flatMap((group, gi) => {
                   if (group.isGroup) {
-                    // When the emphasis carries the light swatch flow, its
-                    // letters are too pale for the display face's warm backlit
-                    // glow — so `emphasisShadow` swaps that glow for a dark
-                    // tinted drop (approved shadow palette), the reference's
-                    // light-letters-over-a-dark-drop treatment.
+                    // The light swatch flow reads worse under either of the
+                    // title's other two options: the inherited warm backlit
+                    // glow washes pastels out (light-on-light), and any drop
+                    // shadow strong enough to read as a shadow also crushes
+                    // the colour back toward the dark ink it's meant to relieve
+                    // — especially once the stamp-distress filter's own grain
+                    // multiplies over it. That grain multiply is already doing
+                    // the contrast work (it densifies every glyph's ink
+                    // regardless of fill), so the flow just needs its
+                    // inherited glow switched off, not replaced.
                     const spanStyle = emphasisColors
-                      ? (emphasisShadow ? { textShadow: emphasisShadow } : {})
+                      ? { textShadow: emphasisShadow || 'none' }
                       : getGradientStyle(wordIndexInHeading)
                     wordIndexInHeading += group.words.length
-                    // Flow the emphasis wash across the group's letters (spaces
-                    // excluded), so a multi-word emphasis reads as one continuous
-                    // sweep rather than each word restarting the ramp.
-                    const groupGlyphTotal = group.words.reduce(
-                      (n, w) => n + Array.from(w.word).length,
-                      0,
-                    )
-                    let groupGlyphIdx = 0
+                    // Fallback fill for the brief window before the
+                    // gradient-clip effect measures and takes over (and for
+                    // any environment where it can't run) — the flow's own
+                    // midpoint colour, so it degrades to a plausible solid
+                    // rather than flashing unstyled text.
+                    const fallbackColor = emphasisColors
+                      ? emphasisColors[Math.floor((emphasisColors.length - 1) / 2)]
+                      : null
                     return [
                       <span
                         key={`g${li}-${gi}`}
+                        {...(emphasisColors ? { 'data-emph-group': true } : {})}
                         className={emphasisItalic ? 'inline-block italic' : 'inline-block'}
                         style={spanStyle}
                       >
                         {group.words.flatMap((w, wi) => [
-                          ...Array.from(w.word).map((ch, ci) => {
-                            const flow = emphasisColors
-                              ? {
-                                  color: flowColour(
-                                    emphasisColors,
-                                    groupGlyphTotal > 1
-                                      ? groupGlyphIdx / (groupGlyphTotal - 1)
-                                      : 0,
-                                  ),
-                                }
-                              : null
-                            groupGlyphIdx++
-                            return (
-                              <motion.span
-                                key={`${gi}-${wi}-${ci}`}
-                                variants={item}
-                                aria-hidden="true"
-                                className="inline-block"
-                                style={{ ...glyphStyle(li, glyphIdx++), ...(flow || {}) }}
-                              >
-                                {ch}
-                              </motion.span>
-                            )
-                          }),
+                          ...Array.from(w.word).map((ch, ci) => (
+                            <motion.span
+                              key={`${gi}-${wi}-${ci}`}
+                              variants={item}
+                              aria-hidden="true"
+                              {...(emphasisColors ? { 'data-emph-glyph': true } : {})}
+                              className="inline-block"
+                              style={{
+                                ...glyphStyle(li, glyphIdx++),
+                                ...(fallbackColor ? { color: fallbackColor } : {}),
+                              }}
+                            >
+                              {ch}
+                            </motion.span>
+                          )),
                           wi < group.words.length - 1 ? (
                             <motion.span
                               key={`space-${gi}-${wi}`}
