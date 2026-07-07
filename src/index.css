@@ -33,33 +33,31 @@
     --rgb-ink-soft: 117 106 124;
     --rgb-line: 225 214 224;
 
-    /* ACCENT — a bright, saturated yellow-green (the palette's protected
-       "chartreuse glow" anchor — see CLAUDE.md), replacing the earlier dull,
-       near-black moss. The accent slots (`terracotta` / `rust` in
-       tailwind.config.js) resolve to these triplets, so every solid
-       `text-terracotta` / `bg-terracotta` / `border-rust` accent reads this
-       chartreuse-olive. Deepened just enough to hold ≥4.5:1 as text on the
-       ivory ground — any lighter and it stops being legible there. */
-    --rgb-terracotta: 79 122 28; /* bright chartreuse-olive #4F7A1C */
-    --rgb-rust: 62 100 21; /* deeper chartreuse #3E6415 */
-    --c-terracotta: #4F7A1C; /* inline-style / SVG mirror of the accent */
+    /* ACCENT — a muted, dusty yellow-green pulled straight from the site's
+       existing Pastel Bloom anchors (`sage` / `sage-deep` in
+       tailwind.config.js) rather than an invented, over-saturated chartreuse
+       — chic and photographic, not neon. The accent slots (`terracotta` /
+       `rust`) resolve to these triplets, so every solid `text-terracotta` /
+       `bg-terracotta` / `border-rust` accent reads this soft sage. Deepened
+       just enough to hold ≥4.5:1 as text on the ivory ground. */
+    --rgb-terracotta: 95 102 43; /* sage-deep #5F662B */
+    --rgb-rust: 71 80 31; /* deeper sage #47501F, for hover/dark-ground use */
+    --c-terracotta: #5F662B; /* inline-style / SVG mirror of the accent */
 
-    /* The single action surface (`.btn-aurora`) as a full gradient. Mostly
-       the bright yellow-green above, with a periwinkle/blue-purple hint on
-       the leading corner and a candy-rose/pink hint on the trailing corner —
-       each bridged through a light butter-cream stop first (anti-mud rule:
-       neighbours on the Pastel Bloom arc, high-lightness at the seam) rather
-       than blending straight into the green. */
-    --btn-aurora-gradient: linear-gradient(
-      115deg,
-      #7B86D6 0%,
-      #EDE6B0 14%,
-      #6B9A22 30%,
-      #588016 50%,
-      #6B9A22 70%,
-      #F0E3C0 86%,
-      #D98BC0 100%
-    );
+    /* The single action surface (`.btn-aurora`). Built entirely from soft,
+       elliptical radial blooms — never a straight linear sweep — so the
+       colour pools the way it does in the reference photograph (out-of-focus
+       light gathering in round patches) and so the light gathers toward the
+       pill's own rounded ends rather than cutting a diagonal band across it.
+       A periwinkle bloom (`cornflower`) sits at the leading rounded cap, a
+       candy-rose bloom (`rose`) at the trailing one, both pulled straight
+       from the existing palette tokens; the body between is a soft
+       lime → sage → sage-deep glow, the same anchors as the solid accent
+       above, so button and text read as one family. */
+    --btn-aurora-gradient:
+      radial-gradient(42% 150% at 12% 40%, rgba(155, 163, 204, 0.6) 0%, rgba(155, 163, 204, 0) 62%),
+      radial-gradient(42% 150% at 88% 62%, rgba(193, 96, 140, 0.5) 0%, rgba(193, 96, 140, 0) 62%),
+      radial-gradient(90% 190% at 42% 28%, #D8DC8F 0%, #8A9143 38%, #5F662B 75%, #47501F 100%);
   }
 
   html {
@@ -228,11 +226,12 @@
 
 @layer utilities {
   /* Primary action surface — the site's single action surface, driven by
-     `--btn-aurora-gradient` (defined above: bright yellow-green with
-     periwinkle/blue-purple and candy-rose corner hints). The lift shadow
-     stays in the approved lilac shadow palette (per CLAUDE.md — no
-     green/neutral shadows). Oversized background-size so hover can drift the
-     light across the surface rather than swap colours. */
+     `--btn-aurora-gradient` (defined above: soft radial sage blooms with
+     periwinkle/candy-rose caps, not a linear sweep). The lift shadow stays in
+     the approved lilac shadow palette (per CLAUDE.md — no green/neutral
+     shadows). Oversized background-size so hover drifts the whole painted
+     bloom-field across the surface rather than swapping flat colours — the
+     periwinkle cap sits at rest, the rose cap slides in on hover. */
   .btn-aurora {
     background-image: var(--btn-aurora-gradient);
     background-size: 200% 100%;

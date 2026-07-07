@@ -17,10 +17,10 @@ export default {
         ink: '#3F3552',
         'ink-soft': '#756A7C',
         line: '#E1D6E0',
-        // Primary accent pigments. The dominant UI accent is a bright,
-        // saturated yellow-green — the palette's protected "chartreuse glow"
-        // anchor (see CLAUDE.md) — replacing the earlier dull, near-black
-        // moss. Driven by CSS custom properties (`--rgb-terracotta` /
+        // Primary accent pigments. The dominant UI accent is a muted, dusty
+        // yellow-green sourced from the palette's own `sage` / `sage-deep`
+        // anchors below (chic and photographic, not a saturated invented
+        // chartreuse). Driven by CSS custom properties (`--rgb-terracotta` /
         // `--rgb-rust`, defined in index.css) so the whole site's accent can
         // be retuned from one place. Token names stay (legacy slots); the
         // soft pastel bloom washes are untouched.
