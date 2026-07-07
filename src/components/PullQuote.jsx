@@ -58,9 +58,9 @@ export default function PullQuote() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(34% 55% at 6% 22%, rgba(194,203,147,0.13), transparent 74%), ' +
-            'radial-gradient(36% 58% at 94% 78%, rgba(198,138,102,0.14), transparent 74%), ' +
-            'radial-gradient(24% 40% at 88% 12%, rgba(223,164,85,0.08), transparent 72%)',
+            'radial-gradient(34% 55% at 6% 22%, rgba(216,220,143,0.14), transparent 74%), ' +
+            'radial-gradient(36% 58% at 94% 78%, rgba(228,230,156,0.16), transparent 74%), ' +
+            'radial-gradient(24% 40% at 88% 12%, rgba(240,228,158,0.10), transparent 72%)',
         }}
       />
       <figure className="relative mx-auto flex max-w-3xl flex-col items-center text-center">
@@ -111,7 +111,7 @@ export default function PullQuote() {
           {...rise(0.2)}
           className="mt-7 flex flex-col items-center gap-1.5"
         >
-          <Drop className="h-5 w-auto opacity-80" gradient={['#A85450', '#DFA455']} />
+          <Drop className="h-5 w-auto opacity-80" gradient={['#B04A76', '#8E63B8']} />
           <span className="flex items-center gap-1.5 font-mono text-[0.95rem] text-ink">
             {PULLQUOTE.author}
             <SmileyThumbsUpIcon width={16} height={16} className="text-ochre" />

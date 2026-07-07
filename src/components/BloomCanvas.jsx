@@ -53,23 +53,27 @@ const FRAG = `
     return v;
   }
 
-  // Ordered pigment ramp sampled from the site palette. Warm (1.0) swaps the
-  // cool cornflower slot for extra lime, matching WatercolourBloom's .wcb-warm.
+  // Ordered pigment ramp following the reference image's hue arc — apricot,
+  // butter yellow, the yellow-green glow, periwinkle, lilac, blush, candy
+  // rose — so every interpolation segment blends neighbouring hues and never
+  // crosses a complement into grey. Warm (1.0) swaps the two coolest slots
+  // (periwinkle, lilac) for butter and blush, matching WatercolourBloom's
+  // .wcb-warm sunlit recipe.
   vec3 pigment(float t, float warm){
-    vec3 terracotta = vec3(0.949, 0.722, 0.675);
-    vec3 ochre      = vec3(0.969, 0.831, 0.682);
-    vec3 blush      = vec3(0.949, 0.761, 0.812);
-    vec3 rose       = vec3(0.847, 0.776, 0.918);
-    vec3 lime       = vec3(0.851, 0.871, 0.757);
-    vec3 cool       = mix(vec3(0.910, 0.655, 0.580), vec3(0.851, 0.871, 0.757), warm);
-    vec3 rust       = vec3(0.949, 0.761, 0.812);
+    vec3 apricot    = vec3(0.969, 0.765, 0.580);
+    vec3 butter     = vec3(0.941, 0.894, 0.620);
+    vec3 yellowgrn  = vec3(0.894, 0.902, 0.612);
+    vec3 peri       = mix(vec3(0.847, 0.855, 0.925), butter, warm);
+    vec3 lilac      = mix(vec3(0.824, 0.769, 0.910), vec3(0.957, 0.769, 0.824), warm);
+    vec3 blush      = vec3(0.957, 0.769, 0.824);
+    vec3 rose       = vec3(0.933, 0.620, 0.745);
     t = fract(t) * 6.0;
-    if (t < 1.0) return mix(terracotta, ochre, t);
-    if (t < 2.0) return mix(ochre, blush, t - 1.0);
-    if (t < 3.0) return mix(blush, rose, t - 2.0);
-    if (t < 4.0) return mix(rose, lime, t - 3.0);
-    if (t < 5.0) return mix(lime, cool, t - 4.0);
-    return mix(cool, rust, t - 5.0);
+    if (t < 1.0) return mix(apricot, butter, t);
+    if (t < 2.0) return mix(butter, yellowgrn, t - 1.0);
+    if (t < 3.0) return mix(yellowgrn, peri, t - 2.0);
+    if (t < 4.0) return mix(peri, lilac, t - 3.0);
+    if (t < 5.0) return mix(lilac, blush, t - 4.0);
+    return mix(blush, rose, t - 5.0);
   }
 
   void main(){
@@ -109,7 +113,7 @@ const FRAG = `
     warm = mask > 0.001 ? warm / mask : 0.0;
 
     vec3 col = pigment(density * 0.9 + warp.x * 0.35, warm);
-    float alpha = bloom * mask * 0.22 * u_alpha;
+    float alpha = bloom * mask * 0.24 * u_alpha;
 
     // Premultiplied output (context is premultipliedAlpha, blend ONE / 1-SRC_A).
     gl_FragColor = vec4(col * alpha, alpha);

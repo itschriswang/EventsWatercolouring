@@ -27,12 +27,12 @@
      translucent nav chrome. */
   :root {
     --c-paper: #F7F4EF;
-    --c-ink: #42333B;
-    --c-terracotta: #A85450;
+    --c-ink: #3F3552;
+    --c-terracotta: #B04A76;
     --rgb-paper: 247 244 239;
-    --rgb-ink: 66 51 59;
-    --rgb-ink-soft: 129 107 105;
-    --rgb-line: 224 213 210;
+    --rgb-ink: 63 53 82;
+    --rgb-ink-soft: 117 106 124;
+    --rgb-line: 225 214 224;
   }
 
   html {
@@ -53,12 +53,15 @@
     overflow-x: hidden;
   }
 
-  /* Aurora veil — the reference orb's light, spread across the whole page as
-     a fixed, viewport-sized wash: peach and blush pooling at the top
-     corners, sage glow warming the lower edges and a lilac breath
-     low-left as the one cool accent. Sits behind all content
-     (negative z-index) but over the paper ground, and stays translucent
-     enough that text contrast on paper is untouched. */
+  /* Aurora veil — the reference photograph's light, spread across the whole
+     page as a fixed, viewport-sized wash laid out like the image itself:
+     apricot pooling top-left, pale periwinkle top-right, the butter /
+     yellow-green glow at centre-right, blush and candy rose low-centre and a
+     lilac breath low-left. A near-white cream core sits on top where the
+     warm and cool clusters meet so the overlap glows instead of averaging to
+     grey (first layer paints on top). Sits behind all content (negative
+     z-index) but over the paper ground, and stays translucent enough that
+     text contrast on paper is untouched. */
   body::before {
     content: '';
     position: fixed;
@@ -66,11 +69,17 @@
     z-index: -1;
     pointer-events: none;
     background-image:
-      radial-gradient(58% 44% at 10% -4%, rgba(246,206,196, 0.34), transparent 72%),
-      radial-gradient(52% 40% at 96% 4%, rgba(242, 194, 207, 0.28), transparent 72%),
-      radial-gradient(46% 38% at 102% 88%, rgba(217, 222, 193, 0.28), transparent 70%),
-      radial-gradient(44% 36% at -4% 82%, rgba(216, 198, 234, 0.20), transparent 70%),
-      radial-gradient(36% 30% at 55% 106%, rgba(247, 212, 174, 0.18), transparent 72%);
+      radial-gradient(34% 28% at 56% 44%, rgba(255,252,242, 0.32), transparent 70%),
+      radial-gradient(58% 44% at 10% -4%, rgba(247, 195, 148, 0.36), transparent 72%),
+      radial-gradient(40% 34% at 34% 14%, rgba(240, 228, 158, 0.26), transparent 70%),
+      radial-gradient(44% 38% at 62% 32%, rgba(228, 230, 156, 0.30), transparent 70%),
+      radial-gradient(30% 26% at 70% 38%, rgba(206, 212, 132, 0.20), transparent 70%),
+      radial-gradient(52% 40% at 96% 2%, rgba(216, 218, 236, 0.30), transparent 72%),
+      radial-gradient(44% 36% at 96% 46%, rgba(244, 196, 210, 0.26), transparent 70%),
+      radial-gradient(40% 34% at 52% 92%, rgba(238, 158, 190, 0.22), transparent 70%),
+      radial-gradient(46% 38% at 68% 104%, rgba(244, 196, 210, 0.26), transparent 72%),
+      radial-gradient(44% 36% at -4% 82%, rgba(210, 196, 232, 0.24), transparent 70%),
+      radial-gradient(36% 30% at 22% 104%, rgba(216, 218, 236, 0.18), transparent 72%);
   }
 
   ::selection {
@@ -133,24 +142,25 @@
 }
 
 @layer utilities {
-  /* Primary action surface — the aurora orb's blend bottled as a button:
-     rosewood melting through coral into apricot, with a coral-lifted,
-     blush-rimmed glow instead of a flat fill. Oversized background-size so
-     hover can drift the light across the surface rather than swap colours. */
+  /* Primary action surface — the reference's cool arc bottled as a button:
+     candy rose melting through rose-plum into lilac, with a blush-rimmed,
+     lilac-lifted glow instead of a flat fill. Every stop stays ≥4.5:1 under
+     the paper-coloured label. Oversized background-size so hover can drift
+     the light across the surface rather than swap colours. */
   .btn-aurora {
     background-image: linear-gradient(
       115deg,
-      #9E4A48 0%,
-      #A85450 28%,
-      #B0585A 55%,
-      #C47058 80%,
-      #D08A5A 100%
+      #B04A76 0%,
+      #A2477C 30%,
+      #8E4470 55%,
+      #86539E 80%,
+      #7E56A8 100%
     );
     background-size: 200% 100%;
     background-position: 0% 50%;
     box-shadow:
-      0 14px 30px -12px rgba(232,167,148, 0.5),
-      0 4px 14px -8px rgba(242, 194, 207, 0.6);
+      0 14px 30px -12px rgba(238, 158, 190, 0.5),
+      0 4px 14px -8px rgba(210, 196, 232, 0.6);
     transition:
       background-position 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
       box-shadow 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -159,8 +169,8 @@
   .btn-aurora:hover {
     background-position: 100% 50%;
     box-shadow:
-      0 16px 34px -12px rgba(246,206,196, 0.65),
-      0 6px 18px -8px rgba(242, 194, 207, 0.65);
+      0 16px 34px -12px rgba(244, 196, 210, 0.65),
+      0 6px 18px -8px rgba(210, 196, 232, 0.65);
   }
 
   /* Subtle paper grain so the bone background reads as stock, not flat #fff. */

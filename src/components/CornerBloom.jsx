@@ -9,9 +9,14 @@
  *
  * Mirrors the pigment recipe used in BloomField (radial-gradient + multiply).
  *
+ * Because the layer multiplies into the card ground, `from`/`to` must be
+ * hue-adjacent on the palette arc (rose+lilac, apricot+butter,
+ * butter+yellow-green…) — multiplying complements (e.g. yellow-green over
+ * rose) averages into grey mud.
+ *
  * Props:
- *   from    — rgba() string for the warm/primary pigment (terracotta/ochre/rose)
- *   to      — rgba() string for the cool/secondary pigment (cornflower)
+ *   from    — rgba() string for the primary pigment (candy rose/apricot/butter)
+ *   to      — rgba() string for the secondary pigment (lilac/periwinkle/yellow-green)
  *   overlay — if true, the bloom layer gets z-10 so it sits above image content
  *             rather than behind text content (default false)
  */
