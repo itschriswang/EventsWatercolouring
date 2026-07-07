@@ -47,28 +47,28 @@
     --rgb-rust: 78 80 22; /* deeper Lemon Lime #4E5016, hover/dark-ground */
     --c-terracotta: #66681C; /* inline-style / SVG mirror of the accent */
 
-    /* The single action surface (`.btn-aurora`). Built entirely from soft,
-       elliptical radial blooms — never a straight linear sweep — so colour
-       gathers in round patches the way it does in the reference photograph,
-       toward the pill's own rounded ends rather than in a diagonal band.
-       The saturated swatch voices (Lavender purple, Seafoam blue, Blossom
-       pink, Rose red) are pulled to the OUTSKIRTS — hugging the caps and the
-       top/bottom shoulders — and carried at near-opaque strength so they read
-       as pigment, not the washed grey you get when a thin pastel drifts over
-       the deepened olive rim. The Lemon Lime glow stays protected in the
-       core (full-brightness highlight, deepened only where the paper-coloured
-       label needs to stay legible). Reads, around the rim: Lavender on the
-       leading cap, a Seafoam glow on the top-left shoulder, Blossom on the
-       trailing cap, and a Rose breath on the trailing-bottom shoulder. Cool
-       hues (lavender/seafoam) neighbour the green on the leading side; the
-       warm pink/rose stay concentrated at the far cap so they never average
-       with the green into mud. */
+    /* The single action surface (`.btn-aurora`). Colour is painted as two
+       large watercolour washes anchored on the pill's rounded ends — never a
+       straight linear sweep — so each hue wraps the whole curved cap and
+       bleeds inward as one continuous flow rather than sitting as an isolated
+       bloom. The LEADING cap flows Seafoam (blue) high into Lavender (purple)
+       low; the TRAILING cap flows Blossom (pink) high into Rose (red) low.
+       Both wash toward the centre and dissolve into the protected Lemon Lime
+       core (a saturated chartreuse, #CCD06A, deepened under the label so the
+       paper-coloured text keeps contrast). Because the washes are keyed to the
+       caps (x at ±4%/±104%) rather than to fixed points along a fixed-width
+       arc, the whole field scales gracefully — a short nav pill just shows a
+       compressed-but-coherent version of the same cool-left / green-centre /
+       warm-right flow, with no warping. Cool hues (seafoam/lavender) meet the
+       green on the leading side, warm hues (blossom/rose) on the trailing side;
+       the green core stays luminous through the middle so the meeting seams
+       read as watercolour bleed, not grey. */
     --btn-aurora-gradient:
-      radial-gradient(34% 150% at 1% 50%, rgba(212, 182, 230, 0.97) 0%, rgba(212, 182, 230, 0.45) 30%, rgba(212, 182, 230, 0) 58%),
-      radial-gradient(34% 140% at 26% -6%, rgba(191, 220, 209, 0.95) 0%, rgba(191, 220, 209, 0.3) 34%, rgba(191, 220, 209, 0) 60%),
-      radial-gradient(34% 150% at 99% 50%, rgba(242, 166, 193, 0.97) 0%, rgba(242, 166, 193, 0.45) 30%, rgba(242, 166, 193, 0) 58%),
-      radial-gradient(30% 135% at 88% 112%, rgba(232, 143, 164, 0.9) 0%, rgba(232, 143, 164, 0.3) 32%, rgba(232, 143, 164, 0) 58%),
-      radial-gradient(64% 200% at 50% 44%, #D8DB7A 0%, #A6A94E 36%, #66681C 72%, #4E5016 100%);
+      radial-gradient(58% 135% at 6% 6%, #BFDCD1 0%, rgba(191, 220, 209, 0) 58%),
+      radial-gradient(72% 180% at -4% 60%, #D4B6E6 0%, rgba(212, 182, 230, 0.5) 26%, rgba(212, 182, 230, 0) 56%),
+      radial-gradient(58% 135% at 94% 8%, #F2A6C1 0%, rgba(242, 166, 193, 0) 58%),
+      radial-gradient(72% 180% at 104% 64%, #E88FA4 0%, rgba(232, 143, 164, 0.5) 26%, rgba(232, 143, 164, 0) 56%),
+      radial-gradient(56% 165% at 50% 46%, #CCD06A 0%, #A9AC50 42%, #71731F 80%, #52541A 100%);
   }
 
   html {

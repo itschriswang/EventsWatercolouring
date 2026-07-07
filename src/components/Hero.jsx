@@ -117,12 +117,16 @@ export default function Hero({ revealed }) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0 overflow-visible"
       >
-        {/* The aurora orb — the reference image itself, rebuilt in gradients:
-            a peach-crowned body crossed by a sage-lit diagonal band,
-            coral pooling low-left, and that blush / apricot glint
-            catching the lower-right rim. It hangs behind the
-            artwork cluster like a low sun. Desktop only: the big blur is the
-            costly part, so touch devices keep the flat wash field above. */}
+        {/* The aurora orb — the hero's colour accent, painted to echo the
+            action surface's continuous watercolour flow: a cool crown of
+            Seafoam (blue) into Lavender (purple) up the leading shoulder,
+            dissolving through a Lemon Lime heart, and warming to Blossom
+            (pink) then Rose (red) as it sinks to the lower-right rim. One
+            unbroken cool → green → warm wash built from overlapping radial
+            blooms — no linear sweep — so it reads as pigment bleeding, not a
+            band. It hangs behind the artwork cluster like a low sun. Desktop
+            only: the big blur is the costly part, so touch devices keep the
+            flat wash field above. */}
         {!reduce && heavyFx && (
           <div
             className="absolute rounded-full"
@@ -132,11 +136,11 @@ export default function Hero({ revealed }) {
               width: '74vmin',
               height: '74vmin',
               background:
-                'radial-gradient(48% 48% at 66% 28%, rgba(247,195,148,0.95), transparent 78%), ' +
-                'radial-gradient(42% 42% at 26% 68%, rgba(238,158,190,0.8), transparent 76%), ' +
-                'radial-gradient(34% 34% at 76% 78%, rgba(242,194,207,0.95), transparent 74%), ' +
-                'radial-gradient(24% 24% at 88% 62%, rgba(240,228,158,0.85), transparent 70%), ' +
-                'linear-gradient(135deg, rgba(228,230,156,0.6) 10%, rgba(240,242,235,0.9) 34%, rgba(247,195,148,0.8) 58%, rgba(242,194,207,0.7) 84%)',
+                'radial-gradient(48% 48% at 28% 20%, rgba(191,220,209,0.9), transparent 72%), ' +
+                'radial-gradient(44% 44% at 14% 50%, rgba(212,182,230,0.82), transparent 72%), ' +
+                'radial-gradient(54% 54% at 48% 52%, rgba(204,208,106,0.9), transparent 74%), ' +
+                'radial-gradient(46% 46% at 72% 64%, rgba(242,166,193,0.92), transparent 74%), ' +
+                'radial-gradient(40% 40% at 86% 84%, rgba(232,143,164,0.86), transparent 72%)',
               filter: 'blur(26px)',
               opacity: 0.62,
               WebkitMaskImage:
@@ -194,6 +198,20 @@ export default function Hero({ revealed }) {
                 lines={isMobile ? HERO.linesMobile : HERO.lines}
                 emphasis={isMobile ? HERO.emphasisMobile : HERO.emphasis}
                 emphasisItalic
+                // The accent word carries the action-surface's continuous
+                // flow, run letter-by-letter cool → green → warm in the true
+                // swatch voices — Seafoam, Lavender, Lemon Lime, Blossom, Rose,
+                // exactly as the button and orb. Those pastels are too light
+                // for the display face's warm backlit glow, so the accent
+                // swaps that glow for a dark tinted drop (approved shadow
+                // palette) and the letters lift off it, reference-style.
+                emphasisColors={['#BFDCD1', '#D4B6E6', '#D8DB7A', '#F2A6C1', '#E88FA4']}
+                emphasisShadow={
+                  '0 0 0.02em rgba(63,53,82,0.9), ' +
+                  '0 0.014em 0.05em rgba(63,53,82,0.72), ' +
+                  '0.01em 0.03em 0.14em rgba(94,74,140,0.55), ' +
+                  '0 0.04em 0.34em rgba(63,53,82,0.32)'
+                }
                 className="display-xl text-ink [line-height:0.86] [font-size:clamp(2.75rem,13vw,4.5rem)] lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)]"
               />
             )}
