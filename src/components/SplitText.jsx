@@ -93,6 +93,7 @@ export default function SplitText({
   emphasis = null,
   emphasisItalic = false,
   emphasisColors = null,
+  emphasisShadow = null,
   underline = null,
   knockout = null,
   unit = 'char',
@@ -239,7 +240,14 @@ export default function SplitText({
             {unit === 'char'
               ? groupedWords.flatMap((group, gi) => {
                   if (group.isGroup) {
-                    const spanStyle = emphasisColors ? {} : getGradientStyle(wordIndexInHeading)
+                    // When the emphasis carries the light swatch flow, its
+                    // letters are too pale for the display face's warm backlit
+                    // glow — so `emphasisShadow` swaps that glow for a dark
+                    // tinted drop (approved shadow palette), the reference's
+                    // light-letters-over-a-dark-drop treatment.
+                    const spanStyle = emphasisColors
+                      ? (emphasisShadow ? { textShadow: emphasisShadow } : {})
+                      : getGradientStyle(wordIndexInHeading)
                     wordIndexInHeading += group.words.length
                     // Flow the emphasis wash across the group's letters (spaces
                     // excluded), so a multi-word emphasis reads as one continuous
