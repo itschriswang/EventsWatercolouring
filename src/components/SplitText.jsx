@@ -45,6 +45,29 @@ const jitter = (li, gi) => {
   return { rotate: dir * (2.5 + r1 * 9.5), lift: (r2 - 0.5) * 0.09 }
 }
 
+// Kerning compensation for the tilt. The display face is set with heavy
+// negative tracking (.display-xl: -0.11em) so upright glyphs nestle and
+// overlap like the hand-lettered reference. But each glyph is then rotated in
+// place about its centre, which swings its vertical side-bearings sideways by
+// ~sin(angle)·(capHeight/2): a tilted letter's near edge juts toward its
+// neighbour and, against that tight tracking, stabs into it — while the seam
+// where two letters lean apart yawns open. That uneven collide/gap is what
+// reads as "a mess" next to the reference, where every pair was re-kerned once
+// its rotation was set.
+//
+// So we do the same, deterministically: give each glyph symmetric horizontal
+// margin proportional to how far its own tilt swings its edges out, handing
+// back just enough of the negative tracking to clear the jut. Upright glyphs
+// (sin≈0) stay fully nestled; the more a letter leans, the more air it earns,
+// and a seam of two leaning letters sums both — evening the optical rhythm the
+// way hand-kerning does. CAP_HALF is half the cap height as a fraction of the
+// em; KERN scales how much of the geometric jut to give back (tuned so a
+// max-tilt pair clears without unpicking the overlap).
+const CAP_HALF = 0.35
+const KERN = 0.62
+const kernEm = (rotateDeg) =>
+  KERN * CAP_HALF * Math.sin(Math.abs(rotateDeg) * (Math.PI / 180))
+
 export default function SplitText({
   lines = [],
   emphasis = null,
@@ -69,7 +92,14 @@ export default function SplitText({
   // position:relative/top so it never fights the y spring. Spaces stay unshifted.
   const glyphStyle = (li, gi) => {
     const j = jitter(li, gi)
-    return { rotate: j.rotate, position: 'relative', top: `${j.lift}em` }
+    const k = kernEm(j.rotate)
+    return {
+      rotate: j.rotate,
+      position: 'relative',
+      top: `${j.lift}em`,
+      marginLeft: `${k}em`,
+      marginRight: `${k}em`,
+    }
   }
 
   const emphasisList = emphasis
