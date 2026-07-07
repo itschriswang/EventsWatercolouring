@@ -469,5 +469,6 @@ export const NAV = [
   { href: '/#work', label: 'Gallery' },
   { href: '/#painter', label: 'About' },
   { href: '/#offerings', label: 'Packages' },
+  { href: '/corporate/', label: 'Corporate' },
   { href: '/faq/', label: 'FAQ' },
 ]

@@ -167,7 +167,6 @@ export default function HeroBrush() {
       const r = canvas.getBoundingClientRect()
       const x = (e.clientX - r.left) / r.width
       const y = (e.clientY - r.top) / r.height
-      if (x < 0 || x > 1 || y < 0 || y > 1) return // only within the hero
       if (lastX >= 0) {
         const dx = x - lastX
         const dy = y - lastY
