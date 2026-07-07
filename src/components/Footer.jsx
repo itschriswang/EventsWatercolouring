@@ -44,12 +44,11 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
 
   return (
     <footer className="relative w-full overflow-hidden bg-ink px-[5vw] pt-[clamp(4rem,8vw,7rem)] pb-36 md:pb-[clamp(4rem,8vw,7rem)] text-paper">
-      {/* Dusk ground — the reference image at nightfall, now grounded on a
-          deep forest-slate rather than plum-violet so the closing band reads
-          masculine. The warm pastel blooms still glow over it like the
-          photograph's pigment field seen in low light; the rose and lilac
-          spots are dialled back so they lift the dark green without tipping
-          it back toward mauve. */}
+      {/* Dusk ground — the reference image at nightfall, grounded on the
+          palette's own deep plum-ink (matching the `wine` timeline ground)
+          rather than the old forest-slate. The pastel blooms — apricot,
+          butter, lemon-lime, blossom and seafoam — still glow over it like
+          the photograph's pigment field seen in low light. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
@@ -62,7 +61,7 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
             'radial-gradient(ellipse 40% 36% at 22% 70%, rgba(250,170,200,0.14) 0%, transparent 55%), ' +
             'radial-gradient(ellipse 46% 40% at 42% 88%, rgba(120,180,150,0.20) 0%, transparent 55%), ' +
             'radial-gradient(ellipse 36% 32% at 96% 78%, rgba(150,190,170,0.20) 0%, transparent 58%), ' +
-            'linear-gradient(160deg, #1E2D28 0%, #24352F 55%, #2A3D35 100%)',
+            'linear-gradient(160deg, #221C30 0%, #2A2438 55%, #322A44 100%)',
         }}
       />
       <div className="relative z-10 flex flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">

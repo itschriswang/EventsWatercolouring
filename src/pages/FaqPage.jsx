@@ -50,7 +50,7 @@ export default function FaqPage() {
 
           <section className="relative w-full px-[5vw] pt-[clamp(7rem,16vw,10rem)] pb-[clamp(1.5rem,4vw,2.5rem)]">
             <div className="relative z-10 max-w-2xl">
-              <Label gradient={['#3E6357', '#2C4A40']}>{FAQ.label}</Label>
+              <Label gradient={['#FFE08A', '#E4B23E']}>{FAQ.label}</Label>
               <h1 className="mt-5 font-sentient text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.95] tracking-[-0.02em] text-ink">
                 {FAQ.title}
               </h1>

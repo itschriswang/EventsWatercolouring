@@ -127,7 +127,7 @@ export default function CorporatePage() {
         <SectionWash mask="linear-gradient(to bottom, transparent 0%, black 25%, black 100%)">
           {/* ── Why it works ───────────────────────────────────────────── */}
           <section className="relative w-full px-[5vw] py-[clamp(3rem,7vw,6rem)]">
-            <Label gradient={['#3E6357', '#2C4A40']}>{CORPORATE.why.label}</Label>
+            <Label gradient={['#FFE08A', '#E4B23E']}>{CORPORATE.why.label}</Label>
             <SplitText
               as="h2"
               unit="char"
@@ -146,7 +146,7 @@ export default function CorporatePage() {
                 >
                   <CornerBloom from="rgba(247,195,148,0.18)" to="rgba(228,230,156,0.14)" />
                   <div className="relative z-10">
-                    <Drop className="h-5 w-auto" gradient={['#3E6357', '#2C4A40']} />
+                    <Drop className="h-5 w-auto" gradient={['#FFE08A', '#E4B23E']} />
                     <h3 className="mt-4 font-sentient text-2xl tracking-[-0.02em] text-ink">{c.h}</h3>
                     <p className="mt-3 text-sm leading-relaxed text-ink-soft">{c.p}</p>
                   </div>
@@ -159,7 +159,7 @@ export default function CorporatePage() {
           <section className="relative w-full px-[5vw] py-[clamp(2.5rem,6vw,5rem)]">
             <div className="grid grid-cols-12 gap-x-8 gap-y-10">
               <div className="col-span-12 lg:col-span-5">
-                <Label gradient={['#2C4A40', '#3E6357']}>{CORPORATE.occasions.label}</Label>
+                <Label gradient={['#FFE08A', '#E4B23E']}>{CORPORATE.occasions.label}</Label>
                 <SplitText
                   as="h2"
                   unit="char"
@@ -180,7 +180,7 @@ export default function CorporatePage() {
                       {...rise(i % 3)}
                       className="flex items-center gap-4 border-b border-line py-4 first:border-t"
                     >
-                      <Drop className="h-4 w-auto shrink-0" gradient={['#3E6357', '#2C4A40']} />
+                      <Drop className="h-4 w-auto shrink-0" gradient={['#FFE08A', '#E4B23E']} />
                       <span className="font-sentient text-xl tracking-[-0.01em] text-ink sm:text-2xl">
                         {item}
                       </span>
@@ -199,7 +199,7 @@ export default function CorporatePage() {
           <SectionWash>
             {/* ── How it runs ──────────────────────────────────────────── */}
             <section className="relative w-full px-[5vw] pt-[clamp(3.5rem,7vw,6rem)] pb-[clamp(1rem,3vw,2rem)]">
-              <Label gradient={['#3E6357', '#2C4A40']}>{CORPORATE.how.label}</Label>
+              <Label gradient={['#FFE08A', '#E4B23E']}>{CORPORATE.how.label}</Label>
               <SplitText
                 as="h2"
                 unit="char"
@@ -221,7 +221,7 @@ export default function CorporatePage() {
 
             {/* ── The engagement ───────────────────────────────────────── */}
             <section className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5rem)] pb-[clamp(2rem,4vw,3rem)]">
-              <Label gradient={['#3E6357', '#2C4A40']}>{CORPORATE.offer.label}</Label>
+              <Label gradient={['#FFE08A', '#E4B23E']}>{CORPORATE.offer.label}</Label>
               <SplitText
                 as="h2"
                 unit="char"
@@ -264,7 +264,7 @@ export default function CorporatePage() {
                     <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
                       {CORPORATE.offer.base.bullets.map((b) => (
                         <li key={b} className="flex gap-3">
-                          <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#3E6357', '#2C4A40']} />
+                          <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#FFE08A', '#E4B23E']} />
                           {b}
                         </li>
                       ))}
