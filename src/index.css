@@ -135,6 +135,27 @@
     filter: url(#stamp-distress);
   }
 
+  /* The reference wordmark's cute connector ("make *it* happen"): one small
+     joining word flipped to negative space — paper fill, ink stroke — shrunk
+     and tucked between its big neighbours so the title reads as one drawn
+     mark. Applied by SplitText's `knockout` prop. Its own text-shadow matters:
+     the inherited display shadow computes em against the parent's size and
+     would swamp the little word; this one stays in scale (and in the approved
+     lilac, never grey). paint-order keeps the paper fill clean on top of the
+     centred ink stroke. */
+  .knockout-word {
+    position: relative;
+    z-index: 1;
+    font-size: 0.48em;
+    color: theme('colors.paper');
+    -webkit-text-stroke: 0.07em theme('colors.ink');
+    paint-order: stroke fill;
+    margin-inline: -0.1em;
+    vertical-align: 0.28em;
+    rotate: -5deg;
+    text-shadow: 0.08em 0.12em 0 rgba(94, 74, 140, 0.30);
+  }
+
   .eyebrow {
     font-family: theme('fontFamily.mono');
     font-size: 0.66rem;

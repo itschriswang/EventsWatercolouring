@@ -16,12 +16,32 @@ import { SPRING } from '../lib/site.js'
  *
  * In char mode, each word's characters are wrapped in an inline-block container
  * so the browser never breaks a word mid-character across lines.
+ *
+ * Char mode also hand-places every glyph — a small deterministic rotation and
+ * baseline shift per letter — so titles land agitated and human, like sticker
+ * letters pressed down one at a time, never digitally flush. Pass `knockout`
+ * to flip one small joining word into the wordmark's negative-space accent:
+ * shrunk, paper-filled with an ink stroke, tucked between its neighbours
+ * (see `.knockout-word` in index.css).
  */
+
+// Deterministic per-glyph agitation, seeded by line + glyph position so the
+// scatter is stable across renders (no re-jumbling on hover or route change).
+// Rotation in degrees, lift in em.
+const jitter = (li, gi) => {
+  const h1 = Math.sin((li + 1) * 127.1 + (gi + 1) * 311.7) * 43758.5453
+  const h2 = Math.sin((li + 1) * 269.5 + (gi + 1) * 183.3) * 24634.6345
+  const r1 = h1 - Math.floor(h1)
+  const r2 = h2 - Math.floor(h2)
+  return { rotate: (r1 - 0.5) * 11, lift: (r2 - 0.5) * 0.09 }
+}
+
 export default function SplitText({
   lines = [],
   emphasis = null,
   emphasisItalic = false,
   underline = null,
+  knockout = null,
   unit = 'char',
   className = '',
   as: Tag = 'h2',
@@ -33,6 +53,15 @@ export default function SplitText({
   const MotionTag = motion(Tag)
   const normalise = s => s.toLowerCase().replace(/[^a-z]/g, '')
   const isWordUnderlined = (word) => underline !== null && normalise(word) === normalise(underline)
+  const isWordKnockout = (word) => knockout !== null && normalise(word) === normalise(knockout)
+
+  // The agitation is styling, not motion — `rotate` merges with the variant's
+  // animated y in framer's transform, and the baseline lift rides on
+  // position:relative/top so it never fights the y spring. Spaces stay unshifted.
+  const glyphStyle = (li, gi) => {
+    const j = jitter(li, gi)
+    return { rotate: j.rotate, position: 'relative', top: `${j.lift}em` }
+  }
 
   const emphasisList = emphasis
     ? (Array.isArray(emphasis) ? emphasis : [emphasis])
@@ -130,6 +159,10 @@ export default function SplitText({
           wordIndexInHeading += lines[prevLi].split(' ').length
         }
 
+        // Running glyph counter for the line, so each successive letter draws
+        // a fresh jitter sample — neighbours never share an angle.
+        let glyphIdx = 0
+
         // An italic emphasis group at the very start of a line leans into the
         // mask's overflow-hidden edge, clipping its leading stroke. Nudge the
         // clip box left and the content right by the same amount so the
@@ -139,7 +172,7 @@ export default function SplitText({
         return (
           <span
             key={li}
-            className={`block overflow-hidden pb-[0.08em]${lineStartsWithItalic ? ' -ml-[0.12em] pl-[0.12em]' : ''}`}
+            className={`block overflow-hidden pb-[0.08em] pt-[0.1em] -mt-[0.1em]${lineStartsWithItalic ? ' -ml-[0.12em] pl-[0.12em]' : ''}`}
           >
             {unit === 'char'
               ? groupedWords.flatMap((group, gi) => {
@@ -159,6 +192,7 @@ export default function SplitText({
                               variants={item}
                               aria-hidden="true"
                               className="inline-block"
+                              style={glyphStyle(li, glyphIdx++)}
                             >
                               {ch}
                             </motion.span>
@@ -195,7 +229,11 @@ export default function SplitText({
                   return [
                     <WordTag
                       key={`w${li}-${gi}`}
-                      className="inline-block"
+                      className={
+                        isWordKnockout(group.word)
+                          ? 'inline-block knockout-word'
+                          : 'inline-block'
+                      }
                       {...wordTagProps}
                     >
                       {Array.from(group.word).map((ch, ci) => (
@@ -204,6 +242,7 @@ export default function SplitText({
                           variants={item}
                           aria-hidden="true"
                           className="inline-block"
+                          style={glyphStyle(li, glyphIdx++)}
                         >
                           {ch}
                         </motion.span>
