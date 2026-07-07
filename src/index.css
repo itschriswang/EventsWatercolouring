@@ -51,15 +51,24 @@
        elliptical radial blooms — never a straight linear sweep — so colour
        gathers in round patches the way it does in the reference photograph,
        toward the pill's own rounded ends rather than in a diagonal band.
-       Reads, left to right: a Lavender bloom on the leading cap, a Seafoam
-       glow bridging across the top, the Lemon Lime body (full-brightness at
-       its highlight, deepened only where the paper-coloured label needs to
-       stay legible), and a Blossom bloom on the trailing cap. */
+       The saturated swatch voices (Lavender purple, Seafoam blue, Blossom
+       pink, Rose red) are pulled to the OUTSKIRTS — hugging the caps and the
+       top/bottom shoulders — and carried at near-opaque strength so they read
+       as pigment, not the washed grey you get when a thin pastel drifts over
+       the deepened olive rim. The Lemon Lime glow stays protected in the
+       core (full-brightness highlight, deepened only where the paper-coloured
+       label needs to stay legible). Reads, around the rim: Lavender on the
+       leading cap, a Seafoam glow on the top-left shoulder, Blossom on the
+       trailing cap, and a Rose breath on the trailing-bottom shoulder. Cool
+       hues (lavender/seafoam) neighbour the green on the leading side; the
+       warm pink/rose stay concentrated at the far cap so they never average
+       with the green into mud. */
     --btn-aurora-gradient:
-      radial-gradient(38% 145% at 8% 34%, rgba(212, 182, 230, 0.62) 0%, rgba(212, 182, 230, 0) 60%),
-      radial-gradient(52% 165% at 32% 8%, rgba(191, 220, 209, 0.55) 0%, rgba(191, 220, 209, 0) 66%),
-      radial-gradient(38% 145% at 92% 68%, rgba(242, 166, 193, 0.58) 0%, rgba(242, 166, 193, 0) 60%),
-      radial-gradient(95% 210% at 42% 30%, #D8DB7A 0%, #A6A94E 32%, #66681C 66%, #4E5016 100%);
+      radial-gradient(34% 150% at 1% 50%, rgba(212, 182, 230, 0.97) 0%, rgba(212, 182, 230, 0.45) 30%, rgba(212, 182, 230, 0) 58%),
+      radial-gradient(34% 140% at 26% -6%, rgba(191, 220, 209, 0.95) 0%, rgba(191, 220, 209, 0.3) 34%, rgba(191, 220, 209, 0) 60%),
+      radial-gradient(34% 150% at 99% 50%, rgba(242, 166, 193, 0.97) 0%, rgba(242, 166, 193, 0.45) 30%, rgba(242, 166, 193, 0) 58%),
+      radial-gradient(30% 135% at 88% 112%, rgba(232, 143, 164, 0.9) 0%, rgba(232, 143, 164, 0.3) 32%, rgba(232, 143, 164, 0) 58%),
+      radial-gradient(64% 200% at 50% 44%, #D8DB7A 0%, #A6A94E 36%, #66681C 72%, #4E5016 100%);
   }
 
   html {
@@ -228,27 +237,28 @@
 
 @layer utilities {
   /* Primary action surface — the site's single action surface, driven by
-     `--btn-aurora-gradient` (defined above: Lemon Lime body with Lavender,
-     Seafoam and Blossom radial blooms — the client's reference swatches,
-     not a linear sweep). The lift shadow stays in the approved lilac shadow
-     palette (per CLAUDE.md — no green/neutral shadows). Oversized
-     background-size so hover drifts the whole painted bloom-field across the
-     surface rather than swapping flat colours — the Lavender cap sits at
-     rest, the Blossom cap slides in on hover. */
+     `--btn-aurora-gradient` (defined above: a Lemon Lime core with the
+     client's saturated reference swatches — Lavender, Seafoam, Blossom, Rose —
+     pooled as radial blooms at the caps and shoulders, not a linear sweep).
+     Full-cover background so all four rim voices stay present at rest (the
+     earlier 200% size showed only half the field until hover, which is what
+     left the outskirts reading washed-grey). The lift shadow stays in the
+     approved lilac shadow palette (per CLAUDE.md — no green/neutral shadows);
+     hover deepens the lift and nudges saturation so the painted blooms bloom
+     brighter rather than swapping flat colours. */
   .btn-aurora {
     background-image: var(--btn-aurora-gradient);
-    background-size: 200% 100%;
-    background-position: 0% 50%;
+    background-size: 100% 100%;
     box-shadow:
       0 14px 30px -12px rgba(94, 74, 140, 0.5),
       0 4px 14px -8px rgba(94, 74, 140, 0.45);
     transition:
-      background-position 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+      filter 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
       box-shadow 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
   .btn-aurora:hover {
-    background-position: 100% 50%;
+    filter: saturate(1.1) brightness(1.03);
     box-shadow:
       0 16px 34px -12px rgba(94, 74, 140, 0.62),
       0 6px 18px -8px rgba(94, 74, 140, 0.55);
