@@ -17,9 +17,13 @@ export default {
         ink: '#3F3552',
         'ink-soft': '#756A7C',
         line: '#E1D6E0',
-        // Primary pigments — candy rose, rose-plum, apricot, yellow-green, lilac
-        terracotta: '#B04A76',
-        rust: '#8E4470',
+        // Primary accent pigments. The dominant UI accent is a deep pine /
+        // teal — masculine and editorial — replacing the former candy-rose /
+        // rose-plum. Token names stay (legacy slots); their values now anchor
+        // the pine scheme. The soft pastel bloom washes keep the reference
+        // photo's warm hues (they read as gradient light, not accent colour).
+        terracotta: '#3B5F52',
+        rust: '#2C4A40',
         orange: '#E89B63',
         ochre: '#C9A94B',
         'ochre-light': '#F5E9AC',
@@ -31,7 +35,7 @@ export default {
         rose: '#C1608C',
         magenta: '#C0559A',
         blush: '#F2C2CF',
-        wine: '#4E3670',
+        wine: '#1F2E2A',
       },
       fontFamily: {
         // Three-font editorial system:

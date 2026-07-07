@@ -44,27 +44,28 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
 
   return (
     <footer className="relative w-full overflow-hidden bg-ink px-[5vw] pt-[clamp(4rem,8vw,7rem)] pb-36 md:pb-[clamp(4rem,8vw,7rem)] text-paper">
-      {/* Dusk ground — the reference image at nightfall: the flat ink is
-          lifted into a deep plum-violet gradient, and the pastel blooms glow
-          over it like the photograph's pigment field seen in low light.
-          The yellow-green glow gets its own bloom (butter-bridged, kept off
-          the rose spots so the overlaps stay luminous, never grey). */}
+      {/* Dusk ground — the reference image at nightfall, now grounded on a
+          deep forest-slate rather than plum-violet so the closing band reads
+          masculine. The warm pastel blooms still glow over it like the
+          photograph's pigment field seen in low light; the rose and lilac
+          spots are dialled back so they lift the dark green without tipping
+          it back toward mauve. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 70% 60% at 88% 2%, rgba(255,165,95,0.34) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 70% 60% at 88% 2%, rgba(255,165,95,0.30) 0%, transparent 55%), ' +
             'radial-gradient(ellipse 44% 38% at 70% 18%, rgba(250,225,120,0.22) 0%, transparent 55%), ' +
             'radial-gradient(ellipse 48% 42% at 58% 42%, rgba(205,215,80,0.30) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 52% 44% at 4% 96%, rgba(245,120,175,0.30) 0%, transparent 52%), ' +
-            'radial-gradient(ellipse 40% 36% at 22% 70%, rgba(250,170,200,0.20) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 46% 40% at 42% 88%, rgba(175,140,230,0.30) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 36% 32% at 96% 78%, rgba(160,165,220,0.24) 0%, transparent 58%), ' +
-            'linear-gradient(160deg, #3C2F58 0%, #463763 55%, #4C3B6B 100%)',
+            'radial-gradient(ellipse 52% 44% at 4% 96%, rgba(245,120,175,0.16) 0%, transparent 52%), ' +
+            'radial-gradient(ellipse 40% 36% at 22% 70%, rgba(250,170,200,0.14) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 46% 40% at 42% 88%, rgba(120,180,150,0.20) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 36% 32% at 96% 78%, rgba(150,190,170,0.20) 0%, transparent 58%), ' +
+            'linear-gradient(160deg, #1E2D28 0%, #24352F 55%, #2A3D35 100%)',
         }}
       />
-      <div className="flex flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">
+      <div className="relative z-10 flex flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">
         {/* The closing line IS the link — a visitor who scrolled this far is
             the warmest one on the page, so the biggest words at the moment of
             highest intent go straight to the reply card. */}
@@ -76,7 +77,7 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
             emphasis={FOOTER.emphasis}
             underline="keep"
             emphasisItalic
-            className="display-lg max-w-[18ch]"
+            className="display-lg max-w-[18ch] [text-shadow:none]"
           />
           <span className="mt-5 inline-flex items-center gap-2.5 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-paper/60 transition-colors duration-300 group-hover:text-paper">
             Start an enquiry
@@ -93,7 +94,7 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
       {/* Instagram — sits in the footer's middle band, right-aligned once
           there's room for it (lg+); left-aligned and stacked on mobile,
           matching how the CTA row above it reflows. */}
-      <div className="mt-[clamp(2.5rem,6vw,4rem)] flex flex-col items-start gap-5 lg:items-end">
+      <div className="relative z-10 mt-[clamp(2.5rem,6vw,4rem)] flex flex-col items-start gap-5 lg:items-end">
         <a
           href={FOOTER.instagram}
           target="_blank"
@@ -114,7 +115,7 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
         </a>
       </div>
 
-      <div className="mt-[clamp(3rem,7vw,6rem)] flex flex-col gap-8 border-t border-paper/15 pt-10 lg:flex-row lg:justify-between">
+      <div className="relative z-10 mt-[clamp(3rem,7vw,6rem)] flex flex-col gap-8 border-t border-paper/15 pt-10 lg:flex-row lg:justify-between">
         <span className="font-sentient text-2xl tracking-[-0.01em]">
           {FOOTER.name}
         </span>

@@ -41,15 +41,17 @@ export default function AboutMe() {
                   like a hand-laid block of pigment. Its edges are feathered
                   (blur + multiply) so it reads as paint bleeding into the
                   paper — echoing the bloom washes used across the site —
-                  rather than a hard geometric outline. The terracotta → rose
-                  → ochre run mirrors the section's own label gradient. */}
+                  rather than a hard geometric outline. Kept well
+                  desaturated (was an unsightly, over-saturated rose/violet):
+                  a gentle pine wash that sits with the section's pine label
+                  rather than shouting behind the photo. */}
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute -left-5 -top-5 h-full w-full rounded-[2.25rem]"
                 style={{
                   background:
-                    'linear-gradient(145deg, rgba(176,74,118,0.55) 0%, rgba(176,74,118,0.50) 55%, rgba(142,99,184,0.42) 100%)',
-                  filter: 'blur(22px)',
+                    'linear-gradient(145deg, rgba(59,95,82,0.28) 0%, rgba(52,85,72,0.24) 55%, rgba(74,117,102,0.18) 100%)',
+                  filter: 'blur(24px)',
                   mixBlendMode: 'multiply',
                 }}
               />
@@ -66,7 +68,7 @@ export default function AboutMe() {
                 }}
                 className="relative overflow-hidden rounded-[1.75rem] border border-line bg-paper-deep"
               >
-                <CornerBloom from="rgba(176,74,118,0.15)" to="rgba(142,99,184,0.11)" overlay />
+                <CornerBloom from="rgba(74,117,102,0.14)" to="rgba(59,95,82,0.11)" overlay />
                 <div className="relative z-10">
                   <picture>
                     <source srcSet={asset(PAINTER.portraitWebp)} type="image/webp" />
@@ -115,7 +117,7 @@ export default function AboutMe() {
           {/* Title + bio + signature — left on mobile, right on desktop */}
           <div className="relative col-span-12 sm:col-span-6 sm:col-start-1 lg:col-span-6 lg:col-start-7 order-1 sm:order-none lg:order-none lg:pl-4">
             <Sparkles variant="burst" className="absolute -top-4 right-0 h-14 w-14 text-terracotta/80 lg:hidden" />
-            <Label gradient={['#B04A76', '#8E63B8']}>{PAINTER.label}</Label>
+            <Label gradient={['#3E6357', '#2C4A40']}>{PAINTER.label}</Label>
             <SplitText
               as="h2"
               unit="char"
