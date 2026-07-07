@@ -248,7 +248,7 @@ Color Palette:
 Typography:
   * Display: Mynerve (hand-drawn, signature feel)
   * Body: Manrope (clean, readable)
-  * Accent: Gochi Hand (editorial)
+  * Accent: Darumadrop One (editorial)
 
 Decorative Elements:
   * Grain overlay (paper texture)
