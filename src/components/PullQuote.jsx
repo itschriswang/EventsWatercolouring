@@ -111,7 +111,7 @@ export default function PullQuote() {
           {...rise(0.2)}
           className="mt-7 flex flex-col items-center gap-1.5"
         >
-          <Drop className="h-5 w-auto opacity-80" gradient={['#3E6357', '#2C4A40']} />
+          <Drop className="h-5 w-auto opacity-80" gradient={['#E88FA4', '#C1608C']} />
           <span className="flex items-center gap-1.5 font-mono text-[0.95rem] text-ink">
             {PULLQUOTE.author}
             <SmileyThumbsUpIcon width={16} height={16} className="text-ochre" />

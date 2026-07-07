@@ -143,7 +143,7 @@ export default function EveningTimeline() {
                       <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_12px_rgba(63,53,82,0.55)]">
                         <Drop
                           className="h-5 w-auto"
-                          gradient={['#4A7566', '#2C4A40']}
+                          gradient={['#BFDCD1', '#8FB5A8']}
                         />
                       </span>
                     ) : (

@@ -34,7 +34,7 @@ export default function Packages() {
   return (
     <section id="offerings" className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(5rem,10vw,9rem)]">
       <Sparkles className="absolute right-[5vw] top-[clamp(3rem,6vw,5.5rem)] hidden h-12 w-12 text-terracotta/70 md:block" />
-      <Label gradient={['#3E6357', '#2C4A40']}>{PACKAGES.label}</Label>
+      <Label gradient={['#D8DB7A', '#9BA03E']}>{PACKAGES.label}</Label>
       <SplitText
         as="h2"
         unit="char"
@@ -86,7 +86,7 @@ export default function Packages() {
             <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
               {PACKAGES.base.bullets.map((b) => (
                 <li key={b} className="flex gap-3">
-                  <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#3E6357', '#2C4A40']} />
+                  <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#D8DB7A', '#9BA03E']} />
                   {b}
                 </li>
               ))}
@@ -129,7 +129,7 @@ export default function Packages() {
                       className="shrink-0 rounded-full bg-paper-deep/70 p-2"
                       aria-hidden="true"
                     >
-                      <Drop className="h-3.5 w-auto" gradient={['#3E6357', '#2C4A40']} />
+                      <Drop className="h-3.5 w-auto" gradient={['#D8DB7A', '#9BA03E']} />
                     </motion.span>
                   </button>
                   <AnimatePresence initial={false}>
@@ -203,7 +203,7 @@ export default function Packages() {
             <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
               {PACKAGES.base.bullets.map((b) => (
                 <li key={b} className="flex gap-3">
-                  <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#3E6357', '#2C4A40']} />
+                  <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#D8DB7A', '#9BA03E']} />
                   {b}
                 </li>
               ))}
@@ -280,7 +280,7 @@ export default function Packages() {
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-paper shadow-[0_2px_10px_rgba(94,74,140,0.30)]"
             aria-hidden="true"
           >
-            <Drop className="h-5 w-auto" gradient={['#3E6357', '#2C4A40']} />
+            <Drop className="h-5 w-auto" gradient={['#D8DB7A', '#9BA03E']} />
           </span>
           <span>
             <span className="block font-sentient text-xl tracking-[-0.02em] text-ink sm:text-2xl">

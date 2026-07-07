@@ -37,7 +37,7 @@ export default function Faq() {
                   className="mt-0.5 shrink-0 rounded-full bg-paper-deep/80 p-2.5"
                   aria-hidden="true"
                 >
-                  <Drop className="h-4 w-auto" gradient={['#2C4A40', '#3E6357']} />
+                  <Drop className="h-4 w-auto" gradient={['#FFE08A', '#E4B23E']} />
                 </span>
                 <div>
                   <h3 className="font-body text-[clamp(0.95rem,1.3vw,1.15rem)] tracking-[-0.01em] leading-snug text-ink">
