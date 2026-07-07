@@ -88,9 +88,10 @@ export default function Hero({ revealed }) {
           WebGL only; renders nothing elsewhere. */}
       <HeroBrush />
 
-      {/* Load flourish: the body of work swirls in a cylinder and drifts down
-          toward the gallery, leaving the two studies below. Self-gating —
-          plays once per session, sits out reduced-motion, and unmounts after. */}
+      {/* Load flourish: a calm current of gallery pieces drifts behind the
+          page copy and on toward the gallery, while the two studies lift out
+          of it and land on the cards below. Self-gating — plays once per
+          session, sits out reduced-motion, and unmounts after. */}
       {revealed && (
         <HeroFlurry
           heroTargets={[
