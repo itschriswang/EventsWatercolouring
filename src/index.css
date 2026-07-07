@@ -9,13 +9,13 @@
 }
 
 .instrument-serif-regular {
-  font-family: "Gochi Hand", cursive;
+  font-family: "Darumadrop One", cursive;
   font-weight: 400;
   font-style: normal;
 }
 
 .instrument-serif-regular-italic {
-  font-family: "Gochi Hand", cursive;
+  font-family: "Darumadrop One", cursive;
   font-weight: 400;
   font-style: italic;
 }
@@ -91,23 +91,35 @@
      once per page root) wobbles the glyph edges and presses a paper-grain
      texture into the ink via hard-light, so titles read as stamped onto the
      page rather than set in flawless digital type. */
+  /* Darumadrop One is a rounded, chunky marker face, so titles get the
+     playful, overlapping-letter treatment from the reference: negative
+     tracking nestles the round glyphs into one another, and a layered
+     lilac drop-shadow (the palette's primary lift shadow — never grey,
+     per CLAUDE.md) lifts the letters off the paper like painted cut-outs.
+     em-based offsets keep the shadow in proportion across the fluid clamp. */
   .display-xl {
     font-family: theme('fontFamily.sentient');
     font-weight: 400;
     font-size: clamp(2.25rem, 6vw, 6rem);
     line-height: 0.95;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.04em;
+    text-shadow:
+      0.055em 0.08em 0 rgba(94, 74, 140, 0.28),
+      0.02em 0.03em 0.03em rgba(94, 74, 140, 0.16);
     filter: url(#stamp-distress);
   }
 
-  /* Gochi Hand ships in regular (400) only — heavier weights here
+  /* Darumadrop One ships in regular (400) only — heavier weights here
      would just trigger faux-bold synthesis, which muddies the letterforms. */
   .display-lg {
     font-family: theme('fontFamily.sentient');
     font-weight: 400;
     font-size: clamp(2rem, 4vw, 4rem);
     line-height: 0.95;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.035em;
+    text-shadow:
+      0.05em 0.07em 0 rgba(94, 74, 140, 0.26),
+      0.02em 0.03em 0.03em rgba(94, 74, 140, 0.15);
     filter: url(#stamp-distress);
   }
 
@@ -116,7 +128,10 @@
     font-weight: 400;
     font-size: clamp(1.5rem, 3.5vw, 3rem);
     line-height: 0.98;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.03em;
+    text-shadow:
+      0.045em 0.06em 0 rgba(94, 74, 140, 0.24),
+      0.018em 0.026em 0.03em rgba(94, 74, 140, 0.14);
     filter: url(#stamp-distress);
   }
 
