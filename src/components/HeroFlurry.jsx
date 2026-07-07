@@ -70,12 +70,15 @@ const lerp = (a, b, t) => a + (b - a) * t
 const smooth = (t) => t * t * (3 - 2 * t) // smoothstep
 
 // The flow, as waypoints [x, y, depth] in viewport fractions (depth 1 = near /
-// front, 0 = far / back). One elegant pass: enter bottom-left, rise to the
-// top-right apex where the hero cards sit, wrap around the back to centre, then
-// sink and leave toward the gallery below. Two proportions — a wide arc biased
-// to the right on landscape (headline keeps the left), a taller full-width loop
-// on phones (the cards live up top).
+// front, 0 = far / back). One elegant pass: rise in from below the fold, climb
+// to the top-right apex where the hero cards sit, wrap around the back to
+// centre, then sink and leave toward the gallery below. The leading waypoint
+// sits off-screen (y > 1) so every piece slides up into view already at full
+// opacity — nothing materialises at the corner. Two proportions — a wide arc
+// biased to the right on landscape (headline keeps the left), a taller
+// full-width loop on phones (the cards live up top).
 const FLOW_DESKTOP = [
+  [0.0, 1.2, 0.4], // off-screen entry — pieces rise up out of the fold
   [0.1, 0.92, 0.5],
   [0.4, 0.74, 0.85],
   [0.7, 0.5, 1.0],
@@ -86,6 +89,7 @@ const FLOW_DESKTOP = [
   [0.66, 1.12, 0.24],
 ]
 const FLOW_MOBILE = [
+  [0.0, 1.2, 0.4], // off-screen entry — pieces rise up out of the fold
   [0.08, 0.9, 0.5],
   [0.3, 0.66, 0.82],
   [0.58, 0.4, 0.96],
@@ -95,7 +99,7 @@ const FLOW_MOBILE = [
   [0.48, 0.72, 0.3],
   [0.52, 1.12, 0.24],
 ]
-const APEX_U = 3 / 7 // the apex sits at waypoint 3 of 0…7
+const APEX_U = 4 / 8 // the apex sits at waypoint 4 of 0…8
 
 // Uniform Catmull-Rom through pts (each [x,y,d]); u in [0,1] → interpolated
 // [x,y,d], for a smooth flowing curve through the waypoints.
@@ -232,7 +236,8 @@ export default function HeroFlurry({ heroTargets = [] }) {
     // The current — a ribbon of gallery pieces strung along the flow, each one
     // offset in time so they stream through the arc rather than move as a block.
     for (let i = 0; i < count; i++) {
-      const off = (i / count) * 0.62 // its place along the ribbon (streamed in)
+      const off = (i / count) * 0.7 // its place along the ribbon — wider spacing so
+                                    // pieces crest the fold one at a time, not in a burst
       const travel = 0.42 + rand(i + 2) * 0.12
       const laneX = (rand(i + 7) - 0.5) * 0.05 * W // a tight scatter off the spine
       const laneY = (rand(i + 8) - 0.5) * 0.04 * H
@@ -284,6 +289,10 @@ export default function HeroFlurry({ heroTargets = [] }) {
       const tilt = (rand(i + 9) - 0.5) * 8
       const tScale = tg.w / cardW
       const landT = LAND_T + n * LAND_STAGGER
+      // Hold each survivor back a beat so it rises in after the lead crowd
+      // piece, not alongside it — keeps the launch single-file. The landing
+      // time (landT) is untouched, so the hero-card handoff still lines up.
+      const enterT = 0.08 + n * 0.05
       const peelStart = landT * 0.72
       const fadeStart = landT + 0.02
       const laneX = (rand(i + 7) - 0.5) * 0.05 * W
@@ -297,8 +306,8 @@ export default function HeroFlurry({ heroTargets = [] }) {
       for (let k = 0; k < K; k++) {
         const t = k / (K - 1)
         times.push(t)
-        // Ride the flow up to the apex by landT…
-        const u = smooth(clamp01(t / landT)) * APEX_U
+        // Ride the flow up to the apex by landT (entering only after enterT)…
+        const u = smooth(clamp01((t - enterT) / (landT - enterT))) * APEX_U
         const [fx, fy, fd] = spline(flow, u)
         const pathX = fx * W + laneX
         const pathY = fy * H
@@ -311,7 +320,7 @@ export default function HeroFlurry({ heroTargets = [] }) {
         ss.push(+(lerp(pathScale, tScale, w) * (1 + 0.045 * bump)).toFixed(3))
         rs.push(+lerp(tilt, tg.tilt, w).toFixed(2))
         hz.push(0)
-        const fin = Math.min(1, t / 0.08)
+        const fin = Math.min(1, Math.max(0, t - enterT) / 0.08)
         const fout = t < fadeStart ? 1 : Math.max(0, 1 - (t - fadeStart) / 0.1)
         os.push(+(fin * fout).toFixed(3))
       }
