@@ -74,8 +74,8 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
           className="group block"
           // The CTA words are paper-white on the dark footer, so the "keep"
           // underline can't ride currentColor or it disappears into the
-          // letters. Paint the stroke in the accent (neon here) instead — it
-          // inherits down to <Underline>'s path via --underline-stroke.
+          // letters. Paint the stroke in the accent instead — it inherits
+          // down to <Underline>'s path via --underline-stroke.
           style={{ '--underline-stroke': 'var(--c-terracotta)' }}
         >
           <SplitText

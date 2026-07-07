@@ -17,15 +17,13 @@ export default {
         ink: '#3F3552',
         'ink-soft': '#756A7C',
         line: '#E1D6E0',
-        // Primary accent pigments. GRADIENT COMPARISON TEST: the two accent
-        // slots are now driven by CSS custom properties (`--rgb-terracotta` /
-        // `--rgb-rust`, defined in index.css) so the accent can be re-anchored
-        // per page region without editing every `text-terracotta` call site.
-        // The top half of the page reads MOSS green (mostly moss, with blue and
-        // purple/pink kissing the gradient edges); the bottom half (wrapped in
-        // `.accent-neon`) reads a BRIGHT NEON purple/blue/sand — so the two
-        // treatments sit on the same page for a side-by-side comparison. Token
-        // names stay (legacy slots). The soft pastel bloom washes are untouched.
+        // Primary accent pigments. The dominant UI accent is a muted, dusty
+        // yellow-green sourced from the palette's own `sage` / `sage-deep`
+        // anchors below (chic and photographic, not a saturated invented
+        // chartreuse). Driven by CSS custom properties (`--rgb-terracotta` /
+        // `--rgb-rust`, defined in index.css) so the whole site's accent can
+        // be retuned from one place. Token names stay (legacy slots); the
+        // soft pastel bloom washes are untouched.
         terracotta: 'rgb(var(--rgb-terracotta) / <alpha-value>)',
         rust: 'rgb(var(--rgb-rust) / <alpha-value>)',
         orange: '#E89B63',
