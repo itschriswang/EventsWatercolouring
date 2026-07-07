@@ -37,7 +37,9 @@ export default {
         rose: '#C1608C',
         magenta: '#C0559A',
         blush: '#F2C2CF',
-        wine: '#1F2E2A',
+        wine: '#241E33', // deep plum-ink night ground (was pine #1F2E2A) — the
+        // dark "nightfall" sections (evening timeline, footer) now sit on the
+        // palette's own deep violet-ink rather than the old masculine forest.
       },
       fontFamily: {
         // Three-font editorial system:
