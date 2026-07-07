@@ -68,10 +68,31 @@ const KERN = 0.62
 const kernEm = (rotateDeg) =>
   KERN * CAP_HALF * Math.sin(Math.abs(rotateDeg) * (Math.PI / 180))
 
+// Sample a colour flowing across a list of hex stops at fraction f in [0,1].
+// Used by `emphasisColors` to run the action-surface's cool → green → warm
+// wash across an emphasis word letter-by-letter — solid per-glyph pigment (so
+// it survives the per-glyph rotations and keeps AA contrast at display sizes)
+// rather than a background-clip:text fill.
+const hexToRgb = (h) => {
+  const n = parseInt(h.slice(1), 16)
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+}
+const mixByte = (a, b, t) => Math.round(a + (b - a) * t)
+const flowColour = (stops, f) => {
+  if (stops.length === 1) return stops[0]
+  const x = Math.max(0, Math.min(1, f)) * (stops.length - 1)
+  const i = Math.min(Math.floor(x), stops.length - 2)
+  const [r1, g1, b1] = hexToRgb(stops[i])
+  const [r2, g2, b2] = hexToRgb(stops[i + 1])
+  const t = x - i
+  return `rgb(${mixByte(r1, r2, t)}, ${mixByte(g1, g2, t)}, ${mixByte(b1, b2, t)})`
+}
+
 export default function SplitText({
   lines = [],
   emphasis = null,
   emphasisItalic = false,
+  emphasisColors = null,
   underline = null,
   knockout = null,
   unit = 'char',
@@ -218,8 +239,16 @@ export default function SplitText({
             {unit === 'char'
               ? groupedWords.flatMap((group, gi) => {
                   if (group.isGroup) {
-                    const spanStyle = getGradientStyle(wordIndexInHeading)
+                    const spanStyle = emphasisColors ? {} : getGradientStyle(wordIndexInHeading)
                     wordIndexInHeading += group.words.length
+                    // Flow the emphasis wash across the group's letters (spaces
+                    // excluded), so a multi-word emphasis reads as one continuous
+                    // sweep rather than each word restarting the ramp.
+                    const groupGlyphTotal = group.words.reduce(
+                      (n, w) => n + Array.from(w.word).length,
+                      0,
+                    )
+                    let groupGlyphIdx = 0
                     return [
                       <span
                         key={`g${li}-${gi}`}
@@ -227,17 +256,30 @@ export default function SplitText({
                         style={spanStyle}
                       >
                         {group.words.flatMap((w, wi) => [
-                          ...Array.from(w.word).map((ch, ci) => (
-                            <motion.span
-                              key={`${gi}-${wi}-${ci}`}
-                              variants={item}
-                              aria-hidden="true"
-                              className="inline-block"
-                              style={glyphStyle(li, glyphIdx++)}
-                            >
-                              {ch}
-                            </motion.span>
-                          )),
+                          ...Array.from(w.word).map((ch, ci) => {
+                            const flow = emphasisColors
+                              ? {
+                                  color: flowColour(
+                                    emphasisColors,
+                                    groupGlyphTotal > 1
+                                      ? groupGlyphIdx / (groupGlyphTotal - 1)
+                                      : 0,
+                                  ),
+                                }
+                              : null
+                            groupGlyphIdx++
+                            return (
+                              <motion.span
+                                key={`${gi}-${wi}-${ci}`}
+                                variants={item}
+                                aria-hidden="true"
+                                className="inline-block"
+                                style={{ ...glyphStyle(li, glyphIdx++), ...(flow || {}) }}
+                              >
+                                {ch}
+                              </motion.span>
+                            )
+                          }),
                           wi < group.words.length - 1 ? (
                             <motion.span
                               key={`space-${gi}-${wi}`}
