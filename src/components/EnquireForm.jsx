@@ -286,8 +286,8 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                   arrives. Sits above the paper, below the content. */}
               <div className="pointer-events-none absolute inset-[3%] z-[1] overflow-hidden rounded-[3px]">
                 {[
-                  { c: '#A85450', pos: '-right-10 -top-12 h-52 w-52', o: 0.1 },
-                  { c: '#C68A66', pos: '-left-10 bottom-0 h-44 w-44', o: 0.09 },
+                  { c: '#B04A76', pos: '-right-10 -top-12 h-52 w-52', o: 0.1 },
+                  { c: '#8E63B8', pos: '-left-10 bottom-0 h-44 w-44', o: 0.09 },
                 ].map((b, i) => (
                   <span
                     key={i}
@@ -309,7 +309,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                     className="absolute left-1/2 top-1/2 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-multiply"
                     style={{
                       background:
-                        'radial-gradient(circle at 50% 50%, #A85450, rgba(198,138,102,0.5) 45%, transparent 72%)',
+                        'radial-gradient(circle at 50% 50%, #B04A76, rgba(142,99,184,0.5) 45%, transparent 72%)',
                       filter: 'blur(34px)',
                     }}
                   />
@@ -324,7 +324,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                     the same stationery. */}
                 <div className="mb-7 flex items-baseline justify-between border-b border-line/80 pb-4">
                   <span className="eyebrow inline-flex items-center gap-2">
-                    <Drop className="h-5 w-auto" fill="#A85450" />
+                    <Drop className="h-5 w-auto" fill="#B04A76" />
                     Reply card
                   </span>
                   <span className="font-mono text-xs lowercase tracking-wide text-ink-soft">
@@ -621,7 +621,7 @@ function DecklePaper({ id }) {
     <div
       aria-hidden="true"
       className="absolute inset-0"
-      style={{ filter: 'drop-shadow(0 18px 38px rgba(66,51,59,0.21))' }}
+      style={{ filter: 'drop-shadow(0 18px 38px rgba(63,53,82,0.21))' }}
     >
       <svg className="h-full w-full" preserveAspectRatio="none">
         <defs>
@@ -676,11 +676,11 @@ function SealButton({ sending }) {
           className="pointer-events-none absolute inset-[10%] rounded-full opacity-60 transition-opacity duration-300 group-hover:opacity-100"
           style={{
             background: [
-              'radial-gradient(circle at 30% 20%, rgba(247,212,174,0.22) 0%, rgba(247,212,174,0) 44%)',
-              'radial-gradient(circle at 72% 24%, rgba(168,84,80,0.18) 0%, rgba(168,84,80,0) 46%)',
-              'radial-gradient(circle at 26% 76%, rgba(223,164,85,0.18) 0%, rgba(223,164,85,0) 50%)',
-              'radial-gradient(circle at 76% 78%, rgba(216,154,94,0.16) 0%, rgba(216,154,94,0) 50%)',
-              'radial-gradient(circle at 50% 55%, rgba(168,84,80,0.14) 0%, rgba(168,84,80,0) 56%)',
+              'radial-gradient(circle at 30% 20%, rgba(240,228,158,0.22) 0%, rgba(240,228,158,0) 44%)',
+              'radial-gradient(circle at 72% 24%, rgba(176,74,118,0.18) 0%, rgba(176,74,118,0) 46%)',
+              'radial-gradient(circle at 26% 76%, rgba(201,169,75,0.18) 0%, rgba(201,169,75,0) 50%)',
+              'radial-gradient(circle at 76% 78%, rgba(232,155,99,0.16) 0%, rgba(232,155,99,0) 50%)',
+              'radial-gradient(circle at 50% 55%, rgba(176,74,118,0.14) 0%, rgba(176,74,118,0) 56%)',
             ].join(', '),
             mixBlendMode: 'screen',
           }}
