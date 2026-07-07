@@ -102,13 +102,13 @@ export default function Hero({ revealed }) {
         className="pointer-events-none absolute inset-0 z-0"
         style={{
           backgroundImage:
-            'radial-gradient(42% 36% at 14% 22%, rgba(246,206,196, 0.38), transparent 72%), ' +
+            'radial-gradient(42% 36% at 14% 22%, rgba(247,195,148, 0.38), transparent 72%), ' +
             'radial-gradient(34% 30% at 88% 12%, rgba(242,194,207, 0.34), transparent 72%), ' +
-            'radial-gradient(36% 32% at 86% 82%, rgba(217,222,193, 0.30), transparent 72%), ' +
-            'radial-gradient(32% 30% at 6% 86%, rgba(216,198,234, 0.20), transparent 72%), ' +
-            'radial-gradient(30% 26% at 60% 6%, rgba(247,212,174, 0.28), transparent 72%), ' +
-            'radial-gradient(32% 28% at 100% 48%, rgba(246,206,196, 0.26), transparent 72%), ' +
-            'radial-gradient(26% 24% at 34% 54%, rgba(158,201,223, 0.14), transparent 74%)',
+            'radial-gradient(36% 32% at 86% 82%, rgba(228,230,156, 0.30), transparent 72%), ' +
+            'radial-gradient(32% 30% at 6% 86%, rgba(210,196,232, 0.20), transparent 72%), ' +
+            'radial-gradient(30% 26% at 60% 6%, rgba(240,228,158, 0.28), transparent 72%), ' +
+            'radial-gradient(32% 28% at 100% 48%, rgba(247,195,148, 0.26), transparent 72%), ' +
+            'radial-gradient(26% 24% at 34% 54%, rgba(216,218,236, 0.14), transparent 74%)',
         }}
       />
 
@@ -132,11 +132,11 @@ export default function Hero({ revealed }) {
               width: '74vmin',
               height: '74vmin',
               background:
-                'radial-gradient(48% 48% at 66% 28%, rgba(246,206,196,0.95), transparent 78%), ' +
-                'radial-gradient(42% 42% at 26% 68%, rgba(232,167,148,0.8), transparent 76%), ' +
+                'radial-gradient(48% 48% at 66% 28%, rgba(247,195,148,0.95), transparent 78%), ' +
+                'radial-gradient(42% 42% at 26% 68%, rgba(238,158,190,0.8), transparent 76%), ' +
                 'radial-gradient(34% 34% at 76% 78%, rgba(242,194,207,0.95), transparent 74%), ' +
-                'radial-gradient(24% 24% at 88% 62%, rgba(247,212,174,0.85), transparent 70%), ' +
-                'linear-gradient(135deg, rgba(217,222,193,0.6) 10%, rgba(240,242,235,0.9) 34%, rgba(246,206,196,0.8) 58%, rgba(242,194,207,0.7) 84%)',
+                'radial-gradient(24% 24% at 88% 62%, rgba(240,228,158,0.85), transparent 70%), ' +
+                'linear-gradient(135deg, rgba(228,230,156,0.6) 10%, rgba(240,242,235,0.9) 34%, rgba(247,195,148,0.8) 58%, rgba(242,194,207,0.7) 84%)',
               filter: 'blur(26px)',
               opacity: 0.62,
               WebkitMaskImage:
@@ -236,7 +236,7 @@ export default function Hero({ revealed }) {
                   whileHover={reduce ? {} : { rotate: -2, scale: 1.03 }}
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(94,74,140,0.30),0_6px_16px_-6px_rgba(94,74,140,0.12)]"
                 >
-                  <CornerBloom from="rgba(242,194,207,0.15)" to="rgba(198,138,102,0.11)" overlay />
+                  <CornerBloom from="rgba(242,194,207,0.15)" to="rgba(142,99,184,0.11)" overlay />
                   {wick && (
                     <BloomFilter
                       id="hero-wick-1"
@@ -277,7 +277,7 @@ export default function Hero({ revealed }) {
                   whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(94,74,140,0.30),0_6px_16px_-6px_rgba(94,74,140,0.12)]"
                 >
-                  <CornerBloom from="rgba(246,206,196,0.20)" to="rgba(242,194,207,0.14)" overlay />
+                  <CornerBloom from="rgba(247,195,148,0.20)" to="rgba(242,194,207,0.14)" overlay />
                   {wick && (
                     <BloomFilter
                       id="hero-wick-2"

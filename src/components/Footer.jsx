@@ -44,15 +44,24 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
 
   return (
     <footer className="relative w-full overflow-hidden bg-ink px-[5vw] pt-[clamp(4rem,8vw,7rem)] pb-36 md:pb-[clamp(4rem,8vw,7rem)] text-paper">
+      {/* Dusk ground — the reference image at nightfall: the flat ink is
+          lifted into a deep plum-violet gradient, and the pastel blooms glow
+          over it like the photograph's pigment field seen in low light.
+          The yellow-green glow gets its own bloom (butter-bridged, kept off
+          the rose spots so the overlaps stay luminous, never grey). */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 70% 60% at 90% 5%, rgba(246,206,196,0.22) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 50% 40% at 5% 95%, rgba(242,194,207,0.18) 0%, transparent 50%), ' +
-            'radial-gradient(ellipse 45% 40% at 48% 55%, rgba(180,156,216,0.14) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 34% 30% at 72% 82%, rgba(217,222,193,0.12) 0%, transparent 60%)',
+            'radial-gradient(ellipse 70% 60% at 88% 2%, rgba(255,165,95,0.34) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 44% 38% at 70% 18%, rgba(250,225,120,0.22) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 48% 42% at 58% 42%, rgba(205,215,80,0.30) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 52% 44% at 4% 96%, rgba(245,120,175,0.30) 0%, transparent 52%), ' +
+            'radial-gradient(ellipse 40% 36% at 22% 70%, rgba(250,170,200,0.20) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 46% 40% at 42% 88%, rgba(175,140,230,0.30) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 36% 32% at 96% 78%, rgba(160,165,220,0.24) 0%, transparent 58%), ' +
+            'linear-gradient(160deg, #3C2F58 0%, #463763 55%, #4C3B6B 100%)',
         }}
       />
       <div className="flex flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">
@@ -91,14 +100,14 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
           rel="noopener noreferrer"
           className="group flex items-center gap-3"
         >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-paper/25 text-paper/70 transition-colors duration-300 group-hover:border-terracotta group-hover:text-terracotta">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-paper/25 text-paper/70 transition-colors duration-300 group-hover:border-blush group-hover:text-blush">
             <InstagramIcon />
           </span>
           <span className="flex flex-col">
             <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-paper/50">
               Follow along
             </span>
-            <span className="font-sentient text-xl tracking-[-0.01em] text-paper transition-colors duration-300 group-hover:text-terracotta sm:text-2xl">
+            <span className="font-sentient text-xl tracking-[-0.01em] text-paper transition-colors duration-300 group-hover:text-blush sm:text-2xl">
               {FOOTER.instagramHandle}
             </span>
           </span>

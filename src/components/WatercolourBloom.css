@@ -16,30 +16,48 @@
    wash into a tall sliver instead of a round bloom. A single circle radius
    keyed to viewport width keeps each wash a natural, round blob regardless
    of how tall the section behind it is. */
+/* Layered per the reference photograph's pigment field. Blooms sit in
+   hue-adjacent clusters (apricot→butter→yellow-green warm arc; blush→rose→
+   lilac→periwinkle cool arc) so their soft edges only ever overlap a
+   neighbouring hue — never a complement — and stay luminous instead of
+   averaging to grey. Near-white cream cores are listed FIRST (top layer)
+   over the spots where clusters meet, echoing the reference's white
+   breathing space. */
 .wcb-static {
   background-image:
-    radial-gradient(circle 34vw at 16% 26%, rgba(246,206,196, 0.40), transparent 72%),
-    radial-gradient(circle 28vw at 88% 14%, rgba(242,194,207, 0.36), transparent 72%),
-    radial-gradient(circle 32vw at 85% 84%, rgba(217,222,193, 0.32), transparent 72%),
-    radial-gradient(circle 29vw at 8% 88%, rgba(158,201,223, 0.16), transparent 72%),
-    radial-gradient(circle 27vw at 62% 8%, rgba(217,222,193, 0.28), transparent 72%),
-    radial-gradient(circle 30vw at 99% 50%, rgba(242,194,207, 0.30), transparent 72%),
-    radial-gradient(circle 24vw at 36% 52%, rgba(216,198,234, 0.22), transparent 74%),
-    radial-gradient(circle 22vw at 45% 96%, rgba(247,212,174, 0.26), transparent 74%),
-    radial-gradient(circle 20vw at 68% 42%, rgba(232,167,148, 0.16), transparent 74%);
+    radial-gradient(circle 20vw at 46% 40%, rgba(255,252,242, 0.36), transparent 72%),
+    radial-gradient(circle 18vw at 70% 78%, rgba(255,252,242, 0.28), transparent 72%),
+    radial-gradient(circle 34vw at 16% 26%, rgba(247,195,148, 0.36), transparent 72%),
+    radial-gradient(circle 26vw at 30% 14%, rgba(240,228,158, 0.32), transparent 72%),
+    radial-gradient(circle 28vw at 42% 28%, rgba(228,230,156, 0.30), transparent 72%),
+    radial-gradient(circle 20vw at 50% 20%, rgba(206,212,132, 0.20), transparent 74%),
+    radial-gradient(circle 28vw at 88% 14%, rgba(244,196,210, 0.34), transparent 72%),
+    radial-gradient(circle 22vw at 80% 28%, rgba(238,158,190, 0.22), transparent 74%),
+    radial-gradient(circle 30vw at 99% 50%, rgba(210,196,232, 0.28), transparent 72%),
+    radial-gradient(circle 32vw at 85% 84%, rgba(228,230,156, 0.28), transparent 72%),
+    radial-gradient(circle 24vw at 72% 92%, rgba(240,228,158, 0.24), transparent 74%),
+    radial-gradient(circle 29vw at 8% 88%, rgba(216,218,236, 0.24), transparent 72%),
+    radial-gradient(circle 24vw at 20% 74%, rgba(210,196,232, 0.24), transparent 74%),
+    radial-gradient(circle 24vw at 36% 52%, rgba(244,196,210, 0.24), transparent 74%),
+    radial-gradient(circle 22vw at 45% 96%, rgba(238,158,190, 0.24), transparent 74%),
+    radial-gradient(circle 20vw at 56% 88%, rgba(244,196,210, 0.22), transparent 74%);
 }
 
 /* Warmer recipe for sections sitting on the deeper `paper-deep` ground
-   (Packages/Enquire) — leans on the palette's sunlit side (apricot, blush,
-   sage glow) so the wash reads as warm light rather than compounding with
-   the cooler base into a muddy grey. */
+   (Packages/Enquire) — leans on the sunlit arc (apricot, butter, the
+   yellow-green glow) with blush/rose accents, so the wash reads as warm
+   light rather than compounding with the cooler base into a muddy grey. */
 .wcb-warm {
   background-image:
-    radial-gradient(circle 32vw at 14% 20%, rgba(246,206,196, 0.32), transparent 72%),
-    radial-gradient(circle 30vw at 90% 12%, rgba(247,212,174, 0.34), transparent 72%),
-    radial-gradient(circle 30vw at 86% 86%, rgba(217,222,193, 0.30), transparent 72%),
-    radial-gradient(circle 26vw at 6% 86%, rgba(242,194,207, 0.30), transparent 72%),
-    radial-gradient(circle 24vw at 60% 6%, rgba(217,222,193, 0.26), transparent 72%),
-    radial-gradient(circle 22vw at 40% 98%, rgba(216,198,234, 0.16), transparent 74%),
-    radial-gradient(circle 20vw at 70% 46%, rgba(247,212,174, 0.22), transparent 74%);
+    radial-gradient(circle 18vw at 52% 34%, rgba(255,252,242, 0.32), transparent 72%),
+    radial-gradient(circle 32vw at 14% 20%, rgba(247,195,148, 0.32), transparent 72%),
+    radial-gradient(circle 26vw at 32% 10%, rgba(240,228,158, 0.30), transparent 72%),
+    radial-gradient(circle 30vw at 90% 12%, rgba(244,196,210, 0.30), transparent 72%),
+    radial-gradient(circle 22vw at 78% 26%, rgba(238,158,190, 0.20), transparent 74%),
+    radial-gradient(circle 30vw at 86% 86%, rgba(228,230,156, 0.28), transparent 72%),
+    radial-gradient(circle 22vw at 70% 94%, rgba(240,228,158, 0.24), transparent 74%),
+    radial-gradient(circle 26vw at 6% 86%, rgba(210,196,232, 0.26), transparent 72%),
+    radial-gradient(circle 20vw at 22% 96%, rgba(216,218,236, 0.20), transparent 74%),
+    radial-gradient(circle 24vw at 60% 6%, rgba(228,230,156, 0.24), transparent 72%),
+    radial-gradient(circle 20vw at 44% 62%, rgba(244,196,210, 0.22), transparent 74%);
 }
