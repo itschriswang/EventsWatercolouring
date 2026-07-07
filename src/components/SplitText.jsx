@@ -34,39 +34,35 @@ import { SPRING } from '../lib/site.js'
 // one way, and a plain hash tends to clump several same-sign tilts in a row —
 // especially visible under the italic emphasis cut, where a run of right-leaning
 // glyphs reads as the whole word tipping over. The hash still sets each letter's
-// magnitude (2.5°–12°) and baseline lift, so the alternation stays organic
-// rather than a perfect metronome.
+// magnitude and baseline lift, so the alternation stays organic rather than a
+// perfect metronome.
+//
+// Angle magnitude is kept gentle (2°–7°). Rotating a glyph about its centre
+// doesn't change its average advance — it swings the top one way and the foot
+// the other, so counter-leaning neighbours meet in a wedge (a gap that opens at
+// the cap and pinches at the baseline). Wide angles turn that wedge severe and
+// the line reads as scattered debris; a gentle tilt keeps the hand-lettered
+// life while the letters still nest cleanly, the way the reference wordmark
+// does.
 const jitter = (li, gi) => {
   const h1 = Math.sin((li + 1) * 127.1 + (gi + 1) * 311.7) * 43758.5453
   const h2 = Math.sin((li + 1) * 269.5 + (gi + 1) * 183.3) * 24634.6345
   const r1 = h1 - Math.floor(h1)
   const r2 = h2 - Math.floor(h2)
   const dir = (gi + li) % 2 === 0 ? 1 : -1
-  return { rotate: dir * (2.5 + r1 * 9.5), lift: (r2 - 0.5) * 0.09 }
+  return { rotate: dir * (2 + r1 * 5), lift: (r2 - 0.5) * 0.07 }
 }
 
-// Kerning compensation for the tilt. The display face is set with heavy
-// negative tracking (.display-xl: -0.11em) so upright glyphs nestle and
-// overlap like the hand-lettered reference. But each glyph is then rotated in
-// place about its centre, which swings its vertical side-bearings sideways by
-// ~sin(angle)·(capHeight/2): a tilted letter's near edge juts toward its
-// neighbour and, against that tight tracking, stabs into it — while the seam
-// where two letters lean apart yawns open. That uneven collide/gap is what
-// reads as "a mess" next to the reference, where every pair was re-kerned once
-// its rotation was set.
-//
-// So we do the same, deterministically: give each glyph symmetric horizontal
-// margin proportional to how far its own tilt swings its edges out, handing
-// back just enough of the negative tracking to clear the jut. Upright glyphs
-// (sin≈0) stay fully nestled; the more a letter leans, the more air it earns,
-// and a seam of two leaning letters sums both — evening the optical rhythm the
-// way hand-kerning does. CAP_HALF is half the cap height as a fraction of the
-// em; KERN scales how much of the geometric jut to give back (tuned so a
-// max-tilt pair clears without unpicking the overlap).
-const CAP_HALF = 0.35
-const KERN = 0.62
-const kernEm = (rotateDeg) =>
-  KERN * CAP_HALF * Math.sin(Math.abs(rotateDeg) * (Math.PI / 180))
+// Overlap. The reference wordmark isn't a row of spaced letters — successive
+// characters tuck into one another so the title reads as one drawn mark. The
+// display face already carries heavy negative tracking (.display-xl: -0.11em),
+// but the round marker glyphs still want more to genuinely overlap, so every
+// split glyph gets a small extra negative margin on each side. It rides on top
+// of letter-spacing (not instead of it) and is symmetric so it never shoves a
+// glyph off its own centre — it only closes the seams. word-spacing on the face
+// buys the inter-word gaps back, so tightening here nestles letters without
+// running the words together.
+const OVERLAP = 0.038 // em pulled off each side of every glyph
 
 export default function SplitText({
   lines = [],
@@ -92,13 +88,12 @@ export default function SplitText({
   // position:relative/top so it never fights the y spring. Spaces stay unshifted.
   const glyphStyle = (li, gi) => {
     const j = jitter(li, gi)
-    const k = kernEm(j.rotate)
     return {
       rotate: j.rotate,
       position: 'relative',
       top: `${j.lift}em`,
-      marginLeft: `${k}em`,
-      marginRight: `${k}em`,
+      marginLeft: `-${OVERLAP}em`,
+      marginRight: `-${OVERLAP}em`,
     }
   }
 
