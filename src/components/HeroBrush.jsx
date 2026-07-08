@@ -20,9 +20,10 @@ import { webglSupported, getContext, createQuadProgram, resizeCanvas } from '../
  * motion-friendly, WebGL-capable devices — it renders nothing anywhere else.
  */
 
-const N = 16 // max simultaneous pigment samples (uniform array length)
+const N = 28 // max simultaneous pigment samples (uniform array length)
 const LIFE = 1300 // ms a stroke takes to dry out
-const MIN_STEP = 0.012 // min normalised travel before dropping a new sample
+const MIN_STEP = 0.007 // min normalised travel before dropping a new sample
+const MAX_STEPS_PER_MOVE = 10 // cap on interpolated dabs laid down per pointermove
 
 const FRAG = `
   precision mediump float;
@@ -76,8 +77,10 @@ const FRAG = `
       float age = pt.z;
       // A real watercolour dab lands small and blooms outward as the pigment
       // wicks into the paper, then fades as it dries — not a wide splash from
-      // the first instant.
-      float radius = mix(0.012, 0.04, age);
+      // the first instant. Radius is generous enough that consecutive dabs
+      // along a stroke overlap into a continuous ribbon rather than reading
+      // as separated dots.
+      float radius = mix(0.02, 0.055, age);
       float body = smoothstep(radius, 0.0, dist) * (1.0 - age);
       vec3 col = pigment(pt.w + age * 0.15);
       // Layer this bloom over what's built up so far (oldest to newest, so
@@ -169,16 +172,36 @@ export default function HeroBrush() {
       const r = canvas.getBoundingClientRect()
       const x = (e.clientX - r.left) / r.width
       const y = (e.clientY - r.top) / r.height
-      if (lastX >= 0) {
-        const dx = x - lastX
-        const dy = y - lastY
-        if (dx * dx + dy * dy < MIN_STEP * MIN_STEP) return
+      const now = performance.now()
+
+      if (lastX < 0) {
+        lastX = x
+        lastY = y
+        seed = (seed + 0.13) % 1
+        pts.push({ x, y, born: now, seed })
+        if (pts.length > N) pts.shift()
+        wake()
+        return
       }
+
+      const dx = x - lastX
+      const dy = y - lastY
+      const dist = Math.sqrt(dx * dx + dy * dy)
+      if (dist < MIN_STEP) return
+
+      // Pointermove events thin out as the cursor speeds up, so a single dab
+      // per event left visible gaps — a "trail of dots" instead of a ribbon.
+      // Lay down evenly spaced dabs along the travelled segment instead.
+      const steps = Math.min(Math.ceil(dist / MIN_STEP), MAX_STEPS_PER_MOVE)
+      for (let i = 1; i <= steps; i++) {
+        const t = i / steps
+        seed = (seed + 0.13) % 1
+        pts.push({ x: lastX + dx * t, y: lastY + dy * t, born: now, seed })
+      }
+      while (pts.length > N) pts.shift()
+
       lastX = x
       lastY = y
-      seed = (seed + 0.13) % 1
-      pts.push({ x, y, born: performance.now(), seed })
-      if (pts.length > N) pts.shift()
       wake()
     }
 
