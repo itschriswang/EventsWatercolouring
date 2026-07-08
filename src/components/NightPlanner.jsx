@@ -75,20 +75,25 @@ export default function NightPlanner() {
                   // to miss as clickable — a slowly rotating aurora ring (the
                   // hero action-surface's own hues) gives every option a visible,
                   // "press me" outline rather than only the selected one standing
-                  // out. `.gradient-frame`'s padding sets the ring width; the
-                  // conic gradient supplies the moving colour.
+                  // out. `.gradient-frame`'s mask hides its own content box, so
+                  // the ring has to live on a separate, empty layer — putting
+                  // the mask on the button itself masked the number right along
+                  // with it. That layer is outset a hair beyond the pill (not
+                  // inset-0) so the pill's opaque fill, which is exactly the
+                  // button's own box, doesn't paint straight over the ring.
                   <button
                     key={h}
                     type="button"
                     onClick={() => setHours(h)}
                     aria-pressed={false}
-                    className="gradient-frame rounded-full p-[1.5px]"
-                    style={{
-                      background:
-                        'conic-gradient(from var(--gf-angle), #BFDCD1, #D4B6E6, #D8DB7A, #F2A6C1, #E88FA4, #BFDCD1)',
-                    }}
+                    className="relative rounded-full"
                   >
-                    <span className="flex items-center justify-center rounded-full bg-paper px-[calc(1rem-1.5px)] py-[calc(0.375rem-1.5px)] font-mono text-sm text-ink-soft transition-colors duration-300 hover:text-ink">
+                    <span
+                      aria-hidden="true"
+                      className="gradient-frame absolute -inset-[1.5px] rounded-full p-[1.5px]"
+                      style={{ background: 'var(--hero-emphasis-gradient-conic)' }}
+                    />
+                    <span className="relative flex items-center justify-center rounded-full bg-paper px-4 py-1.5 font-mono text-sm text-ink-soft transition-colors duration-300 hover:text-ink">
                       {h}
                     </span>
                   </button>

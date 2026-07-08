@@ -116,7 +116,7 @@ export default function AboutMe() {
 
           {/* Title + bio + signature — left on mobile, right on desktop */}
           <div className="relative col-span-12 sm:col-span-6 sm:col-start-1 lg:col-span-6 lg:col-start-7 order-1 sm:order-none lg:order-none lg:pl-4">
-            <Sparkles variant="burst" className="absolute -top-4 right-0 h-14 w-14 text-terracotta/80 lg:hidden" />
+            <Sparkles variant="burst" className="absolute -top-4 right-0 h-14 w-14 lg:hidden" />
             <Label gradient={['#FFCDA1', '#E89B63']}>{PAINTER.label}</Label>
             <SplitText
               as="h2"
