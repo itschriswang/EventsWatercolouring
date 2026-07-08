@@ -183,13 +183,13 @@
     font-family: theme('fontFamily.sentient');
     font-weight: 400;
     font-size: clamp(2.25rem, 6vw, 6rem);
-    line-height: 0.95;
+    line-height: 0.80;
     /* Letters nestle tighter than the other display sizes so the hero
        wordmark reads like the hand-lettered reference (glyphs overlapping).
        `word-spacing` then buys the gap between words back so the tighter
        tracking doesn't run the words together. */
     letter-spacing: -0.11em;
-    word-spacing: 0.34em;
+    word-spacing: 0.20em;
     text-shadow:
       0 0 0.045em rgba(255, 249, 236, 0.98),
       0 0 0.1em rgba(252, 233, 205, 0.9),
