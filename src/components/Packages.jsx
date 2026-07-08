@@ -284,7 +284,12 @@ export default function Packages() {
           </span>
           <span>
             <span className="block font-sentient text-xl tracking-[-0.02em] text-ink sm:text-2xl">
-              {withUnderline('Got a question? Read the FAQ', 'FAQ', { className: 'text-terracotta' })}
+              {withUnderline('Got a question? Read the FAQ', 'FAQ', {
+                // The gradient fill clips text to transparent, so the
+                // underline (which defaults to currentColor) needs its own
+                // explicit stroke or it would vanish along with it.
+                className: 'text-hero-flow [--underline-stroke:var(--c-terracotta)]',
+              })}
             </span>
             <span className="mt-1 block text-sm text-ink-soft">
               Booking, travel, timing and materials, all answered plainly.
