@@ -136,7 +136,7 @@ export const PAINTER = {
   portraitWebp: 'assets/portrait-christopher.webp',
   caption: 'Chris Wang',
   body: [
-    'I am Christopher. I grew up in Sydney and I am based in Melbourne now, and I have been painting in watercolour for more than ten years.',
+    'I am Chris. I grew up in Sydney and I am based in Melbourne now, and I have been painting in watercolour for more than ten years.',
     'Painting live at a wedding is the part I love most. Special moments with each guest, a small portrait made by hand while the night carries on, and something real to take home at the end.',
     'I travel across Melbourne and Australia-wide for weddings, corporate events, brand activations, and private celebrations.',
   ],
