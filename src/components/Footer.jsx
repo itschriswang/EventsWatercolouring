@@ -71,16 +71,17 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
         <a
           href={enquireHref}
           className="group block"
-          // The CTA words are paper-white on the dark footer, so the "keep"
-          // underline can't ride currentColor or it disappears into the
-          // letters. Paint the stroke in the accent instead — it inherits
-          // down to <Underline>'s path via --underline-stroke. This word
-          // also sits in the display-lg heading (line-height 0.95, tighter
-          // than the body copy the default offset is tuned for), so the
-          // stroke needs to sit further below the baseline or it crosses
-          // straight through the "p" descender — push it down via
-          // --underline-offset.
-          style={{ '--underline-stroke': 'var(--c-terracotta)', '--underline-offset': '-0.26em' }}
+          // Leave --underline-stroke unset so "keep" picks up <Underline>'s
+          // own default — the two-colour pastel flow wash (pickFlowPair),
+          // same as EveningTimeline's dark-ground underline. Those raw
+          // swatches read fine against the dusk footer; only the deepened
+          // text tokens (terracotta/rust) need the ivory-paper contrast
+          // treatment. This word sits in the display-lg heading
+          // (line-height 0.95, tighter than the body copy the default
+          // offset is tuned for), so the stroke still needs to sit further
+          // below the baseline or it crosses straight through the "p"
+          // descender — push it down via --underline-offset.
+          style={{ '--underline-offset': '-0.26em' }}
         >
           <SplitText
             as="p"
