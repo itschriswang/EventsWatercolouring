@@ -159,7 +159,6 @@ export default function Hero({ revealed }) {
                 playOnMount
                 lines={isMobile ? HERO.linesMobile : HERO.lines}
                 emphasis={isMobile ? HERO.emphasisMobile : HERO.emphasis}
-                emphasisItalic
                 // The accent word carries the action-surface's continuous
                 // flow — a real clipped gradient, not per-letter swatches —
                 // in the true palette voices: Seafoam, Lavender, Lemon Lime
