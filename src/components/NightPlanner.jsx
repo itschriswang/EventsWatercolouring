@@ -66,7 +66,7 @@ export default function NightPlanner() {
                     type="button"
                     onClick={() => setHours(h)}
                     aria-pressed
-                    className="btn-aurora rounded-full px-4 py-1.5 font-mono text-sm text-paper shadow-[0_8px_18px_-8px_rgba(94,74,140,0.5)]"
+                    className="btn-aurora rounded-full px-4 py-1.5 font-mono text-sm text-ink shadow-[0_8px_18px_-8px_rgba(94,74,140,0.5)]"
                   >
                     {h}
                   </button>
@@ -162,7 +162,7 @@ export default function NightPlanner() {
             onClick={() =>
               window.dispatchEvent(new CustomEvent('ew:planner-enquire', { detail: { hours } }))
             }
-            className="group btn-aurora mt-6 inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-paper"
+            className="group btn-aurora mt-6 inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-ink"
           >
             {p.cta}
             <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">

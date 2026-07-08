@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useId, useMemo, useRef, useState } from 'react'
 import { motion, useReducedMotion, useInView } from 'framer-motion'
 
 // Six hand-drawn squiggle paths (viewBox 0 0 310 40), adapted from the
@@ -26,6 +26,24 @@ function hash(str) {
 // stroke on the next, without the shape jittering while you're looking at it.
 const MINUTE_SEED = new Date().getMinutes()
 
+// The same five pigments the hero headline's flow gradient is built from
+// (see GradientDefs.jsx / `--hero-emphasis-gradient`). Rather than painting
+// every underline with the full six-stop rainbow — messy at this stroke
+// width — each underline picks just two of these to blend between, so it
+// still echoes the site's palette without the busy multi-hue wash.
+const FLOW_COLORS = ['#9ED0BD', '#C18DE1', '#D8DC4B', '#F674A2', '#EB5E7F']
+
+// Deterministically picks two distinct colours from FLOW_COLORS for a given
+// phrase — stable for the life of the page load, reseeded minute to minute
+// (same cadence as the squiggle pick above) so it doesn't feel static across
+// visits without ever jittering mid-view.
+function pickFlowPair(text) {
+  const h = hash(text) + MINUTE_SEED
+  const i = h % FLOW_COLORS.length
+  const j = (i + 1 + (h % (FLOW_COLORS.length - 1))) % FLOW_COLORS.length
+  return [FLOW_COLORS[i], FLOW_COLORS[j]]
+}
+
 /**
  * A hand-drawn underline beneath a short keyword or phrase. It's drawn in
  * once the word scrolls into view; hovering erases it — the reverse of the
@@ -40,6 +58,8 @@ export default function Underline({ children, seed, className = '' }) {
 
   const text = seed ?? (typeof children === 'string' ? children : '')
   const d = useMemo(() => PATHS[(hash(text) + MINUTE_SEED) % PATHS.length], [text])
+  const [flowFrom, flowTo] = useMemo(() => pickFlowPair(text), [text])
+  const gradId = `underline-flow-${useId()}`
 
   const drawn = reduce || (inView && !hovered)
 
@@ -55,17 +75,29 @@ export default function Underline({ children, seed, className = '' }) {
         aria-hidden="true"
         viewBox="0 0 310 40"
         preserveAspectRatio="none"
-        className="pointer-events-none absolute inset-x-0 -bottom-[0.08em] h-[0.32em] w-full overflow-visible"
+        // The offset defaults to a small clearance tuned for body-sized
+        // copy; display-sized headings (e.g. the footer's "keep.") compress
+        // their line-height tighter than their glyphs' descenders, so a
+        // caller in that context overrides `--underline-offset` to push the
+        // stroke further down and clear of the letterforms.
+        className="pointer-events-none absolute inset-x-0 h-[0.32em] w-full overflow-visible"
+        style={{ bottom: 'var(--underline-offset, -0.08em)' }}
       >
+        <defs>
+          <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor={flowFrom} />
+            <stop offset="100%" stopColor={flowTo} />
+          </linearGradient>
+        </defs>
         <motion.path
           d={d}
           fill="none"
-          // Defaults to the hero title's own gradient wash (every hand-drawn
-          // underline on the site echoes the headline's "painted" flow), but
-          // a caller can paint a flat stroke instead via `--underline-stroke`
-          // — used in the footer, where the word itself is paper-white and
-          // needs a plain stroke to stay legible against the dusk ground.
-          stroke="var(--underline-stroke, url(#hero-flow-gradient))"
+          // Defaults to a two-colour slice of the hero flow's own palette
+          // (picked per-phrase above), but a caller can paint a flat stroke
+          // instead via `--underline-stroke` — used in the footer, where the
+          // word itself is paper-white and needs a plain stroke to stay
+          // legible against the dusk ground.
+          stroke={`var(--underline-stroke, url(#${gradId}))`}
           strokeWidth="10"
           strokeLinecap="round"
           initial={false}

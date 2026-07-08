@@ -24,7 +24,7 @@ export default function MagneticButton({
   const palette =
     variant === 'paper'
       ? 'bg-paper text-ink hover:bg-terracotta hover:text-paper'
-      : 'btn-aurora text-paper'
+      : 'btn-aurora text-ink'
 
   return (
     <motion.a
