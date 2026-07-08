@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
+import GradientDefs from '../components/GradientDefs.jsx'
 import GrainOverlay from '../components/GrainOverlay.jsx'
 import ScrollProgress from '../components/ScrollProgress.jsx'
 import SiteHeader from '../components/SiteHeader.jsx'
@@ -41,6 +42,7 @@ export default function CorporatePage() {
 
   return (
     <div className="relative min-h-screen bg-paper">
+      <GradientDefs />
       <GrainOverlay />
       <ScrollProgress />
       <SiteHeader revealed enquireHref="#enquiry" />
@@ -67,7 +69,7 @@ export default function CorporatePage() {
               <div className="relative mt-5">
                 <Sparkles
                   delay={0.6}
-                  className="absolute -top-7 right-[8%] hidden h-12 w-12 text-ochre sm:block"
+                  className="absolute -top-7 right-[8%] hidden h-12 w-12 sm:block"
                 />
                 <SplitText
                   as="h1"

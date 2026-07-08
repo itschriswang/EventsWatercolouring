@@ -3,10 +3,12 @@ import { motion, useReducedMotion, useInView } from 'framer-motion'
 
 // A hand-drawn sparkle cluster — one tall four-point twinkle, a smaller one
 // at its shoulder, and a stray tick — sharing the Underline squiggles'
-// brush language: slightly wobbly strokes, round caps, currentColor. Each
-// stroke wicks in with a pathLength draw once the cluster scrolls into
-// view, staggered so the cluster reads as dotted onto the page one flick
-// at a time. Reduced-motion gets the static drawing.
+// brush language: slightly wobbly strokes, round caps, painted with the
+// hero title's own gradient wash (#hero-flow-gradient, see GradientDefs.jsx)
+// rather than a flat pigment. Each stroke wicks in with a pathLength draw
+// once the cluster scrolls into view, staggered so the cluster reads as
+// dotted onto the page one flick at a time. Reduced-motion gets the static
+// drawing.
 const STROKES = [
   // Big twinkle — vertical then horizontal
   { d: 'M36 24Q37.8 39 36.2 52Q35.2 64 36.9 76', delay: 0 },
@@ -44,7 +46,7 @@ export default function Sparkles({ className = '', delay = 0, variant = 'twinkle
       >
         <motion.path
           d={BURST_STAR}
-          fill="currentColor"
+          fill="url(#hero-flow-gradient)"
           initial={false}
           animate={
             drawn
@@ -60,7 +62,7 @@ export default function Sparkles({ className = '', delay = 0, variant = 'twinkle
         />
         <motion.path
           d={BURST_TICK.d}
-          stroke="currentColor"
+          stroke="url(#hero-flow-gradient)"
           strokeWidth="5.5"
           strokeLinecap="round"
           initial={false}
@@ -87,7 +89,7 @@ export default function Sparkles({ className = '', delay = 0, variant = 'twinkle
         <motion.path
           key={i}
           d={s.d}
-          stroke="currentColor"
+          stroke="url(#hero-flow-gradient)"
           strokeWidth="5.5"
           strokeLinecap="round"
           initial={false}

@@ -73,16 +73,31 @@
     /* The hero headline's own emphasis flow (see Hero.jsx's `emphasisColors`
        on "painted") — Seafoam into Lavender into a Lemon Lime plateau, out
        through Blossom to Rose. Shared as a token so any other short emphasis
-       word (FAQ, "your day") can wear the same wash via `.text-hero-flow`
-       without re-deriving the stops. */
+       word (FAQ, "your day"), ring, doodle or underline can wear the same
+       wash via `.text-hero-flow` / `.gradient-frame` / `#hero-flow-gradient`
+       without re-deriving the stops. Deepened ~1 shade off the raw swatch
+       sheet (more saturation, a little less lightness) — the swatch values
+       verbatim read as a light, washed-out pastel once thinned to a stroke
+       or clipped to type, especially over the cream paper ground. */
     --hero-emphasis-gradient: linear-gradient(
       to right,
-      #BFDCD1 0%,
-      #D4B6E6 22%,
-      #D8DB7A 38%,
-      #D8DB7A 62%,
-      #F2A6C1 78%,
-      #E88FA4 100%
+      #9ED0BD 0%,
+      #C18DE1 22%,
+      #D8DC4B 38%,
+      #D8DC4B 62%,
+      #F674A2 78%,
+      #EB5E7F 100%
+    );
+    /* Same wash, wrapped for a rotating ring (`.gradient-frame`) — the first
+       stop repeats at the end so the loop has no seam. */
+    --hero-emphasis-gradient-conic: conic-gradient(
+      from var(--gf-angle),
+      #9ED0BD,
+      #C18DE1,
+      #D8DC4B,
+      #F674A2,
+      #EB5E7F,
+      #9ED0BD
     );
   }
 

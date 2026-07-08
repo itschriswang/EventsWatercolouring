@@ -1,12 +1,11 @@
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import SplitText from './SplitText.jsx'
 import MagneticButton from './MagneticButton.jsx'
 import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset, ENQUIRE_HREF } from '../lib/site.js'
 import { HERO } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
-import HeroFlurry, { flurryWillPlay, FLURRY_HANDOFF_DELAY, FLURRY_HANDOFF_DELAY_2 } from './HeroFlurry.jsx'
 import Sparkles from './Sparkles.jsx'
 import { withUnderline } from './Underline.jsx'
 import BloomFilter from './WetBloom.jsx'
@@ -18,43 +17,18 @@ export default function Hero({ revealed }) {
   const isMobile = useMediaQuery('(max-width: 639px)')
   const ref = useRef(null)
 
-  // The two hero-card boxes the flurry's survivors land on. Measured by
-  // HeroFlurry so the flying studies grow into these exact positions.
-  const charRef = useRef(null)
-  const bouquetRef = useRef(null)
-
-  // Whether the load flurry will play. When it does, these two cards are
-  // *delivered* by it — they simply fade in as the survivor lands on them,
-  // rather than running their own fly-in. Stable for the session (session /
-  // hash gate), combined with the live reduced-motion signal.
-  const [flurrySession] = useState(() => flurryWillPlay())
-  const flurryPlays = revealed && !reduce && flurrySession
-
-  // The hero card entrance. Under the flurry it's a quiet fade in place (the
-  // survivor supplies the motion); otherwise the original rise-and-settle.
-  const cardEntrance = (rot, delay, handoff) => {
-    if (!revealed) {
-      return {
-        initial: { opacity: 0, y: reduce ? 0 : 52, rotate: reduce ? 0 : rot },
-        animate: { opacity: 0 },
-        transition: { ...SPRING_SOFT, delay },
-      }
-    }
-    if (flurryPlays) {
-      return {
-        initial: { opacity: 0, y: 0, rotate: rot },
-        animate: { opacity: 1, y: 0, rotate: rot },
-        transition: { duration: 0.55, delay: handoff, ease: [0.22, 0.61, 0.36, 1] },
-      }
-    }
-    return {
-      initial: { opacity: 0, y: reduce ? 0 : 52, rotate: reduce ? 0 : rot },
-      animate: { opacity: 1, y: 0, rotate: reduce ? 0 : rot },
-      transition: { ...SPRING_SOFT, delay },
-    }
-  }
-  const charEntrance = cardEntrance(-6, 0.8, FLURRY_HANDOFF_DELAY)
-  const bouquetEntrance = cardEntrance(3, 0.95, FLURRY_HANDOFF_DELAY_2)
+  // The hero card entrance — a rise-and-settle from below, staggered so the
+  // bouquet lands a beat after the character study. Stays put (just hidden)
+  // until the preloader hands over, then rises into place.
+  const cardEntrance = (rot, delay) => ({
+    initial: { opacity: 0, y: reduce ? 0 : 52, rotate: reduce ? 0 : rot },
+    animate: revealed
+      ? { opacity: 1, y: 0, rotate: reduce ? 0 : rot }
+      : { opacity: 0 },
+    transition: { ...SPRING_SOFT, delay },
+  })
+  const charEntrance = cardEntrance(-6, 0.8)
+  const bouquetEntrance = cardEntrance(3, 0.95)
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end start'],
@@ -81,18 +55,6 @@ export default function Hero({ revealed }) {
       ref={ref}
       className="relative w-full overflow-x-clip px-[5vw] pb-[clamp(2.5rem,5vw,4.5rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-8"
     >
-      {/* Load flourish: the body of work swirls in a cylinder and drifts down
-          toward the gallery, leaving the two studies below. Self-gating —
-          plays once per session, sits out reduced-motion, and unmounts after. */}
-      {revealed && (
-        <HeroFlurry
-          heroTargets={[
-            { ref: charRef, img: 'art-character-boy', tilt: -6 },
-            { ref: bouquetRef, img: 'art-bouquet', tilt: 3 },
-          ]}
-        />
-      )}
-
       {/* Static bloom field — soft pigment halos in the site's own warm
           pigments, settled into the margins. One cheap paint on every device;
           the WebGL aurora it replaces cost 50KB and continuous GPU time to
@@ -187,7 +149,7 @@ export default function Hero({ revealed }) {
               finishing flick, not part of the type reveal. */}
           <Sparkles
             delay={1.1}
-            className="absolute -top-6 right-[6%] hidden h-12 w-12 text-ochre sm:block"
+            className="absolute -top-6 right-[6%] hidden h-12 w-12 sm:block"
           />
           <motion.div style={parallax ? { y: copyY } : {}}>
             {revealed && (
@@ -255,17 +217,12 @@ export default function Hero({ revealed }) {
                 >
                   <CornerBloom from="rgba(242,194,207,0.15)" to="rgba(142,99,184,0.11)" overlay />
                   {wick && (
-                    <BloomFilter
-                      id="hero-wick-1"
-                      dur="1.2s"
-                      begin={flurryPlays ? `${FLURRY_HANDOFF_DELAY}s` : '0.8s'}
-                    />
+                    <BloomFilter id="hero-wick-1" dur="1.2s" begin="0.8s" />
                   )}
                   <div className="relative z-10">
                     <picture>
                       <source srcSet={asset('assets/art-character-boy.webp')} type="image/webp" />
                       <img
-                        ref={charRef}
                         src={asset('assets/art-character-boy.jpg')}
                         alt="A small watercolour character study at the palette."
                         style={wick ? { filter: 'url(#hero-wick-1)' } : undefined}
@@ -296,17 +253,12 @@ export default function Hero({ revealed }) {
                 >
                   <CornerBloom from="rgba(247,195,148,0.20)" to="rgba(242,194,207,0.14)" overlay />
                   {wick && (
-                    <BloomFilter
-                      id="hero-wick-2"
-                      dur="1.2s"
-                      begin={flurryPlays ? `${FLURRY_HANDOFF_DELAY_2}s` : '0.95s'}
-                    />
+                    <BloomFilter id="hero-wick-2" dur="1.2s" begin="0.95s" />
                   )}
                   <div className="relative z-10">
                     <picture>
                       <source srcSet={asset('assets/art-bouquet.webp')} type="image/webp" />
                       <img
-                        ref={bouquetRef}
                         src={asset('assets/art-bouquet.jpg')}
                         alt="A watercolour bouquet study held to the light."
                         style={wick ? { filter: 'url(#hero-wick-2)' } : undefined}
