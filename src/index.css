@@ -54,21 +54,28 @@
        bloom. The LEADING cap flows Seafoam (blue) high into Lavender (purple)
        low; the TRAILING cap flows Blossom (pink) high into Rose (red) low.
        Both wash toward the centre and dissolve into the protected Lemon Lime
-       core (a saturated chartreuse, #CCD06A, deepened under the label so the
-       paper-coloured text keeps contrast). Because the washes are keyed to the
-       caps (x at ±4%/±104%) rather than to fixed points along a fixed-width
-       arc, the whole field scales gracefully — a short nav pill just shows a
-       compressed-but-coherent version of the same cool-left / green-centre /
-       warm-right flow, with no warping. Cool hues (seafoam/lavender) meet the
-       green on the leading side, warm hues (blossom/rose) on the trailing side;
-       the green core stays luminous through the middle so the meeting seams
-       read as watercolour bleed, not grey. */
+       core. Because the washes are keyed to the caps (x at ±4%/±104%) rather
+       than to fixed points along a fixed-width arc, the whole field scales
+       gracefully — a short nav pill just shows a compressed-but-coherent
+       version of the same cool-left / green-centre / warm-right flow, with no
+       warping. Cool hues (seafoam/lavender) meet the green on the leading
+       side, warm hues (blossom/rose) on the trailing side; the green core
+       stays luminous through the middle so the meeting seams read as
+       watercolour bleed, not grey.
+       All five swatches are lightened a step off the raw reference sheet and
+       the core no longer deepens toward near-black at its rim (it used to
+       taper through #71731F/#52541A) — that dark tail was reading as muddy
+       brown where washes overlapped, and every button here labels itself
+       with dark ink text, so a darker core actively fought the label's
+       contrast rather than helping it. The core now stays a light-to-mid
+       chartreuse throughout, which is lighter *and* higher-contrast against
+       ink than the old near-black tail. */
     --btn-aurora-gradient:
-      radial-gradient(58% 135% at 6% 6%, #BFDCD1 0%, rgba(191, 220, 209, 0) 58%),
-      radial-gradient(72% 180% at -4% 60%, #D4B6E6 0%, rgba(212, 182, 230, 0.5) 26%, rgba(212, 182, 230, 0) 56%),
-      radial-gradient(58% 135% at 94% 8%, #F2A6C1 0%, rgba(242, 166, 193, 0) 58%),
-      radial-gradient(72% 180% at 104% 64%, #E88FA4 0%, rgba(232, 143, 164, 0.5) 26%, rgba(232, 143, 164, 0) 56%),
-      radial-gradient(56% 165% at 50% 46%, #CCD06A 0%, #A9AC50 42%, #71731F 80%, #52541A 100%);
+      radial-gradient(58% 135% at 6% 6%, #D0E8DD 0%, rgba(208, 232, 221, 0) 58%),
+      radial-gradient(72% 180% at -4% 60%, #E1C6F0 0%, rgba(225, 198, 240, 0.5) 26%, rgba(225, 198, 240, 0) 56%),
+      radial-gradient(58% 135% at 94% 8%, #F8BDD2 0%, rgba(248, 189, 210, 0) 58%),
+      radial-gradient(72% 180% at 104% 64%, #EFA3B5 0%, rgba(239, 163, 181, 0.5) 26%, rgba(239, 163, 181, 0) 56%),
+      radial-gradient(56% 165% at 50% 46%, #DCE092 0%, #C9CC7C 45%, #B5B968 100%);
 
     /* The hero headline's own emphasis flow (see Hero.jsx's `emphasisColors`
        on "painted") — Seafoam into Lavender into a Lemon Lime plateau, out
@@ -78,14 +85,18 @@
        without re-deriving the stops. Deepened ~1 shade off the raw swatch
        sheet (more saturation, a little less lightness) — the swatch values
        verbatim read as a light, washed-out pastel once thinned to a stroke
-       or clipped to type, especially over the cream paper ground. */
+       or clipped to type, especially over the cream paper ground.
+       Stops (not colours) were retuned so Lavender and Blossom sit further
+       out toward the corners while the Lemon Lime plateau in the middle
+       narrows — the purple→green and pink→red transitions each reach
+       further in toward centre instead of resolving to flat green early. */
     --hero-emphasis-gradient: linear-gradient(
       to right,
       #9ED0BD 0%,
-      #C18DE1 22%,
-      #D8DC4B 38%,
-      #D8DC4B 62%,
-      #F674A2 78%,
+      #C18DE1 14%,
+      #D8DC4B 44%,
+      #D8DC4B 56%,
+      #F674A2 86%,
       #EB5E7F 100%
     );
     /* Same wash, wrapped for a rotating ring (`.gradient-frame`) — the first
