@@ -1,3 +1,4 @@
+import GradientDefs from '../components/GradientDefs.jsx'
 import GrainOverlay from '../components/GrainOverlay.jsx'
 import ScrollProgress from '../components/ScrollProgress.jsx'
 import SiteHeader from '../components/SiteHeader.jsx'
@@ -23,6 +24,7 @@ import { FAQ } from '../content.js'
 export default function FaqPage() {
   return (
     <div className="relative min-h-screen bg-paper">
+      <GradientDefs />
       <GrainOverlay />
       <ScrollProgress />
       <SiteHeader revealed enquireHref="#enquiry" />
