@@ -245,7 +245,7 @@ export default function Hero({ revealed }) {
               </div>
 
               {/* Bouquet — accent card, floats high right (tilts right) */}
-              <div className="relative z-10 -ml-[10%] translate-x-[8%] w-[46%] shrink-0 -translate-y-[14%] sm:translate-x-0 sm:-ml-[10%] sm:w-[48%] lg:w-[54%] sm:-translate-y-[22%] lg:-translate-y-[16%]">
+              <div className="relative z-10 -ml-[10%] translate-x-[16%] w-[46%] shrink-0 -translate-y-[14%] sm:translate-x-0 sm:-ml-[10%] sm:w-[48%] lg:w-[54%] sm:-translate-y-[22%] lg:-translate-y-[16%]">
                 <motion.figure
                   initial={bouquetEntrance.initial}
                   animate={bouquetEntrance.animate}
