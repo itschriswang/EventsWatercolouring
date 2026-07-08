@@ -163,18 +163,21 @@ export default function Hero({ revealed }) {
                 // flow — a real clipped gradient, not per-letter swatches —
                 // in the true palette voices: Seafoam, Lavender, Lemon Lime
                 // (repeated to hold a flat plateau), Blossom, Rose, exactly as
-                // the button and orb. Seafoam/Lavender/Blossom/Rose are
-                // weighted out toward the leading and trailing corners so
-                // blue/purple/pink/red read clearly at the word's edges,
-                // while the purple→green and pink→red transitions are pulled
-                // in closer to centre — narrowing (not removing) the Lemon
-                // Lime plateau so the protected green voice still holds the
-                // middle, just in a tighter band. Those pastels are too light
-                // for the display face's warm backlit glow, so the accent
-                // swaps that glow for a dark tinted drop (approved shadow
-                // palette) and the letters lift off it, reference-style.
-                emphasisColors={['#BFDCD1', '#D4B6E6', '#D8DB7A', '#D8DB7A', '#F2A6C1', '#E88FA4']}
-                emphasisColorStops={[0, 0.14, 0.44, 0.56, 0.86, 1]}
+                // the button and orb. Each of the four rim voices now holds
+                // its own plateau (a repeated stop) stretched out toward the
+                // word's edges, so blue/purple/pink/red each own a wide band
+                // rather than a single instant — and the purple→green and
+                // green→pink blends are squeezed into narrow zones tucked
+                // right up against the centre, where the RGB blend between
+                // Lemon Lime and its neighbour reads muddiest, so the least
+                // possible width is spent on it. The protected Lemon Lime
+                // plateau still holds dead centre, just in a tighter band.
+                // Those pastels are too light for the display face's warm
+                // backlit glow, so the accent swaps that glow for a dark
+                // tinted drop (approved shadow palette) and the letters lift
+                // off it, reference-style.
+                emphasisColors={['#BFDCD1', '#BFDCD1', '#D4B6E6', '#D4B6E6', '#D8DB7A', '#D8DB7A', '#F2A6C1', '#F2A6C1', '#E88FA4', '#E88FA4']}
+                emphasisColorStops={[0, 0.06, 0.16, 0.42, 0.48, 0.52, 0.58, 0.84, 0.94, 1]}
                 className="display-xl text-ink [line-height:0.80] [font-size:clamp(2.75rem,13vw,4.5rem)] lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)]"
               />
             )}

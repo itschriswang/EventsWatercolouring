@@ -69,13 +69,17 @@
        with dark ink text, so a darker core actively fought the label's
        contrast rather than helping it. The core now stays a light-to-mid
        chartreuse throughout, which is lighter *and* higher-contrast against
-       ink than the old near-black tail. */
+       ink than the old near-black tail.
+       All five swatches are lightened a further step (mixed 8-20% toward
+       white, more on the darker core tail where ink-on-fill contrast was
+       weakest) so the dark ink label sits on a lighter ground with more
+       headroom above AA everywhere on the pill, not just at the caps. */
     --btn-aurora-gradient:
-      radial-gradient(58% 135% at 6% 6%, #D0E8DD 0%, rgba(208, 232, 221, 0) 58%),
-      radial-gradient(72% 180% at -4% 60%, #E1C6F0 0%, rgba(225, 198, 240, 0.5) 26%, rgba(225, 198, 240, 0) 56%),
-      radial-gradient(58% 135% at 94% 8%, #F8BDD2 0%, rgba(248, 189, 210, 0) 58%),
-      radial-gradient(72% 180% at 104% 64%, #EFA3B5 0%, rgba(239, 163, 181, 0.5) 26%, rgba(239, 163, 181, 0) 56%),
-      radial-gradient(56% 165% at 50% 46%, #DCE092 0%, #C9CC7C 45%, #B5B968 100%);
+      radial-gradient(58% 135% at 6% 6%, #D4EAE0 0%, rgba(212, 234, 224, 0) 58%),
+      radial-gradient(72% 180% at -4% 60%, #E3CBF1 0%, rgba(227, 203, 241, 0.5) 26%, rgba(227, 203, 241, 0) 56%),
+      radial-gradient(58% 135% at 94% 8%, #F9C2D6 0%, rgba(249, 194, 214, 0) 58%),
+      radial-gradient(72% 180% at 104% 64%, #F1B0BF 0%, rgba(241, 176, 191, 0.5) 26%, rgba(241, 176, 191, 0) 56%),
+      radial-gradient(56% 165% at 50% 46%, #E0E39D 0%, #D2D491 45%, #C4C786 100%);
 
     /* The hero headline's own emphasis flow (see Hero.jsx's `emphasisColors`
        on "painted") — Seafoam into Lavender into a Lemon Lime plateau, out
@@ -86,17 +90,23 @@
        sheet (more saturation, a little less lightness) — the swatch values
        verbatim read as a light, washed-out pastel once thinned to a stroke
        or clipped to type, especially over the cream paper ground.
-       Stops (not colours) were retuned so Lavender and Blossom sit further
-       out toward the corners while the Lemon Lime plateau in the middle
-       narrows — the purple→green and pink→red transitions each reach
-       further in toward centre instead of resolving to flat green early. */
+       Stops (not colours) were retuned so each of the four rim voices holds
+       its own plateau stretched out toward the corners, while the
+       purple→green and green→pink blends are squeezed into narrow bands
+       tucked right against centre — the least width spent on the muddiest
+       part of the blend — and the protected Lemon Lime plateau still holds
+       dead centre, just in a tighter band. */
     --hero-emphasis-gradient: linear-gradient(
       to right,
       #9ED0BD 0%,
-      #C18DE1 14%,
-      #D8DC4B 44%,
-      #D8DC4B 56%,
-      #F674A2 86%,
+      #9ED0BD 6%,
+      #C18DE1 16%,
+      #C18DE1 42%,
+      #D8DC4B 48%,
+      #D8DC4B 52%,
+      #F674A2 58%,
+      #F674A2 84%,
+      #EB5E7F 94%,
       #EB5E7F 100%
     );
     /* Same wash, wrapped for a rotating ring (`.gradient-frame`) — the first

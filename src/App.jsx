@@ -8,7 +8,6 @@ import Preloader from './components/Preloader.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
 import MobileNav from './components/MobileNav.jsx'
 import ScrollProgress from './components/ScrollProgress.jsx'
-import HeroBrush from './components/HeroBrush.jsx'
 import Hero from './components/Hero.jsx'
 import PullQuote from './components/PullQuote.jsx'
 import EveningTimeline from './components/EveningTimeline.jsx'
@@ -70,7 +69,6 @@ export default function App() {
       <GradientDefs />
       <BloomCanvas revealed={revealed} />
       <GrainCanvas />
-      <HeroBrush />
       <Preloader onDone={() => setRevealed(true)} />
 
       <ScrollProgress />
