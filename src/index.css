@@ -275,32 +275,50 @@
 }
 
 @layer utilities {
-  /* Primary action surface — the site's single action surface, driven by
-     `--btn-aurora-gradient` (defined above: a Lemon Lime core with the
-     client's saturated reference swatches — Lavender, Seafoam, Blossom, Rose —
-     pooled as radial blooms at the caps and shoulders, not a linear sweep).
-     Full-cover background so all four rim voices stay present at rest (the
-     earlier 200% size showed only half the field until hover, which is what
-     left the outskirts reading washed-grey). The lift shadow stays in the
-     approved lilac shadow palette (per CLAUDE.md — no green/neutral shadows);
-     hover deepens the lift and nudges saturation so the painted blooms bloom
-     brighter rather than swapping flat colours. */
+  /* Primary action surface — inverted from the original wash-filled pill:
+     the surface itself is now the deep ink ground, and the aurora gradient
+     (`--btn-aurora-gradient`, defined above) has moved onto the label via
+     `.btn-aurora-label`. In its place the surface wears a layered, coloured
+     shadow bloom — lilac and candy rose (both from the approved CLAUDE.md
+     shadow palette, never grey) stacked at increasing blur/spread so the
+     glow reads as a soft halo lifting off the page rather than a single flat
+     drop shadow. Hover nudges both the ink brightness and the bloom's reach
+     (+15% per the CLAUDE.md vibrancy formula). */
   .btn-aurora {
-    background-image: var(--btn-aurora-gradient);
-    background-size: 100% 100%;
+    background-color: theme('colors.ink');
+    background-image: none;
     box-shadow:
-      0 14px 30px -12px rgba(94, 74, 140, 0.5),
-      0 4px 14px -8px rgba(94, 74, 140, 0.45);
+      0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+      0 10px 22px -10px rgba(94, 74, 140, 0.30),
+      0 18px 40px -16px rgba(142, 68, 112, 0.52),
+      0 30px 64px -26px rgba(94, 74, 140, 0.30);
     transition:
       filter 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
       box-shadow 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
   .btn-aurora:hover {
-    filter: saturate(1.1) brightness(1.03);
+    filter: brightness(1.12);
     box-shadow:
-      0 16px 34px -12px rgba(94, 74, 140, 0.62),
-      0 6px 18px -8px rgba(94, 74, 140, 0.55);
+      0 0 0 1px rgba(255, 255, 255, 0.09) inset,
+      0 12px 26px -10px rgba(94, 74, 140, 0.35),
+      0 20px 46px -16px rgba(142, 68, 112, 0.60),
+      0 34px 72px -26px rgba(94, 74, 140, 0.35);
+  }
+
+  /* The label voice for `.btn-aurora`: the aurora gradient clipped to the
+     text itself (same watercolour wash that used to fill the pill), so the
+     dark ground reads as paper and the wording carries the colour. Kept as
+     its own class rather than folded into `.btn-aurora` because the surface
+     often also holds a plain-coloured icon/arrow that should stay a flat
+     tone against the ink ground, not clip the gradient too. */
+  .btn-aurora-label {
+    background-image: var(--btn-aurora-gradient);
+    background-size: 100% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
   /* A short emphasis word painted with the hero headline's own cool-to-warm

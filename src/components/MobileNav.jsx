@@ -34,7 +34,7 @@ function DockButton({ item }) {
         'flex flex-col items-center justify-center gap-[3px] rounded-full select-none',
         'px-3 py-2.5',
         highlight
-          ? 'btn-aurora text-ink px-3.5'
+          ? 'btn-aurora text-paper/70 px-3.5'
           : 'text-ink-soft',
       ].join(' ')}
       whileTap={{ scale: 0.86 }}
@@ -42,7 +42,12 @@ function DockButton({ item }) {
       aria-label={label}
     >
       <Icon />
-      <span className="font-mono text-[0.56rem] uppercase tracking-[0.12em] leading-none whitespace-nowrap">
+      <span
+        className={
+          (highlight ? 'btn-aurora-label ' : '') +
+          'font-mono text-[0.56rem] uppercase tracking-[0.12em] leading-none whitespace-nowrap'
+        }
+      >
         {label}
       </span>
     </motion.a>
