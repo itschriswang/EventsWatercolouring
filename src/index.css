@@ -98,10 +98,10 @@
     --hero-emphasis-gradient: linear-gradient(
       to right,
       #9ED0BD 0%,
-      #C18DE1 8%,
-      #D8DC4B 46%,
-      #D8DC4B 54%,
-      #F674A2 92%,
+      #C18DE1 4%,
+      #D8DC4B 48%,
+      #D8DC4B 52%,
+      #F674A2 96%,
       #EB5E7F 100%
     );
     /* Same wash, wrapped for a rotating ring (`.gradient-frame`) — the first
