@@ -47,9 +47,12 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
       {/* Fireflies night background */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-cover bg-center"
+        className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage: 'url(/assets/fireflies-night.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          imageRendering: 'crisp-edges',
         }}
       />
       {/* Overlay for text readability */}
