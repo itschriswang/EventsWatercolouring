@@ -13,6 +13,17 @@
  * The full six-stop rainbow reads as busy mud at that size (same reasoning
  * Underline's `pickFlowPair` already applies to its squiggles), so each
  * sparkle only ever carries two neighbouring hues.
+ *
+ * These two are pinned to `userSpaceOnUse` across Sparkles' own 0–100
+ * viewBox rather than the default `objectBoundingBox`. Each stroke in that
+ * cluster is its own `<path>`, so objectBoundingBox was mapping the 0–1 ramp
+ * onto every individual stroke's *own* tiny bounding box — for a near-vertical
+ * stroke that box is only a couple of units wide, far narrower than the
+ * 5.5px stroke width painted on top of it, so almost the whole visible line
+ * fell outside the box and got clamped to a flat edge colour. The result
+ * read as a hard left/right split down each stroke instead of a wash. Fixing
+ * the gradient to one shared coordinate space makes every stroke sample the
+ * same continuous diagonal, so the cluster blends as a single doodle again.
  */
 export default function GradientDefs() {
   return (
@@ -26,11 +37,11 @@ export default function GradientDefs() {
           <stop offset="86%" stopColor="#F674A2" />
           <stop offset="100%" stopColor="#EB5E7F" />
         </linearGradient>
-        <linearGradient id="sparkle-gradient-a" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id="sparkle-gradient-a" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="100">
           <stop offset="0%" stopColor="#C18DE1" />
           <stop offset="100%" stopColor="#D8DC4B" />
         </linearGradient>
-        <linearGradient id="sparkle-gradient-b" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id="sparkle-gradient-b" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="100">
           <stop offset="0%" stopColor="#D8DC4B" />
           <stop offset="100%" stopColor="#F674A2" />
         </linearGradient>
