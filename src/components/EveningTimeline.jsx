@@ -37,21 +37,29 @@ export default function EveningTimeline() {
   return (
     <section
       id="night"
-      className="relative w-full bg-wine px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper"
+      className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper"
+      style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.3))' }}
     >
-      {/* Dusk sky — the reference's pigments after dark: apricot light
-          pooling top-left, a blush drift high-right, the yellow-green glow
-          breathing mid-band, and a low lilac ember along the bottom edge. */}
+      {/* Fireflies night background */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: 'url(/assets/fireflies-night.jpg)',
+          backgroundAttachment: 'fixed',
+        }}
+      />
+      {/* Overlay for text readability and ambience */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(255,165,95,0.34) 0%, transparent 60%), ' +
-            'radial-gradient(ellipse 55% 45% at 90% 10%, rgba(250,170,200,0.26) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 60% 50% at 92% 92%, rgba(175,140,230,0.24) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 45% 40% at 30% 100%, rgba(250,225,120,0.18) 0%, transparent 60%), ' +
-            'radial-gradient(ellipse 48% 40% at 55% 48%, rgba(205,215,80,0.22) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(255,165,95,0.17) 0%, transparent 60%), ' +
+            'radial-gradient(ellipse 55% 45% at 90% 10%, rgba(250,170,200,0.13) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 60% 50% at 92% 92%, rgba(175,140,230,0.12) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 45% 40% at 30% 100%, rgba(250,225,120,0.09) 0%, transparent 60%), ' +
+            'radial-gradient(ellipse 48% 40% at 55% 48%, rgba(205,215,80,0.11) 0%, transparent 55%), ' +
             'linear-gradient(170deg, rgba(63,53,82,0.35) 0%, rgba(84,64,107,0) 45%, rgba(84,64,107,0.25) 100%)',
         }}
       />
