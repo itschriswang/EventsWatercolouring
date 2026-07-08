@@ -258,12 +258,9 @@ export default function SplitText({
                     // title's other two options: the inherited warm backlit
                     // glow washes pastels out (light-on-light), and any drop
                     // shadow strong enough to read as a shadow also crushes
-                    // the colour back toward the dark ink it's meant to relieve
-                    // — especially once the stamp-distress filter's own grain
-                    // multiplies over it. That grain multiply is already doing
-                    // the contrast work (it densifies every glyph's ink
-                    // regardless of fill), so the flow just needs its
-                    // inherited glow switched off, not replaced.
+                    // the colour back toward the dark ink it's meant to relieve.
+                    // So the flow just needs its inherited glow switched off,
+                    // not replaced.
                     const spanStyle = emphasisColors
                       ? { textShadow: emphasisShadow || 'none' }
                       : getGradientStyle(wordIndexInHeading)

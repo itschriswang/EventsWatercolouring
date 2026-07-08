@@ -74,8 +74,10 @@ const FRAG = `
       float w = vnoise(p * 9.0 + pt.w * 20.0 + u_time * 0.3) - 0.5;
       float dist = length(d) + w * 0.02;
       float age = pt.z;
-      // Pigment spreads a little as it dries, and fades as it does.
-      float radius = mix(0.075, 0.15, age);
+      // A real watercolour dab lands small and blooms outward as the pigment
+      // wicks into the paper, then fades as it dries — not a wide splash from
+      // the first instant.
+      float radius = mix(0.012, 0.04, age);
       float body = smoothstep(radius, 0.0, dist) * (1.0 - age);
       vec3 col = pigment(pt.w + age * 0.15);
       // Layer this bloom over what's built up so far (oldest to newest, so
@@ -203,7 +205,7 @@ export default function HeroBrush() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-[1] h-full w-full"
+      className="pointer-events-none fixed inset-0 z-[1] h-full w-full"
     />
   )
 }
