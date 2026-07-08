@@ -142,7 +142,7 @@ export default function SiteHeader({ revealed, className = '', enquireHref = ENQ
         {/* Enquire CTA */}
         <motion.a
           href={enquireHref}
-          className="rounded-full btn-aurora px-5 py-2 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-paper"
+          className="rounded-full btn-aurora px-5 py-2 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-ink"
           whileHover={{ scale: 1.05, y: -1 }}
           whileTap={{ scale: 0.96 }}
           transition={{ duration: 0.28, ease: EASE }}
