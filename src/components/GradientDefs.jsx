@@ -31,10 +31,10 @@ export default function GradientDefs() {
       <defs>
         <linearGradient id="hero-flow-gradient" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="#9ED0BD" />
-          <stop offset="8%" stopColor="#C18DE1" />
-          <stop offset="46%" stopColor="#D8DC4B" />
-          <stop offset="54%" stopColor="#D8DC4B" />
-          <stop offset="92%" stopColor="#F674A2" />
+          <stop offset="4%" stopColor="#C18DE1" />
+          <stop offset="48%" stopColor="#D8DC4B" />
+          <stop offset="52%" stopColor="#D8DC4B" />
+          <stop offset="96%" stopColor="#F674A2" />
           <stop offset="100%" stopColor="#EB5E7F" />
         </linearGradient>
         <linearGradient id="sparkle-gradient-a" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="100">
