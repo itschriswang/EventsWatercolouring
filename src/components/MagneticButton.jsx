@@ -20,11 +20,13 @@ export default function MagneticButton({
 
   // The aurora gradient is the site's single action surface — every primary
   // control (header pill, mobile dock highlight, this button) wears it, so
-  // "aurora light means act" only has to be learned once.
+  // "aurora light means act" only has to be learned once. The surface itself
+  // is now the dark ink ground; the gradient lives on the label text (see
+  // `.btn-aurora-label`), so the dot/arrow here stay a flat light tone.
   const palette =
     variant === 'paper'
       ? 'bg-paper text-ink hover:bg-terracotta hover:text-paper'
-      : 'btn-aurora text-ink'
+      : 'btn-aurora text-paper/70'
 
   return (
     <motion.a
@@ -48,7 +50,9 @@ export default function MagneticButton({
       <motion.span
         variants={{ hover: reduce ? {} : { skewX: -6} }}
         transition={SPRING}
-        className="inline-block"
+        className={
+          (variant === 'paper' ? '' : 'btn-aurora-label ') + 'inline-block'
+        }
       >
         {children}
       </motion.span>
