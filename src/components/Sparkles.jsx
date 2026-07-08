@@ -3,12 +3,13 @@ import { motion, useReducedMotion, useInView } from 'framer-motion'
 
 // A hand-drawn sparkle cluster — one tall four-point twinkle, a smaller one
 // at its shoulder, and a stray tick — sharing the Underline squiggles'
-// brush language: slightly wobbly strokes, round caps, painted with the
-// hero title's own gradient wash (#hero-flow-gradient, see GradientDefs.jsx)
-// rather than a flat pigment. Each stroke wicks in with a pathLength draw
-// once the cluster scrolls into view, staggered so the cluster reads as
-// dotted onto the page one flick at a time. Reduced-motion gets the static
-// drawing.
+// brush language: slightly wobbly strokes, round caps, painted with a
+// two-colour slice of the hero flow wash (`#sparkle-gradient-a`, see
+// GradientDefs.jsx) rather than the full six-stop rainbow — busy mud at this
+// small a size, per the same reasoning Underline already applies to its own
+// strokes. Each stroke wicks in with a pathLength draw once the cluster
+// scrolls into view, staggered so the cluster reads as dotted onto the page
+// one flick at a time. Reduced-motion gets the static drawing.
 const STROKES = [
   // Big twinkle — vertical then horizontal
   { d: 'M36 24Q37.8 39 36.2 52Q35.2 64 36.9 76', delay: 0 },
@@ -24,7 +25,9 @@ const STROKES = [
 // (the classic ✦ sparkle silhouette) paired with one small stray twinkle tick,
 // so a burst still reads as part of the same hand-drawn family rather than a
 // stock icon. Scales/fades in rather than drawing a stroke, since it's a
-// filled shape, not a line.
+// filled shape, not a line. Wears the flow's other two-colour slice
+// (`#sparkle-gradient-b`, Lemon Lime into Blossom) so the two variants read
+// as siblings rather than duplicates.
 const BURST_STAR =
   'M50 4C52.5 27 56 41 61 46C66 51 80 54.5 96 57C80 59.5 66 63 61 68C56 73 52.5 87 50 110C47.5 87 44 73 39 68C34 63 20 59.5 4 57C20 54.5 34 51 39 46C44 41 47.5 27 50 4Z'
 const BURST_TICK = { d: 'M78 20Q80.4 25.4 82.9 31.6', delay: 0.3 }
@@ -46,7 +49,7 @@ export default function Sparkles({ className = '', delay = 0, variant = 'twinkle
       >
         <motion.path
           d={BURST_STAR}
-          fill="url(#hero-flow-gradient)"
+          fill="url(#sparkle-gradient-b)"
           initial={false}
           animate={
             drawn
@@ -62,7 +65,7 @@ export default function Sparkles({ className = '', delay = 0, variant = 'twinkle
         />
         <motion.path
           d={BURST_TICK.d}
-          stroke="url(#hero-flow-gradient)"
+          stroke="url(#sparkle-gradient-b)"
           strokeWidth="5.5"
           strokeLinecap="round"
           initial={false}
@@ -89,7 +92,7 @@ export default function Sparkles({ className = '', delay = 0, variant = 'twinkle
         <motion.path
           key={i}
           d={s.d}
-          stroke="url(#hero-flow-gradient)"
+          stroke="url(#sparkle-gradient-a)"
           strokeWidth="5.5"
           strokeLinecap="round"
           initial={false}
