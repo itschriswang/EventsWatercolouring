@@ -37,20 +37,8 @@ export default function EveningTimeline() {
   return (
     <section
       id="night"
-      className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper"
+      className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper bg-wine"
     >
-      {/* Fireflies night background */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage: 'url(/assets/fireflies-night.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
-          imageRendering: 'crisp-edges',
-        }}
-      />
       {/* Overlay for text readability and ambience */}
       <div
         aria-hidden="true"
