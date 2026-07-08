@@ -60,11 +60,12 @@ export default function Underline({ children, seed, className = '' }) {
         <motion.path
           d={d}
           fill="none"
-          // Defaults to the text colour (so a coloured phrase underlines to
-          // match), but a caller can paint just the stroke via
-          // `--underline-stroke` — used in the footer, where the word itself
-          // is paper-white and a currentColor underline would vanish into it.
-          stroke="var(--underline-stroke, currentColor)"
+          // Defaults to the hero title's own gradient wash (every hand-drawn
+          // underline on the site echoes the headline's "painted" flow), but
+          // a caller can paint a flat stroke instead via `--underline-stroke`
+          // — used in the footer, where the word itself is paper-white and
+          // needs a plain stroke to stay legible against the dusk ground.
+          stroke="var(--underline-stroke, url(#hero-flow-gradient))"
           strokeWidth="10"
           strokeLinecap="round"
           initial={false}

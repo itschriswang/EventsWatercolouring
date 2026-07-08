@@ -273,11 +273,22 @@ export default function SplitText({
                     const fallbackColor = emphasisColors
                       ? emphasisColors[Math.floor((emphasisColors.length - 1) / 2)]
                       : null
+                    // Italic + background-clip:text is a known cross-browser
+                    // rough edge (WebKit in particular can mis-clip a sheared
+                    // glyph against a mask computed for its upright outline,
+                    // biting chunks out of thin strokes). When both are in
+                    // play, keep `font-style: italic` on the exact same
+                    // element that carries the clip (each glyph) rather than
+                    // inheriting it from the group wrapper, so the browser
+                    // never has to reconcile the two across an element
+                    // boundary.
+                    const glyphItalic = emphasisItalic && !emphasisColors
+                    const groupItalic = emphasisItalic && emphasisColors
                     return [
                       <span
                         key={`g${li}-${gi}`}
                         {...(emphasisColors ? { 'data-emph-group': true } : {})}
-                        className={emphasisItalic ? 'inline-block italic' : 'inline-block'}
+                        className={glyphItalic ? 'inline-block italic' : 'inline-block'}
                         style={spanStyle}
                       >
                         {group.words.flatMap((w, wi) => [
@@ -287,7 +298,7 @@ export default function SplitText({
                               variants={item}
                               aria-hidden="true"
                               {...(emphasisColors ? { 'data-emph-glyph': true } : {})}
-                              className="inline-block"
+                              className={groupItalic ? 'inline-block italic' : 'inline-block'}
                               style={{
                                 ...glyphStyle(li, glyphIdx++),
                                 ...(fallbackColor ? { color: fallbackColor } : {}),

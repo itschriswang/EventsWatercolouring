@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import GradientDefs from './components/GradientDefs.jsx'
 import GrainCanvas from './components/GrainCanvas.jsx'
 import BloomCanvas from './components/BloomCanvas.jsx'
 import SectionWash from './components/SectionWash.jsx'
@@ -66,6 +67,7 @@ export default function App() {
       {/* Live watercolour wash behind the whole page (one shared WebGL
           context), with the GPU paper grain over the top. Both degrade to the
           static CSS washes / SVG grain on mobile, reduced-motion or no-WebGL. */}
+      <GradientDefs />
       <BloomCanvas revealed={revealed} />
       <GrainCanvas />
       <HeroBrush />

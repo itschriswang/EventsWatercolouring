@@ -33,7 +33,7 @@ export default function Packages() {
 
   return (
     <section id="offerings" className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(5rem,10vw,9rem)]">
-      <Sparkles className="absolute right-[5vw] top-[clamp(3rem,6vw,5.5rem)] hidden h-12 w-12 text-terracotta/70 md:block" />
+      <Sparkles className="absolute right-[5vw] top-[clamp(3rem,6vw,5.5rem)] hidden h-12 w-12 md:block" />
       <Label gradient={['#D8DB7A', '#9BA03E']}>{PACKAGES.label}</Label>
       <SplitText
         as="h2"
@@ -285,10 +285,7 @@ export default function Packages() {
           <span>
             <span className="block font-sentient text-xl tracking-[-0.02em] text-ink sm:text-2xl">
               {withUnderline('Got a question? Read the FAQ', 'FAQ', {
-                // The gradient fill clips text to transparent, so the
-                // underline (which defaults to currentColor) needs its own
-                // explicit stroke or it would vanish along with it.
-                className: 'text-hero-flow [--underline-stroke:var(--c-terracotta)]',
+                className: 'text-hero-flow',
               })}
             </span>
             <span className="mt-1 block text-sm text-ink-soft">
