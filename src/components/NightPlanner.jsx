@@ -58,23 +58,42 @@ export default function NightPlanner() {
             <span className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
               {p.hoursLabel}
             </span>
-            <div role="group" aria-label={p.hoursLabel} className="mt-3 flex gap-2">
-              {HOURS.map((h) => (
-                <button
-                  key={h}
-                  type="button"
-                  onClick={() => setHours(h)}
-                  aria-pressed={hours === h}
-                  className={
-                    'rounded-full border px-4 py-1.5 font-mono text-sm transition-colors duration-300 ' +
-                    (hours === h
-                      ? 'border-terracotta bg-terracotta text-paper'
-                      : 'border-line text-ink-soft hover:border-terracotta/60 hover:text-ink')
-                  }
-                >
-                  {h}
-                </button>
-              ))}
+            <div role="group" aria-label={p.hoursLabel} className="mt-3 flex gap-2.5">
+              {HOURS.map((h) =>
+                hours === h ? (
+                  <button
+                    key={h}
+                    type="button"
+                    onClick={() => setHours(h)}
+                    aria-pressed
+                    className="btn-aurora rounded-full px-4 py-1.5 font-mono text-sm text-paper shadow-[0_8px_18px_-8px_rgba(94,74,140,0.5)]"
+                  >
+                    {h}
+                  </button>
+                ) : (
+                  // Unselected hours read as a plain pill without a border, easy
+                  // to miss as clickable — a slowly rotating aurora ring (the
+                  // hero action-surface's own hues) gives every option a visible,
+                  // "press me" outline rather than only the selected one standing
+                  // out. `.gradient-frame`'s padding sets the ring width; the
+                  // conic gradient supplies the moving colour.
+                  <button
+                    key={h}
+                    type="button"
+                    onClick={() => setHours(h)}
+                    aria-pressed={false}
+                    className="gradient-frame rounded-full p-[1.5px]"
+                    style={{
+                      background:
+                        'conic-gradient(from var(--gf-angle), #BFDCD1, #D4B6E6, #D8DB7A, #F2A6C1, #E88FA4, #BFDCD1)',
+                    }}
+                  >
+                    <span className="flex items-center justify-center rounded-full bg-paper px-[calc(1rem-1.5px)] py-[calc(0.375rem-1.5px)] font-mono text-sm text-ink-soft transition-colors duration-300 hover:text-ink">
+                      {h}
+                    </span>
+                  </button>
+                ),
+              )}
             </div>
           </div>
         </div>
@@ -138,7 +157,7 @@ export default function NightPlanner() {
             onClick={() =>
               window.dispatchEvent(new CustomEvent('ew:planner-enquire', { detail: { hours } }))
             }
-            className="group mt-6 inline-flex w-fit items-center gap-2.5 rounded-full bg-terracotta px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-paper transition-colors duration-300 hover:bg-rust"
+            className="group btn-aurora mt-6 inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-paper"
           >
             {p.cta}
             <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
