@@ -381,7 +381,7 @@ function RevealTile({ reveal, className = '' }) {
           aria-valuemax={100}
           aria-valuenow={Math.round(pct)}
           onKeyDown={onKeyDown}
-          className="btn-aurora absolute top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full font-mono text-[0.6rem] text-paper shadow-[0_2px_12px_rgba(142,68,112,0.40)] outline-none focus-visible:ring-2 focus-visible:ring-paper"
+          className="btn-aurora absolute top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full font-mono text-[0.6rem] text-ink shadow-[0_2px_12px_rgba(142,68,112,0.40)] outline-none focus-visible:ring-2 focus-visible:ring-paper"
           style={{ left: `${pct}%` }}
         >
           <svg
