@@ -47,9 +47,18 @@ const jitter = (li, gi) => {
 // back-to-back to hold a flat plateau — e.g. green at both 0.38 and 0.62 —
 // so the flow reads as "mostly green" with the other hues only bleeding in
 // at the edges.
-const buildFlowGradientCss = (colors, positions) => {
+// `washPx`/`insetPx` size the wash to a group's rendered width plus the
+// glyphs' paint-box bleed on either side: the stops are inset so the wash
+// still spans exactly the group's own width, while the gradient's natural
+// end-clamping extends the first and last colours flat across the bleed —
+// where a sheared first descender or last ascender can reach past the
+// group's edges.
+const buildFlowGradientCss = (colors, positions, washPx = 1, insetPx = 0) => {
   const pos = positions || colors.map((_, i) => i / (colors.length - 1))
-  const stops = colors.map((c, i) => `${c} ${(pos[i] * 100).toFixed(2)}%`).join(', ')
+  const total = washPx + 2 * insetPx
+  const stops = colors
+    .map((c, i) => `${c} ${(((insetPx + pos[i] * washPx) / total) * 100).toFixed(2)}%`)
+    .join(', ')
   return `linear-gradient(to right, ${stops})`
 }
 
@@ -60,7 +69,28 @@ const buildFlowGradientCss = (colors, positions) => {
 // each glyph's background by its position within the group, so adjacent
 // glyphs' slices line up into one unbroken wash. Re-measures on resize since
 // the display face's clamp() sizing changes glyph pixel widths.
-const applyEmphasisFlow = (root, gradientCss) => {
+//
+// Each glyph span carries `EMPH_GLYPH_BLEED` (padding cancelled by negative
+// margins) because a background only paints inside the element's own box,
+// while the ink of these glyphs reaches well outside it: the display line
+// heights (down to 0.86) leave the box shorter than the face's ascenders and
+// descenders, and the synthetic-oblique italic (the display face has no true
+// italic cut) shears every letter's top past its advance width — worsened by
+// the display styles' negative tracking. Without the bleed, any ink outside
+// the box has no gradient behind it and renders transparent: flat-sliced
+// ascenders/descenders and chunks bitten out of every sheared glyph. The
+// offsets below stay correct automatically: they're measured from the padded
+// rects, and background-position's origin is the padding box.
+
+// Paint-box bleed for gradient-clipped emphasis glyphs (see above). 0.3em
+// vertical covers ascender/descender overflow past the tightest display
+// line-height plus the per-glyph jitter lift; 0.3em horizontal covers the
+// synthetic-oblique shear at ascender height. The negative margins hand the
+// space straight back, so layout (glyph positions, line-box height, the
+// masks' 0.08em line gap) doesn't move.
+const EMPH_GLYPH_BLEED = { padding: '0.3em', margin: '-0.3em' }
+
+const applyEmphasisFlow = (root, colors, positions) => {
   if (!root) return undefined
   const groups = root.querySelectorAll('[data-emph-group]')
   if (groups.length === 0) return undefined
@@ -69,12 +99,18 @@ const applyEmphasisFlow = (root, gradientCss) => {
     groups.forEach((group) => {
       const groupRect = group.getBoundingClientRect()
       if (groupRect.width === 0) return
-      group.querySelectorAll('[data-emph-glyph]').forEach((glyph) => {
+      const glyphs = group.querySelectorAll('[data-emph-glyph]')
+      if (glyphs.length === 0) return
+      // The bleed in px at the group's rendered font size (EMPH_GLYPH_BLEED
+      // is uniform, so any side of any glyph reads the same).
+      const bleedPx = parseFloat(getComputedStyle(glyphs[0]).paddingLeft) || 0
+      const gradientCss = buildFlowGradientCss(colors, positions, groupRect.width, bleedPx)
+      glyphs.forEach((glyph) => {
         const glyphRect = glyph.getBoundingClientRect()
         const offset = glyphRect.left - groupRect.left
         glyph.style.backgroundImage = gradientCss
-        glyph.style.backgroundSize = `${groupRect.width}px 100%`
-        glyph.style.backgroundPosition = `${-offset}px 0`
+        glyph.style.backgroundSize = `${groupRect.width + 2 * bleedPx}px 100%`
+        glyph.style.backgroundPosition = `${-offset - bleedPx}px 0`
         glyph.style.backgroundRepeat = 'no-repeat'
         // Camel-case `style.webkitBackgroundClip =` silently no-ops in this
         // engine (only the unprefixed property lands) and unprefixed
@@ -122,8 +158,7 @@ export default function SplitText({
   // resize via ResizeObserver.
   useLayoutEffect(() => {
     if (!emphasisColors) return undefined
-    const gradientCss = buildFlowGradientCss(emphasisColors, emphasisColorStops)
-    return applyEmphasisFlow(rootRef.current, gradientCss)
+    return applyEmphasisFlow(rootRef.current, emphasisColors, emphasisColorStops)
   }, [emphasisColors, emphasisColorStops, lines, emphasis])
 
   const normalise = s => s.toLowerCase().replace(/[^a-z]/g, '')
@@ -273,15 +308,11 @@ export default function SplitText({
                     const fallbackColor = emphasisColors
                       ? emphasisColors[Math.floor((emphasisColors.length - 1) / 2)]
                       : null
-                    // Italic + background-clip:text is a known cross-browser
-                    // rough edge (WebKit in particular can mis-clip a sheared
-                    // glyph against a mask computed for its upright outline,
-                    // biting chunks out of thin strokes). When both are in
-                    // play, keep `font-style: italic` on the exact same
-                    // element that carries the clip (each glyph) rather than
-                    // inheriting it from the group wrapper, so the browser
-                    // never has to reconcile the two across an element
-                    // boundary.
+                    // When the glyphs carry the gradient clip, keep
+                    // `font-style: italic` on the clipped glyph elements
+                    // themselves (with their EMPH_GLYPH_BLEED sized for the
+                    // sheared ink) rather than inheriting it from the group
+                    // wrapper.
                     const glyphItalic = emphasisItalic && !emphasisColors
                     const groupItalic = emphasisItalic && emphasisColors
                     return [
@@ -302,6 +333,7 @@ export default function SplitText({
                               style={{
                                 ...glyphStyle(li, glyphIdx++),
                                 ...(fallbackColor ? { color: fallbackColor } : {}),
+                                ...(emphasisColors ? EMPH_GLYPH_BLEED : {}),
                               }}
                             >
                               {ch}
