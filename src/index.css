@@ -90,23 +90,18 @@
        sheet (more saturation, a little less lightness) — the swatch values
        verbatim read as a light, washed-out pastel once thinned to a stroke
        or clipped to type, especially over the cream paper ground.
-       Stops (not colours) were retuned so each of the four rim voices holds
-       its own plateau stretched out toward the corners, while the
-       purple→green and green→pink blends are squeezed into narrow bands
-       tucked right against centre — the least width spent on the muddiest
-       part of the blend — and the protected Lemon Lime plateau still holds
-       dead centre, just in a tighter band. */
+       Stops (not colours) were retuned so blue/purple/pink/red sit as
+       near-instant peaks pinned tight to the corners, the Lemon Lime plateau
+       holds a small pocket dead centre, and the purple→green / green→pink
+       blends fill most of the remaining width — the transition itself is
+       the dominant voice, not a seam squeezed out of the way. */
     --hero-emphasis-gradient: linear-gradient(
       to right,
       #9ED0BD 0%,
-      #9ED0BD 6%,
-      #C18DE1 16%,
-      #C18DE1 42%,
+      #C18DE1 4%,
       #D8DC4B 48%,
       #D8DC4B 52%,
-      #F674A2 58%,
-      #F674A2 84%,
-      #EB5E7F 94%,
+      #F674A2 96%,
       #EB5E7F 100%
     );
     /* Same wash, wrapped for a rotating ring (`.gradient-frame`) — the first
