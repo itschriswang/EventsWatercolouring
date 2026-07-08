@@ -163,15 +163,18 @@ export default function Hero({ revealed }) {
                 // flow — a real clipped gradient, not per-letter swatches —
                 // in the true palette voices: Seafoam, Lavender, Lemon Lime
                 // (repeated to hold a flat plateau), Blossom, Rose, exactly as
-                // the button and orb. Stops are weighted so the plateau plus
-                // its flanking blend zones cover the middle ~55% of the word,
-                // reading as mostly green with colour only bleeding in at the
-                // leading and trailing letters. Those pastels are too light
+                // the button and orb. Seafoam/Lavender/Blossom/Rose are
+                // weighted out toward the leading and trailing corners so
+                // blue/purple/pink/red read clearly at the word's edges,
+                // while the purple→green and pink→red transitions are pulled
+                // in closer to centre — narrowing (not removing) the Lemon
+                // Lime plateau so the protected green voice still holds the
+                // middle, just in a tighter band. Those pastels are too light
                 // for the display face's warm backlit glow, so the accent
                 // swaps that glow for a dark tinted drop (approved shadow
                 // palette) and the letters lift off it, reference-style.
                 emphasisColors={['#BFDCD1', '#D4B6E6', '#D8DB7A', '#D8DB7A', '#F2A6C1', '#E88FA4']}
-                emphasisColorStops={[0, 0.22, 0.38, 0.62, 0.78, 1]}
+                emphasisColorStops={[0, 0.14, 0.44, 0.56, 0.86, 1]}
                 className="display-xl text-ink [line-height:0.80] [font-size:clamp(2.75rem,13vw,4.5rem)] lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)]"
               />
             )}

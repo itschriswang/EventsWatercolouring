@@ -23,7 +23,14 @@ import { webglSupported, getContext, createQuadProgram, resizeCanvas } from '../
 const N = 28 // max simultaneous pigment samples (uniform array length)
 const LIFE = 1300 // ms a stroke takes to dry out
 const MIN_STEP = 0.007 // min normalised travel before dropping a new sample
-const MAX_STEPS_PER_MOVE = 10 // cap on interpolated dabs laid down per pointermove
+// Cap on interpolated dabs laid down per pointermove. This used to be a flat
+// 10, which was fine for slow moves but starved fast ones: a quick flick
+// across the hero covers far more normalised distance than 10 dabs spaced at
+// MIN_STEP can reach, so the gaps between dabs grew past the dab radius and
+// the "ribbon" fell back to reading as a dotted line. Capping by the ring
+// buffer size instead means the interpolation only ever runs out of room
+// when there's nowhere left to put the dabs anyway.
+const MAX_STEPS_PER_MOVE = N
 
 const FRAG = `
   precision mediump float;
@@ -45,18 +52,21 @@ const FRAG = `
     return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
   }
 
-  // Warm hero pigments only — terracotta, rose, ochre, orange, blush.
+  // Same cool-to-warm arc as the hero's own aurora orb (the bloom behind the
+  // artwork cluster in Hero.jsx) — Seafoam into Lavender, through the
+  // Lemon Lime heart, out to Blossom then Rose — so the brush the visitor
+  // paints with matches the light it's painting into.
   vec3 pigment(float s){
-    vec3 terracotta = vec3(0.851, 0.871, 0.757);
-    vec3 rose       = vec3(0.847, 0.776, 0.918);
-    vec3 ochre      = vec3(0.969, 0.831, 0.682);
-    vec3 orange     = vec3(0.847, 0.604, 0.369);
-    vec3 blush      = vec3(0.949, 0.761, 0.812);
+    vec3 seafoam  = vec3(0.749, 0.863, 0.820);
+    vec3 lavender = vec3(0.831, 0.714, 0.902);
+    vec3 lemonlime= vec3(0.800, 0.816, 0.416);
+    vec3 blossom  = vec3(0.949, 0.651, 0.757);
+    vec3 rose     = vec3(0.910, 0.561, 0.643);
     s = fract(s) * 4.0;
-    if (s < 1.0) return mix(terracotta, rose, s);
-    if (s < 2.0) return mix(rose, ochre, s - 1.0);
-    if (s < 3.0) return mix(ochre, orange, s - 2.0);
-    return mix(orange, blush, s - 3.0);
+    if (s < 1.0) return mix(seafoam, lavender, s);
+    if (s < 2.0) return mix(lavender, lemonlime, s - 1.0);
+    if (s < 3.0) return mix(lemonlime, blossom, s - 2.0);
+    return mix(blossom, rose, s - 3.0);
   }
 
   void main(){
@@ -80,7 +90,7 @@ const FRAG = `
       // the first instant. Radius is generous enough that consecutive dabs
       // along a stroke overlap into a continuous ribbon rather than reading
       // as separated dots.
-      float radius = mix(0.02, 0.055, age);
+      float radius = mix(0.026, 0.065, age);
       float body = smoothstep(radius, 0.0, dist) * (1.0 - age);
       vec3 col = pigment(pt.w + age * 0.15);
       // Layer this bloom over what's built up so far (oldest to newest, so
