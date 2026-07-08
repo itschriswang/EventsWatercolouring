@@ -245,7 +245,10 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
           <h2 className="display-lg mt-5 text-ink">
             {ENQUIRY.title[0]}
             <br />
-            <em className="text-terracotta">{ENQUIRY.title[1]}</em>
+            {/* The inherited display glow (a warm near-white backlight) washes
+                a transparent gradient-clipped fill out to almost nothing —
+                same reason the hero's own "painted" drops it. */}
+            <em className="text-hero-flow [text-shadow:none]">{ENQUIRY.title[1]}</em>
           </h2>
           <p className="mt-6 max-w-sm leading-relaxed text-ink-soft">{ENQUIRY.intro}</p>
           <p className="mt-6 flex flex-col gap-1 font-mono text-xs uppercase tracking-[0.15em] text-ink-soft sm:flex-row sm:items-baseline sm:gap-1.5">

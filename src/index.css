@@ -69,6 +69,21 @@
       radial-gradient(58% 135% at 94% 8%, #F2A6C1 0%, rgba(242, 166, 193, 0) 58%),
       radial-gradient(72% 180% at 104% 64%, #E88FA4 0%, rgba(232, 143, 164, 0.5) 26%, rgba(232, 143, 164, 0) 56%),
       radial-gradient(56% 165% at 50% 46%, #CCD06A 0%, #A9AC50 42%, #71731F 80%, #52541A 100%);
+
+    /* The hero headline's own emphasis flow (see Hero.jsx's `emphasisColors`
+       on "painted") — Seafoam into Lavender into a Lemon Lime plateau, out
+       through Blossom to Rose. Shared as a token so any other short emphasis
+       word (FAQ, "your day") can wear the same wash via `.text-hero-flow`
+       without re-deriving the stops. */
+    --hero-emphasis-gradient: linear-gradient(
+      to right,
+      #BFDCD1 0%,
+      #D4B6E6 22%,
+      #D8DB7A 38%,
+      #D8DB7A 62%,
+      #F2A6C1 78%,
+      #E88FA4 100%
+    );
   }
 
   html {
@@ -131,11 +146,7 @@
 
 @layer components {
   /* Fluid display type — raw clamp() so headers behave as graphic art,
-     not as rigid Tailwind steps. Tight leading + negative tracking.
-     `filter: url(#stamp-distress)` (defined in StampFilters.jsx, mounted
-     once per page root) wobbles the glyph edges and presses a paper-grain
-     texture into the ink via hard-light, so titles read as stamped onto the
-     page rather than set in flawless digital type. */
+     not as rigid Tailwind steps. Tight leading + negative tracking. */
   /* Darumadrop One is a rounded, chunky marker face, so titles get the
      playful, overlapping-letter treatment from the reference. Two moves work
      together here:
@@ -168,7 +179,6 @@
       0 0 0.045em rgba(255, 249, 236, 0.98),
       0 0 0.1em rgba(252, 233, 205, 0.9),
       -0.01em -0.014em 0.32em rgba(247, 212, 174, 0.55);
-    filter: url(#stamp-distress);
   }
 
   /* Darumadrop One ships in regular (400) only — heavier weights here
@@ -183,7 +193,6 @@
       0 0 0.042em rgba(255, 249, 236, 0.98),
       0 0 0.095em rgba(252, 233, 205, 0.88),
       -0.009em -0.013em 0.3em rgba(247, 212, 174, 0.52);
-    filter: url(#stamp-distress);
   }
 
   .display-md {
@@ -196,7 +205,6 @@
       0 0 0.04em rgba(255, 249, 236, 0.98),
       0 0 0.09em rgba(252, 233, 205, 0.86),
       -0.008em -0.012em 0.28em rgba(247, 212, 174, 0.5);
-    filter: url(#stamp-distress);
   }
 
   /* The reference wordmark's cute connector ("make *it* happen"): one small
@@ -264,6 +272,20 @@
       0 6px 18px -8px rgba(94, 74, 140, 0.55);
   }
 
+  /* A short emphasis word painted with the hero headline's own cool-to-warm
+     wash instead of a flat pigment — for standalone keywords elsewhere on
+     the page that want to echo the hero's "painted" treatment (FAQ pointer,
+     the enquiry title's "your day"). Both vendor-prefixed clip properties are
+     set explicitly (the camelCase DOM property silently no-ops in some
+     engines) so the fill actually clips to the glyph shapes everywhere. */
+  .text-hero-flow {
+    background-image: var(--hero-emphasis-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
   /* Subtle paper grain so the bone background reads as stock, not flat #fff. */
   .paper-grain {
     background-image: radial-gradient(
@@ -322,19 +344,6 @@
 @media (pointer: coarse) {
   .gradient-frame {
     animation: none;
-  }
-}
-
-/* The stamped-title filter (feTurbulence + feDisplacementMap + feBlend) is
-   rasterised fresh on every repaint, which is a lot to ask of small touch
-   GPUs mid-scroll for a purely decorative flourish — drop titles back to
-   flawless-but-cheap flat type there and for anyone who's asked for less
-   motion/effect overall. */
-@media (pointer: coarse), (prefers-reduced-motion: reduce) {
-  .display-xl,
-  .display-lg,
-  .display-md {
-    filter: none;
   }
 }
 
