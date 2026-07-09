@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import InkSpreadReveal from './InkSpreadReveal'
 
 // Session flag so the intro plays once per visit, not once per page load —
 // coming back from /faq/ (or any internal navigation) skips straight to the
@@ -55,31 +56,34 @@ export default function Preloader({ onDone }) {
   if (skip) return null
 
   return (
-    <AnimatePresence>
-      {!gone && (
-        <motion.div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-paper paper-grain"
-          initial={false}
-          exit={
-            reduce
-              ? { opacity: 0, transition: { duration: 0.25 } }
-              : {
-                  clipPath: 'circle(0% at 50% 45%)',
-                  transition: { duration: 0.7, ease: [0.22, 0.61, 0.36, 1] },
-                }
-          }
-          style={{ clipPath: 'circle(150% at 50% 45%)' }}
-        >
-          <div className="relative grid h-40 w-40 place-items-center sm:h-48 sm:w-48">
-            <Bloom active={bloom} reduce={reduce} />
-          </div>
+    <>
+      <AnimatePresence>
+        {!gone && (
+          <motion.div
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-paper paper-grain"
+            initial={false}
+            exit={
+              reduce
+                ? { opacity: 0, transition: { duration: 0.25 } }
+                : {
+                    clipPath: 'circle(0% at 50% 45%)',
+                    transition: { duration: 0.7, ease: [0.22, 0.61, 0.36, 1] },
+                  }
+            }
+            style={{ clipPath: 'circle(150% at 50% 45%)' }}
+          >
+            <div className="relative grid h-40 w-40 place-items-center sm:h-48 sm:w-48">
+              <Bloom active={bloom} reduce={reduce} />
+            </div>
 
-          <p className="mt-8 font-sentient text-xl tracking-[-0.01em] text-ink">
-            chris wang<span className="text-terracotta">.</span>
-          </p>
-        </motion.div>
-      )}
-    </AnimatePresence>
+            <p className="mt-8 font-sentient text-xl tracking-[-0.01em] text-ink">
+              chris wang<span className="text-terracotta">.</span>
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <InkSpreadReveal reveal={bloom && !reduce} />
+    </>
   )
 }
 
