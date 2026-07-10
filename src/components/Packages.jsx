@@ -32,7 +32,32 @@ export default function Packages() {
   })
 
   return (
-    <section id="offerings" className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(5rem,10vw,9rem)]">
+    <section id="offerings" className="relative isolate w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(5rem,10vw,9rem)]">
+      {/* A richer bloom pooled behind the cards, over the section's ambient
+          warm wash. The cards are opaque cream tiles, so this only shows in
+          the gutters and margins around them — giving the negative space more
+          colour so the bright tiles read with stronger contrast against it.
+          `isolate` on the section keeps this -z-10 layer above the ambient
+          WatercolourBloom but behind all the section's content. Blooms are
+          ordered left→right along the palette arc (apricot → butter →
+          yellow-green → periwinkle → lilac → blush) so every overlap is
+          between hue neighbours, and a near-white cream radial lifts the
+          centre where they meet so it glows rather than averaging to grey
+          (Pastel Bloom anti-mud rules). */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            'radial-gradient(circle 20vw at 50% 56%, rgba(255,252,242,0.5), transparent 66%), ' +
+            'radial-gradient(circle 26vw at 10% 46%, rgba(247,195,148,0.20), transparent 70%), ' +
+            'radial-gradient(circle 22vw at 30% 66%, rgba(240,228,158,0.18), transparent 70%), ' +
+            'radial-gradient(circle 24vw at 47% 40%, rgba(228,230,156,0.20), transparent 70%), ' +
+            'radial-gradient(circle 24vw at 65% 62%, rgba(216,218,236,0.18), transparent 72%), ' +
+            'radial-gradient(circle 22vw at 82% 44%, rgba(210,196,232,0.18), transparent 72%), ' +
+            'radial-gradient(circle 24vw at 94% 68%, rgba(244,196,210,0.18), transparent 72%)',
+        }}
+      />
       <Sparkles className="absolute right-[5vw] top-[clamp(3rem,6vw,5.5rem)] hidden h-12 w-12 md:block" />
       <Label gradient={['#D8DB7A', '#9BA03E']}>{PACKAGES.label}</Label>
       <SplitText
