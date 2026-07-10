@@ -71,7 +71,7 @@ export default function Packages() {
           className="relative z-20 mt-4 max-w-[calc(100vw-5vw*2)] overflow-hidden rounded-2xl border border-line p-6 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.32)]"
           style={{ background: CARD_BG }}
         >
-          <CornerBloom from="rgba(176,74,118,0.18)" to="rgba(142,99,184,0.12)" />
+          <CornerBloom from="rgba(176,74,118,0.12)" to="rgba(142,99,184,0.08)" />
           <div className="relative z-10">
             <p className="text-sm text-ink-soft">{PACKAGES.base.note}</p>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -179,7 +179,7 @@ export default function Packages() {
           className="relative col-span-5 flex flex-col overflow-hidden rounded-2xl border border-line p-7 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
           style={{ background: CARD_BG }}
         >
-          <CornerBloom from="rgba(176,74,118,0.18)" to="rgba(142,99,184,0.12)" />
+          <CornerBloom from="rgba(176,74,118,0.12)" to="rgba(142,99,184,0.08)" />
           <div className="relative z-10 flex flex-1 flex-col">
             <div className="flex items-baseline justify-between gap-4">
               <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
@@ -222,7 +222,7 @@ export default function Packages() {
           className="relative col-span-7 overflow-hidden rounded-2xl border border-line shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
           style={{ background: CARD_BG }}
         >
-          <CornerBloom from="rgba(201,169,75,0.16)" to="rgba(138,145,67,0.12)" />
+          <CornerBloom from="rgba(201,169,75,0.10)" to="rgba(138,145,67,0.08)" />
           <div className="relative z-10 flex h-full flex-col">
             <div className="flex items-baseline justify-between border-b border-line/50 px-8 pb-5 pt-8">
               <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
@@ -281,7 +281,7 @@ export default function Packages() {
         className="group relative mt-12 flex w-full items-center justify-between gap-4 overflow-hidden rounded-2xl border border-terracotta/30 p-6 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.32)] transition-colors duration-300 hover:border-terracotta/60 sm:p-7"
         style={{ background: CARD_BG }}
       >
-        <CornerBloom from="rgba(201,169,75,0.16)" to="rgba(232,155,99,0.14)" />
+        <CornerBloom from="rgba(201,169,75,0.10)" to="rgba(232,155,99,0.09)" />
         <span className="relative z-10 flex items-center gap-4 sm:gap-5">
           <span
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-paper shadow-[0_2px_10px_rgba(94,74,140,0.30)]"
