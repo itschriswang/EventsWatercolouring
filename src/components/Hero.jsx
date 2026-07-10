@@ -51,7 +51,6 @@ export default function Hero({ revealed }) {
 
   return (
     <section
-      id="top"
       ref={ref}
       className="relative w-full overflow-x-clip px-[5vw] pb-[clamp(2.5rem,5vw,4.5rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-8"
     >
