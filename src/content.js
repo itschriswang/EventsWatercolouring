@@ -153,7 +153,7 @@ export const PACKAGES = {
     title: 'Live on the day',
     note: 'The base package, painted across your event.',
     priceSmall: 'From',
-    price: '$850',
+    price: '$1000',
     facts: ['3 hours live', '24 keepsakes'],
     bullets: [
       'Guest portraits painted live, on 300gsm A5 archival watercolour paper',
@@ -408,7 +408,7 @@ export const CORPORATE = {
     base: {
       title: 'Live at your event',
       priceSmall: 'From',
-      price: '$850',
+      price: '$1000',
       facts: ['3 hours live', '24 keepsakes'],
       bullets: [
         'Guest portraits painted live on 300gsm A5 archival cotton paper',
