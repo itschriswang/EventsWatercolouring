@@ -8,7 +8,7 @@ Brand facts used throughout, pulled from the site copy so posts stay consistent:
 - Christopher Wang, architect-turned-painter, Melbourne-based, travels to Sydney metro
 - Live watercolour portraits of guests + couple, on 300gsm archival cotton paper
 - ~8 pieces painted per hour, 5–10 minutes each, sleeved on the spot to travel home safely
-- Base package from $850 (3 hrs live, 24 keepsakes); studio commissions from photos too
+- Base package from $1000 (3 hrs live, 24 keepsakes); studio commissions from photos too
 - Also does corporate events, brand activations, private celebrations
 - Instagram: [@chriswangstudio](https://www.instagram.com/chriswangstudio)
 - Tone: warm, editorial, quietly confident, no hard-sell, no exclamation marks
@@ -120,7 +120,7 @@ Reels drive discovery; carousels and Stories convert discovery into enquiries.
 
 21. **"Now booking [Season/Year]"** static announcement — pairs with the design prompt
     in §5 below. Push to Stories with a countdown sticker for date scarcity.
-22. **"From $850" package breakdown static/carousel** — plain-language version of the
+22. **"From $1000" package breakdown static/carousel** — plain-language version of the
     Packages section, one card per package tier.
 23. **Add-on spotlight**: the wedding bouquet illustration ($500 A3) shown finished, since
     it's a distinctive add-on most competitors don't offer. Static post.
@@ -232,7 +232,7 @@ watercolour painting packages. Use the Pastel Bloom palette and approved tinted 
 from this repo's CLAUDE.md (lilac rgba(94,74,140,0.30) for card elevation).
 
 Slide 1: headline "One base package, built around your day." (matches the site's Packages
-section title) plus "From $850" in large display type.
+section title) plus "From $1000" in large display type.
 Slide 2: "What's included" — 4 short bullet lines in Manrope (3 hours live, 24 keepsakes,
 all materials, travel within [1 hour] of Melbourne/Sydney metro).
 Slide 3: "Popular add-ons" — 3 short lines (Family portrait A3 $400, Bridal party A3 $400,
