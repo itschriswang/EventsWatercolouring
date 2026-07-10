@@ -158,7 +158,8 @@ const inkSpotMask = `radial-gradient(circle calc(${INK_OUTER_RADIUS_EM}em * var(
 // One glyph's two crossfaded layers: the sharp base and a wet blur
 // duplicate. `idx` addresses this glyph's slot in the ink ref/metrics
 // arrays so the cursor-tracking loop (in the SplitText body) can drive its
-// --mx/--my.
+// --mx/--my. The blurred layer strips text-shadow so it blurs only the
+// letterform, not inherited effects that would create visual mud.
 function InkGlyph({ ch, idx, wrapRefs }) {
   const base = { display: 'inline-block', whiteSpace: 'pre' }
   return (
@@ -177,6 +178,7 @@ function InkGlyph({ ch, idx, wrapRefs }) {
           top: 0,
           left: 0,
           pointerEvents: 'none',
+          textShadow: 'none',
           filter: `blur(${INK_BLUR_EM}em)`,
           WebkitMaskImage: inkSpotMask,
           maskImage: inkSpotMask,
