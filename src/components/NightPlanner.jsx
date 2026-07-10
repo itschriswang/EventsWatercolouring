@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import CornerBloom from './CornerBloom.jsx'
-import { SPRING, ENQUIRE_HREF } from '../lib/site.js'
+import { SPRING, ENQUIRE_HREF, CARD_BG } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import { withUnderline } from './Underline.jsx'
 
@@ -43,7 +43,7 @@ export default function NightPlanner() {
       viewport={{ once: true, margin: '-60px' }}
       transition={SPRING}
       className="relative mt-[clamp(2.5rem,6vw,4rem)] overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
-      style={{ background: 'linear-gradient(150deg, rgba(247,195,148,0.18) 0%, rgba(242,194,207,0.14) 48%, rgba(228,230,156,0.16) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
+      style={{ background: CARD_BG }}
     >
       <CornerBloom from="rgba(142,99,184,0.13)" to="rgba(176,74,118,0.14)" />
       <div className="relative z-10 grid grid-cols-1 gap-8 p-7 sm:p-8 lg:grid-cols-2 lg:gap-12">
