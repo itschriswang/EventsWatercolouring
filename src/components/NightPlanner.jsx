@@ -42,7 +42,7 @@ export default function NightPlanner() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={SPRING}
-      className="relative mt-[clamp(2.5rem,6vw,4rem)] overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
+      className="relative mt-[clamp(2.5rem,6vw,4rem)] overflow-hidden rounded-2xl border border-line shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
       style={{ background: CARD_BG }}
     >
       <CornerBloom from="rgba(142,99,184,0.13)" to="rgba(176,74,118,0.14)" />

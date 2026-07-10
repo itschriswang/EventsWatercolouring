@@ -68,7 +68,7 @@ export default function Packages() {
         </motion.div>
         <motion.div
           {...reveal(1)}
-          className="relative z-20 mt-4 max-w-[calc(100vw-5vw*2)] overflow-hidden rounded-2xl border border-line/45 p-6 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.32)]"
+          className="relative z-20 mt-4 max-w-[calc(100vw-5vw*2)] overflow-hidden rounded-2xl border border-line p-6 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.32)]"
           style={{ background: CARD_BG }}
         >
           <CornerBloom from="rgba(176,74,118,0.18)" to="rgba(142,99,184,0.12)" />
@@ -143,20 +143,24 @@ export default function Packages() {
                         transition={ACCORDION}
                         className="overflow-hidden"
                       >
-                        <p className="pb-3 text-xs leading-relaxed text-ink-soft">{a.p}</p>
-                        <p className="pb-4 text-xs text-rust">
-                          {a.small && (
-                            <span className="mr-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
-                              {a.small}
-                            </span>
-                          )}
-                          <span className="font-mono">{a.tag}</span>
-                          {a.extra && (
-                            <span className="ml-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
-                              {a.extra}
-                            </span>
-                          )}
+                        <p className={a.tag ? 'pb-3 text-xs leading-relaxed text-ink-soft' : 'pb-4 text-xs leading-relaxed text-ink-soft'}>
+                          {a.p}
                         </p>
+                        {a.tag && (
+                          <p className="pb-4 text-xs text-rust">
+                            {a.small && (
+                              <span className="mr-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
+                                {a.small}
+                              </span>
+                            )}
+                            <span className="font-mono">{a.tag}</span>
+                            {a.extra && (
+                              <span className="ml-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
+                                {a.extra}
+                              </span>
+                            )}
+                          </p>
+                        )}
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -172,7 +176,7 @@ export default function Packages() {
         {/* Base package card */}
         <motion.article
           {...reveal()}
-          className="relative col-span-5 flex flex-col overflow-hidden rounded-2xl border border-line/45 p-7 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
+          className="relative col-span-5 flex flex-col overflow-hidden rounded-2xl border border-line p-7 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
           style={{ background: CARD_BG }}
         >
           <CornerBloom from="rgba(176,74,118,0.18)" to="rgba(142,99,184,0.12)" />
@@ -215,7 +219,7 @@ export default function Packages() {
         {/* Add-ons — right column, replacing "Included as standard" */}
         <motion.div
           {...reveal(1)}
-          className="relative col-span-7 overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
+          className="relative col-span-7 overflow-hidden rounded-2xl border border-line shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
           style={{ background: CARD_BG }}
         >
           <CornerBloom from="rgba(201,169,75,0.16)" to="rgba(138,145,67,0.12)" />
@@ -240,19 +244,21 @@ export default function Packages() {
                 >
                   <h4 className="font-sentient text-base tracking-[-0.01em] text-ink [overflow-wrap:anywhere]">{a.h}</h4>
                   <p className="mt-2 flex-1 text-xs leading-relaxed text-ink-soft">{a.p}</p>
-                  <p className="mt-4 text-xs text-rust">
-                    {a.small && (
-                      <span className="mr-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
-                        {a.small}
-                      </span>
-                    )}
-                    <span className="font-mono">{a.tag}</span>
-                    {a.extra && (
-                      <span className="ml-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
-                        {a.extra}
-                      </span>
-                    )}
-                  </p>
+                  {a.tag && (
+                    <p className="mt-4 text-xs text-rust">
+                      {a.small && (
+                        <span className="mr-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
+                          {a.small}
+                        </span>
+                      )}
+                      <span className="font-mono">{a.tag}</span>
+                      {a.extra && (
+                        <span className="ml-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
+                          {a.extra}
+                        </span>
+                      )}
+                    </p>
+                  )}
                 </motion.div>
               ))}
             </div>
