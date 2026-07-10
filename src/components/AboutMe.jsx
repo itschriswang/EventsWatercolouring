@@ -27,7 +27,11 @@ export default function AboutMe() {
       className="relative w-full overflow-visible px-[5vw] pt-[clamp(4rem,8vw,7rem)]"
     >
       <div className="relative pb-[clamp(5rem,10vw,8rem)]">
-        <div className="grid grid-cols-12 items-start gap-x-8 gap-y-8">
+        {/* On desktop the portrait + bio group is capped and left-aligned
+            (no mx-auto) so the whole block sits toward the left of the section
+            with breathing room on the right, rather than stretching edge to
+            edge. Mobile/tablet keep the full-width stack. */}
+        <div className="grid grid-cols-12 items-start gap-x-8 gap-y-8 lg:max-w-[62rem]">
           {/* Portrait — left on desktop, right on mobile */}
           <motion.figure
             initial={{ opacity: 0, y: reduce ? 0 : 40 }}
@@ -41,16 +45,18 @@ export default function AboutMe() {
                   like a hand-laid block of pigment. Its edges are feathered
                   (blur + multiply) so it reads as paint bleeding into the
                   paper — echoing the bloom washes used across the site —
-                  rather than a hard geometric outline. Kept well
-                  desaturated (was an unsightly, over-saturated rose/violet):
-                  a gentle pine wash that sits with the section's pine label
-                  rather than shouting behind the photo. */}
+                  rather than a hard geometric outline. The wash rides the
+                  Pastel Bloom arc (apricot → blush → soft lilac) so it ties to
+                  the section's apricot label and warm signature — the earlier
+                  pine/teal wash sat off the palette and multiplied dark, so it
+                  read as a sickly slab behind the photo. Held to high-lightness
+                  pastels at low alpha so it stays luminous, not muddy. */}
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute -left-5 -top-5 h-full w-full rounded-[2.25rem]"
                 style={{
                   background:
-                    'linear-gradient(145deg, rgba(59,95,82,0.28) 0%, rgba(52,85,72,0.24) 55%, rgba(74,117,102,0.18) 100%)',
+                    'linear-gradient(145deg, rgba(247,195,148,0.26) 0%, rgba(242,194,207,0.22) 55%, rgba(214,205,236,0.18) 100%)',
                   filter: 'blur(24px)',
                   mixBlendMode: 'multiply',
                 }}
@@ -68,7 +74,7 @@ export default function AboutMe() {
                 }}
                 className="relative overflow-hidden rounded-[1.75rem] border border-line bg-paper-deep"
               >
-                <CornerBloom from="rgba(74,117,102,0.14)" to="rgba(59,95,82,0.11)" overlay />
+                <CornerBloom from="rgba(247,195,148,0.13)" to="rgba(242,194,207,0.11)" overlay />
                 <div className="relative z-10">
                   <picture>
                     <source srcSet={asset(PAINTER.portraitWebp)} type="image/webp" />
