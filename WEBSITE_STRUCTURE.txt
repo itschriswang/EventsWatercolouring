@@ -81,7 +81,7 @@ CONTENT SECTIONS (in scroll order)
 
    BASE PACKAGE section:
      - Title: "Live on the day"
-     - Price: From $850
+     - Price: From $1000
      - Key facts: 3 hours live, 24 keepsakes
      - 4 bullet points of inclusions
      - Explanation: VIPs first, then guests as they pass, all sleeved
@@ -181,7 +181,7 @@ Primary Value Proposition:
   on archival A5 cotton paper. Creates a memorable focal point and lasting memento.
 
 Core Service Variants:
-  1. Live on the day (base: 3 hours, ~24 portraits, $850+)
+  1. Live on the day (base: 3 hours, ~24 portraits, $1000+)
   2. Studio commissions from photos (4 weeks turnaround, $400–$500+)
   3. Add-ons (extra hours, family portraits, stationery, bouquet illustrations)
 
