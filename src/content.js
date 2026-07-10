@@ -169,43 +169,36 @@ export const PACKAGES = {
     {
       h: 'After-event service',
       p: 'Add this and guests beyond the booked pieces are painted in the studio afterwards and posted to you to pass on, at a per-portrait rate we agree before the day.',
-      tag: 'Per portrait · on enquiry',
+      tag: 'Per portrait',
     },
     {
       h: 'Family portrait, A3',
       p: 'You and your immediate family, painted larger on A3 from photos you send after the day.',
-      tag: 'On enquiry',
     },
     {
       h: 'Bridal party, A3',
       p: 'A group portrait of the bridal party on A3, the people closest to you on the day.',
-      tag: 'On enquiry',
     },
 
     {
       h: 'Extra live hours',
       p: 'I stay longer across the event, so more of your guests get painted.',
-      tag: 'On enquiry',
     },
     {
       h: 'Studio commission',
       p: 'A portrait from your photos, before or after the wedding, in a classic likeness or the stylised character style shown in the studio studies. Ready in about four weeks.',
-      tag: 'On enquiry',
     },
     {
       h: 'Stationery licensing',
       p: 'A digital file of your portrait, licensed for save-the-dates, invitations and thank-you cards.',
-      tag: 'On enquiry',
     },
     {
       h: 'Travel further afield',
       p: 'Regional Victoria and destination weddings further out. Happy to talk it through.',
-      tag: 'On enquiry',
     },
     {
       h: 'Wedding bouquet illustration',
       p: 'Your bouquet painted from photos after the day, on A3 cotton paper. A2 on request.',
-      tag: 'On enquiry',
     },
   ],
   licence:

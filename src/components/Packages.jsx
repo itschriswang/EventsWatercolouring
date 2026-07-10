@@ -32,7 +32,32 @@ export default function Packages() {
   })
 
   return (
-    <section id="offerings" className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(5rem,10vw,9rem)]">
+    <section id="offerings" className="relative isolate w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(5rem,10vw,9rem)]">
+      {/* A richer bloom pooled behind the cards, over the section's ambient
+          warm wash. The cards are opaque cream tiles, so this only shows in
+          the gutters and margins around them — giving the negative space more
+          colour so the bright tiles read with stronger contrast against it.
+          `isolate` on the section keeps this -z-10 layer above the ambient
+          WatercolourBloom but behind all the section's content. Blooms are
+          ordered left→right along the palette arc (apricot → butter →
+          yellow-green → periwinkle → lilac → blush) so every overlap is
+          between hue neighbours, and a near-white cream radial lifts the
+          centre where they meet so it glows rather than averaging to grey
+          (Pastel Bloom anti-mud rules). */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            'radial-gradient(circle 20vw at 50% 56%, rgba(255,252,242,0.5), transparent 66%), ' +
+            'radial-gradient(circle 26vw at 10% 46%, rgba(247,195,148,0.20), transparent 70%), ' +
+            'radial-gradient(circle 22vw at 30% 66%, rgba(240,228,158,0.18), transparent 70%), ' +
+            'radial-gradient(circle 24vw at 47% 40%, rgba(228,230,156,0.20), transparent 70%), ' +
+            'radial-gradient(circle 24vw at 65% 62%, rgba(216,218,236,0.18), transparent 72%), ' +
+            'radial-gradient(circle 22vw at 82% 44%, rgba(210,196,232,0.18), transparent 72%), ' +
+            'radial-gradient(circle 24vw at 94% 68%, rgba(244,196,210,0.18), transparent 72%)',
+        }}
+      />
       <Sparkles className="absolute right-[5vw] top-[clamp(3rem,6vw,5.5rem)] hidden h-12 w-12 md:block" />
       <Label gradient={['#D8DB7A', '#9BA03E']}>{PACKAGES.label}</Label>
       <SplitText
@@ -68,10 +93,10 @@ export default function Packages() {
         </motion.div>
         <motion.div
           {...reveal(1)}
-          className="relative z-20 mt-4 max-w-[calc(100vw-5vw*2)] overflow-hidden rounded-2xl border border-line/45 p-6 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.32)]"
+          className="relative z-20 mt-4 max-w-[calc(100vw-5vw*2)] overflow-hidden rounded-2xl border border-line p-6 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.32)]"
           style={{ background: CARD_BG }}
         >
-          <CornerBloom from="rgba(176,74,118,0.18)" to="rgba(142,99,184,0.12)" />
+          <CornerBloom from="rgba(176,74,118,0.12)" to="rgba(142,99,184,0.08)" />
           <div className="relative z-10">
             <p className="text-sm text-ink-soft">{PACKAGES.base.note}</p>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -143,20 +168,24 @@ export default function Packages() {
                         transition={ACCORDION}
                         className="overflow-hidden"
                       >
-                        <p className="pb-3 text-xs leading-relaxed text-ink-soft">{a.p}</p>
-                        <p className="pb-4 text-xs text-rust">
-                          {a.small && (
-                            <span className="mr-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
-                              {a.small}
-                            </span>
-                          )}
-                          <span className="font-mono">{a.tag}</span>
-                          {a.extra && (
-                            <span className="ml-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
-                              {a.extra}
-                            </span>
-                          )}
+                        <p className={a.tag ? 'pb-3 text-xs leading-relaxed text-ink-soft' : 'pb-4 text-xs leading-relaxed text-ink-soft'}>
+                          {a.p}
                         </p>
+                        {a.tag && (
+                          <p className="pb-4 text-xs text-rust">
+                            {a.small && (
+                              <span className="mr-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
+                                {a.small}
+                              </span>
+                            )}
+                            <span className="font-mono">{a.tag}</span>
+                            {a.extra && (
+                              <span className="ml-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
+                                {a.extra}
+                              </span>
+                            )}
+                          </p>
+                        )}
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -172,10 +201,10 @@ export default function Packages() {
         {/* Base package card */}
         <motion.article
           {...reveal()}
-          className="relative col-span-5 flex flex-col overflow-hidden rounded-2xl border border-line/45 p-7 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
+          className="relative col-span-5 flex flex-col overflow-hidden rounded-2xl border border-line p-7 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
           style={{ background: CARD_BG }}
         >
-          <CornerBloom from="rgba(176,74,118,0.18)" to="rgba(142,99,184,0.12)" />
+          <CornerBloom from="rgba(176,74,118,0.12)" to="rgba(142,99,184,0.08)" />
           <div className="relative z-10 flex flex-1 flex-col">
             <div className="flex items-baseline justify-between gap-4">
               <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
@@ -215,10 +244,10 @@ export default function Packages() {
         {/* Add-ons — right column, replacing "Included as standard" */}
         <motion.div
           {...reveal(1)}
-          className="relative col-span-7 overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
+          className="relative col-span-7 overflow-hidden rounded-2xl border border-line shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
           style={{ background: CARD_BG }}
         >
-          <CornerBloom from="rgba(201,169,75,0.16)" to="rgba(138,145,67,0.12)" />
+          <CornerBloom from="rgba(201,169,75,0.10)" to="rgba(138,145,67,0.08)" />
           <div className="relative z-10 flex h-full flex-col">
             <div className="flex items-baseline justify-between border-b border-line/50 px-8 pb-5 pt-8">
               <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
@@ -240,19 +269,21 @@ export default function Packages() {
                 >
                   <h4 className="font-sentient text-base tracking-[-0.01em] text-ink [overflow-wrap:anywhere]">{a.h}</h4>
                   <p className="mt-2 flex-1 text-xs leading-relaxed text-ink-soft">{a.p}</p>
-                  <p className="mt-4 text-xs text-rust">
-                    {a.small && (
-                      <span className="mr-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
-                        {a.small}
-                      </span>
-                    )}
-                    <span className="font-mono">{a.tag}</span>
-                    {a.extra && (
-                      <span className="ml-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
-                        {a.extra}
-                      </span>
-                    )}
-                  </p>
+                  {a.tag && (
+                    <p className="mt-4 text-xs text-rust">
+                      {a.small && (
+                        <span className="mr-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
+                          {a.small}
+                        </span>
+                      )}
+                      <span className="font-mono">{a.tag}</span>
+                      {a.extra && (
+                        <span className="ml-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
+                          {a.extra}
+                        </span>
+                      )}
+                    </p>
+                  )}
                 </motion.div>
               ))}
             </div>
@@ -275,7 +306,7 @@ export default function Packages() {
         className="group relative mt-12 flex w-full items-center justify-between gap-4 overflow-hidden rounded-2xl border border-terracotta/30 p-6 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.32)] transition-colors duration-300 hover:border-terracotta/60 sm:p-7"
         style={{ background: CARD_BG }}
       >
-        <CornerBloom from="rgba(201,169,75,0.16)" to="rgba(232,155,99,0.14)" />
+        <CornerBloom from="rgba(201,169,75,0.10)" to="rgba(232,155,99,0.09)" />
         <span className="relative z-10 flex items-center gap-4 sm:gap-5">
           <span
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-paper shadow-[0_2px_10px_rgba(94,74,140,0.30)]"
