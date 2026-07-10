@@ -41,6 +41,7 @@ export default function Packages() {
         lines={PACKAGES.title}
         emphasis={PACKAGES.emphasis}
         emphasisItalic
+        inkBleed
         className="display-lg mt-5 text-ink"
       />
       <motion.p

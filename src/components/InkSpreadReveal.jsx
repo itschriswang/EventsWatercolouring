@@ -28,7 +28,7 @@ export default function InkSpreadReveal({ reveal }) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-40 overflow-hidden"
+      className="fixed inset-0 z-40 overflow-hidden pointer-events-none"
       style={{ opacity: isDone ? 0 : 1 }}
       transition={{ duration: 0.3, delay: 0.5 }}
     >

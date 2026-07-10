@@ -124,6 +124,7 @@ export default function AboutMe() {
               lines={PAINTER.title}
               emphasis={PAINTER.emphasis}
               emphasisItalic
+              inkBleed
               className="display-lg mt-5 text-ink"
             />
             <div className="mt-8 flex flex-col gap-5 text-[clamp(1rem,1.1vw,1.15rem)] leading-relaxed text-ink-soft">
