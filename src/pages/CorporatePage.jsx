@@ -78,6 +78,7 @@ export default function CorporatePage() {
                   lines={CORPORATE.lines}
                   emphasis={CORPORATE.emphasis}
                   emphasisItalic
+                  inkBleed
                   className="display-xl text-ink"
                 />
               </div>
@@ -134,6 +135,7 @@ export default function CorporatePage() {
               lines={CORPORATE.why.title}
               emphasis={CORPORATE.why.emphasis}
               emphasisItalic
+              inkBleed
               className="display-lg mt-5 text-ink"
             />
             <div className="mt-[clamp(2rem,5vw,3.5rem)] grid grid-cols-1 gap-6 sm:grid-cols-3">
@@ -166,6 +168,7 @@ export default function CorporatePage() {
                   lines={CORPORATE.occasions.title}
                   emphasis={CORPORATE.occasions.emphasis}
                   emphasisItalic
+                  inkBleed
                   className="display-lg mt-5 text-ink"
                 />
                 <motion.p {...rise(1)} className="mt-6 max-w-md leading-relaxed text-ink-soft">
@@ -206,6 +209,7 @@ export default function CorporatePage() {
                 lines={CORPORATE.how.title}
                 emphasis={CORPORATE.how.emphasis}
                 emphasisItalic
+                inkBleed
                 className="display-lg mt-5 text-ink"
               />
               <div className="mt-[clamp(2rem,5vw,3.5rem)] grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -228,6 +232,7 @@ export default function CorporatePage() {
                 lines={CORPORATE.offer.title}
                 emphasis={CORPORATE.offer.emphasis}
                 emphasisItalic
+                inkBleed
                 className="display-lg mt-5 text-ink"
               />
               <div className="mt-[clamp(2rem,5vw,3.5rem)] grid grid-cols-12 gap-8">
