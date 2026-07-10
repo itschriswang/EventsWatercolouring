@@ -5,6 +5,7 @@ import BloomCanvas from './components/BloomCanvas.jsx'
 import SectionWash from './components/SectionWash.jsx'
 import DeckleEdge from './components/DeckleEdge.jsx'
 import Preloader from './components/Preloader.jsx'
+import PageTransition from './components/PageTransition.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
 import MobileNav from './components/MobileNav.jsx'
 import ScrollProgress from './components/ScrollProgress.jsx'
@@ -70,6 +71,10 @@ export default function App() {
       <BloomCanvas revealed={revealed} />
       <GrainCanvas />
       <Preloader onDone={() => setRevealed(true)} />
+      {/* Ink wipe to/from /corporate/ (see PageTransition). Independent of the
+          Preloader: it only plays for an intercepted in-site navigation, so a
+          fresh arrival still gets the intro, not a page wipe. */}
+      <PageTransition />
 
       <ScrollProgress />
       <SiteHeader revealed={revealed} />
