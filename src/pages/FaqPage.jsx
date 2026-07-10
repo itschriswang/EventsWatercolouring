@@ -5,6 +5,7 @@ import SiteHeader from '../components/SiteHeader.jsx'
 import MobileNav from '../components/MobileNav.jsx'
 import WatercolourBloom from '../components/WatercolourBloom.jsx'
 import Label from '../components/Label.jsx'
+import SplitText from '../components/SplitText.jsx'
 import Faq from '../components/Faq.jsx'
 import EnquireForm from '../components/EnquireForm.jsx'
 import Footer from '../components/Footer.jsx'
@@ -51,9 +52,14 @@ export default function FaqPage() {
           <section className="relative w-full px-[5vw] pt-[clamp(7rem,16vw,10rem)] pb-[clamp(1.5rem,4vw,2.5rem)]">
             <div className="relative z-10 max-w-2xl">
               <Label gradient={['#FFE08A', '#E4B23E']}>{FAQ.label}</Label>
-              <h1 className="mt-5 font-sentient text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.95] tracking-[-0.02em] text-ink">
-                {FAQ.title}
-              </h1>
+              <SplitText
+                as="h1"
+                unit="char"
+                playOnMount
+                lines={[FAQ.title]}
+                inkBleed
+                className="mt-5 font-sentient text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.95] tracking-[-0.02em] text-ink"
+              />
               <p className="mt-6 max-w-md leading-relaxed text-ink-soft">
                 Answers to what people usually ask before booking. Can’t find
                 yours?{' '}
