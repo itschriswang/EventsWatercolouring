@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { motion, useMotionValue, useTransform } from 'framer-motion'
 import { asset } from '../lib/site.js'
 import BloomFilter from './WetBloom.jsx'
@@ -32,17 +32,19 @@ function blendForRel(rel) {
   return Math.min(Math.abs(rel), 1)
 }
 
-// The box a piece grows into as it nears centre. Landscape pieces (the same
-// `landscape` flag the grid tiles use, aspect 3:2) get a wider box instead of
-// being squeezed into the portrait default (3:4-ish) and heavily letterboxed
-// — held to the same height as everything else, capped so a wide piece can't
-// blow past the stage width on small screens. Peripheral slats stay a
-// uniform crop (see `objectFit` below), so this only matters once a piece is
-// close enough to centre to be shown uncropped.
-function activeBoxFor(item, sizing) {
-  if (!item.landscape) return { width: sizing.activeWidth, height: sizing.activeHeight }
-  const width = Math.min(sizing.activeHeight * 1.5, sizing.maxActiveWidth)
-  return { width, height: sizing.activeHeight }
+// The box a piece grows into as it nears centre, sized to *its own* real
+// image aspect ratio (measured off the loaded <img>, not guessed from the
+// `landscape` flag) so `object-fit: contain` never has to pad it with bars —
+// the box just *is* the image's shape, clamped inside the height/max-width
+// the tier allows. `ar` is null until the image reports its natural size, in
+// which case this falls back to the tier's own default portrait box.
+// Peripheral slats stay a uniform crop (see `objectFit` below), so this only
+// matters once a piece is close enough to centre to be shown uncropped.
+function activeBoxFor(ar, sizing) {
+  if (!ar) return { width: sizing.activeWidth, height: sizing.activeHeight }
+  const byHeight = sizing.activeHeight * ar
+  if (byHeight <= sizing.maxActiveWidth) return { width: byHeight, height: sizing.activeHeight }
+  return { width: sizing.maxActiveWidth, height: sizing.maxActiveWidth / ar }
 }
 
 const hideOnError = (e) => {
@@ -54,7 +56,20 @@ const hideOnError = (e) => {
 // triggering a React re-render per frame — only the settle (a real
 // navigation) ever re-renders.
 function Card({ item, cardIndex, pos, count, R, sizing, radius, onSelect, dressed, filterId }) {
-  const activeBox = activeBoxFor(item, sizing)
+  const imgRef = useRef(null)
+  const [aspect, setAspect] = useState(null)
+  const readAspect = (el) => {
+    if (el && el.naturalWidth && el.naturalHeight) setAspect(el.naturalWidth / el.naturalHeight)
+  }
+  // The grid tile above already fetched this same asset, so it's usually
+  // already in the image cache and `complete` the instant this mounts —
+  // covers that case (onLoad alone would miss it, since a cached image never
+  // fires load again for a freshly mounted <img>).
+  useEffect(() => {
+    if (imgRef.current?.complete) readAspect(imgRef.current)
+  }, [])
+
+  const activeBox = activeBoxFor(aspect, sizing)
   const width = useTransform(pos, (p) => {
     const a = blendForRel(relOf(cardIndex, p, count))
     return activeBox.width + (sizing.restWidth - activeBox.width) * a
@@ -130,10 +145,12 @@ function Card({ item, cardIndex, pos, count, R, sizing, radius, onSelect, dresse
       <picture className="block h-full w-full">
         <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
         <motion.img
+          ref={imgRef}
           src={asset(`assets/${item.img}.jpg`)}
           alt={item.alt || item.ttl}
           draggable={false}
           onError={hideOnError}
+          onLoad={(e) => readAspect(e.currentTarget)}
           style={{
             width: '100%',
             height: '100%',
@@ -230,13 +247,14 @@ export default function CoverflowCarousel({ items, index, onSelect, sizing, radi
 
   return (
     <div
-      className="relative mx-auto overflow-hidden"
-      // Explicit viewport-based width, not a percentage: this stage's only
-      // children are absolutely positioned slats, so it has no in-flow
-      // content to size a `width: 100%` against inside the lightbox's
-      // shrink-to-fit flex column — it would collapse to ~0 and clip
-      // everything outside the active card.
-      style={{ height: sizing.activeHeight, width: 'min(92vw, 900px)' }}
+      className="relative overflow-hidden"
+      // `100vw`, not a percentage: this stage's only children are absolutely
+      // positioned slats, so it has no in-flow content to size a `width:
+      // 100%` against inside the lightbox's flex column — it would collapse
+      // to ~0 and clip everything outside the active card. The caller (see
+      // Lightbox) mounts this stage in a `position: fixed` wrapper specifically
+      // so `100vw` here means the true browser width, edge to edge.
+      style={{ height: sizing.activeHeight, width: '100vw' }}
     >
       {dressed && <BloomFilter id={filterId} />}
       <div className="absolute inset-0" style={{ isolation: 'isolate' }}>
@@ -263,10 +281,10 @@ export default function CoverflowCarousel({ items, index, onSelect, sizing, radi
 // Two size tiers — coverflow math needs real pixel numbers (for the slat
 // offsets), so it steps rather than fluidly scaling like the rest of the
 // site's clamp()-driven type.
-// `maxActiveWidth` caps how wide a landscape piece's box can grow — loose
-// enough to read as landscape, tight enough that it never crowds out every
-// slat even at the narrow edge of its tier's viewport range (the `wide` tier
-// starts at a 640px viewport, where the stage itself is only ~590px).
+// `maxActiveWidth` caps how wide a piece's box can grow for a very wide
+// aspect ratio — loose enough to read as landscape, tight enough that it
+// never crowds out every slat even at the narrow edge of its tier's viewport
+// range (the `wide` tier starts at a 640px viewport).
 export const COVERFLOW_SIZING = {
   wide: { activeWidth: 326, activeHeight: 449, restWidth: 173, restHeight: 238, gap: 17, maxActiveWidth: 520 },
   narrow: { activeWidth: 196, activeHeight: 270, restWidth: 104, restHeight: 143, gap: 10, maxActiveWidth: 260 },
