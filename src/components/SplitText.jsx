@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import Underline from './Underline.jsx'
 import { SPRING } from '../lib/site.js'
@@ -207,7 +207,12 @@ export default function SplitText({
   const reduce = useReducedMotion()
   const lite = reduce || !useHeavyFx()
   const inkActive = inkBleed && unit === 'char' && !lite
-  const MotionTag = motion(Tag)
+  // `motion(Tag)` must stay the same component reference across re-renders —
+  // recreating it every render makes React see a new element type each time
+  // and remount the whole heading, which replays the `whileInView once`
+  // reveal (and any other mid-page re-render, e.g. the gallery lightbox
+  // opening, would silently reset it) instead of leaving it played.
+  const MotionTag = useMemo(() => motion(Tag), [Tag])
   const rootRef = useRef(null)
 
   // Real gradient-clip flow (see `applyEmphasisFlow`) needs post-layout glyph

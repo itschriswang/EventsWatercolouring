@@ -538,24 +538,37 @@ function Lightbox({ items, index, onClose, onNavigate, onSelect }) {
             />
           )}
 
-          <motion.figure
-            onClick={(e) => e.stopPropagation()}
+          {/* `position: fixed` (not the dialog's flex/padding box) so the
+              carousel spans the true browser width — a descendant of the
+              scale-animated figure below couldn't do this, since a CSS
+              transform on an ancestor traps `position: fixed` children to
+              that ancestor's box instead of the viewport. The dialog itself
+              only animates opacity, so it stays a valid escape hatch. Empty
+              space is `pointer-events: none` so backdrop-click-to-close still
+              reaches the dialog underneath; the carousel and caption opt back
+              into pointer events for themselves. */}
+          <motion.div
             initial={{ scale: reduce ? 1 : 0.94, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: reduce ? 1 : 0.96, opacity: 0 }}
             transition={reduce ? { duration: 0.2 } : SPRING_SOFT}
-            className="relative z-[1] flex max-h-full max-w-5xl flex-col items-center"
+            className="pointer-events-none fixed inset-0 z-[1] flex flex-col items-center justify-center gap-4"
           >
-            <CoverflowCarousel
-              items={items}
-              index={index}
-              onSelect={onSelect}
-              sizing={sizing}
-              radius={COVERFLOW_RADIUS}
-              dressed={dressed}
-              reduce={reduce}
-            />
-            <figcaption className="mt-4 text-center">
+            <div onClick={(e) => e.stopPropagation()} className="pointer-events-auto w-full">
+              <CoverflowCarousel
+                items={items}
+                index={index}
+                onSelect={onSelect}
+                sizing={sizing}
+                radius={COVERFLOW_RADIUS}
+                dressed={dressed}
+                reduce={reduce}
+              />
+            </div>
+            <figcaption
+              onClick={(e) => e.stopPropagation()}
+              className="pointer-events-auto text-center"
+            >
               <span className="block font-sentient tracking-[-0.03em] text-lg text-paper">{item.ttl}</span>
               <span className="mt-0.5 block font-mono text-[0.6rem] uppercase tracking-[0.18em] text-paper/60">
                 {item.meta}
@@ -572,7 +585,7 @@ function Lightbox({ items, index, onClose, onNavigate, onSelect }) {
                 )}
               </span>
             </figcaption>
-          </motion.figure>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
