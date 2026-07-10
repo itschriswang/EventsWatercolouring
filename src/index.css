@@ -122,6 +122,16 @@
     scroll-behavior: smooth;
   }
 
+  /* Anchor jumps (nav links, /#section arrivals) land with breathing room
+     under the sticky desktop header instead of flush against it — one rule
+     for every anchored section, present and future. Mobile has no top bar,
+     so the margin only applies from the header's own breakpoint up. */
+  @media (min-width: 768px) {
+    section[id] {
+      scroll-margin-top: 3.5rem;
+    }
+  }
+
   body {
     margin: 0;
     background-color: theme('colors.paper');
@@ -167,6 +177,22 @@
   ::selection {
     background-color: theme('colors.terracotta');
     color: theme('colors.paper');
+  }
+
+  /* The scrollbar is chrome the visitor stares at for the whole scroll story —
+     tint it into the palette (a soft lilac thumb on the paper ground) instead
+     of leaving the browser's grey. Colour only; width stays native so nothing
+     gets harder to grab. */
+  html {
+    scrollbar-color: rgba(94, 74, 140, 0.35) theme('colors.paper');
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(94, 74, 140, 0.35);
+    border-radius: 9999px;
+    border: 3px solid theme('colors.paper');
+  }
+  ::-webkit-scrollbar-track {
+    background-color: theme('colors.paper');
   }
 
   :focus-visible {

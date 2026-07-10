@@ -45,6 +45,14 @@ const mailtoFor = (data) => {
   )}&body=${encodeURIComponent(body)}`
 }
 
+// Local-timezone YYYY-MM-DD for the date picker's `min` — the event is always
+// in the future, so greying out the past stops a mistyped year (or a stray
+// scroll to last March) from slipping through unnoticed.
+const todayISO = () => {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
 // The three sheets of the reply card, in order.
 const LAST_STEP = 2
 const STEP_COUNT = LAST_STEP + 1
@@ -445,6 +453,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                                     id="f-date"
                                     type="date"
                                     name="date"
+                                    min={todayISO()}
                                     value={f.date}
                                     onChange={(e) =>
                                       // A real date and "not sure yet" can't

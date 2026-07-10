@@ -5,6 +5,7 @@ import BloomCanvas from './components/BloomCanvas.jsx'
 import SectionWash from './components/SectionWash.jsx'
 import DeckleEdge from './components/DeckleEdge.jsx'
 import Preloader from './components/Preloader.jsx'
+import SkipLink from './components/SkipLink.jsx'
 import PageTransition from './components/PageTransition.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
 import MobileNav from './components/MobileNav.jsx'
@@ -82,6 +83,7 @@ export default function App() {
           fresh arrival still gets the intro, not a page wipe. */}
       <PageTransition />
 
+      <SkipLink />
       <ScrollProgress />
       <SiteHeader revealed={revealed} />
       <MobileNav revealed={revealed} />
@@ -91,7 +93,7 @@ export default function App() {
           a couple's word for it right after they've seen the work, the
           person you're trusting with the room (the painter), then the
           decision and the ask. */}
-      <main className="relative z-10">
+      <main id="main" tabIndex={-1} className="relative z-10 outline-none">
         <Hero revealed={revealed} />
 
         <EveningTimeline />
