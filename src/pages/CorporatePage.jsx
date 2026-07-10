@@ -2,6 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import GradientDefs from '../components/GradientDefs.jsx'
 import GrainOverlay from '../components/GrainOverlay.jsx'
 import ScrollProgress from '../components/ScrollProgress.jsx'
+import SkipLink from '../components/SkipLink.jsx'
 import PageTransition from '../components/PageTransition.jsx'
 import SiteHeader from '../components/SiteHeader.jsx'
 import MobileNav from '../components/MobileNav.jsx'
@@ -46,11 +47,12 @@ export default function CorporatePage() {
       <GradientDefs />
       <GrainOverlay />
       <PageTransition />
+      <SkipLink />
       <ScrollProgress />
       <SiteHeader revealed enquireHref="#enquiry" />
       <MobileNav revealed enquireHref="#enquiry" />
 
-      <main className="relative z-10 pb-28 md:pb-0">
+      <main id="main" tabIndex={-1} className="relative z-10 pb-28 md:pb-0 outline-none">
         {/* ── Hero ─────────────────────────────────────────────────────── */}
         <section className="relative w-full overflow-x-clip px-[5vw] pt-[clamp(6rem,14vw,9rem)] pb-[clamp(2.5rem,5vw,4.5rem)]">
           <div
