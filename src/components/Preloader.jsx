@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import InkSpreadReveal from './InkSpreadReveal'
+import { whenFontsReady, whenImagesReady, whenInkReady } from '../lib/pageReady.js'
+
+// The two hero paintings — the LCP art the reveal exists to unveil. They're
+// <link rel="preload"> in index.html, so gating on them (rather than the whole
+// page's `load`) lifts the curtain the moment the hero can paint, not after
+// every below-fold asset has arrived. Keep in step with index.html's preloads.
+const HERO_ART = ['/assets/art-character-boy.webp', '/assets/art-bouquet.webp']
 
 // Session flag so the intro plays once per visit, not once per page load —
 // coming back from /faq/ (or any internal navigation) skips straight to the
@@ -45,12 +52,40 @@ export default function Preloader({ onDone }) {
       done?.()
       return
     }
-    const timers = [
-      window.setTimeout(() => setBloom(true), reduce ? 60 : 420),
-      window.setTimeout(() => setGone(true), reduce ? 140 : 900),
-      window.setTimeout(() => done?.(), reduce ? 220 : 1400),
-    ]
-    return () => timers.forEach(window.clearTimeout)
+
+    let cancelled = false
+    const timers = []
+    timers.push(window.setTimeout(() => setBloom(true), reduce ? 60 : 420))
+
+    // Hold the reveal until the page is actually painted (window load + fonts)
+    // and the ink sprite is decoded, so the curtain lifts on a finished hero
+    // instead of a blank wash — and the peel runs smoothly rather than snapping
+    // on a not-yet-decoded mask. A minimum dwell lets the bloom breathe, and a
+    // cap means a slow asset can never leave the intro hanging.
+    const start = performance.now()
+    const MIN = reduce ? 140 : 950
+    const CAP = reduce ? 500 : 3200
+    const gates = [whenFontsReady(CAP), whenImagesReady(HERO_ART, CAP)]
+    if (!reduce) gates.push(whenInkReady())
+    // Race the readiness gate against a hard cap: on a slow link the sprite
+    // download (or a stubborn asset) must never leave the intro hanging.
+    const capped = new Promise((r) => window.setTimeout(r, CAP))
+    Promise.race([Promise.all(gates), capped]).then(() => {
+      if (cancelled) return
+      const wait = Math.max(0, MIN - (performance.now() - start))
+      timers.push(
+        window.setTimeout(() => {
+          if (cancelled) return
+          setGone(true)
+          timers.push(window.setTimeout(() => done?.(), reduce ? 80 : 260))
+        }, wait),
+      )
+    })
+
+    return () => {
+      cancelled = true
+      timers.forEach(window.clearTimeout)
+    }
   }, [skip, reduce, done])
 
   if (skip) return null
