@@ -2,6 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import GradientDefs from '../components/GradientDefs.jsx'
 import GrainOverlay from '../components/GrainOverlay.jsx'
 import ScrollProgress from '../components/ScrollProgress.jsx'
+import PageTransition from '../components/PageTransition.jsx'
 import SiteHeader from '../components/SiteHeader.jsx'
 import MobileNav from '../components/MobileNav.jsx'
 import WatercolourBloom from '../components/WatercolourBloom.jsx'
@@ -44,6 +45,7 @@ export default function CorporatePage() {
     <div className="relative min-h-screen bg-paper">
       <GradientDefs />
       <GrainOverlay />
+      <PageTransition />
       <ScrollProgress />
       <SiteHeader revealed enquireHref="#enquiry" />
       <MobileNav revealed enquireHref="#enquiry" />
