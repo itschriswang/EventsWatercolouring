@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
 import { Drop } from './Label.jsx'
-import { SPRING } from '../lib/site.js'
+import { SPRING, CARD_BG } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
 import Sparkles from './Sparkles.jsx'
@@ -68,7 +68,7 @@ export default function Packages() {
         <motion.div
           {...reveal(1)}
           className="relative z-20 mt-4 max-w-[calc(100vw-5vw*2)] overflow-hidden rounded-2xl border border-line/45 p-6 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.32)]"
-          style={{ background: 'linear-gradient(150deg, rgba(247,195,148,0.18) 0%, rgba(242,194,207,0.14) 48%, rgba(228,230,156,0.16) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
+          style={{ background: CARD_BG }}
         >
           <CornerBloom from="rgba(176,74,118,0.18)" to="rgba(142,99,184,0.12)" />
           <div className="relative z-10">
@@ -172,7 +172,7 @@ export default function Packages() {
         <motion.article
           {...reveal()}
           className="relative col-span-5 flex flex-col overflow-hidden rounded-2xl border border-line/45 p-7 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
-          style={{ background: 'linear-gradient(150deg, rgba(247,195,148,0.18) 0%, rgba(242,194,207,0.14) 48%, rgba(228,230,156,0.16) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
+          style={{ background: CARD_BG }}
         >
           <CornerBloom from="rgba(176,74,118,0.18)" to="rgba(142,99,184,0.12)" />
           <div className="relative z-10 flex flex-1 flex-col">
@@ -215,7 +215,7 @@ export default function Packages() {
         <motion.div
           {...reveal(1)}
           className="relative col-span-7 overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
-          style={{ background: 'linear-gradient(150deg, rgba(247,195,148,0.18) 0%, rgba(242,194,207,0.14) 48%, rgba(228,230,156,0.16) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
+          style={{ background: CARD_BG }}
         >
           <CornerBloom from="rgba(201,169,75,0.16)" to="rgba(138,145,67,0.12)" />
           <div className="relative z-10 flex h-full flex-col">
@@ -272,7 +272,7 @@ export default function Packages() {
         whileHover={reduce ? {} : { y: -3 }}
         transition={SPRING}
         className="group relative mt-12 flex w-full items-center justify-between gap-4 overflow-hidden rounded-2xl border border-terracotta/30 p-6 shadow-[0_24px_50px_-20px_rgba(94,74,140,0.32)] transition-colors duration-300 hover:border-terracotta/60 sm:p-7"
-        style={{ background: 'linear-gradient(150deg, rgba(247,195,148,0.18) 0%, rgba(242,194,207,0.14) 48%, rgba(228,230,156,0.16) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }}
+        style={{ background: CARD_BG }}
       >
         <CornerBloom from="rgba(201,169,75,0.16)" to="rgba(232,155,99,0.14)" />
         <span className="relative z-10 flex items-center gap-4 sm:gap-5">
