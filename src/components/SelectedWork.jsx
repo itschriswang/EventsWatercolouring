@@ -7,12 +7,12 @@ import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset } from '../lib/site.js'
 import { WORK } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
-import BloomFilter from './WetBloom.jsx'
+import CoverflowCarousel, { COVERFLOW_SIZING, COVERFLOW_RADIUS } from './CoverflowCarousel.jsx'
 
 // Flatten the curated groups once, giving every entry a stable index. The
-// lightbox walks this flat list, and `_idx` (not `item.img`) backs each
-// tile's layoutId: Framer Motion requires layoutId to be unique among
-// mounted elements, and reused source images would otherwise collide.
+// lightbox walks this flat list, and `_idx` (not `item.img`, which repeats
+// across the reveal strip) backs the stable React key each painting keeps
+// as it moves between the grid tile and a coverflow slat.
 const GROUPS = WORK.groups.map((group) => ({ ...group, items: [...group.items] }))
 {
   let idx = 0
@@ -58,6 +58,8 @@ export default function SelectedWork() {
     (dir) => setActiveIndex((i) => (i + dir + paintings.length) % paintings.length),
     [paintings.length],
   )
+  // Jump straight to a piece — used when a visitor taps a slat in the coverflow.
+  const selectIndex = useCallback((i) => setActiveIndex(i), [])
 
   // Lock background scroll while the lightbox is open. Escape, focus trapping
   // and focus restoration are handled by useFocusTrap inside the Lightbox.
@@ -152,6 +154,7 @@ export default function SelectedWork() {
         index={activeIndex}
         onClose={close}
         onNavigate={navigate}
+        onSelect={selectIndex}
       />
     </section>
   )
@@ -205,10 +208,7 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
         >
           <picture>
             <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
-            {/* Shared-layout source: morphs into the lightbox image on open.
-                Disabled under reduced-motion so framer leaves layout untouched. */}
             <motion.img
-              layoutId={reduce ? undefined : `work-${item._idx}`}
               src={asset(`assets/${item.img}.jpg`)}
               alt={item.alt || item.ttl}
               loading="lazy"
@@ -447,22 +447,26 @@ function NavControl({ label, onClick, className, children }) {
 }
 
 /**
- * Lightbox — an overlay that grows the selected painting to fill the screen.
- * Walks the gallery with the on-screen arrows or the ← / → keys; closes on
- * backdrop click, the close button, or Escape. Honours reduced-motion by
- * skipping the scale-in and crossfade. The expensive dressing — backdrop
- * blur, the blurred pigment glow, the wet-bloom SVG filter — is reserved for
- * fine-pointer desktops (heavyFx): phones get a plain dark backdrop and the
- * same shared-layout morph, which is transform-only and stays smooth.
+ * Lightbox — an overlay that opens the gallery into a coverflow: the tapped
+ * painting takes the centre at full size, with the rest of the wall fanned
+ * out either side as thin slats. Walks the gallery with the on-screen arrows,
+ * the ← / → keys, or by tapping a slat directly; closes on backdrop click,
+ * the close button, or Escape. Honours reduced-motion by skipping the pop-in
+ * and sliding the carousel straight to each new piece. The expensive
+ * dressing — backdrop blur, the blurred pigment glow, the wet-bloom SVG
+ * filter — is reserved for fine-pointer desktops (heavyFx): phones get a
+ * plain dark backdrop and flat colour, transform-only motion, which stays smooth.
  */
-function Lightbox({ items, index, onClose, onNavigate }) {
+function Lightbox({ items, index, onClose, onNavigate, onSelect }) {
   const reduce = useReducedMotion()
   const heavy = useHeavyFx()
+  const wide = useMediaQuery('(min-width: 640px)')
   const open = index != null
   const item = open ? items[index] : null
   const trapRef = useFocusTrap(open, onClose)
   const many = items.length > 1
   const dressed = heavy && !reduce
+  const sizing = wide ? COVERFLOW_SIZING.wide : COVERFLOW_SIZING.narrow
 
   // Left / right arrow keys walk the wall while the lightbox is open.
   useEffect(() => {
@@ -535,42 +539,21 @@ function Lightbox({ items, index, onClose, onNavigate }) {
 
           <motion.figure
             onClick={(e) => e.stopPropagation()}
-            // The shared-layout morph carries the figure open, so it no longer
-            // scales itself in. Reduced-motion keeps the original gentle scale-in.
-            initial={reduce ? { scale: 1, opacity: 0, y: 0 } : false}
-            animate={reduce ? { scale: 1, opacity: 1, y: 0 } : false}
-            exit={reduce ? { scale: 1, opacity: 0 } : { opacity: 0 }}
-            transition={SPRING_SOFT}
+            initial={{ scale: reduce ? 1 : 0.94, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: reduce ? 1 : 0.96, opacity: 0 }}
+            transition={reduce ? { duration: 0.2 } : SPRING_SOFT}
             className="relative z-[1] flex max-h-full max-w-5xl flex-col items-center"
           >
-            {/* Keyed by index so each painting crossfades as you move along
-                the wall; the wet-bloom re-wick is desktop-only dressing. */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={index}
-                initial={reduce ? false : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={reduce ? { opacity: 1 } : { opacity: 0 }}
-                transition={{ duration: 0.22 }}
-                className="relative block"
-              >
-                {dressed && <BloomFilter id={`wc-bloom-${index}`} />}
-                <picture className="block">
-                  <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
-                  {/* Shared-layout target: morphs from the gallery tile of the
-                      same painting. */}
-                  <motion.img
-                    layoutId={reduce ? undefined : `work-${item._idx}`}
-                    transition={SPRING_SOFT}
-                    src={asset(`assets/${item.img}.jpg`)}
-                    alt={item.alt || item.ttl}
-                    onError={hideOnError}
-                    style={dressed ? { filter: `url(#wc-bloom-${index})` } : undefined}
-                    className="max-h-[80vh] w-auto rounded-2xl object-contain shadow-[0_28px_60px_-10px_rgba(94,74,140,0.65)]"
-                  />
-                </picture>
-              </motion.div>
-            </AnimatePresence>
+            <CoverflowCarousel
+              items={items}
+              index={index}
+              onSelect={onSelect}
+              sizing={sizing}
+              radius={COVERFLOW_RADIUS}
+              dressed={dressed}
+              reduce={reduce}
+            />
             <figcaption className="mt-4 text-center">
               <span className="block font-sentient tracking-[-0.03em] text-lg text-paper">{item.ttl}</span>
               <span className="mt-0.5 block font-mono text-[0.6rem] uppercase tracking-[0.18em] text-paper/60">
