@@ -22,6 +22,11 @@ const GROUPS = WORK.groups.map((group) => ({ ...group, items: [...group.items] }
 }
 const ALL_ITEMS = GROUPS.flatMap((g) => g.items)
 
+// The openable paintings (testimonials are not enlargeable). The lightbox
+// walks this list, so navigation skips quote cards automatically. Content is
+// static, so this is computed once, not per render.
+const PAINTINGS = ALL_ITEMS.filter((g) => !g.testimonial)
+
 // Graceful fallback when an image fails to load: hide the broken <img> so the
 // paper-toned card remains instead of a broken-image glyph.
 const hideOnError = (e) => {
@@ -38,9 +43,7 @@ const hideOnError = (e) => {
  * added in content.js) slot into the rows as quote cards.
  */
 export default function SelectedWork() {
-  // The openable paintings (testimonials are not enlargeable). The lightbox
-  // walks this list, so navigation skips quote cards automatically.
-  const paintings = ALL_ITEMS.filter((g) => !g.testimonial)
+  const paintings = PAINTINGS
 
   // Only one of the two layouts is ever mounted at a time. Mounting both
   // (one display:none per breakpoint) would give every tile an invisible

@@ -44,17 +44,23 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
 
   return (
     <footer className="relative w-full overflow-hidden px-[5vw] pt-[clamp(4rem,8vw,7rem)] pb-36 md:pb-[clamp(4rem,8vw,7rem)] text-paper">
-      {/* Fireflies night background */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage: 'url(/assets/fireflies-night.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          imageRendering: 'crisp-edges',
-        }}
-      />
+      {/* Fireflies night background. A real <picture> rather than a CSS
+          background so the browser can pick the much lighter webp and lazy-load
+          it — the heaviest image on the page never blocks anything above the
+          footer. The wine ground beneath keeps the light type readable while
+          (or if) the photo is still arriving. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-wine">
+        <picture>
+          <source srcSet="/assets/fireflies-night.webp" type="image/webp" />
+          <img
+            src="/assets/fireflies-night.jpg"
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover"
+          />
+        </picture>
+      </div>
       {/* Overlay for text readability */}
       <div
         aria-hidden="true"
@@ -137,8 +143,11 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
       </div>
 
       <div className="relative z-10 mt-[clamp(3rem,7vw,6rem)] flex flex-col gap-8 border-t border-paper/15 pt-10 lg:flex-row lg:justify-between">
-        <span className="font-sentient text-2xl tracking-[-0.01em]">
-          {FOOTER.name}
+        <span className="flex flex-col gap-1.5">
+          <span className="font-sentient text-2xl tracking-[-0.01em]">{FOOTER.name}</span>
+          <span className="font-mono text-[0.55rem] uppercase tracking-[0.2em] text-paper/40">
+            © {new Date().getFullYear()} · Melbourne & Sydney
+          </span>
         </span>
         <nav
           aria-label="Footer"
