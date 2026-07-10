@@ -1,4 +1,81 @@
-# EventsWatercolouring Design System Guide
+# EventsWatercolouring — Project Guide
+
+Marketing site for Chris Wang's live event watercolour painting service
+(chriswangstudio.com). React 18 + Vite 5 + Tailwind 3 + Framer Motion,
+deployed as a static multi-page build to GitHub Pages.
+
+## Commands
+
+```
+npm run dev       # Vite dev server
+npm run build     # production build to dist/ (all three pages)
+npm run preview   # serve the production build locally
+```
+
+There are no tests or linters — verify changes with `npm run build` plus a
+visual pass (Playwright is available as a devDependency for screenshots).
+
+## Architecture
+
+**Three static pages, one Vite build** (see `vite.config.js` rollup inputs):
+
+- `/` — `index.html` → `src/main.jsx` → `src/App.jsx` (the homepage)
+- `/faq/` — `faq/index.html` → `src/faq-main.jsx` → `src/pages/FaqPage.jsx`
+- `/corporate/` — `corporate/index.html` → `src/corporate-main.jsx` → `src/pages/CorporatePage.jsx`
+
+Each HTML entry carries its own SEO meta + a no-JS fallback. This is an MPA:
+navigation between pages is a real page load (PageTransition's ink wipe hands
+off across it via sessionStorage).
+
+**Key directories:**
+
+- `src/content.js` — ALL site copy lives here, one export per section.
+  Christopher's voice: plain, warm, Australian English, no em dashes.
+- `src/lib/site.js` — shared constants: `SPRING`/`SPRING_SOFT` (the site-wide
+  motion physics), `asset()`, `ENQUIRE_HREF`, `EMAIL`, Formspree config.
+- `src/components/` — one component per file. Homepage section order is set
+  in `App.jsx`; the section comments there explain the narrative pacing.
+- `src/hooks/useMediaQuery.js` — exports `useHeavyFx()`, the performance gate
+  (see below).
+- `docs/` — business documents (contract, pricing models, copy notes,
+  content plans). Not part of the build.
+- `reference/` — design references and adapted third-party studies. Not part
+  of the build.
+
+## Performance conventions
+
+Every expensive effect is tiered, and new effects must follow the same ladder:
+
+1. **`useHeavyFx()`** (roomy fine-pointer devices, no Data Saver, ≥4GiB
+   reported memory) gates parallax, WebGL washes, backdrop blur, cursor
+   effects. Touch/low-end devices get a cheaper static equivalent — never
+   nothing, never jank.
+2. **`useReducedMotion()`** (Framer) zeroes translate/scale entrances and
+   skips loops; `index.css` has a global reduced-motion safety net for CSS
+   animations. The static tilt/washes may remain.
+3. **WebGL** (`BloomCanvas`, `GrainCanvas` via `src/lib/webgl.js`) always has
+   a CSS/SVG fallback (`WatercolourBloom`, `GrainOverlay`) and tears down via
+   `WEBGL_lose_context`.
+
+Images ship as `<picture>` webp + jpg/png pairs in `public/assets/`; anything
+below the fold is `loading="lazy"`. The two hero paintings are preloaded from
+`index.html` (LCP) — keep those hrefs in sync if the hero art changes.
+
+## Working in this codebase
+
+- Comments explain *why* an effect or value exists (often hard-won fixes —
+  oscillating headers, mask clipping, gradient bleed). Read them before
+  "simplifying" something that looks odd; keep the style when adding code.
+- `terracotta`/`rust`/`ochre` token names are legacy slots pointing at the
+  pastel palette — do not rename them site-wide, and never introduce actual
+  terracotta/brick tones (see below).
+- Anchor ids (`#night`, `#work`, `#painter`, `#offerings`, `#enquiry`,
+  `#faq`) are load-bearing: nav, footer, FAQ cross-links and the planner all
+  point at them. `section[id]` gets `scroll-margin-top` from `index.css`.
+- The enquiry form posts to Formspree with a fixed field set — if you change
+  fields, keep the posted payload keys stable (see `EnquireForm.jsx`).
+
+# Design System Guide
 
 ## Palette: Pastel Bloom
 

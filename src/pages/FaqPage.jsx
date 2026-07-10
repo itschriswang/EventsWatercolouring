@@ -1,6 +1,7 @@
 import GradientDefs from '../components/GradientDefs.jsx'
 import GrainOverlay from '../components/GrainOverlay.jsx'
 import ScrollProgress from '../components/ScrollProgress.jsx'
+import SkipLink from '../components/SkipLink.jsx'
 import SiteHeader from '../components/SiteHeader.jsx'
 import MobileNav from '../components/MobileNav.jsx'
 import WatercolourBloom from '../components/WatercolourBloom.jsx'
@@ -27,11 +28,12 @@ export default function FaqPage() {
     <div className="relative min-h-screen bg-paper">
       <GradientDefs />
       <GrainOverlay />
+      <SkipLink />
       <ScrollProgress />
       <SiteHeader revealed enquireHref="#enquiry" />
       <MobileNav revealed enquireHref="#enquiry" />
 
-      <main className="relative z-10 pb-28 md:pb-0">
+      <main id="main" tabIndex={-1} className="relative z-10 pb-28 md:pb-0 outline-none">
         {/* One continuous wash behind the hero and the whole FAQ list — the
             cards below are opaque paper tiles, not painted with the wash
             themselves, so the bloom only reads in the negative space around
