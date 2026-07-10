@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { whenPageReady, whenInkReady } from '../lib/pageReady.js'
 
 // Paper ground — matches the `paper` token and both pages' background, so the
 // wipe is a sheet of the site's own paper, never a foreign colour.
@@ -30,24 +31,6 @@ const readFlag = () => {
 }
 
 /**
- * Resolve once the arriving page has actually painted its content — window
- * `load` (images, including the preloaded hero art) plus web fonts — so the
- * reveal unveils a finished page rather than a half-drawn one. Capped so a
- * single slow asset can never strand the cover on screen.
- */
-function whenPageReady(cap = 1400) {
-  const waits = []
-  if (document.readyState !== 'complete') {
-    waits.push(new Promise((r) => window.addEventListener('load', r, { once: true })))
-  }
-  if (document.fonts && document.fonts.status !== 'loaded') {
-    waits.push(document.fonts.ready.catch(() => {}))
-  }
-  const ready = waits.length ? Promise.all(waits) : Promise.resolve()
-  return Promise.race([ready, new Promise((r) => setTimeout(r, cap))])
-}
-
-/**
  * Ink wipe between the homepage and /corporate/. Same sprite and paper-mask
  * trick as the intro reveal (InkSpreadReveal): the dark ink sprite is used only
  * as an alpha mask over a paper fill, so nothing dark ever flashes.
@@ -71,19 +54,27 @@ export default function PageTransition() {
 
   // Clear the hand-off flag once, on mount: the arrival initializer has already
   // read it, and leaving it set would replay the reveal on a manual refresh.
+  // Also warm the ink sprite now so the cover (on the next click) and the peel
+  // are decoded and ready — no snap on a page reached without a prior wipe.
   useEffect(() => {
     try {
       window.sessionStorage.removeItem(FLAG)
     } catch {
       // Storage blocked — nothing to clear.
     }
+    whenInkReady()
   }, [])
 
-  // Arrival: hold the cover until the page is painted, then peel.
+  // Arrival: hold the cover until the page is painted *and* the mask is decoded,
+  // then peel — so it reveals a finished page and the recede runs smoothly.
   useEffect(() => {
     if (phase !== 'enter-cover') return
     let cancelled = false
-    whenPageReady().then(() => {
+    const CAP = 2500
+    const capped = new Promise((r) => setTimeout(r, CAP))
+    // Race against a hard cap so a slow asset (or the sprite download) can
+    // never strand the cover on the arriving page.
+    Promise.race([Promise.all([whenPageReady(CAP), whenInkReady()]), capped]).then(() => {
       if (cancelled) return
       // One frame so the fully-covered paint commits before the peel starts.
       requestAnimationFrame(() => !cancelled && setPhase('enter-peel'))
