@@ -63,6 +63,12 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-paper">
+      {/* Logo/`/#top` anchor. Must sit at the true document top, off the
+          normal flow: anchoring `#top` to the hero put the target at
+          (sticky header height) ≈ the header's 60px compress threshold, so
+          the browser's anchor-chasing and the header's resize fed each other
+          in an endless scroll/height oscillation. */}
+      <span id="top" aria-hidden="true" className="absolute top-0" />
       {/* Live watercolour wash behind the whole page (one shared WebGL
           context), with the GPU paper grain over the top. Both degrade to the
           static CSS washes / SVG grain on mobile, reduced-motion or no-WebGL. */}
