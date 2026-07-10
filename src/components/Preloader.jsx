@@ -47,8 +47,8 @@ export default function Preloader({ onDone }) {
     }
     const timers = [
       window.setTimeout(() => setBloom(true), reduce ? 60 : 420),
-      window.setTimeout(() => setGone(true), reduce ? 140 : 820),
-      window.setTimeout(() => done?.(), reduce ? 220 : 1100),
+      window.setTimeout(() => setGone(true), reduce ? 140 : 900),
+      window.setTimeout(() => done?.(), reduce ? 220 : 1400),
     ]
     return () => timers.forEach(window.clearTimeout)
   }, [skip, reduce, done])
@@ -62,15 +62,10 @@ export default function Preloader({ onDone }) {
           <motion.div
             className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-paper paper-grain"
             initial={false}
-            exit={
-              reduce
-                ? { opacity: 0, transition: { duration: 0.25 } }
-                : {
-                    clipPath: 'circle(0% at 50% 45%)',
-                    transition: { duration: 0.7, ease: [0.22, 0.61, 0.36, 1] },
-                  }
-            }
-            style={{ clipPath: 'circle(150% at 50% 45%)' }}
+            // Fade the intro sheet out (rather than a clip-path collapse) so it
+            // hands off cleanly to the ink cover behind it — both are paper, so
+            // there's no seam; the ink retraction then owns the reveal.
+            exit={{ opacity: 0, transition: { duration: reduce ? 0.25 : 0.5 } }}
           >
             <div className="relative grid h-40 w-40 place-items-center sm:h-48 sm:w-48">
               <Bloom active={bloom} reduce={reduce} />
@@ -82,7 +77,10 @@ export default function Preloader({ onDone }) {
           </motion.div>
         )}
       </AnimatePresence>
-      <InkSpreadReveal reveal={bloom && !reduce} />
+      {/* Motion flow only — the ink cover would trap the page under a
+          non-animating sheet under reduced motion, so it's simply omitted
+          there (the fade above is the reveal instead). */}
+      {!reduce && <InkSpreadReveal reveal={gone} />}
     </>
   )
 }
