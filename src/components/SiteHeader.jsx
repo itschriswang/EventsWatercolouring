@@ -44,9 +44,17 @@ export default function SiteHeader({ revealed, className = '', enquireHref = ENQ
   const [scrolled, setScrolled] = useState(false)
   const [active, setActive] = useState(null)
 
-  // Compress the header once the page is scrolled past the fold.
+  // Compress the header once the page is scrolled past the fold. The two
+  // thresholds are deliberate hysteresis: compressing changes the header's
+  // height, which shifts the page under the sticky bar — a single trip point
+  // would let scroll positions near it flap the header back and forth.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60)
+    const onScroll = () =>
+      setScrolled((prev) => {
+        if (window.scrollY > 72) return true
+        if (window.scrollY < 48) return false
+        return prev
+      })
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
