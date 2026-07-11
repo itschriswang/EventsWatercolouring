@@ -10,14 +10,15 @@ export default {
         // periwinkle on the cool side. Everything stays light and luminous;
         // nothing drifts toward brick or terracotta. Token names are legacy
         // slot names — their values point at the pastel scheme's anchors.
-        // Text/UI tokens use deep burgundy anchors — the chartreuse accent's
-        // chic wine counterpart — so contrast holds on the ivory ground (all
-        // text anchors ≥4.5:1 on paper).
+        // Text stays a dark slate (the `ink` slot keeps its cool cast on
+        // purpose) — burgundy is a *decorative* deep anchor (shadows, night
+        // grounds, washes), never the titles/body copy. All text anchors
+        // ≥4.5:1 on paper.
         paper: '#F7F4EF',
         'paper-deep': '#F4ECEF',
-        ink: '#4E2639',
-        'ink-soft': '#80606B',
-        line: '#E4D4DA',
+        ink: '#3F3552',
+        'ink-soft': '#756A7C',
+        line: '#E1D6E0',
         // Primary accent pigments. The dominant UI accent is Lemon Lime
         // (#D8DB7A), one of the client's reference swatches, deepened just
         // enough to read as text — see the full swatch-to-hex mapping in
