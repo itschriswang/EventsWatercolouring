@@ -31,7 +31,7 @@ const MINUTE_SEED = new Date().getMinutes()
 // every underline with the full six-stop rainbow — messy at this stroke
 // width — each underline picks just two of these to blend between, so it
 // still echoes the site's palette without the busy multi-hue wash.
-const FLOW_COLORS = ['#9ED0BD', '#C18DE1', '#D8DC4B', '#F674A2', '#EB5E7F']
+const FLOW_COLORS = ['#9ED0BD', '#C18DE1', '#D8DC4B', '#F674A2', '#C94868']
 
 // Deterministically picks two distinct colours from FLOW_COLORS for a given
 // phrase — stable for the life of the page load, reseeded minute to minute

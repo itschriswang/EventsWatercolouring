@@ -61,8 +61,8 @@ const FRAG = `
   // .wcb-warm sunlit recipe.
   vec3 pigment(float t, float warm){
     vec3 apricot    = vec3(0.969, 0.765, 0.580);
-    vec3 butter     = vec3(0.941, 0.894, 0.620);
-    vec3 yellowgrn  = vec3(0.894, 0.902, 0.612);
+    vec3 butter     = vec3(0.906, 0.910, 0.565);
+    vec3 yellowgrn  = vec3(0.843, 0.886, 0.533);
     vec3 peri       = mix(vec3(0.847, 0.855, 0.925), butter, warm);
     vec3 lilac      = mix(vec3(0.824, 0.769, 0.910), vec3(0.957, 0.769, 0.824), warm);
     vec3 blush      = vec3(0.957, 0.769, 0.824);

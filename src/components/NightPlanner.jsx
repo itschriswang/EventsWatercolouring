@@ -8,9 +8,9 @@ import { withUnderline } from './Underline.jsx'
 // Warm pigment pairs for the little keepsake thumbnails — cycled so the
 // grid reads as a spread of different paintings, not a repeat pattern.
 const THUMB_TINTS = [
-  ['rgba(176,74,118,0.55)', 'rgba(142,99,184,0.35)'],
-  ['rgba(142,99,184,0.5)', 'rgba(176,74,118,0.3)'],
-  ['rgba(201,169,75,0.5)', 'rgba(138,145,67,0.35)'],
+  ['rgba(176,74,118,0.55)', 'rgba(140,54,86,0.35)'],
+  ['rgba(140,54,86,0.5)', 'rgba(176,74,118,0.3)'],
+  ['rgba(176,172,66,0.5)', 'rgba(138,145,67,0.35)'],
   ['rgba(176,74,118,0.5)', 'rgba(192,85,154,0.3)'],
 ]
 
@@ -42,10 +42,10 @@ export default function NightPlanner() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={SPRING}
-      className="relative mt-[clamp(2.5rem,6vw,4rem)] overflow-hidden rounded-2xl border border-line shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]"
+      className="relative mt-[clamp(2.5rem,6vw,4rem)] overflow-hidden rounded-2xl border border-line shadow-[0_24px_50px_-20px_rgba(126,40,72,0.25)]"
       style={{ background: CARD_BG }}
     >
-      <CornerBloom from="rgba(142,99,184,0.09)" to="rgba(176,74,118,0.09)" />
+      <CornerBloom from="rgba(140,54,86,0.09)" to="rgba(176,74,118,0.09)" />
       <div className="relative z-10 grid grid-cols-1 gap-8 p-7 sm:p-8 lg:grid-cols-2 lg:gap-12">
         {/* Controls */}
         <div>
@@ -135,7 +135,7 @@ export default function NightPlanner() {
                   initial={reduce ? false : { opacity: 0, scale: 0.5 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ ...SPRING, delay: reduce ? 0 : (i % 8) * 0.02 }}
-                  className="relative h-7 w-5 overflow-hidden rounded-[3px] border border-line bg-paper shadow-[0_2px_6px_-2px_rgba(94,74,140,0.35)]"
+                  className="relative h-7 w-5 overflow-hidden rounded-[3px] border border-line bg-paper shadow-[0_2px_6px_-2px_rgba(126,40,72,0.35)]"
                 >
                   <span
                     className="absolute inset-0"

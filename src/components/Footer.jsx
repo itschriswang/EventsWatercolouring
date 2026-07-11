@@ -68,13 +68,13 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
         style={{
           background:
             'radial-gradient(ellipse 70% 60% at 88% 2%, rgba(255,165,95,0.15) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 44% 38% at 70% 18%, rgba(250,225,120,0.12) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 44% 38% at 70% 18%, rgba(236,232,108,0.12) 0%, transparent 55%), ' +
             'radial-gradient(ellipse 48% 42% at 58% 42%, rgba(205,215,80,0.15) 0%, transparent 55%), ' +
             'radial-gradient(ellipse 52% 44% at 4% 96%, rgba(245,120,175,0.08) 0%, transparent 52%), ' +
             'radial-gradient(ellipse 40% 36% at 22% 70%, rgba(250,170,200,0.07) 0%, transparent 55%), ' +
             'radial-gradient(ellipse 46% 40% at 42% 88%, rgba(120,180,150,0.10) 0%, transparent 55%), ' +
             'radial-gradient(ellipse 36% 32% at 96% 78%, rgba(150,190,170,0.10) 0%, transparent 58%), ' +
-            'linear-gradient(160deg, rgba(34,28,48,0.65) 0%, rgba(42,36,56,0.60) 55%, rgba(50,42,68,0.65) 100%)',
+            'linear-gradient(160deg, rgba(45,24,36,0.65) 0%, rgba(54,30,43,0.60) 55%, rgba(66,36,50,0.65) 100%)',
         }}
       />
       <div className="relative z-10 flex flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">
