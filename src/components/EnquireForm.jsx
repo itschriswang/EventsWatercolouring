@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label, { Drop } from './Label.jsx'
+import Postcard from './Postcard.jsx'
 import { CalendarDateIcon } from './icons/FreehandIcons.jsx'
 import {
   SPRING,
@@ -345,6 +346,10 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
 
                 <AnimatePresence mode="wait">
                   {sent ? (
+                    // The metaphor completes here: the seal was pressed, the
+                    // sheet flooded with pigment, and the thank-you arrives
+                    // as a mailed postcard — stamped with a keepsake and
+                    // postmarked today (see Postcard.jsx).
                     <motion.div
                       key="confirm"
                       initial={{ opacity: 0, y: reduce ? 0 : 16 }}
@@ -352,23 +357,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                       transition={SPRING}
                       className="relative"
                     >
-                      <h3 className="font-sentient text-3xl tracking-[-0.04em] text-ink">
-                        {ENQUIRY.confirm.title}
-                        {firstName && <span className="text-terracotta">, {firstName}</span>}.
-                      </h3>
-                      <p className="mt-3 max-w-md leading-relaxed text-ink-soft">
-                        {ENQUIRY.confirm.body}
-                      </p>
-                      {ENQUIRY.confirm.sign && (
-                        <motion.p
-                          initial={{ opacity: 0, y: reduce ? 0 : 8 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={reduce ? { duration: 0 } : { ...SPRING, delay: 0.45 }}
-                          className="mt-6 font-sentient text-3xl italic text-terracotta"
-                        >
-                          {ENQUIRY.confirm.sign}
-                        </motion.p>
-                      )}
+                      <Postcard firstName={firstName} reduce={reduce} />
                     </motion.div>
                   ) : (
                     <motion.form key="form" noValidate onSubmit={onSubmit} initial={false}>
