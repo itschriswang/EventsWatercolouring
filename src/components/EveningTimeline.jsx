@@ -6,6 +6,7 @@ import { SPRING } from '../lib/site.js'
 import { EVENING } from '../content.js'
 import WatercolourBloom from './WatercolourBloom.jsx'
 import GlassPill from './GlassPill.jsx'
+import GlassCardRim from './GlassCardRim.jsx'
 import { withUnderline } from './Underline.jsx'
 
 /**
@@ -170,6 +171,7 @@ export default function EveningTimeline() {
                     transition={SPRING}
                     className="group relative -mt-px flex-1 rounded-2xl border border-paper/15 bg-paper-deep/95 p-4 shadow-[0_10px_30px_-18px_rgba(78,38,57,0.58)] backdrop-blur-[1px] sm:p-5"
                   >
+                    <GlassCardRim />
                     <span
                       aria-hidden="true"
                       className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-terracotta/0 transition-colors duration-500 group-hover:ring-terracotta/30"
