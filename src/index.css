@@ -460,3 +460,76 @@
   0%   { transform: translate(0, 3vmin) scale(.92) rotate(0deg); opacity: .16; }
   100% { transform: translate(10vmin, -8vmin) scale(1.2) rotate(9deg); opacity: .30; }
 }
+
+/* ── Water droplets (Droplets.jsx + the .wet-sheen hover) ─────────────────
+   Kept as plain CSS animation on purpose: the reduced-motion safety net
+   above freezes all of it for free — hanging beads settle at their resting
+   shape, the falling droplet never appears (its resting opacity is 0), and
+   the sheen sweep becomes an instant fade. */
+
+/* A bead clinging to a card's bottom edge, breathing as it gathers water.
+   Origin at the top so it swells downward, away from the attachment point. */
+.drip-bead {
+  transform-origin: 50% 0;
+  animation: drip-breathe 6.5s ease-in-out infinite;
+}
+@keyframes drip-breathe {
+  0%, 100% { transform: scaleY(0.86); }
+  50%      { transform: scaleY(1.04); }
+}
+
+/* A bead that actually lets go: swells past full, snaps back as the falling
+   droplet (.drip-fall) detaches. The pair shares one duration + delay from
+   the component so the snap and the release always line up. */
+.drip-bead-release {
+  transform-origin: 50% 0;
+  animation: drip-release 7s ease-in-out infinite;
+}
+@keyframes drip-release {
+  0%   { transform: scaleY(0.72); }
+  60%  { transform: scaleY(1); }
+  74%  { transform: scaleY(1.14); }
+  80%  { transform: scaleY(0.6); }
+  100% { transform: scaleY(0.72); }
+}
+
+/* The released droplet. Hidden for most of the cycle, appears at the moment
+   drip-release snaps back, then accelerates away (per-segment ease-in) and
+   fades before it can reach whatever sits below the card. */
+.drip-fall {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  opacity: 0; /* resting state — also what reduced-motion leaves behind */
+  animation: drip-fall 7s ease-in infinite;
+}
+@keyframes drip-fall {
+  0%, 72% { opacity: 0;    transform: translate(-50%, -5px) scale(0.5); }
+  76%     { opacity: 0.9;  transform: translate(-50%, -2px) scale(0.9); }
+  78%     { opacity: 0.95; transform: translate(-50%, 0)    scale(1); }
+  100%    { opacity: 0;    transform: translate(-50%, 26px) scale(0.9); }
+}
+
+/* Light sweeping across wet glass on a card/cell hover. Sits above the text
+   on purpose — a sheen paints over everything beneath it. Palette-tinted
+   (cream into periwinkle), never a white-grey glare. Needs an overflow
+   clipper: either the hovered .group itself or a wrapping span. */
+.wet-sheen {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 252, 242, 0.45) 45%,
+    rgba(216, 218, 236, 0.25) 56%,
+    transparent 70%
+  );
+  opacity: 0;
+  transform: translateX(-65%) skewX(-6deg);
+  transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.4s ease;
+}
+.group:hover .wet-sheen {
+  opacity: 1;
+  transform: translateX(65%) skewX(-6deg);
+}
