@@ -5,28 +5,7 @@ import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING } from '../lib/site.js'
 import { EVENING } from '../content.js'
 import WatercolourBloom from './WatercolourBloom.jsx'
-import DuskRain from './DuskRain.jsx'
-import { CardDrips } from './Droplets.jsx'
 import { withUnderline } from './Underline.jsx'
-
-// Beads clinging to each step card's bottom edge — hand-placed per card (by
-// index) rather than randomised, so drips never land under a card's text
-// gutter twice in a row and the ones that release a droplet stay spread out
-// down the column.
-const CARD_DRIPS = [
-  [
-    { x: 15, s: 0.85, delay: 0.6 },
-    { x: 72, s: 1, delay: 2.2, fall: true },
-  ],
-  [{ x: 83, s: 0.7, delay: 1.4 }],
-  [
-    { x: 27, s: 0.95, delay: 0, fall: true },
-    { x: 60, s: 0.6, delay: 3.1 },
-  ],
-  [{ x: 68, s: 0.8, delay: 2.7 }],
-  [{ x: 12, s: 0.75, delay: 1.1, fall: true }],
-  [{ x: 44, s: 0.85, delay: 0.9 }],
-]
 
 /**
  * "How the evening runs" — a sticky split-screen. A massive section title is
@@ -93,12 +72,8 @@ export default function EveningTimeline() {
       >
         <WatercolourBloom />
       </div>
-      {/* Condensation running down the dusk "window", behind the content.
-          Above the ambience overlay and pigment wash (later sibling) but
-          below the grid, which is `relative` so it paints over the canvas. */}
-      <DuskRain className="opacity-70" />
 
-      <div className="relative grid grid-cols-12 gap-x-8">
+      <div className="grid grid-cols-12 gap-x-8">
         {/* Sticky title rail */}
         <div className="col-span-12 lg:col-span-5">
           <div className="lg:sticky lg:top-24 lg:h-fit">
@@ -190,21 +165,12 @@ export default function EveningTimeline() {
                       aria-hidden="true"
                       className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-terracotta/0 transition-colors duration-500 group-hover:ring-terracotta/30"
                     />
-                    {/* Wet-glass sheen on hover — needs its own clipper
-                        because the card can't be overflow-hidden (the drips
-                        below hang outside it). */}
-                    <span aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
-                      <span className="wet-sheen" />
-                    </span>
                     <h3 className="relative font-mono text-[clamp(1.25rem,2.4vw,1.9rem)] leading-tight tracking-[-0.01em] text-ink">
                       {beat.title}
                     </h3>
                     <p className="relative mt-2 max-w-lg text-[0.95rem] leading-relaxed text-ink-soft">
                       {beat.body}
                     </p>
-                    {/* Water beading along the card's bottom edge; the pale
-                        beads catch the light against the dusk ground. */}
-                    <CardDrips drops={CARD_DRIPS[i % CARD_DRIPS.length]} />
                   </motion.div>
                 </motion.li>
               )
