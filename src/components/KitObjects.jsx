@@ -31,77 +31,83 @@ function Blur({ id, dev = 3 }) {
   )
 }
 
-/** The table easel the kit fans out from — pale beech wood (kept cream/honey,
- *  never terracotta), holding one of the real keepsakes under a brass clip. */
+/** The desktop drawing board the kit fans out from — a beech A-frame table
+ *  easel (kept cream/honey, never terracotta): a big tilted board resting in a
+ *  front rail, propped by a ratchet-notched back support. It holds the
+ *  portrait itself — that's me, taped to the board. */
 export function EaselArt({ className = '' }) {
   const uid = useId().replace(/:/g, '')
   const wood = `easel-wood-${uid}`
+  const woodDark = `easel-wood-dark-${uid}`
   const blur = `easel-blur-${uid}`
+  const photo = `easel-photo-${uid}`
   return (
-    <svg viewBox="0 0 240 320" className={className} aria-hidden="true">
+    <svg viewBox="0 0 300 300" className={className} aria-hidden="true">
       <defs>
         <linearGradient id={wood} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#F3E9D7" />
           <stop offset="100%" stopColor="#DEC9A6" />
         </linearGradient>
+        <linearGradient id={woodDark} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#E0CDA9" />
+          <stop offset="100%" stopColor="#C7B085" />
+        </linearGradient>
         <Blur id={blur} dev={4} />
+        {/* the portrait sits inside the board, a hair inset from the mount */}
+        <clipPath id={photo}>
+          <polygon points="97,61 229,61 212,197 79,197" />
+        </clipPath>
       </defs>
 
-      {/* feet shadows */}
-      <ContactShadow cx={52} cy={300} rx={26} ry={7} blurId={blur} />
-      <ContactShadow cx={188} cy={300} rx={26} ry={7} blurId={blur} />
-      <ContactShadow cx={120} cy={296} rx={20} ry={6} blurId={blur} opacity={0.12} />
+      {/* board + base contact shadow */}
+      <ContactShadow cx={150} cy={260} rx={120} ry={13} blurId={blur} />
+      <ContactShadow cx={150} cy={256} rx={92} ry={9} blurId={blur} opacity={0.12} />
 
-      {/* back leg, peeking between the front pair */}
+      {/* back support — pivot, angled strut, and the ratchet notches it drops
+          into (the adjustable rail on this style of drawing board) */}
+      <circle cx="244" cy="120" r="7" fill="#E8D6B6" stroke={INK} strokeOpacity="0.35" strokeWidth="1" />
+      <polygon points="240,122 249,120 279,214 268,216" fill={`url(#${woodDark})`} stroke={INK} strokeOpacity="0.3" strokeWidth="1" />
       <path
-        d="M117,64 C116,130 116,220 114,290 L124,290 C124,220 124,130 124,64 Z"
-        fill="#D9C29C"
+        d="M250,214 L250,204 L258,204 L258,196 L266,196 L266,188 L274,188 L274,214 Z"
+        fill={`url(#${woodDark})`}
         stroke={INK}
         strokeOpacity="0.3"
         strokeWidth="1"
       />
-      {/* A-frame front legs */}
-      <path
-        d="M112,26 C96,110 72,214 44,296 L56,299 C84,216 108,112 122,30 Z"
-        fill={`url(#${wood})`}
-        stroke={INK}
-        strokeOpacity="0.35"
-        strokeWidth="1"
-      />
-      <path
-        d="M128,26 C142,110 166,214 196,296 L184,299 C156,216 132,112 118,30 Z"
-        fill={`url(#${wood})`}
-        stroke={INK}
-        strokeOpacity="0.35"
-        strokeWidth="1"
-      />
-      {/* top pivot knob */}
-      <circle cx="120" cy="28" r="9" fill="#E8D6B6" stroke={INK} strokeOpacity="0.35" strokeWidth="1" />
 
-      {/* tray the paper rests on */}
-      <path
-        d="M46,236 C96,232 148,232 194,236 L194,248 C148,244 96,244 46,248 Z"
-        fill={`url(#${wood})`}
-        stroke={INK}
-        strokeOpacity="0.35"
-        strokeWidth="1"
-      />
+      {/* board thickness — the face's offset shadow slab reads as a solid panel */}
+      <polygon points="64,222 238,222 256,48 82,48" fill={`url(#${woodDark})`} stroke={INK} strokeOpacity="0.25" strokeWidth="1" />
 
-      {/* the sheet on the easel — a real keepsake, clipped at the top */}
-      <g transform="rotate(-1 120 160)">
-        <rect x="66" y="84" width="108" height="152" rx="2" fill="#FFFDF7" stroke={INK} strokeOpacity="0.25" strokeWidth="1" />
-        <image
-          href={asset('assets/art-couple-sage.webp')}
-          x="72"
-          y="90"
-          width="96"
-          height="140"
-          preserveAspectRatio="xMidYMid slice"
-        />
-        {/* brass clip */}
-        <rect x="106" y="78" width="28" height="14" rx="3" fill="#E3D293" stroke={INK} strokeOpacity="0.35" strokeWidth="1" />
-        <rect x="112" y="82" width="16" height="6" rx="2" fill="#F3E9C9" />
-      </g>
+      {/* the board face, tilted back a touch */}
+      <polygon points="58,214 232,214 250,40 76,40" fill={`url(#${wood})`} stroke={INK} strokeOpacity="0.35" strokeWidth="1" />
+      {/* faint wood grain following the board's lean */}
+      <path d="M118,42 C114,90 110,150 101,213" stroke={INK} strokeOpacity="0.1" strokeWidth="1.2" fill="none" />
+      <path d="M166,42 C162,90 158,150 149,213" stroke={INK} strokeOpacity="0.1" strokeWidth="1.2" fill="none" />
+
+      {/* the portrait, mounted and taped to the board — that's me */}
+      <polygon points="92,56 234,56 216,202 74,202" fill="#FFFDF7" stroke="#E1D6E0" strokeWidth="1" />
+      <image
+        href={asset('assets/portrait-christopher.jpg')}
+        x="74"
+        y="54"
+        width="160"
+        height="148"
+        preserveAspectRatio="xMidYMid slice"
+        clipPath={`url(#${photo})`}
+      />
+      {/* washi tape at the top corners, holding the print down */}
+      <rect x="80" y="52" width="36" height="12" rx="1" fill="rgba(242,194,207,0.62)" transform="rotate(-40 96 60)" />
+      <rect x="212" y="50" width="36" height="12" rx="1" fill="rgba(214,205,236,0.6)" transform="rotate(40 228 58)" />
+
+      {/* front base rail the board rests in — top face + front face, with a few
+          finger-joint lines nodding to the board's dovetailed corners */}
+      <polygon points="48,210 250,210 264,224 32,224" fill={`url(#${wood})`} stroke={INK} strokeOpacity="0.3" strokeWidth="1" />
+      <polygon points="32,224 264,224 258,242 38,242" fill={`url(#${woodDark})`} stroke={INK} strokeOpacity="0.3" strokeWidth="1" />
+      <path d="M36,229 h12 M36,233.5 h12 M36,238 h12" stroke={INK} strokeOpacity="0.22" strokeWidth="0.9" fill="none" />
+      <path d="M250,229 h12 M250,233.5 h12 M250,238 h12" stroke={INK} strokeOpacity="0.22" strokeWidth="0.9" fill="none" />
+      {/* little feet */}
+      <rect x="44" y="242" width="16" height="6" rx="2" fill={`url(#${woodDark})`} stroke={INK} strokeOpacity="0.28" strokeWidth="1" />
+      <rect x="240" y="242" width="16" height="6" rx="2" fill={`url(#${woodDark})`} stroke={INK} strokeOpacity="0.28" strokeWidth="1" />
     </svg>
   )
 }

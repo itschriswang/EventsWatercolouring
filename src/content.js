@@ -143,18 +143,13 @@ export const PAINTER = {
   signature: 'Chris',
 }
 
-// "What's in my kit" — the desk, unpacked. Each item fans out from behind
-// the easel as the visitor scrolls (see MyKit.jsx). `id` doubles as the
-// asset slot: drop a cut-out photo at assets/kit/<id>.webp + .png and it
-// replaces the painted illustration automatically.
+// The desk, unpacked — the closing beat of "about me" (no heading of its own).
+// The art supplies fan out from behind the easel as the visitor scrolls, and
+// re-stack when they scroll back up; the easel itself holds the portrait. `id`
+// doubles as the asset slot: drop a cut-out photo at assets/kit/<id>.webp + .png
+// and it replaces the painted illustration automatically.
 export const KIT = {
-  label: 'The kit',
-  title: ['Everything fits', 'on one small desk.'],
-  emphasis: 'on one small desk.',
-  lede: 'No AV, no power, no fuss. The whole studio travels in one bag and unpacks in about fifteen minutes. Here it is, laid out the way it sits beside me on the night.',
-  hint: 'Keep scrolling, the desk unpacks itself.',
   items: [
-    { id: 'portrait', name: 'That is me', note: 'Chris, the painter. I come with the kit.' },
     { id: 'brushes', name: 'The brushes', note: 'A round for faces, a flat for washes. Ten years old and going strong.' },
     { id: 'spritzer', name: 'Water spritzer', note: 'Keeps the pans wet so the colour lifts fast between guests.' },
     { id: 'pencil', name: 'The pencil', note: 'A light sketch first, five lines at most, then straight to paint.' },
