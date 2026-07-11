@@ -1,127 +1,29 @@
-import { useRef } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
-import { useHeavyFx } from '../hooks/useMediaQuery.js'
-import { SPRING, asset } from '../lib/site.js'
 import { PAINTER } from '../content.js'
-import CornerBloom from './CornerBloom.jsx'
 import Sparkles from './Sparkles.jsx'
 import { withUnderline } from './Underline.jsx'
+import KitStage from './MyKit.jsx'
 
-/** "The painter" — bio set against an asymmetric framed portrait. */
+/**
+ * "The painter" — the bio, set beside the portrait. The portrait isn't a static
+ * frame any more: it's the kit stage (KitStage), a flat matted print of Chris
+ * with the tools of the desk fanning out around it as the section scrolls in
+ * (and re-packing on the way back up).
+ */
 export default function AboutMe() {
-  const reduce = useReducedMotion()
-  const parallax = useHeavyFx() && !reduce
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start'],
-  })
-  const y = useTransform(scrollYProgress, [0, 1], ['10%', '-10%'])
-
   return (
     <section
       id="painter"
-      ref={ref}
       className="relative w-full overflow-visible px-[5vw] pt-[clamp(4rem,8vw,7rem)]"
     >
       <div className="relative pb-[clamp(5rem,10vw,8rem)]">
-        {/* On desktop the portrait + bio group is capped and left-aligned
-            (no mx-auto) so the whole block sits toward the left of the section
-            with breathing room on the right, rather than stretching edge to
-            edge. Mobile/tablet keep the full-width stack. */}
-        <div className="grid grid-cols-12 items-start gap-x-8 gap-y-8 lg:max-w-[62rem]">
-          {/* Portrait — left on desktop, right on mobile */}
-          <motion.figure
-            initial={{ opacity: 0, y: reduce ? 0 : 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={SPRING}
-            className="col-span-12 sm:col-span-6 sm:col-start-7 lg:col-span-6 lg:col-start-1 lg:mt-0 order-2 sm:order-none lg:order-none"
-          >
-            <div className="relative sm:ml-auto sm:max-w-[20rem]">
-              {/* A soft watercolour swatch rests behind the portrait, offset
-                  like a hand-laid block of pigment. Its edges are feathered
-                  (blur + multiply) so it reads as paint bleeding into the
-                  paper — echoing the bloom washes used across the site —
-                  rather than a hard geometric outline. The wash rides the
-                  Pastel Bloom arc (apricot → blush → soft lilac) so it ties to
-                  the section's apricot label and warm signature — the earlier
-                  pine/teal wash sat off the palette and multiplied dark, so it
-                  read as a sickly slab behind the photo. Held to high-lightness
-                  pastels at low alpha so it stays luminous, not muddy. */}
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -left-5 -top-5 h-full w-full rounded-[2.25rem]"
-                style={{
-                  background:
-                    'linear-gradient(145deg, rgba(247,195,148,0.26) 0%, rgba(242,194,207,0.22) 55%, rgba(214,205,236,0.18) 100%)',
-                  filter: 'blur(24px)',
-                  mixBlendMode: 'multiply',
-                }}
-              />
-              <motion.div
-                style={{
-                  ...(parallax ? { y } : {}),
-                  // overflow-hidden + border-radius alone doesn't clip the
-                  // bird's rounded corner below — its own `filter` (the rust
-                  // drop-shadow) puts it on a separate composited layer that
-                  // the ancestor's rounded overflow clip fails to mask, so
-                  // the bird's hard bottom/right crop shows past the curve.
-                  // clip-path clips that layer correctly.
-                  clipPath: 'inset(0 round 1.75rem)',
-                }}
-                className="relative overflow-hidden rounded-[1.75rem] border border-line bg-paper-deep"
-              >
-                <CornerBloom from="rgba(247,195,148,0.13)" to="rgba(242,194,207,0.11)" overlay />
-                <div className="relative z-10">
-                  <picture>
-                    <source srcSet={asset(PAINTER.portraitWebp)} type="image/webp" />
-                    <img
-                      src={asset(PAINTER.portrait)}
-                      alt="Christopher Wang, the painter."
-                      width="1000"
-                      height="1090"
-                      loading="lazy"
-                      decoding="async"
-                      onError={(e) => (e.currentTarget.style.display = 'none')}
-                      className="h-full w-full object-cover"
-                    />
-                  </picture>
-                </div>
-                {/* The watercolour bird perches in the portrait's corner,
-                    fully opaque. The wrapper's clip-path (matching its
-                    rounded corners) clips the bird's hard rectangular crop
-                    so it stays inside the card's curved shape instead of
-                    sticking out past it. The rust drop-shadow (palette, no
-                    greys) sits on the wrapper so it traces the bird's own
-                    silhouette. */}
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute bottom-0 right-0 z-20 w-[72%]"
-                  style={{ filter: 'drop-shadow(0 8px 16px rgba(150,56,90,0.28))' }}
-                >
-                  <picture>
-                    <source srcSet={asset('assets/bird-accent.webp')} type="image/webp" />
-                    <img
-                      src={asset('assets/bird-accent.png')}
-                      alt=""
-                      aria-hidden="true"
-                      width="800"
-                      height="685"
-                      loading="lazy"
-                      decoding="async"
-                      className="block w-full"
-                    />
-                  </picture>
-                </div>
-              </motion.div>
-            </div>
-          </motion.figure>
-
-          {/* Title + bio + signature — left on mobile, right on desktop */}
-          <div className="relative col-span-12 sm:col-span-6 sm:col-start-1 lg:col-span-6 lg:col-start-7 order-1 sm:order-none lg:order-none lg:pl-4">
+        {/* The bio block is capped and left-aligned (no mx-auto) so it sits
+            toward the left with breathing room on the right — which is also
+            where the kit fans out into, so the tools have room to spread. */}
+        <div className="grid grid-cols-12 items-center gap-x-8 gap-y-6 lg:max-w-[64rem]">
+          {/* Title + bio + signature — first in the reading order everywhere */}
+          <div className="relative col-span-12 sm:col-span-6 sm:col-start-1 lg:col-span-5 lg:col-start-1 order-1">
             <Sparkles variant="burst" className="absolute -top-4 right-0 h-14 w-14 lg:hidden" />
             <Label gradient={['#FFCDA1', '#E89B63']}>{PAINTER.label}</Label>
             <SplitText
@@ -148,9 +50,15 @@ export default function AboutMe() {
               </p>
             )}
           </div>
+
+          {/* The portrait, now the kit stage — right on desktop, below the bio
+              on mobile. Given the roomier column and the whitespace beyond it,
+              the fan has space to open. */}
+          <div className="col-span-12 sm:col-span-6 sm:col-start-7 lg:col-span-7 lg:col-start-6 order-2">
+            <KitStage />
+          </div>
         </div>
       </div>
-
     </section>
   )
 }
