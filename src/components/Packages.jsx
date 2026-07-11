@@ -6,6 +6,7 @@ import { SPRING, CARD_BG } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
 import Sparkles from './Sparkles.jsx'
+import GlassPill from './GlassPill.jsx'
 import NightPlanner from './NightPlanner.jsx'
 import { withUnderline } from './Underline.jsx'
 
@@ -100,12 +101,9 @@ export default function Packages() {
             <p className="text-sm text-ink-soft">{PACKAGES.base.note}</p>
             <div className="mt-5 flex flex-wrap gap-2">
               {PACKAGES.base.facts.map((f) => (
-                <span
-                  key={f}
-                  className="border border-lime/40 px-3 py-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-sage-deep"
-                >
+                <GlassPill key={f} className="px-3 py-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-sage-deep">
                   {f}
-                </span>
+                </GlassPill>
               ))}
             </div>
             <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
@@ -221,12 +219,9 @@ export default function Packages() {
             <p className="mt-2 text-sm text-ink-soft">{PACKAGES.base.note}</p>
             <div className="mt-5 flex flex-wrap gap-2">
               {PACKAGES.base.facts.map((f) => (
-                <span
-                  key={f}
-                  className="border border-lime/40 px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.15em] text-sage-deep"
-                >
+                <GlassPill key={f} className="px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.15em] text-sage-deep">
                   {f}
-                </span>
+                </GlassPill>
               ))}
             </div>
             <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
