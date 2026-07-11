@@ -31,77 +31,41 @@ function Blur({ id, dev = 3 }) {
   )
 }
 
-/** The table easel the kit fans out from — pale beech wood (kept cream/honey,
- *  never terracotta), holding one of the real keepsakes under a brass clip. */
+/** The portrait itself — a single flat rectangle: the print, matted and taped
+ *  at the corners (no 3D easel). It's the centrepiece the kit fans out from,
+ *  and the one guaranteed real photo in the scene. */
 export function EaselArt({ className = '' }) {
   const uid = useId().replace(/:/g, '')
-  const wood = `easel-wood-${uid}`
   const blur = `easel-blur-${uid}`
+  const photo = `easel-photo-${uid}`
   return (
-    <svg viewBox="0 0 240 320" className={className} aria-hidden="true">
+    <svg viewBox="0 0 240 300" className={className} aria-hidden="true">
       <defs>
-        <linearGradient id={wood} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#F3E9D7" />
-          <stop offset="100%" stopColor="#DEC9A6" />
-        </linearGradient>
-        <Blur id={blur} dev={4} />
+        <Blur id={blur} dev={5} />
+        {/* the portrait sits a hair inside the mount's rounded rectangle */}
+        <clipPath id={photo}>
+          <rect x="26" y="24" width="188" height="248" rx="6" />
+        </clipPath>
       </defs>
 
-      {/* feet shadows */}
-      <ContactShadow cx={52} cy={300} rx={26} ry={7} blurId={blur} />
-      <ContactShadow cx={188} cy={300} rx={26} ry={7} blurId={blur} />
-      <ContactShadow cx={120} cy={296} rx={20} ry={6} blurId={blur} opacity={0.12} />
+      {/* soft tinted contact shadow (no greys) */}
+      <ellipse cx="120" cy="290" rx="106" ry="12" fill="rgba(126,40,72,0.16)" filter={`url(#${blur})`} />
 
-      {/* back leg, peeking between the front pair */}
-      <path
-        d="M117,64 C116,130 116,220 114,290 L124,290 C124,220 124,130 124,64 Z"
-        fill="#D9C29C"
-        stroke={INK}
-        strokeOpacity="0.3"
-        strokeWidth="1"
-      />
-      {/* A-frame front legs */}
-      <path
-        d="M112,26 C96,110 72,214 44,296 L56,299 C84,216 108,112 122,30 Z"
-        fill={`url(#${wood})`}
-        stroke={INK}
-        strokeOpacity="0.35"
-        strokeWidth="1"
-      />
-      <path
-        d="M128,26 C142,110 166,214 196,296 L184,299 C156,216 132,112 118,30 Z"
-        fill={`url(#${wood})`}
-        stroke={INK}
-        strokeOpacity="0.35"
-        strokeWidth="1"
-      />
-      {/* top pivot knob */}
-      <circle cx="120" cy="28" r="9" fill="#E8D6B6" stroke={INK} strokeOpacity="0.35" strokeWidth="1" />
-
-      {/* tray the paper rests on */}
-      <path
-        d="M46,236 C96,232 148,232 194,236 L194,248 C148,244 96,244 46,248 Z"
-        fill={`url(#${wood})`}
-        stroke={INK}
-        strokeOpacity="0.35"
-        strokeWidth="1"
+      {/* the single rectangle — a matted print */}
+      <rect x="14" y="12" width="212" height="272" rx="10" fill="#FFFDF7" stroke="#E7DCE6" strokeWidth="1.5" />
+      <image
+        href={asset('assets/portrait-christopher.jpg')}
+        x="24"
+        y="22"
+        width="192"
+        height="252"
+        preserveAspectRatio="xMidYMid slice"
+        clipPath={`url(#${photo})`}
       />
 
-      {/* the sheet on the easel — a real keepsake, clipped at the top */}
-      <g transform="rotate(-1 120 160)">
-        <rect x="66" y="84" width="108" height="152" rx="2" fill="#FFFDF7" stroke={INK} strokeOpacity="0.25" strokeWidth="1" />
-        <image
-          href={asset('assets/art-couple-sage.webp')}
-          x="72"
-          y="90"
-          width="96"
-          height="140"
-          preserveAspectRatio="xMidYMid slice"
-        />
-        {/* brass clip */}
-        <rect x="106" y="78" width="28" height="14" rx="3" fill="#E3D293" stroke={INK} strokeOpacity="0.35" strokeWidth="1" />
-        <rect x="112" y="82" width="16" height="6" rx="2" fill="#F3E9C9" />
-      </g>
+      {/* washi tape at the top corners, holding the print down */}
+      <rect x="4" y="14" width="54" height="17" rx="1" fill="rgba(242,194,207,0.6)" transform="rotate(-38 31 22)" />
+      <rect x="182" y="14" width="54" height="17" rx="1" fill="rgba(214,205,236,0.6)" transform="rotate(38 209 22)" />
     </svg>
   )
 }
