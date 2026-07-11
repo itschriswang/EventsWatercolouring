@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import CornerBloom from './CornerBloom.jsx'
+import GlassPill from './GlassPill.jsx'
+import GlassCardRim from './GlassCardRim.jsx'
 import { SPRING, ENQUIRE_HREF, CARD_BG } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import { withUnderline } from './Underline.jsx'
@@ -55,6 +57,7 @@ export default function NightPlanner() {
       style={{ background: CARD_BG }}
     >
       <CornerBloom from="rgba(140,54,86,0.09)" to="rgba(176,74,118,0.09)" />
+      <GlassCardRim />
       <div className="relative z-10 grid grid-cols-1 gap-8 p-7 sm:p-8 lg:grid-cols-2 lg:gap-12">
         {/* Controls */}
         <div>
@@ -102,9 +105,12 @@ export default function NightPlanner() {
                       className="gradient-frame absolute -inset-[1.5px] rounded-full p-[1.5px]"
                       style={{ background: 'var(--hero-emphasis-gradient-conic)' }}
                     />
-                    <span className="relative flex items-center justify-center rounded-full bg-paper px-4 py-1.5 font-mono text-sm text-ink-soft transition-colors duration-300 hover:text-ink">
+                    <GlassPill
+                      opaque
+                      className="relative justify-center px-4 py-1.5 font-mono text-sm text-ink-soft transition-colors duration-300 hover:text-ink"
+                    >
                       {h}
-                    </span>
+                    </GlassPill>
                   </button>
                 ),
               )}

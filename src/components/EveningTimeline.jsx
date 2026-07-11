@@ -5,6 +5,8 @@ import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING } from '../lib/site.js'
 import { EVENING } from '../content.js'
 import WatercolourBloom from './WatercolourBloom.jsx'
+import GlassPill from './GlassPill.jsx'
+import GlassCardRim from './GlassCardRim.jsx'
 import { withUnderline } from './Underline.jsx'
 
 /**
@@ -138,16 +140,24 @@ export default function EveningTimeline() {
                     aria-hidden="true"
                   >
                     {isLast ? (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_12px_rgba(78,38,57,0.55)]">
+                      <GlassPill
+                        opaque
+                        tint={['#BFDCD1', '#8FB5A8']}
+                        rim={['rgba(191,220,209,0.55)', 'rgba(143,181,168,0.4)']}
+                        className="h-9 w-9 justify-center shadow-[0_2px_12px_rgba(78,38,57,0.55)]"
+                      >
                         <Drop
                           className="h-5 w-auto"
                           gradient={['#BFDCD1', '#8FB5A8']}
                         />
-                      </span>
+                      </GlassPill>
                     ) : (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] text-wine shadow-[0_2px_12px_rgba(78,38,57,0.42)]">
+                      <GlassPill
+                        opaque
+                        className="h-9 w-9 justify-center border border-paper/40 font-mono text-[0.7rem] text-wine shadow-[0_2px_12px_rgba(78,38,57,0.42)]"
+                      >
                         {beat.no}
-                      </span>
+                      </GlassPill>
                     )}
                   </motion.span>
 
@@ -161,6 +171,7 @@ export default function EveningTimeline() {
                     transition={SPRING}
                     className="group relative -mt-px flex-1 rounded-2xl border border-paper/15 bg-paper-deep/95 p-4 shadow-[0_10px_30px_-18px_rgba(78,38,57,0.58)] backdrop-blur-[1px] sm:p-5"
                   >
+                    <GlassCardRim />
                     <span
                       aria-hidden="true"
                       className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-terracotta/0 transition-colors duration-500 group-hover:ring-terracotta/30"
