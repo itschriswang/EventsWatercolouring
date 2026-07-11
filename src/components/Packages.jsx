@@ -6,7 +6,7 @@ import { SPRING, CARD_BG } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
 import Sparkles from './Sparkles.jsx'
-import { DewBeads } from './Droplets.jsx'
+import GlassPill from './GlassPill.jsx'
 import NightPlanner from './NightPlanner.jsx'
 import { withUnderline } from './Underline.jsx'
 
@@ -97,19 +97,13 @@ export default function Packages() {
           style={{ background: CARD_BG }}
         >
           <CornerBloom from="rgba(176,74,118,0.12)" to="rgba(142,99,184,0.08)" />
-          {/* Dew resting on the paper — sits under the z-10 content, so text
-              always reads over it. */}
-          <DewBeads seed={1} className="absolute bottom-4 right-5 h-6 w-10 opacity-60" />
           <div className="relative z-10">
             <p className="text-sm text-ink-soft">{PACKAGES.base.note}</p>
             <div className="mt-5 flex flex-wrap gap-2">
               {PACKAGES.base.facts.map((f) => (
-                <span
-                  key={f}
-                  className="border border-lime/40 px-3 py-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-sage-deep"
-                >
+                <GlassPill key={f} className="px-3 py-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-sage-deep">
                   {f}
-                </span>
+                </GlassPill>
               ))}
             </div>
             <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
@@ -208,9 +202,6 @@ export default function Packages() {
           style={{ background: CARD_BG }}
         >
           <CornerBloom from="rgba(176,74,118,0.12)" to="rgba(142,99,184,0.08)" />
-          {/* Dew resting on the paper — under the z-10 content, over the card
-              ground, so it reads as sitting on the sheet itself. */}
-          <DewBeads seed={1} className="absolute bottom-5 right-6 h-7 w-11 opacity-60" />
           <div className="relative z-10 flex flex-1 flex-col">
             <div className="flex items-baseline justify-between gap-4">
               <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
@@ -228,12 +219,9 @@ export default function Packages() {
             <p className="mt-2 text-sm text-ink-soft">{PACKAGES.base.note}</p>
             <div className="mt-5 flex flex-wrap gap-2">
               {PACKAGES.base.facts.map((f) => (
-                <span
-                  key={f}
-                  className="border border-lime/40 px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.15em] text-sage-deep"
-                >
+                <GlassPill key={f} className="px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.15em] text-sage-deep">
                   {f}
-                </span>
+                </GlassPill>
               ))}
             </div>
             <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
@@ -269,17 +257,10 @@ export default function Packages() {
                   key={a.h}
                   {...reveal(i % 2)}
                   className={
-                    'group relative flex flex-col overflow-hidden border-b border-line/50 p-6 ' +
+                    'flex flex-col border-b border-line/50 p-6 ' +
                     (i % 2 === 0 ? 'border-r ' : '')
                   }
                 >
-                  {/* Watery cell dressing: a light sweep across the "glass"
-                      on hover, and settled dew in alternating cells (every
-                      cell would read as a pattern, not weather). */}
-                  <span aria-hidden="true" className="wet-sheen" />
-                  {i % 2 === 0 && (
-                    <DewBeads seed={i / 2} className="absolute bottom-2 right-3 h-6 w-9 opacity-60" />
-                  )}
                   <h4 className="font-sentient text-base tracking-[-0.01em] text-ink [overflow-wrap:anywhere]">{a.h}</h4>
                   <p className="mt-2 flex-1 text-xs leading-relaxed text-ink-soft">{a.p}</p>
                   {a.tag && (
