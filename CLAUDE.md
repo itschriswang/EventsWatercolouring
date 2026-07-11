@@ -92,12 +92,21 @@ yellows deliberately lean green (chartreuse), never toward gold or amber.
 names in code (`terracotta`, `rust`, `ochre`, …) are legacy slot names — their
 values point at the pastel scheme's anchors (see `tailwind.config.js`).
 
-**Deep anchors are burgundy, not purple.** Everywhere the palette needs depth —
-body ink, shadows, the dark "nightfall" grounds (`wine`), label-gradient dark
-stops — it reaches for burgundy/claret wine tones (hue ≈ 335–345°), the chic
-counterpart to the chartreuse accent. The light pastels (soft lilac,
-periwinkle, lavender washes) stay on the arc as-is; only the *deep* tones are
-burgundy. Do not reintroduce deep violet/purple anchors.
+**Deep *decorative* anchors are burgundy, not purple.** Where the palette needs
+depth in the decorative layer — shadows, the dark "nightfall" grounds (`wine`),
+label-gradient dark stops, bloom pairs — it reaches for burgundy/claret wine
+tones (hue ≈ 335–345°), the chic counterpart to the chartreuse accent. **Body
+and title text is the exception: `ink` (#3F3552) stays a dark slate, not
+burgundy** — that one deep slot deliberately keeps its cool cast so the copy
+never reads as warm/wine. The light pastels (soft lilac, periwinkle, lavender
+washes) stay on the arc as-is. Do not reintroduce deep violet/purple decorative
+anchors, and do not push the ink text toward burgundy.
+
+**Multi-hue "keepsake" swatches keep the full rainbow.** Sections that stand in
+for a spread of real paintings (the NightPlanner thumbnail grid, gallery
+tiles) deliberately cycle the *whole* pastel arc — warm apricot/orange included
+— for a lowkey-rainbow feel. Don't collapse these to the deep anchors; the
+warms belong there.
 
 ### Anti-mud rules for overlapping blooms/gradients
 
