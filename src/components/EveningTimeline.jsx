@@ -5,6 +5,7 @@ import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING } from '../lib/site.js'
 import { EVENING } from '../content.js'
 import WatercolourBloom from './WatercolourBloom.jsx'
+import GlassPill from './GlassPill.jsx'
 import { withUnderline } from './Underline.jsx'
 
 /**
@@ -138,16 +139,24 @@ export default function EveningTimeline() {
                     aria-hidden="true"
                   >
                     {isLast ? (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_12px_rgba(78,38,57,0.55)]">
+                      <GlassPill
+                        opaque
+                        tint={['#BFDCD1', '#8FB5A8']}
+                        rim={['rgba(191,220,209,0.55)', 'rgba(143,181,168,0.4)']}
+                        className="h-9 w-9 justify-center shadow-[0_2px_12px_rgba(78,38,57,0.55)]"
+                      >
                         <Drop
                           className="h-5 w-auto"
                           gradient={['#BFDCD1', '#8FB5A8']}
                         />
-                      </span>
+                      </GlassPill>
                     ) : (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] text-wine shadow-[0_2px_12px_rgba(78,38,57,0.42)]">
+                      <GlassPill
+                        opaque
+                        className="h-9 w-9 justify-center border border-paper/40 font-mono text-[0.7rem] text-wine shadow-[0_2px_12px_rgba(78,38,57,0.42)]"
+                      >
                         {beat.no}
-                      </span>
+                      </GlassPill>
                     )}
                   </motion.span>
 
