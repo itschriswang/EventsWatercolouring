@@ -114,8 +114,8 @@ function Card({ item, cardIndex, pos, count, R, sizing, radius, onSelect, dresse
   // tone, with a warm cream inner edge instead of a white/grey highlight.
   const boxShadow = useTransform(pos, (p) =>
     Math.abs(relOf(cardIndex, p, count)) < 0.5
-      ? '0 28px 60px -10px rgba(94,74,140,0.65), inset 0 0 0 1px rgba(255,252,242,0.08)'
-      : '0 14px 40px -12px rgba(94,74,140,0.30), inset 0 0 0 1px rgba(255,252,242,0.05)',
+      ? '0 28px 60px -10px rgba(126,40,72,0.65), inset 0 0 0 1px rgba(255,252,242,0.08)'
+      : '0 14px 40px -12px rgba(126,40,72,0.30), inset 0 0 0 1px rgba(255,252,242,0.05)',
   )
   // The active piece shows the whole painting (letterboxed if needed); the
   // slats either side are just navigational peeks, so they can crop to fill

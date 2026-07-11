@@ -81,7 +81,7 @@ export default function SelectedWork() {
       <div className="mx-auto max-w-[88rem]">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <Label gradient={['#D4B6E6', '#9B6FC4']}>{WORK.label}</Label>
+            <Label gradient={['#E3B7C8', '#96385A']}>{WORK.label}</Label>
             <SplitText
               as="h2"
               unit="char"
@@ -192,7 +192,7 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
     >
       {item.testimonial ? (
         <div className={cardShape + ' bg-paper-deep'}>
-          <CornerBloom from="rgba(201,169,75,0.14)" to="rgba(138,145,67,0.11)" />
+          <CornerBloom from="rgba(176,172,66,0.14)" to="rgba(138,145,67,0.11)" />
           <div className="relative z-10 flex h-full flex-col">
             <Testimonial item={item} masonry={masonry} />
           </div>
@@ -206,7 +206,7 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
             cardShape +
             ' block w-full cursor-zoom-in bg-paper-deep text-left outline-none' +
             ' transition-[transform,box-shadow] duration-500 ease-organic' +
-            ' group-hover:-translate-y-1 group-hover:shadow-[0_18px_42px_-26px_rgba(94,74,140,0.32)]' +
+            ' group-hover:-translate-y-1 group-hover:shadow-[0_18px_42px_-26px_rgba(126,40,72,0.32)]' +
             ' focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-paper'
           }
         >
@@ -220,7 +220,7 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
             />
           </picture>
-          <CornerBloom from="rgba(176,74,118,0.14)" to="rgba(142,99,184,0.10)" overlay />
+          <CornerBloom from="rgba(176,74,118,0.14)" to="rgba(140,54,86,0.10)" overlay />
         </button>
       )}
     </motion.figure>
@@ -374,7 +374,7 @@ function RevealTile({ reveal, className = '' }) {
         {/* Seam + handle */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 w-px bg-paper shadow-[0_0_8px_rgba(63,53,82,0.45)]"
+          className="pointer-events-none absolute inset-y-0 w-px bg-paper shadow-[0_0_8px_rgba(78,38,57,0.45)]"
           style={{ left: `${pct}%` }}
         />
         <div
@@ -535,7 +535,7 @@ function Lightbox({ items, index, onClose, onNavigate, onSelect }) {
               className="pointer-events-none absolute left-1/2 top-1/2 h-[125vmin] w-[125vmin] -translate-x-1/2 -translate-y-1/2 mix-blend-screen"
               style={{
                 background:
-                  'radial-gradient(circle at 50% 50%, rgba(176,74,118,0.42), rgba(142,99,184,0.2) 42%, transparent 72%)',
+                  'radial-gradient(circle at 50% 50%, rgba(176,74,118,0.42), rgba(140,54,86,0.2) 42%, transparent 72%)',
                 filter: 'blur(60px)',
               }}
             />

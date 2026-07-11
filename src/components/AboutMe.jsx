@@ -100,7 +100,7 @@ export default function AboutMe() {
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute bottom-0 right-0 z-20 w-[72%]"
-                  style={{ filter: 'drop-shadow(0 8px 16px rgba(142,68,112,0.28))' }}
+                  style={{ filter: 'drop-shadow(0 8px 16px rgba(150,56,90,0.28))' }}
                 >
                   <picture>
                     <source srcSet={asset('assets/bird-accent.webp')} type="image/webp" />

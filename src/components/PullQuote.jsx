@@ -59,8 +59,8 @@ export default function PullQuote() {
         style={{
           background:
             'radial-gradient(34% 55% at 6% 22%, rgba(216,220,143,0.14), transparent 74%), ' +
-            'radial-gradient(36% 58% at 94% 78%, rgba(228,230,156,0.16), transparent 74%), ' +
-            'radial-gradient(24% 40% at 88% 12%, rgba(240,228,158,0.10), transparent 72%)',
+            'radial-gradient(36% 58% at 94% 78%, rgba(212,226,130,0.16), transparent 74%), ' +
+            'radial-gradient(24% 40% at 88% 12%, rgba(226,232,138,0.10), transparent 72%)',
         }}
       />
       <figure className="relative mx-auto flex max-w-3xl flex-col items-center text-center">
