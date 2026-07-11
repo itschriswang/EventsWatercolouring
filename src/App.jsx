@@ -15,6 +15,7 @@ import PullQuote from './components/PullQuote.jsx'
 import EveningTimeline from './components/EveningTimeline.jsx'
 import SelectedWork from './components/SelectedWork.jsx'
 import AboutMe from './components/AboutMe.jsx'
+import MyKit from './components/MyKit.jsx'
 import Packages from './components/Packages.jsx'
 import EnquireForm from './components/EnquireForm.jsx'
 import Footer from './components/Footer.jsx'
@@ -106,6 +107,9 @@ export default function App() {
           <SelectedWork />
           <PullQuote />
           <AboutMe />
+          {/* The kit fans out right after the painter introduces himself —
+              same wash, so the person and his tools read as one sheet. */}
+          <MyKit />
         </SectionWash>
 
         {/* Hard editorial break: the painter's sheet tears off along a

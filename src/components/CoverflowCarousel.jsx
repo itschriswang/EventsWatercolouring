@@ -108,15 +108,34 @@ function Card({ item, cardIndex, pos, count, R, sizing, radius, onSelect, dresse
     const h = activeBox.height + (sizing.restHeight - activeBox.height) * a
     return (Math.max(0, Math.min(20, radius)) / 20) * (Math.min(w, h) / 2)
   })
-  // Lilac lift shadows from the site's approved (no-grey) shadow palette —
-  // the centred piece gets the same strong wash the old single-image
-  // lightbox used; slats further out settle for the quieter card-elevation
-  // tone, with a warm cream inner edge instead of a white/grey highlight.
-  const boxShadow = useTransform(pos, (p) =>
-    Math.abs(relOf(cardIndex, p, count)) < 0.5
-      ? '0 28px 60px -10px rgba(126,40,72,0.65), inset 0 0 0 1px rgba(255,252,242,0.08)'
-      : '0 14px 40px -12px rgba(126,40,72,0.30), inset 0 0 0 1px rgba(255,252,242,0.05)',
-  )
+  // Lift shadows from the site's approved (no-grey) burgundy palette — the
+  // centred piece gets the same strong wash the old single-image lightbox
+  // used, and the slats grade with distance: the near neighbours keep a
+  // tighter, richer shadow (a card held closer), the far ones soften and
+  // fade back, so the row reads as a shuffled stack of prints at different
+  // depths rather than one flat texture repeated.
+  const boxShadow = useTransform(pos, (p) => {
+    const ar = Math.abs(relOf(cardIndex, p, count))
+    if (ar < 0.5)
+      return '0 28px 60px -10px rgba(126,40,72,0.65), inset 0 0 0 1px rgba(255,252,242,0.08)'
+    const t = Math.min((ar - 0.5) / 3.5, 1)
+    const drop = (16 - 8 * t).toFixed(1)
+    const soft = (42 - 20 * t).toFixed(1)
+    const alpha = (0.36 - 0.2 * t).toFixed(3)
+    return `0 ${drop}px ${soft}px -12px rgba(126,40,72,${alpha}), inset 0 0 0 1px rgba(255,252,242,0.05)`
+  })
+  // Card-stock thickness: a thin lighter-cream strip down the card's leading
+  // edge — the side facing the centre, i.e. the edge a shuffled print shows
+  // you — so each slat reads as physical stock with a visible paper edge.
+  // The active card, faced straight on, shows a fainter sliver both sides.
+  const leftEdge = useTransform(pos, (p) => {
+    const rel = relOf(cardIndex, p, count)
+    return Math.min(Math.max(rel, 0), 1) * 0.9 + Math.max(0, 0.5 - Math.abs(rel)) * 0.7
+  })
+  const rightEdge = useTransform(pos, (p) => {
+    const rel = relOf(cardIndex, p, count)
+    return Math.min(Math.max(-rel, 0), 1) * 0.9 + Math.max(0, 0.5 - Math.abs(rel)) * 0.7
+  })
   // The active piece shows the whole painting (letterboxed if needed); the
   // slats either side are just navigational peeks, so they can crop to fill
   // their sliver cleanly.
@@ -162,6 +181,24 @@ function Card({ item, cardIndex, pos, count, R, sizing, radius, onSelect, dresse
           }}
         />
       </picture>
+      {/* paper edges — over the image, under nothing; clipped by the card's
+          own rounded overflow so they follow the corner radius */}
+      <motion.span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 left-0 w-[2.5px]"
+        style={{
+          opacity: leftEdge,
+          background: 'linear-gradient(to right, rgba(255,252,242,0.95), rgba(255,252,242,0.1))',
+        }}
+      />
+      <motion.span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 right-0 w-[2.5px]"
+        style={{
+          opacity: rightEdge,
+          background: 'linear-gradient(to left, rgba(255,252,242,0.95), rgba(255,252,242,0.1))',
+        }}
+      />
     </motion.div>
   )
 }

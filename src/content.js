@@ -143,6 +143,27 @@ export const PAINTER = {
   signature: 'Chris',
 }
 
+// "What's in my kit" — the desk, unpacked. Each item fans out from behind
+// the easel as the visitor scrolls (see MyKit.jsx). `id` doubles as the
+// asset slot: drop a cut-out photo at assets/kit/<id>.webp + .png and it
+// replaces the painted illustration automatically.
+export const KIT = {
+  label: 'The kit',
+  title: ['Everything fits', 'on one small desk.'],
+  emphasis: 'on one small desk.',
+  lede: 'No AV, no power, no fuss. The whole studio travels in one bag and unpacks in about fifteen minutes. Here it is, laid out the way it sits beside me on the night.',
+  hint: 'Keep scrolling, the desk unpacks itself.',
+  items: [
+    { id: 'portrait', name: 'That is me', note: 'Chris, the painter. I come with the kit.' },
+    { id: 'brushes', name: 'The brushes', note: 'A round for faces, a flat for washes. Ten years old and going strong.' },
+    { id: 'spritzer', name: 'Water spritzer', note: 'Keeps the pans wet so the colour lifts fast between guests.' },
+    { id: 'pencil', name: 'The pencil', note: 'A light sketch first, five lines at most, then straight to paint.' },
+    { id: 'tubes', name: 'The paint', note: 'Professional lightfast pigment, so the colour holds for decades.' },
+    { id: 'eraser', name: 'The eraser', note: 'Barely used, honestly. The pencil lines vanish under the wash.' },
+    { id: 'palette', name: 'Travel palette', note: 'The whole colour arc in one tin that fits in a coat pocket.' },
+  ],
+}
+
 export const PACKAGES = {
   label: 'Packages',
   title: ['One base package,', 'built around your day.'],
@@ -315,6 +336,17 @@ export const ENQUIRY = {
     title: 'Thank you',
     body: 'Your message is with me. I will read it properly and write back soon, usually within a few days.',
     sign: 'Chris',
+    // The confirmation arrives as a mailed postcard (see Postcard.jsx):
+    // stamped with one of the keepsakes, postmarked with today's date.
+    postcard: {
+      toLabel: 'To',
+      stamp: 'art-couple-blush',
+      stampAlt: 'A postage stamp printed with one of the keepsake paintings',
+      country: 'AUSTRALIA',
+      ringTop: 'CHRIS WANG STUDIO',
+      ringBottom: 'MELBOURNE',
+      delivered: 'Sealed, stamped, and with me.',
+    },
   },
 }
 
