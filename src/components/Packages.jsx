@@ -7,6 +7,7 @@ import { PACKAGES } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
 import Sparkles from './Sparkles.jsx'
 import GlassPill from './GlassPill.jsx'
+import GlassCardRim from './GlassCardRim.jsx'
 import NightPlanner from './NightPlanner.jsx'
 import { withUnderline } from './Underline.jsx'
 
@@ -97,6 +98,7 @@ export default function Packages() {
           style={{ background: CARD_BG }}
         >
           <CornerBloom from="rgba(176,74,118,0.12)" to="rgba(140,54,86,0.08)" />
+          <GlassCardRim />
           <div className="relative z-10">
             <p className="text-sm text-ink-soft">{PACKAGES.base.note}</p>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -202,6 +204,7 @@ export default function Packages() {
           style={{ background: CARD_BG }}
         >
           <CornerBloom from="rgba(176,74,118,0.12)" to="rgba(140,54,86,0.08)" />
+          <GlassCardRim />
           <div className="relative z-10 flex flex-1 flex-col">
             <div className="flex items-baseline justify-between gap-4">
               <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
@@ -242,6 +245,7 @@ export default function Packages() {
           style={{ background: CARD_BG }}
         >
           <CornerBloom from="rgba(176,172,66,0.10)" to="rgba(138,145,67,0.08)" />
+          <GlassCardRim />
           <div className="relative z-10 flex h-full flex-col">
             <div className="flex items-baseline justify-between border-b border-line/50 px-8 pb-5 pt-8">
               <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
@@ -301,6 +305,7 @@ export default function Packages() {
         style={{ background: CARD_BG }}
       >
         <CornerBloom from="rgba(176,172,66,0.10)" to="rgba(232,155,99,0.09)" />
+        <GlassCardRim tint={['#F0E4A8', '#F2C378']} rim={['rgba(240,228,158,0.5)', 'rgba(242,195,120,0.4)']} />
         <span className="relative z-10 flex items-center gap-4 sm:gap-5">
           <span
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-paper shadow-[0_2px_10px_rgba(126,40,72,0.30)]"
