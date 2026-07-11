@@ -27,11 +27,11 @@
      translucent nav chrome. */
   :root {
     --c-paper: #F7F4EF;
-    --c-ink: #3F3552;
+    --c-ink: #4E2639;
     --rgb-paper: 247 244 239;
-    --rgb-ink: 63 53 82;
-    --rgb-ink-soft: 117 106 124;
-    --rgb-line: 225 214 224;
+    --rgb-ink: 78 38 57;
+    --rgb-ink-soft: 128 96 107;
+    --rgb-line: 228 212 218;
 
     /* ACCENT — sourced verbatim from the client's reference swatch sheet:
          Lemon Lime #D8DB7A · Seafoam #BFDCD1 · Lavender #D4B6E6 ·
@@ -79,7 +79,7 @@
       radial-gradient(72% 180% at -4% 60%, #E3CBF1 0%, rgba(227, 203, 241, 0.5) 26%, rgba(227, 203, 241, 0) 56%),
       radial-gradient(58% 135% at 94% 8%, #F9C2D6 0%, rgba(249, 194, 214, 0) 58%),
       radial-gradient(72% 180% at 104% 64%, #F1B0BF 0%, rgba(241, 176, 191, 0.5) 26%, rgba(241, 176, 191, 0) 56%),
-      radial-gradient(56% 165% at 50% 46%, #E0E39D 0%, #D2D491 45%, #C4C786 100%);
+      radial-gradient(56% 165% at 50% 46%, #DBE38F 0%, #CBD683 45%, #BACA78 100%);
 
     /* The hero headline's own emphasis flow (see Hero.jsx's `emphasisColors`
        on "painted") — Seafoam into Lavender into a Lemon Lime plateau, out
@@ -102,7 +102,7 @@
       #D8DC4B 48%,
       #D8DC4B 52%,
       #F674A2 96%,
-      #EB5E7F 100%
+      #C94868 100%
     );
     /* Same wash, wrapped for a rotating ring (`.gradient-frame`) — the first
        stop repeats at the end so the loop has no seam. */
@@ -112,7 +112,7 @@
       #C18DE1,
       #D8DC4B,
       #F674A2,
-      #EB5E7F,
+      #C94868,
       #9ED0BD
     );
   }
@@ -163,9 +163,9 @@
     background-image:
       radial-gradient(34% 28% at 56% 44%, rgba(255,252,242, 0.32), transparent 70%),
       radial-gradient(58% 44% at 10% -4%, rgba(247, 195, 148, 0.36), transparent 72%),
-      radial-gradient(40% 34% at 34% 14%, rgba(240, 228, 158, 0.26), transparent 70%),
-      radial-gradient(44% 38% at 62% 32%, rgba(228, 230, 156, 0.30), transparent 70%),
-      radial-gradient(30% 26% at 70% 38%, rgba(206, 212, 132, 0.20), transparent 70%),
+      radial-gradient(40% 34% at 34% 14%, rgba(226, 232, 138, 0.26), transparent 70%),
+      radial-gradient(44% 38% at 62% 32%, rgba(212, 226, 130, 0.30), transparent 70%),
+      radial-gradient(30% 26% at 70% 38%, rgba(196, 210, 116, 0.20), transparent 70%),
       radial-gradient(52% 40% at 96% 2%, rgba(216, 218, 236, 0.30), transparent 72%),
       radial-gradient(44% 36% at 96% 46%, rgba(244, 196, 210, 0.26), transparent 70%),
       radial-gradient(40% 34% at 52% 92%, rgba(238, 158, 190, 0.22), transparent 70%),
@@ -180,14 +180,14 @@
   }
 
   /* The scrollbar is chrome the visitor stares at for the whole scroll story —
-     tint it into the palette (a soft lilac thumb on the paper ground) instead
+     tint it into the palette (a soft burgundy thumb on the paper ground) instead
      of leaving the browser's grey. Colour only; width stays native so nothing
      gets harder to grab. */
   html {
-    scrollbar-color: rgba(94, 74, 140, 0.35) theme('colors.paper');
+    scrollbar-color: rgba(126, 40, 72, 0.35) theme('colors.paper');
   }
   ::-webkit-scrollbar-thumb {
-    background-color: rgba(94, 74, 140, 0.35);
+    background-color: rgba(126, 40, 72, 0.35);
     border-radius: 9999px;
     border: 3px solid theme('colors.paper');
   }
@@ -273,7 +273,7 @@
      not a wordmark. Its own text-shadow matters:
      the inherited display shadow computes em against the parent's size and
      would swamp the little word; this one stays in scale (and in the approved
-     lilac, never grey). paint-order keeps the paper fill clean on top of the
+     burgundy, never grey). paint-order keeps the paper fill clean on top of the
      centred ink stroke. */
   .knockout-word {
     position: relative;
@@ -285,7 +285,7 @@
     margin-inline: -0.1em;
     vertical-align: 0.28em;
     rotate: -5deg;
-    text-shadow: 0.06em 0.1em 0.14em rgba(94, 74, 140, 0.45);
+    text-shadow: 0.06em 0.1em 0.14em rgba(126, 40, 72, 0.45);
   }
 
   .eyebrow {
@@ -296,7 +296,7 @@
     /* Darker than ink-soft (5.2:1) on purpose: this text is tiny and often
        sits over the watercolour bloom washes, so it needs headroom above
        the 4.5:1 AA minimum rather than just clearing it. ~7.45:1 on paper. */
-    color: #4A4E63;
+    color: #5C3A49;
   }
 }
 
@@ -305,7 +305,7 @@
      the surface itself is now the deep ink ground, and the aurora gradient
      (`--btn-aurora-gradient`, defined above) has moved onto the label via
      `.btn-aurora-label`. In its place the surface wears a layered, coloured
-     shadow bloom — lilac and candy rose (both from the approved CLAUDE.md
+     shadow bloom — burgundy and claret rose (both from the approved CLAUDE.md
      shadow palette, never grey) stacked at increasing blur/spread so the
      glow reads as a soft halo lifting off the page rather than a single flat
      drop shadow. Hover nudges both the ink brightness and the bloom's reach
@@ -315,9 +315,9 @@
     background-image: none;
     box-shadow:
       0 0 0 1px rgba(255, 255, 255, 0.06) inset,
-      0 10px 22px -10px rgba(94, 74, 140, 0.30),
-      0 18px 40px -16px rgba(142, 68, 112, 0.52),
-      0 30px 64px -26px rgba(94, 74, 140, 0.30);
+      0 10px 22px -10px rgba(126, 40, 72, 0.30),
+      0 18px 40px -16px rgba(150, 56, 90, 0.52),
+      0 30px 64px -26px rgba(126, 40, 72, 0.30);
     transition:
       filter 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
       box-shadow 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -327,9 +327,9 @@
     filter: brightness(1.12);
     box-shadow:
       0 0 0 1px rgba(255, 255, 255, 0.09) inset,
-      0 12px 26px -10px rgba(94, 74, 140, 0.35),
-      0 20px 46px -16px rgba(142, 68, 112, 0.60),
-      0 34px 72px -26px rgba(94, 74, 140, 0.35);
+      0 12px 26px -10px rgba(126, 40, 72, 0.35),
+      0 20px 46px -16px rgba(150, 56, 90, 0.60),
+      0 34px 72px -26px rgba(126, 40, 72, 0.35);
   }
 
   /* The label voice for `.btn-aurora`: the aurora gradient clipped to the

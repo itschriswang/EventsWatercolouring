@@ -35,7 +35,7 @@ export default function GradientDefs() {
           <stop offset="48%" stopColor="#D8DC4B" />
           <stop offset="52%" stopColor="#D8DC4B" />
           <stop offset="96%" stopColor="#F674A2" />
-          <stop offset="100%" stopColor="#EB5E7F" />
+          <stop offset="100%" stopColor="#C94868" />
         </linearGradient>
         <linearGradient id="sparkle-gradient-a" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="100">
           <stop offset="0%" stopColor="#C18DE1" />

@@ -86,10 +86,18 @@ blurred pastel field. Its hue arc, in blending order:
 soft lilac → blush → candy rose → (wraps to apricot)**
 
 Everything stays light and luminous. The yellow-green glow is a deliberate,
-protected voice — do not lose it when adding or retuning washes. **Never
-introduce terracotta / brick / burnt-orange tones anywhere.** Token names in
-code (`terracotta`, `rust`, `ochre`, …) are legacy slot names — their values
-point at the pastel scheme's anchors (see `tailwind.config.js`).
+protected voice — do not lose it when adding or retuning washes, and the
+yellows deliberately lean green (chartreuse), never toward gold or amber.
+**Never introduce terracotta / brick / burnt-orange tones anywhere.** Token
+names in code (`terracotta`, `rust`, `ochre`, …) are legacy slot names — their
+values point at the pastel scheme's anchors (see `tailwind.config.js`).
+
+**Deep anchors are burgundy, not purple.** Everywhere the palette needs depth —
+body ink, shadows, the dark "nightfall" grounds (`wine`), label-gradient dark
+stops — it reaches for burgundy/claret wine tones (hue ≈ 335–345°), the chic
+counterpart to the chartreuse accent. The light pastels (soft lilac,
+periwinkle, lavender washes) stay on the arc as-is; only the *deep* tones are
+burgundy. Do not reintroduce deep violet/purple anchors.
 
 ### Anti-mud rules for overlapping blooms/gradients
 
@@ -117,45 +125,45 @@ All shadows must use these RGBA values (or derived variants at +15% vibrancy):
 
 | Colour | Use Case | RGBA |
 |--------|----------|------|
-| **Lilac** (deep) | Primary lift shadows, cards, general elevation | `rgba(94,74,140,0.30)` |
-| **Candy Rose** (token: rust) | Timeline markers, strong shadows | `rgba(142,68,112,0.52)` |
-| **Deep Ink** | Deep shadows on overlays, keepsake cards | `rgba(63,53,82,0.58)` |
-| **Ink** | Paper shadows, subtle depth | `rgba(63,53,82,0.21)` |
-| **Lilac** | Accent shadows (form elements, special cases) | `rgba(94,74,140,0.25)` |
+| **Burgundy** (deep) | Primary lift shadows, cards, general elevation | `rgba(126,40,72,0.30)` |
+| **Claret Rose** (token: rust) | Timeline markers, strong shadows | `rgba(150,56,90,0.52)` |
+| **Deep Ink** | Deep shadows on overlays, keepsake cards | `rgba(78,38,57,0.58)` |
+| **Ink** | Paper shadows, subtle depth | `rgba(78,38,57,0.21)` |
+| **Burgundy** | Accent shadows (form elements, special cases) | `rgba(126,40,72,0.25)` |
 
 ### Component Shadow Reference
 
 **Hero Cards** (primary & accent):
 ```
-shadow-[0_28px_52px_-18px_rgba(94,74,140,0.30),0_6px_16px_-6px_rgba(94,74,140,0.12)]
+shadow-[0_28px_52px_-18px_rgba(126,40,72,0.30),0_6px_16px_-6px_rgba(126,40,72,0.12)]
 ```
 
 **Timeline Markers**:
 ```
-shadow-[0_2px_12px_rgba(142,68,112,0.52)]  /* Primary marker */
-shadow-[0_2px_12px_rgba(142,68,112,0.40)]  /* Numbered dots */
+shadow-[0_2px_12px_rgba(150,56,90,0.52)]  /* Primary marker */
+shadow-[0_2px_12px_rgba(150,56,90,0.40)]  /* Numbered dots */
 ```
 
 **Gallery/Lightbox Images**:
 ```
-shadow-[0_28px_60px_-10px_rgba(94,74,140,0.65)]  /* Strong lilac for modal */
+shadow-[0_28px_60px_-10px_rgba(126,40,72,0.65)]  /* Strong burgundy for modal */
 ```
 
 **Package Cards**:
 ```
-shadow-[0_24px_50px_-20px_rgba(94,74,140,0.32)]  /* Primary shadow */
-shadow-[0_24px_50px_-20px_rgba(94,74,140,0.25)]  /* Secondary shadow */
+shadow-[0_24px_50px_-20px_rgba(126,40,72,0.32)]  /* Primary shadow */
+shadow-[0_24px_50px_-20px_rgba(126,40,72,0.25)]  /* Secondary shadow */
 ```
 
 **Keepsake Cards** (What You Keep):
 ```
-shadow-[0_10px_30px_-18px_rgba(63,53,82,0.58)]
+shadow-[0_10px_30px_-18px_rgba(78,38,57,0.58)]
 ```
 
 **Enquire Form**:
 ```
-drop-shadow(0 18px 38px rgba(63,53,82,0.21))     /* Paper drop shadow */
-drop-shadow(0 2.5px 3px rgba(94,74,140,0.25))    /* Accent shadow */
+drop-shadow(0 18px 38px rgba(78,38,57,0.21))     /* Paper drop shadow */
+drop-shadow(0 2.5px 3px rgba(126,40,72,0.25))    /* Accent shadow */
 ```
 
 ### Adding New Shadows
@@ -163,7 +171,7 @@ drop-shadow(0 2.5px 3px rgba(94,74,140,0.25))    /* Accent shadow */
 When adding shadows to new components:
 
 1. **Pick a base colour** from the approved list above
-2. **Match the site's aesthetic**: Use lilac or candy rose for most cases
+2. **Match the site's aesthetic**: Use burgundy or claret rose for most cases
 3. **Adjust opacity as needed**, but keep RGB values within the palette
 4. **Test on dark backgrounds** (like the dusk timeline and footer) to ensure visibility
 5. **Never use**: `rgba(0,0,0,...)`, `rgba(128,128,128,...)`, or any neutral greys

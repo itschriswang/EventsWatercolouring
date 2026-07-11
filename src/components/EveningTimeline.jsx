@@ -48,9 +48,9 @@ export default function EveningTimeline() {
             'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(255,165,95,0.12) 0%, transparent 60%), ' +
             'radial-gradient(ellipse 55% 45% at 90% 10%, rgba(250,170,200,0.10) 0%, transparent 55%), ' +
             'radial-gradient(ellipse 60% 50% at 92% 92%, rgba(175,140,230,0.10) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 45% 40% at 30% 100%, rgba(250,225,120,0.08) 0%, transparent 60%), ' +
+            'radial-gradient(ellipse 45% 40% at 30% 100%, rgba(236,232,108,0.08) 0%, transparent 60%), ' +
             'radial-gradient(ellipse 48% 40% at 55% 48%, rgba(205,215,80,0.10) 0%, transparent 55%), ' +
-            'linear-gradient(170deg, rgba(30,20,40,0.25) 0%, rgba(40,30,55,0.45) 35%, rgba(50,35,65,0.65) 100%)',
+            'linear-gradient(170deg, rgba(40,20,31,0.25) 0%, rgba(52,26,40,0.45) 35%, rgba(64,32,48,0.65) 100%)',
         }}
       />
       {/* Watercolour pigment wash, bottom-left — the title rail leaves that
@@ -77,7 +77,7 @@ export default function EveningTimeline() {
         {/* Sticky title rail */}
         <div className="col-span-12 lg:col-span-5">
           <div className="lg:sticky lg:top-24 lg:h-fit">
-            <Label gradient={['#F5E9AC', '#F7F4EF']} className="!text-paper/90">
+            <Label gradient={['#EFEFA0', '#F7F4EF']} className="!text-paper/90">
               {EVENING.label}
             </Label>
             {/* No backlight glow here: the section runs light type on the
@@ -138,14 +138,14 @@ export default function EveningTimeline() {
                     aria-hidden="true"
                   >
                     {isLast ? (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_12px_rgba(63,53,82,0.55)]">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-paper shadow-[0_2px_12px_rgba(78,38,57,0.55)]">
                         <Drop
                           className="h-5 w-auto"
                           gradient={['#BFDCD1', '#8FB5A8']}
                         />
                       </span>
                     ) : (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] text-wine shadow-[0_2px_12px_rgba(63,53,82,0.42)]">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-paper font-mono text-[0.7rem] text-wine shadow-[0_2px_12px_rgba(78,38,57,0.42)]">
                         {beat.no}
                       </span>
                     )}
@@ -159,7 +159,7 @@ export default function EveningTimeline() {
                   <motion.div
                     whileHover={reduce ? {} : { y: -6 }}
                     transition={SPRING}
-                    className="group relative -mt-px flex-1 rounded-2xl border border-paper/15 bg-paper-deep/95 p-4 shadow-[0_10px_30px_-18px_rgba(63,53,82,0.58)] backdrop-blur-[1px] sm:p-5"
+                    className="group relative -mt-px flex-1 rounded-2xl border border-paper/15 bg-paper-deep/95 p-4 shadow-[0_10px_30px_-18px_rgba(78,38,57,0.58)] backdrop-blur-[1px] sm:p-5"
                   >
                     <span
                       aria-hidden="true"

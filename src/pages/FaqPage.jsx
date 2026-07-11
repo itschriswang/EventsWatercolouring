@@ -53,7 +53,7 @@ export default function FaqPage() {
 
           <section className="relative w-full px-[5vw] pt-[clamp(7rem,16vw,10rem)] pb-[clamp(1.5rem,4vw,2.5rem)]">
             <div className="relative z-10 max-w-2xl">
-              <Label gradient={['#FFE08A', '#E4B23E']}>{FAQ.label}</Label>
+              <Label gradient={['#F2E982', '#BCB438']}>{FAQ.label}</Label>
               <SplitText
                 as="h1"
                 unit="char"

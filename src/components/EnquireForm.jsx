@@ -633,7 +633,7 @@ function DecklePaper({ id }) {
     <div
       aria-hidden="true"
       className="absolute inset-0"
-      style={{ filter: 'drop-shadow(0 18px 38px rgba(63,53,82,0.21))' }}
+      style={{ filter: 'drop-shadow(0 18px 38px rgba(78,38,57,0.21))' }}
     >
       <svg className="h-full w-full" preserveAspectRatio="none">
         <defs>
@@ -676,7 +676,7 @@ function SealButton({ sending }) {
             className="absolute inset-0 h-full w-full object-contain"
             style={{
               filter:
-                'sepia(0.15) saturate(1.05) drop-shadow(0 2.5px 3px rgba(94,74,140,0.25))',
+                'sepia(0.15) saturate(1.05) drop-shadow(0 2.5px 3px rgba(126,40,72,0.25))',
             }}
           />
         </picture>
@@ -688,9 +688,9 @@ function SealButton({ sending }) {
           className="pointer-events-none absolute inset-[10%] rounded-full opacity-60 transition-opacity duration-300 group-hover:opacity-100"
           style={{
             background: [
-              'radial-gradient(circle at 30% 20%, rgba(240,228,158,0.22) 0%, rgba(240,228,158,0) 44%)',
+              'radial-gradient(circle at 30% 20%, rgba(226,232,138,0.22) 0%, rgba(226,232,138,0) 44%)',
               'radial-gradient(circle at 72% 24%, rgba(176,74,118,0.18) 0%, rgba(176,74,118,0) 46%)',
-              'radial-gradient(circle at 26% 76%, rgba(201,169,75,0.18) 0%, rgba(201,169,75,0) 50%)',
+              'radial-gradient(circle at 26% 76%, rgba(176,172,66,0.18) 0%, rgba(176,172,66,0) 50%)',
               'radial-gradient(circle at 76% 78%, rgba(232,155,99,0.16) 0%, rgba(232,155,99,0) 50%)',
               'radial-gradient(circle at 50% 55%, rgba(176,74,118,0.14) 0%, rgba(176,74,118,0) 56%)',
             ].join(', '),
