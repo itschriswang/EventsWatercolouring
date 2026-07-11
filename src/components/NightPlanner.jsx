@@ -5,13 +5,22 @@ import { SPRING, ENQUIRE_HREF, CARD_BG } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import { withUnderline } from './Underline.jsx'
 
-// Warm pigment pairs for the little keepsake thumbnails — cycled so the
-// grid reads as a spread of different paintings, not a repeat pattern.
+// Full-arc pigment pairs for the little keepsake thumbnails — cycled so the
+// grid reads as a spread of different paintings across the whole palette
+// (warm apricot/orange through chartreuse, periwinkle, lilac, blush and rose),
+// that lowkey-rainbow vibe rather than one repeated hue. The oranges/warms
+// stay here on purpose: these swatches stand in for real paintings, so they
+// keep the pastel arc's full range, not just the site's deep anchors. Each
+// pair is two arc-neighbours so a single swatch never muddies — the rainbow
+// lives across the grid, not inside one card.
 const THUMB_TINTS = [
-  ['rgba(176,74,118,0.55)', 'rgba(140,54,86,0.35)'],
-  ['rgba(140,54,86,0.5)', 'rgba(176,74,118,0.3)'],
-  ['rgba(176,172,66,0.5)', 'rgba(138,145,67,0.35)'],
-  ['rgba(176,74,118,0.5)', 'rgba(192,85,154,0.3)'],
+  ['rgba(247,178,120,0.55)', 'rgba(232,155,99,0.38)'], // apricot → orange
+  ['rgba(232,155,99,0.5)', 'rgba(240,224,138,0.4)'],   // orange → butter
+  ['rgba(214,224,120,0.52)', 'rgba(138,145,67,0.35)'], // chartreuse → sage
+  ['rgba(184,192,230,0.5)', 'rgba(200,172,226,0.38)'], // periwinkle → lilac
+  ['rgba(210,182,230,0.5)', 'rgba(242,194,207,0.4)'],  // lilac → blush
+  ['rgba(242,194,207,0.55)', 'rgba(193,96,140,0.35)'], // blush → rose
+  ['rgba(176,74,118,0.5)', 'rgba(192,85,154,0.32)'],   // candy rose → magenta
 ]
 
 const PIECES_PER_HOUR = 8

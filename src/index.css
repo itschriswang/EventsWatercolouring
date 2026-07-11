@@ -27,11 +27,11 @@
      translucent nav chrome. */
   :root {
     --c-paper: #F7F4EF;
-    --c-ink: #4E2639;
+    --c-ink: #3F3552;
     --rgb-paper: 247 244 239;
-    --rgb-ink: 78 38 57;
-    --rgb-ink-soft: 128 96 107;
-    --rgb-line: 228 212 218;
+    --rgb-ink: 63 53 82;
+    --rgb-ink-soft: 117 106 124;
+    --rgb-line: 225 214 224;
 
     /* ACCENT — sourced verbatim from the client's reference swatch sheet:
          Lemon Lime #D8DB7A · Seafoam #BFDCD1 · Lavender #D4B6E6 ·
@@ -296,7 +296,7 @@
     /* Darker than ink-soft (5.2:1) on purpose: this text is tiny and often
        sits over the watercolour bloom washes, so it needs headroom above
        the 4.5:1 AA minimum rather than just clearing it. ~7.45:1 on paper. */
-    color: #5C3A49;
+    color: #4A4E63;
   }
 }
 
