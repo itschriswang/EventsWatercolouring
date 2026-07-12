@@ -370,9 +370,13 @@ function KitObject({ piece, item }) {
       </span>
     )
   }
+  // The painted stand-in (only reached when no cut-out photo exists) wears the
+  // printed-dither stipple so the sketches read as pigment on paper. Real
+  // photographs go through the `<picture>` branch above and stay clean — the
+  // dither never touches a photo.
   return (
     <span role="img" aria-label={label} className="block">
-      <Art className="block w-full" />
+      <Art className="block w-full dither-sketch" />
     </span>
   )
 }

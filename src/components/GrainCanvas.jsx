@@ -105,7 +105,7 @@ export default function GrainCanvas() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-[60] h-full w-full opacity-[0.05] mix-blend-multiply"
+      className="pointer-events-none fixed inset-0 z-[60] h-full w-full opacity-[0.075] mix-blend-multiply"
     />
   )
 }
