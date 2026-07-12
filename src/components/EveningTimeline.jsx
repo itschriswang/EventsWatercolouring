@@ -39,7 +39,11 @@ export default function EveningTimeline() {
   return (
     <section
       id="night"
-      className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper bg-wine"
+      // Base ground is a desaturated near-neutral wine (same hue/lightness as
+      // the `wine` token, saturation pulled way down) — this section's own
+      // colour should come from the blooms and gradient overlay above, not
+      // the base fill. Footer keeps the fuller-saturation `wine` token.
+      className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper bg-[#2A2226]"
     >
       {/* Overlay for text readability and ambience */}
       <div
