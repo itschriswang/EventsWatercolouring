@@ -93,6 +93,7 @@ export const WORK = {
         { img: 'art-couple-vows',  ttl: 'The vows',          meta: 'Watercolour · A5', landscape: true, venue: '', alt: 'Landscape watercolour of a bride in a white gown and a groom in a navy tuxedo holding hands among scattered confetti' },
         { img: 'art-couple-sage',  ttl: 'The pair, in sage', meta: 'Watercolour · A5', venue: '', alt: 'Watercolour portrait of a couple, the bride in a sage-green off-shoulder gown beside a groom in a soft brown jacket' },
         { img: 'art-couple-blush', ttl: 'Blush & black tie', meta: 'Watercolour · A5', venue: '', alt: 'Watercolour portrait of a couple, the bride in a blush off-shoulder gown beside a groom in a black suit and glasses' },
+        { img: 'art-couple-hanbok', ttl: 'Hanbok traditions', meta: 'Watercolour · A5', venue: '', alt: 'Watercolour portrait of a couple in traditional Korean hanbok attire, the bride in a blue jeogori and skirt and the groom in traditional jacket and pants' },
         // Template — swap in a real client quote, then uncomment:
         // {
         //   testimonial: true,
