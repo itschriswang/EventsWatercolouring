@@ -118,10 +118,16 @@ const windowFor = (i) => {
 export default function KitStage({ className = '' }) {
   const reduce = useReducedMotion()
   const heavy = useHeavyFx()
-  // The fan + orbit is scroll-linked for everyone but reduced-motion visitors.
-  // (Phones used to be excluded to dodge a scroll-judder feedback loop; the
-  // stage's vertical overflow clip below removes that loop — see the file note.)
-  const scrollLinked = !reduce
+  // The fan + orbit is scroll-linked on roomy fine-pointer devices only. It's
+  // the heaviest motion on the page: six pieces, each riding ~9 scroll-linked
+  // transforms off two springs, laid out in a `preserve-3d`/`perspective`
+  // scene. Driving all of that per scroll frame is what made phones feel laggy,
+  // so touch/low-end/reduced-motion visitors fall to the lighter path below —
+  // the settled fan pose with a plain fade-in reveal. The kit still opens the
+  // same way; it just doesn't churn springs and 3D compositing on a phone GPU.
+  // (The stage's vertical overflow clip below also breaks the old scroll-judder
+  // feedback loop — see the file note.)
+  const scrollLinked = heavy && !reduce
 
   const stageRef = useRef(null)
 
@@ -321,8 +327,9 @@ function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, 
               className: '[transform-style:preserve-3d]',
             }
           : {
-              // Reduced motion: no travel, no orbit, no depth — resolve in the
-              // settled fan pose with an opacity reveal only.
+              // Light path (touch / low-end / reduced motion): no travel, no
+              // orbit, no depth — resolve straight into the settled fan pose
+              // with an opacity reveal only.
               initial: { opacity: 0 },
               whileInView: { opacity: 1 },
               viewport: { once: true, margin: '-40px' },
