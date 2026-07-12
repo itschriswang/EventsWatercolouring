@@ -135,8 +135,18 @@
   body {
     margin: 0;
     background-color: theme('colors.paper');
-    background-image: radial-gradient(theme('colors.line') 0.5px, transparent 0.5px);
-    background-size: 4px 4px;
+    /* Paper tooth as an ordered dither. The original faint line-dot grid (last
+       layer) is joined by two offset burgundy dot grids — the second nudged
+       half a cell on both axes — so the ground reads as a printed dither
+       checkerboard rather than a flat cream, tying it to the dithered washes
+       above. Dots are burgundy at a whisper alpha (never grey, per CLAUDE.md)
+       and small enough not to touch body-copy legibility. */
+    background-image:
+      radial-gradient(rgba(126, 40, 72, 0.05) 0.5px, transparent 0.6px),
+      radial-gradient(rgba(126, 40, 72, 0.05) 0.5px, transparent 0.6px),
+      radial-gradient(theme('colors.line') 0.5px, transparent 0.5px);
+    background-size: 3px 3px, 3px 3px, 4px 4px;
+    background-position: 0 0, 1.5px 1.5px, 0 0;
     color: theme('colors.ink');
     font-family: theme('fontFamily.body');
     font-weight: 400;
@@ -350,6 +360,15 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
+  }
+
+  /* Printed-dither texture for the painted kit sketches (see the
+     `#dither-sketch` filter in GradientDefs). A CSS `filter` reference clips to
+     the element's own painted alpha for free, so a single class on the SVG
+     stand-in stipples just the illustration and leaves the transparent gaps —
+     and, crucially, every real photograph — untouched. */
+  .dither-sketch {
+    filter: url(#dither-sketch);
   }
 
   /* Subtle paper grain so the bone background reads as stock, not flat #fff. */

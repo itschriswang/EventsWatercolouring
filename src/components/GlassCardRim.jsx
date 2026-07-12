@@ -34,10 +34,15 @@ export default function GlassCardRim({ radius = 16, tint = ['#E4E6A8', '#D6DAF0'
         preserveAspectRatio="none"
       >
         <defs>
-          <filter id={`gr-warp-${uid}`} x="-6%" y="-6%" width="112%" height="112%">
+          <filter id={`gr-warp-${uid}`} x="-10%" y="-10%" width="120%" height="120%">
+            {/* A lower base frequency than the old glass shimmer buys a longer
+                wavelength — a few big, round undulations rather than fine
+                noise — so the edge reads as a cute wobble of wet paper
+                floating on water, not a shivering rim. The wider filter
+                region (±10%) gives that larger swell room before it clips. */}
             <feTurbulence
               type="fractalNoise"
-              baseFrequency="0.012 0.018"
+              baseFrequency="0.006 0.009"
               numOctaves="2"
               seed="9"
               result="n"
@@ -45,15 +50,18 @@ export default function GlassCardRim({ radius = 16, tint = ['#E4E6A8', '#D6DAF0'
               {animated && (
                 <animate
                   attributeName="baseFrequency"
-                  values="0.012 0.018;0.009 0.014;0.012 0.018"
-                  dur="14s"
+                  values="0.006 0.009;0.004 0.006;0.006 0.009"
+                  dur="12s"
                   calcMode="spline"
                   keySplines="0.45 0 0.55 1;0.45 0 0.55 1"
                   repeatCount="indefinite"
                 />
               )}
             </feTurbulence>
-            <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" />
+            {/* Bigger displacement (9 vs 5) makes the swell actually visible;
+                the stroke below is widened to match so the wavier edge stays a
+                continuous ribbon instead of pinching apart at the crests. */}
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" />
           </filter>
           <linearGradient id={`gr-stroke-${uid}`} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#FFFCF2" stopOpacity="0.9" />
@@ -73,7 +81,7 @@ export default function GlassCardRim({ radius = 16, tint = ['#E4E6A8', '#D6DAF0'
           rx={radius}
           fill="none"
           stroke={`url(#gr-stroke-${uid})`}
-          strokeWidth="1.75"
+          strokeWidth="2.25"
           filter={`url(#gr-warp-${uid})`}
         />
       </svg>
