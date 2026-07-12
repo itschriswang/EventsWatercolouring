@@ -17,8 +17,8 @@ export default {
         // anchors ≥4.5:1 on paper.
         paper: '#F7F4EF',
         'paper-deep': '#F4ECEF',
-        ink: '#423A3D',
-        'ink-soft': '#786E71',
+        ink: '#352E30',
+        'ink-soft': '#6B6065',
         line: '#E1D6E0',
         // Primary accent pigments. The dominant UI accent is Lemon Lime
         // (#D8DB7A), one of the client's reference swatches, deepened just
