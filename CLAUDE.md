@@ -96,11 +96,13 @@ values point at the pastel scheme's anchors (see `tailwind.config.js`).
 depth in the decorative layer — shadows, the dark "nightfall" grounds (`wine`),
 label-gradient dark stops, bloom pairs — it reaches for burgundy/claret wine
 tones (hue ≈ 335–345°), the chic counterpart to the chartreuse accent. **Body
-and title text is the exception: `ink` (#3F3552) stays a dark slate, not
-burgundy** — that one deep slot deliberately keeps its cool cast so the copy
-never reads as warm/wine. The light pastels (soft lilac, periwinkle, lavender
-washes) stay on the arc as-is. Do not reintroduce deep violet/purple decorative
-anchors, and do not push the ink text toward burgundy.
+and title text is the exception: `ink` (#423A3D) is a near-neutral dark grey
+with only an ever-so-slight burgundy lean (hue ≈ 337°)** — deliberately not the
+old mauve/violet cast, and never a full wine. That one deep slot reads as a true
+neutral slate first, warmth second, so the copy never looks purple or wine. The
+light pastels (soft lilac, periwinkle, lavender washes) stay on the arc as-is.
+Do not reintroduce deep violet/purple decorative anchors, and do not push the
+ink text past its faint burgundy whisper toward actual burgundy/wine.
 
 **Multi-hue "keepsake" swatches keep the full rainbow.** Sections that stand in
 for a spread of real paintings (the NightPlanner thumbnail grid, gallery
