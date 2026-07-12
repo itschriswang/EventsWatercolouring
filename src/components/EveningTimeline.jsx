@@ -39,20 +39,31 @@ export default function EveningTimeline() {
   return (
     <section
       id="night"
-      className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper bg-wine"
+      // Base ground is a desaturated near-neutral wine (same hue/lightness as
+      // the `wine` token, saturation pulled way down) — this section's own
+      // colour should come from the blooms and gradient overlay above, not
+      // the base fill. Footer keeps the fuller-saturation `wine` token.
+      className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper bg-[#2A2226]"
     >
       {/* Overlay for text readability and ambience */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
+          // Bloom alphas raised (from a desaturated base, these now carry
+          // most of the section's colour) — same hues/positions, just
+          // stronger, so they still stay hue-adjacent where they overlap.
           background:
-            'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(255,165,95,0.12) 0%, transparent 60%), ' +
-            'radial-gradient(ellipse 55% 45% at 90% 10%, rgba(250,170,200,0.10) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 60% 50% at 92% 92%, rgba(175,140,230,0.10) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 45% 40% at 30% 100%, rgba(236,232,108,0.08) 0%, transparent 60%), ' +
-            'radial-gradient(ellipse 48% 40% at 55% 48%, rgba(205,215,80,0.10) 0%, transparent 55%), ' +
-            'linear-gradient(170deg, rgba(40,20,31,0.25) 0%, rgba(52,26,40,0.45) 35%, rgba(64,32,48,0.65) 100%)',
+            'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(255,165,95,0.20) 0%, transparent 60%), ' +
+            'radial-gradient(ellipse 55% 45% at 90% 10%, rgba(250,170,200,0.17) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 60% 50% at 92% 92%, rgba(175,140,230,0.17) 0%, transparent 55%), ' +
+            'radial-gradient(ellipse 45% 40% at 30% 100%, rgba(236,232,108,0.14) 0%, transparent 60%), ' +
+            'radial-gradient(ellipse 48% 40% at 55% 48%, rgba(205,215,80,0.17) 0%, transparent 55%), ' +
+            // Desaturated to match the base ground below — this wash used to
+            // carry a lot of the section's wine colour on its own; now it
+            // just deepens the ground toward the bottom, leaving colour to
+            // the blooms above.
+            'linear-gradient(170deg, rgba(34,26,30,0.25) 0%, rgba(44,34,39,0.45) 35%, rgba(54,42,48,0.65) 100%)',
         }}
       />
       {/* Watercolour pigment wash, bottom-left — the title rail leaves that
@@ -64,7 +75,7 @@ export default function EveningTimeline() {
           as a hard-edged square against the dusk background. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-[8vw] bottom-0 h-[52vw] w-[52vw] max-h-[560px] max-w-[560px] overflow-hidden opacity-70"
+        className="pointer-events-none absolute -left-[8vw] bottom-0 h-[52vw] w-[52vw] max-h-[560px] max-w-[560px] overflow-hidden opacity-90"
         style={{
           WebkitMaskImage:
             'radial-gradient(ellipse 70% 70% at 32% 72%, black 0%, black 38%, transparent 76%)',
