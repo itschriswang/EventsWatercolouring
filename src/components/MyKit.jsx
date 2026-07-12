@@ -73,13 +73,16 @@ const PIECES = [
   { id: 'palette', fx: 0.16, fy: 236, r0: 0, r: -3, w: '36%', depth: 0.5 },
 ]
 
-// The orbit phase. The constellation revolves counter-clockwise by ORBIT_DEG,
-// each piece turning with it (so they read as carried around, not sliding), and
-// drawing ORBIT_PULL inward toward the portrait so the ring tucks close and
-// stays within the fanned envelope (see the enclosure note above).
-const ORBIT_DEG = -34
-const ORBIT_RAD = (ORBIT_DEG * Math.PI) / 180
-const ORBIT_PULL = 0.16
+// The orbit phase. The constellation revolves counter-clockwise around the
+// portrait by ORBIT_SWEEP_DEG — a good arc, so the travel reads clearly — while
+// each piece only turns a hair on its own axis (ORBIT_SELF_DEG): the tools stay
+// upright as they're carried around, rather than tumbling. They also draw
+// ORBIT_PULL inward toward the portrait as they turn, so the ring tucks close
+// and the outer pieces stay on the sheet (see the enclosure note above).
+const ORBIT_SWEEP_DEG = -52
+const ORBIT_SWEEP_RAD = (ORBIT_SWEEP_DEG * Math.PI) / 180
+const ORBIT_SELF_DEG = -7
+const ORBIT_PULL = 0.24
 
 const ART = {
   brushes: BrushesArt,
@@ -219,19 +222,19 @@ function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, 
   // Phase 2 rotates that fanned vector around the portrait and reels it inward.
   // At orbit 0 (still fanning) this is identity, so the two phases meet cleanly.
   const x = useTransform([t, orbit], ([tv, ov]) => {
-    const ang = ov * ORBIT_RAD
+    const ang = ov * ORBIT_SWEEP_RAD
     const rad = 1 - ov * ORBIT_PULL
     return (baseX(tv) * Math.cos(ang) - baseY(tv) * Math.sin(ang)) * rad
   })
   const y = useTransform([t, orbit, drift], ([tv, ov, d]) => {
-    const ang = ov * ORBIT_RAD
+    const ang = ov * ORBIT_SWEEP_RAD
     const rad = 1 - ov * ORBIT_PULL
     return (baseX(tv) * Math.sin(ang) + baseY(tv) * Math.cos(ang)) * rad + d * piece.depth * driftScale
   })
-  // The piece turns with the orbit (carried around, not sliding) on top of its
-  // hand-placed fan rotation.
+  // The piece keeps its hand-placed fan rotation and only turns a hair on its
+  // own axis as it revolves — it's carried around the portrait, not tumbling.
   const rotate = useTransform([t, orbit], ([tv, ov]) =>
-    piece.r0 + (piece.r - piece.r0) * tv + ov * ORBIT_DEG,
+    piece.r0 + (piece.r - piece.r0) * tv + ov * ORBIT_SELF_DEG,
   )
   const scale = useTransform(t, [0, 1], [0.84, 1])
   const opacity = useTransform(t, [0, 0.22], [0, 1])
