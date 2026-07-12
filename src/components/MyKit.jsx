@@ -118,16 +118,15 @@ const windowFor = (i) => {
 export default function KitStage({ className = '' }) {
   const reduce = useReducedMotion()
   const heavy = useHeavyFx()
-  // The fan + orbit is scroll-linked on roomy fine-pointer devices only. It's
-  // the heaviest motion on the page: six pieces, each riding ~9 scroll-linked
-  // transforms off two springs, laid out in a `preserve-3d`/`perspective`
-  // scene. Driving all of that per scroll frame is what made phones feel laggy,
-  // so touch/low-end/reduced-motion visitors fall to the lighter path below —
-  // the settled fan pose with a plain fade-in reveal. The kit still opens the
-  // same way; it just doesn't churn springs and 3D compositing on a phone GPU.
+  // The fan + orbit is scroll-linked for everyone but reduced-motion visitors.
+  // On phones/low-end, the scroll-linked motion (fan, orbit, drift) still runs,
+  // but without the `preserve-3d`/`perspective` 3D compositing overhead — the
+  // pieces animate in 2D instead. This keeps the satisfying spring-driven fan and
+  // rotation while dodging the GPU cost that made phones feel laggy. The hover
+  // lift and cursor lean (perspective tilt) stay desktop-only.
   // (The stage's vertical overflow clip below also breaks the old scroll-judder
   // feedback loop — see the file note.)
-  const scrollLinked = heavy && !reduce
+  const scrollLinked = !reduce
 
   const stageRef = useRef(null)
 
@@ -212,7 +211,7 @@ export default function KitStage({ className = '' }) {
       style={{
         overflowX: 'visible',
         overflowY: 'clip',
-        perspective: scrollLinked ? PERSPECTIVE : undefined,
+        perspective: (scrollLinked && heavy) ? PERSPECTIVE : undefined,
       }}
       className={`relative mx-auto h-[clamp(34rem,88vw,40rem)] w-full ${className}`}
       role="group"
@@ -226,7 +225,7 @@ export default function KitStage({ className = '' }) {
         className="absolute inset-0"
         style={
           scrollLinked
-            ? { transformStyle: 'preserve-3d', rotateX: tiltX, rotateY: tiltY }
+            ? { transformStyle: heavy ? 'preserve-3d' : 'flat', rotateX: tiltX, rotateY: tiltY }
             : undefined
         }
       >
@@ -317,14 +316,14 @@ function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, 
 
   return (
     <div
-      className="absolute left-1/2 top-[46%] -translate-x-1/2 -translate-y-1/2 [transform-style:preserve-3d]"
-      style={{ width: piece.w }}
+      className="absolute left-1/2 top-[46%] -translate-x-1/2 -translate-y-1/2"
+      style={{ width: piece.w, transformStyle: heavy ? 'preserve-3d' : 'flat' }}
     >
       <motion.div
         {...(scrollLinked
           ? {
               style: { x, y, z, rotate, rotateX, rotateY, scale, opacity },
-              className: '[transform-style:preserve-3d]',
+              className: heavy ? '[transform-style:preserve-3d]' : '',
             }
           : {
               // Light path (touch / low-end / reduced motion): no travel, no
@@ -340,7 +339,7 @@ function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, 
         <motion.div
           whileHover={reduce ? undefined : { y: -7, z: heavy ? 44 : 0, scale: 1.04, rotate: 2 }}
           transition={{ type: 'spring', stiffness: 200, damping: 18 }}
-          className="cursor-default [transform-style:preserve-3d]"
+          className={`cursor-default ${heavy ? '[transform-style:preserve-3d]' : ''}`}
         >
           <KitObject piece={piece} item={item} />
         </motion.div>
