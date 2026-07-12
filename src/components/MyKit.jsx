@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
-import { asset, SPRING_SOFT } from '../lib/site.js'
+import { asset } from '../lib/site.js'
 import { KIT } from '../content.js'
 import {
   EaselArt,
@@ -16,8 +16,19 @@ import {
 /**
  * The kit stage — the portrait, and the desk unpacking around it. It IS the
  * "about me" portrait: the flat matted print sits at the centre and the tools
- * start stacked behind it, fanning outward as the section scrolls into view
- * and re-packing when you scroll back up.
+ * start stacked behind it, then move on scroll in two linked phases:
+ *
+ *  1. FAN — as the stage climbs to the middle of the viewport (the portrait
+ *     "halfway up the page"), the tools fan out from behind the print into
+ *     their desk poses.
+ *  2. ORBIT — keep scrolling and the whole fanned constellation revolves
+ *     around the portrait, each tool turning with it and drawing a touch
+ *     inward, so they wheel around the print like hands on a clock.
+ *
+ * Both phases are scroll-linked and reversible on every device (scroll back up
+ * and the ring un-turns, then re-stacks behind the print). Only genuine
+ * reduced-motion visitors fall back to an opacity-only reveal into the settled
+ * fan.
  *
  * Everything is sized as a fraction of the stage itself (widths in %, fan
  * spread in fractions of the stage half-width), so the whole scene scales to
@@ -25,20 +36,23 @@ import {
  * full-width stack on a phone — rather than to the viewport. The stage width is
  * read via a ResizeObserver so rotation/resize re-lays the desk.
  *
+ * Why scroll-linking is now safe on phones: the earlier build kept phones on a
+ * one-shot reveal because scroll-linking six drop-shadowed layers let their
+ * downward transforms grow the page's scrollable height every frame, and since
+ * `body` is a scroll container that fed back into the scroll position and the
+ * whole page juddered. Two things fix that here: the stage clips its VERTICAL
+ * overflow (`overflowY: 'clip'`, horizontal left visible so the wide tools
+ * still spill past the column edge), so no child transform can enlarge the
+ * page's scroll height; and the stage reserves enough height to enclose the
+ * settled fan, so nothing is actually cut. The orbit only ever draws pieces
+ * inward (never past their fanned reach), so the enclosed envelope never grows.
+ *
  * Motion tiers, per the site ladder:
- *  - heavy-fx (roomy fine-pointer) devices: the fan is scroll-linked (useScroll
- *    drives every pose), so it plays forward as you scroll down and reverses —
- *    re-stacking behind the print — as you scroll back up, with a soft spring
- *    (pieces trail the thumb like wet pigment) and a residual per-piece parallax
- *    drift after they've landed.
- *  - touch / low-end devices: a cheaper one-shot reveal — the kit springs open
- *    from behind the print once, when the stage scrolls into view, then holds.
- *    Scroll-linking the fan on phones re-transformed six drop-shadowed layers on
- *    every scroll frame, and because `body` is itself a scroll container
- *    (overflow-x:hidden), those moving transforms kept resizing the page's
- *    scrollable area and feeding back into the scroll position — the whole page
- *    juddered. The one-shot open keeps the delight without touching scroll.
- *  - reduced motion: opacity-only reveal straight into the final layout.
+ *  - reduced motion: opacity-only reveal straight into the final fan layout.
+ *  - everyone else: the scroll-linked fan + orbit, softened by a spring so the
+ *    pieces trail the thumb like wet pigment.
+ *  - heavy-fx (roomy fine-pointer) devices additionally get a residual
+ *    per-piece parallax drift once they've landed, for depth.
  *
  * Each tool tries a real cut-out photograph first (assets/kit/<id>.webp + .png)
  * and falls back to the painted SVG stand-ins in KitObjects.jsx.
@@ -59,6 +73,14 @@ const PIECES = [
   { id: 'palette', fx: 0.16, fy: 236, r0: 0, r: -3, w: '36%', depth: 0.5 },
 ]
 
+// The orbit phase. The constellation revolves counter-clockwise by ORBIT_DEG,
+// each piece turning with it (so they read as carried around, not sliding), and
+// drawing ORBIT_PULL inward toward the portrait so the ring tucks close and
+// stays within the fanned envelope (see the enclosure note above).
+const ORBIT_DEG = -34
+const ORBIT_RAD = (ORBIT_DEG * Math.PI) / 180
+const ORBIT_PULL = 0.16
+
 const ART = {
   brushes: BrushesArt,
   pencil: PencilArt,
@@ -68,7 +90,7 @@ const ART = {
   palette: PaletteArt,
 }
 
-// Per-piece fan window inside the scroll progress: staggered starts, long
+// Per-piece fan window inside the fan phase progress: staggered starts, long
 // overlaps, so the kit opens as one gesture rather than a queue.
 const windowFor = (i) => {
   const a = 0.04 + i * 0.07
@@ -78,12 +100,10 @@ const windowFor = (i) => {
 export default function KitStage({ className = '' }) {
   const reduce = useReducedMotion()
   const heavy = useHeavyFx()
-  // The scroll-linked fan is a heavy scroll-linked effect (six drop-shadowed
-  // layers re-posed every scroll frame), so it gates on useHeavyFx like the
-  // rest of the ladder. Running it on touch/low-end devices drove the whole
-  // page into a scroll oscillation (see the tier note above), so those fall
-  // back to the one-shot spring reveal below.
-  const scrollLinked = heavy && !reduce
+  // The fan + orbit is scroll-linked for everyone but reduced-motion visitors.
+  // (Phones used to be excluded to dodge a scroll-judder feedback loop; the
+  // stage's vertical overflow clip below removes that loop — see the file note.)
+  const scrollLinked = !reduce
 
   const stageRef = useRef(null)
 
@@ -101,15 +121,21 @@ export default function KitStage({ className = '' }) {
     return () => ro.disconnect()
   }, [])
 
-  // The fan itself: runs from the stage entering low in the viewport to it
-  // reaching centre stage. On heavy fx a soft spring lets pieces trail the
-  // thumb organically; lighter devices ride the raw scroll (still reversible).
-  const { scrollYProgress } = useScroll({
+  // Phase 1, the fan: runs from the stage entering low in the viewport to the
+  // portrait reaching the middle of the page. A soft spring lets pieces trail
+  // the thumb organically as they open (and re-stack, scrolling back up).
+  const { scrollYProgress: fanRaw } = useScroll({
     target: stageRef,
-    offset: ['start 0.92', 'center 0.5'],
+    offset: ['start 0.92', 'center 0.55'],
   })
-  const springed = useSpring(scrollYProgress, { stiffness: 55, damping: 17 })
-  const fan = heavy ? springed : scrollYProgress
+  // Phase 2, the orbit: picks up where the fan lands (portrait around centre)
+  // and runs as you keep scrolling it up and out, wheeling the ring around.
+  const { scrollYProgress: orbitRaw } = useScroll({
+    target: stageRef,
+    offset: ['center 0.55', 'end 0.2'],
+  })
+  const fan = useSpring(fanRaw, { stiffness: 55, damping: 17 })
+  const orbit = useSpring(orbitRaw, { stiffness: 60, damping: 20 })
 
   // Residual drift across the whole section for depth once pieces have
   // landed — each piece rides it by its own `depth` (heavy fx only).
@@ -119,15 +145,21 @@ export default function KitStage({ className = '' }) {
   })
   const drift = useTransform(through, [0, 1], [12, -12])
 
-  // The print rises and settles on the leading edge of the same scroll, so it
-  // eases back out as you scroll up with the rest of the desk.
+  // The print rises and settles on the leading edge of the fan, so it eases
+  // back out as you scroll up with the rest of the desk.
   const easelOpacity = useTransform(fan, [0, 0.1], [0, 1])
   const easelY = useTransform(fan, [0, 0.2], [26, 0])
 
   return (
     <div
       ref={stageRef}
-      className={`relative mx-auto h-[clamp(30rem,84vw,40rem)] w-full ${className}`}
+      // h clamp: tall enough to enclose the settled fan (palette + caption sit
+      // near the bottom) so the vertical clip never cuts real content, only
+      // guards the page's scroll height. overflowY:clip breaks the phone
+      // scroll-judder loop; overflowX stays visible so the wide tools (tubes,
+      // spritzer) can still spill past the column edge as designed.
+      style={{ overflowX: 'visible', overflowY: 'clip' }}
+      className={`relative mx-auto h-[clamp(34rem,88vw,40rem)] w-full ${className}`}
       role="group"
       aria-label="Chris's portrait, with the tools of the kit laid out around it"
     >
@@ -156,6 +188,7 @@ export default function KitStage({ className = '' }) {
             item={item}
             order={i}
             fan={fan}
+            orbit={orbit}
             drift={drift}
             halfW={halfW}
             scrollLinked={scrollLinked}
@@ -169,23 +202,41 @@ export default function KitStage({ className = '' }) {
 }
 
 /** One object in the fan: the travel from stacked-behind-the-print to its
- *  final desk pose, plus a small hover lift so it feels pick-up-able. */
-function KitPiece({ piece, item, order, fan, drift, halfW, scrollLinked, driftScale, reduce }) {
+ *  fanned desk pose, then its revolution around the portrait, plus a small
+ *  hover lift so it feels pick-up-able. */
+function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, driftScale, reduce }) {
   const [a, b] = windowFor(order)
   const t = useTransform(fan, [a, b], [0, 1])
 
   const fx = piece.fx * halfW
 
-  // Scroll-linked pose. The x/y path bows very slightly (y arrives on a
-  // later ramp than x) so pieces sweep outward in an arc, not on rails.
-  const x = useTransform(t, [0, 1], [0, fx])
-  const y = useTransform([t, drift], ([v, d]) => piece.fy * Math.min(v * 1.08, 1) + d * piece.depth * driftScale)
-  const rotate = useTransform(t, [0, 1], [piece.r0, piece.r])
+  // The fanned vector (portrait centre → piece), unrolled over the fan phase.
+  // The y arrives on a later ramp than x (`* 1.08`, clamped) so pieces sweep
+  // outward in an arc, not on rails.
+  const baseX = (tv) => fx * tv
+  const baseY = (tv) => piece.fy * Math.min(tv * 1.08, 1)
+
+  // Phase 2 rotates that fanned vector around the portrait and reels it inward.
+  // At orbit 0 (still fanning) this is identity, so the two phases meet cleanly.
+  const x = useTransform([t, orbit], ([tv, ov]) => {
+    const ang = ov * ORBIT_RAD
+    const rad = 1 - ov * ORBIT_PULL
+    return (baseX(tv) * Math.cos(ang) - baseY(tv) * Math.sin(ang)) * rad
+  })
+  const y = useTransform([t, orbit, drift], ([tv, ov, d]) => {
+    const ang = ov * ORBIT_RAD
+    const rad = 1 - ov * ORBIT_PULL
+    return (baseX(tv) * Math.sin(ang) + baseY(tv) * Math.cos(ang)) * rad + d * piece.depth * driftScale
+  })
+  // The piece turns with the orbit (carried around, not sliding) on top of its
+  // hand-placed fan rotation.
+  const rotate = useTransform([t, orbit], ([tv, ov]) =>
+    piece.r0 + (piece.r - piece.r0) * tv + ov * ORBIT_DEG,
+  )
   const scale = useTransform(t, [0, 1], [0.84, 1])
   const opacity = useTransform(t, [0, 0.22], [0, 1])
   const caption = useTransform(t, [0.78, 1], [0, 1])
 
-  // Reduced motion lands in the final layout with an opacity-only reveal.
   return (
     <div
       className="absolute left-1/2 top-[46%] -translate-x-1/2 -translate-y-1/2"
@@ -195,16 +246,13 @@ function KitPiece({ piece, item, order, fan, drift, halfW, scrollLinked, driftSc
         {...(scrollLinked
           ? { style: { x, y, rotate, scale, opacity } }
           : {
-              // One-shot open from behind the print. Reduced motion drops the
-              // travel and just resolves in place (opacity only); everyone else
-              // gets a soft, staggered spring so the kit still fans as one
-              // gesture — but once, on reveal, never tied to the scrollbar.
-              initial: reduce
-                ? { opacity: 0 }
-                : { opacity: 0, x: 0, y: 0, rotate: piece.r0, scale: 0.84 },
-              whileInView: { opacity: 1, x: fx, y: piece.fy, rotate: piece.r, scale: 1 },
+              // Reduced motion: no travel, no orbit — resolve in the settled
+              // fan pose with an opacity reveal only.
+              initial: { opacity: 0 },
+              whileInView: { opacity: 1 },
               viewport: { once: true, margin: '-40px' },
-              transition: reduce ? { duration: 0 } : { ...SPRING_SOFT, delay: order * 0.06 },
+              transition: { duration: 0.01 },
+              style: { x: fx, y: piece.fy, rotate: piece.r, scale: 1 },
             })}
       >
         <motion.div
