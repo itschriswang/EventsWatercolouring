@@ -206,7 +206,7 @@ export default function KitStage({ className = '' }) {
 
 /** One object in the fan: the travel from stacked-behind-the-print to its
  *  fanned desk pose, then its revolution around the portrait, plus a small
- *  hover lift so it feels pick-up-able. */
+ *  hover lift so it feels pick-up-able. No label — the motion carries it. */
 function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, driftScale, reduce }) {
   const [a, b] = windowFor(order)
   const t = useTransform(fan, [a, b], [0, 1])
@@ -238,7 +238,6 @@ function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, 
   )
   const scale = useTransform(t, [0, 1], [0.84, 1])
   const opacity = useTransform(t, [0, 0.22], [0, 1])
-  const caption = useTransform(t, [0.78, 1], [0, 1])
 
   return (
     <div
@@ -265,13 +264,6 @@ function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, 
         >
           <KitObject piece={piece} item={item} />
         </motion.div>
-        <motion.p
-          {...(scrollLinked ? { style: { opacity: caption } } : {})}
-          className="mt-1.5 text-center font-mono text-[0.72rem] leading-tight text-ink-soft"
-          title={item?.note}
-        >
-          {item?.name}
-        </motion.p>
       </motion.div>
     </div>
   )
