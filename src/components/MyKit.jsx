@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
-import { asset } from '../lib/site.js'
+import { asset, SPRING_SOFT } from '../lib/site.js'
 import { KIT } from '../content.js'
 import {
   EaselArt,
@@ -26,11 +26,18 @@ import {
  * read via a ResizeObserver so rotation/resize re-lays the desk.
  *
  * Motion tiers, per the site ladder:
- *  - any motion-OK device: the fan is scroll-linked (useScroll drives every
- *    pose), so it plays forward as you scroll down and reverses — re-stacking
- *    behind the print — as you scroll back up. Heavy-fx devices additionally
- *    get a soft spring (pieces trail the thumb like wet pigment) and a residual
- *    per-piece parallax drift after they've landed.
+ *  - heavy-fx (roomy fine-pointer) devices: the fan is scroll-linked (useScroll
+ *    drives every pose), so it plays forward as you scroll down and reverses —
+ *    re-stacking behind the print — as you scroll back up, with a soft spring
+ *    (pieces trail the thumb like wet pigment) and a residual per-piece parallax
+ *    drift after they've landed.
+ *  - touch / low-end devices: a cheaper one-shot reveal — the kit springs open
+ *    from behind the print once, when the stage scrolls into view, then holds.
+ *    Scroll-linking the fan on phones re-transformed six drop-shadowed layers on
+ *    every scroll frame, and because `body` is itself a scroll container
+ *    (overflow-x:hidden), those moving transforms kept resizing the page's
+ *    scrollable area and feeding back into the scroll position — the whole page
+ *    juddered. The one-shot open keeps the delight without touching scroll.
  *  - reduced motion: opacity-only reveal straight into the final layout.
  *
  * Each tool tries a real cut-out photograph first (assets/kit/<id>.webp + .png)
@@ -71,9 +78,12 @@ const windowFor = (i) => {
 export default function KitStage({ className = '' }) {
   const reduce = useReducedMotion()
   const heavy = useHeavyFx()
-  // Scroll-links (and so reverses) on every motion-OK device; heavy fx adds the
-  // spring lag and residual drift on top.
-  const scrollLinked = !reduce
+  // The scroll-linked fan is a heavy scroll-linked effect (six drop-shadowed
+  // layers re-posed every scroll frame), so it gates on useHeavyFx like the
+  // rest of the ladder. Running it on touch/low-end devices drove the whole
+  // page into a scroll oscillation (see the tier note above), so those fall
+  // back to the one-shot spring reveal below.
+  const scrollLinked = heavy && !reduce
 
   const stageRef = useRef(null)
 
@@ -185,10 +195,16 @@ function KitPiece({ piece, item, order, fan, drift, halfW, scrollLinked, driftSc
         {...(scrollLinked
           ? { style: { x, y, rotate, scale, opacity } }
           : {
-              initial: { opacity: 0 },
-              whileInView: { opacity: 1, x: fx, y: piece.fy, rotate: piece.r },
+              // One-shot open from behind the print. Reduced motion drops the
+              // travel and just resolves in place (opacity only); everyone else
+              // gets a soft, staggered spring so the kit still fans as one
+              // gesture — but once, on reveal, never tied to the scrollbar.
+              initial: reduce
+                ? { opacity: 0 }
+                : { opacity: 0, x: 0, y: 0, rotate: piece.r0, scale: 0.84 },
+              whileInView: { opacity: 1, x: fx, y: piece.fy, rotate: piece.r, scale: 1 },
               viewport: { once: true, margin: '-40px' },
-              transition: { duration: 0 },
+              transition: reduce ? { duration: 0 } : { ...SPRING_SOFT, delay: order * 0.06 },
             })}
       >
         <motion.div
