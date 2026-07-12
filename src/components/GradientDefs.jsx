@@ -45,6 +45,63 @@ export default function GradientDefs() {
           <stop offset="0%" stopColor="#D8DC4B" />
           <stop offset="100%" stopColor="#F674A2" />
         </linearGradient>
+
+        {/*
+          #dither-sketch — the printed-dither texture for the painted kit
+          sketches in the bio (MyKit's SVG stand-ins), so they read as pigment
+          stippled onto paper rather than flat vector fills, matching the
+          dithered washes and background. Referenced from CSS `filter:
+          url(#dither-sketch)` (the `.dither-sketch` utility), applied ONLY to
+          the illustrated stand-ins — never the real portrait or any cut-out
+          photograph.
+
+          Built from robust, universally-supported primitives (no feImage/
+          feTile, whose tiling is inconsistent across engines):
+            1. feTurbulence lays down fine fractal noise.
+            2. its R channel is moved to alpha, then feComponentTransfer's
+               discrete alpha table hard-clips it to ~25%-coverage dots — the
+               dither grain.
+            3. the dots are flooded burgundy (the deep decorative anchor, never
+               grey) and composited `in` the SourceAlpha, so they only ever
+               fall on the drawn object, not the transparent gaps around it.
+            4. finally multiplied back over the original art, darkening just
+               those speckles.
+          color-interpolation-filters=sRGB keeps the burgundy true; the graph
+          is static (no animate), so it's safe on every device tier.
+        */}
+        <filter
+          id="dither-sketch"
+          x="0%"
+          y="0%"
+          width="100%"
+          height="100%"
+          colorInterpolationFilters="sRGB"
+        >
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.55"
+            numOctaves="1"
+            seed="11"
+            stitchTiles="stitch"
+            result="noise"
+          />
+          <feColorMatrix
+            in="noise"
+            type="matrix"
+            values="0 0 0 0 0
+                    0 0 0 0 0
+                    0 0 0 0 0
+                    1 0 0 0 0"
+            result="grain"
+          />
+          <feComponentTransfer in="grain" result="dots">
+            <feFuncA type="discrete" tableValues="0 0 0 1" />
+          </feComponentTransfer>
+          <feFlood floodColor="#7E2848" floodOpacity="0.5" result="tint" />
+          <feComposite in="tint" in2="dots" operator="in" result="tintedDots" />
+          <feComposite in="tintedDots" in2="SourceAlpha" operator="in" result="clipped" />
+          <feBlend in="SourceGraphic" in2="clipped" mode="multiply" />
+        </filter>
       </defs>
     </svg>
   )
