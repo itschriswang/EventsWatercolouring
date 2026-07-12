@@ -115,6 +115,19 @@ const FRAG = `
     vec3 col = pigment(density * 0.9 + warp.x * 0.35, warm);
     float alpha = bloom * mask * 0.24 * u_alpha;
 
+    // Sprayed grain-dither: break the smooth wash into a printed, airbrushed
+    // stipple so the bloom reads as pigment sprayed onto paper rather than a
+    // clean CSS gradient (matching the reference's grainy gradient field). The
+    // grain is a steady screen-space hash (no u_time term, so it never
+    // shimmers) sampled at the half-res buffer, which the CSS upscale turns
+    // into a coarse ~2px speckle. Two moves make it read as *spray* rather than
+    // flat noise: the modulation is deepened toward the bloom's soft edges
+    // (1-bloom), the way an airbrush thins to grain at the fringe, while the
+    // dense core stays smooth so colour still reads.
+    float grain = hash(floor(gl_FragCoord.xy));
+    float spray = mix(0.5, 0.9, bloom);           // grainier at the fringes, a little even in the core
+    alpha *= mix(spray, 1.0, grain);
+
     // Premultiplied output (context is premultipliedAlpha, blend ONE / 1-SRC_A).
     gl_FragColor = vec4(col * alpha, alpha);
   }
