@@ -13,7 +13,7 @@ import { asset } from '../lib/site.js'
  * illustration is a file drop, not a code change.
  */
 
-const INK = '#423A3D'
+const INK = '#352E30'
 
 // Shared blurred contact shadow. Sits inside each object's own viewBox so a
 // photo swap (which brings its own natural shadow) replaces both at once.
