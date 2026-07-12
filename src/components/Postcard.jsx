@@ -190,7 +190,7 @@ function Stamp({ img, alt, country }) {
           fontWeight="700"
           fontSize="7.5"
           letterSpacing="2"
-          fill="#3F3552"
+          fill="#423A3D"
           opacity="0.65"
         >
           {country}
