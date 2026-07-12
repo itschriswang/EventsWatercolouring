@@ -1,4 +1,5 @@
 import WatercolourBloom from './WatercolourBloom.jsx'
+import DitherField from './DitherField.jsx'
 
 /**
  * Wraps a run of homepage sections in a shared WatercolourBloom background
@@ -25,6 +26,13 @@ export default function SectionWash({ mask, seamGradient, variant, children }) {
         }}
       >
         <WatercolourBloom variant={variant} />
+        {/* Break the smooth wash into a printed dither dot-screen so the bloom
+            reads as pigment on paper, not a CSS gradient. Sits in the same
+            masked, overflow-clipped box as the wash, and — unlike `.wcb-root` —
+            is NOT hidden when the live WebGL wash takes over, so it dithers
+            that live bloom too. It's behind the section's content, so text and
+            photographs above stay crisp and undithered. */}
+        <DitherField />
       </div>
       {seamGradient && (
         <div

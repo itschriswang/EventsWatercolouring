@@ -7,6 +7,7 @@ import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset } from '../lib/site.js'
 import { WORK } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
+import GlassCardRim from './GlassCardRim.jsx'
 import CoverflowCarousel, { COVERFLOW_SIZING, COVERFLOW_RADIUS } from './CoverflowCarousel.jsx'
 
 // Flatten the curated groups once, giving every entry a stable index. The
@@ -193,6 +194,10 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
       {item.testimonial ? (
         <div className={cardShape + ' bg-paper-deep'}>
           <CornerBloom from="rgba(176,172,66,0.14)" to="rgba(138,145,67,0.11)" />
+          {/* A quote is a text card, so it wears the same wet, water-wobbled
+              edge as the Packages family — the painting tiles beside it keep a
+              clean crop for the photo. */}
+          <GlassCardRim />
           <div className="relative z-10 flex h-full flex-col">
             <Testimonial item={item} masonry={masonry} />
           </div>
