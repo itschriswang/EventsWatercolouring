@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
+import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { asset } from '../lib/site.js'
 import { KIT } from '../content.js'
@@ -84,6 +84,21 @@ const ORBIT_SWEEP_RAD = (ORBIT_SWEEP_DEG * Math.PI) / 180
 const ORBIT_SELF_DEG = -7
 const ORBIT_PULL = 0.24
 
+// The 2.5D "diorama". The flat cut-outs aren't given real geometry — instead the
+// whole scene is a CSS perspective space: each tool rests at its own depth (so
+// it parallaxes), turns a little on the yaw/pitch as it revolves (a shallow
+// turntable — enough to read as a solid object catching the light, never so far
+// that the flat art shows its paper-thin edge), and the entire scene leans to
+// follow the cursor on desktop. Kept deliberately shallow so nothing breaks the
+// vertical clip or the flat watercolour voice.
+const PERSPECTIVE = '900px'
+const DEPTH_Z = 54 // px of resting translateZ per unit of (piece.depth − 0.9)
+const LIFT_Z = 30 // px the ring floats toward the viewer as it turns
+const TURN_Y_DEG = 18 // per-piece yaw across the orbit
+const TURN_X_DEG = 9 // per-piece pitch across the orbit
+const TILT_X_DEG = 7 // cursor lean, pitch (heavy-fx only)
+const TILT_Y_DEG = 10 // cursor lean, yaw (heavy-fx only)
+
 const ART = {
   brushes: BrushesArt,
   pencil: PencilArt,
@@ -153,53 +168,98 @@ export default function KitStage({ className = '' }) {
   const easelOpacity = useTransform(fan, [0, 0.1], [0, 1])
   const easelY = useTransform(fan, [0, 0.2], [26, 0])
 
+  // Cursor lean for the diorama — the whole scene tips toward the pointer, and
+  // the depth-staggered tools parallax against each other. Fine-pointer devices
+  // only (there's no hovering cursor on a phone); reduced motion keeps it flat.
+  const tiltActive = heavy && !reduce
+  const tiltXRaw = useMotionValue(0)
+  const tiltYRaw = useMotionValue(0)
+  const tiltX = useSpring(tiltXRaw, { stiffness: 120, damping: 20 })
+  const tiltY = useSpring(tiltYRaw, { stiffness: 120, damping: 20 })
+  const onPointerMove = (e) => {
+    if (!tiltActive) return
+    const el = stageRef.current
+    if (!el) return
+    const r = el.getBoundingClientRect()
+    const px = (e.clientX - r.left) / r.width - 0.5 // −0.5 … 0.5
+    const py = (e.clientY - r.top) / r.height - 0.5
+    tiltYRaw.set(px * TILT_Y_DEG * 2) // pointer right → scene yaws right
+    tiltXRaw.set(-py * TILT_X_DEG * 2) // pointer down → scene pitches down
+  }
+  const onPointerLeave = () => {
+    tiltXRaw.set(0)
+    tiltYRaw.set(0)
+  }
+
   return (
     <div
       ref={stageRef}
-      // h clamp: tall enough to enclose the settled fan (palette + caption sit
-      // near the bottom) so the vertical clip never cuts real content, only
-      // guards the page's scroll height. overflowY:clip breaks the phone
-      // scroll-judder loop; overflowX stays visible so the wide tools (tubes,
-      // spritzer) can still spill past the column edge as designed.
-      style={{ overflowX: 'visible', overflowY: 'clip' }}
+      onPointerMove={onPointerMove}
+      onPointerLeave={onPointerLeave}
+      // h clamp: tall enough to enclose the settled fan (palette sits near the
+      // bottom) so the vertical clip never cuts real content, only guards the
+      // page's scroll height. overflowY:clip breaks the phone scroll-judder
+      // loop; overflowX stays visible so the wide tools (tubes, spritzer) can
+      // still spill past the column edge as designed. `perspective` makes this
+      // the vanishing point for the 2.5D scene (a clip boundary is fine for
+      // perspective — only preserve-3d, on the inner scene, would be flattened).
+      style={{
+        overflowX: 'visible',
+        overflowY: 'clip',
+        perspective: scrollLinked ? PERSPECTIVE : undefined,
+      }}
       className={`relative mx-auto h-[clamp(34rem,88vw,40rem)] w-full ${className}`}
       role="group"
       aria-label="Chris's portrait, with the tools of the kit laid out around it"
     >
-      {/* Portrait centrepiece — the flat print, rising in on scroll. */}
-      <div className="absolute left-1/2 top-[46%] z-10 w-[52%] -translate-x-1/2 -translate-y-1/2">
-        <motion.div
-          {...(scrollLinked
-            ? { style: { opacity: easelOpacity, y: easelY } }
-            : {
-                initial: { opacity: 0 },
-                whileInView: { opacity: 1 },
-                viewport: { once: true, margin: '-60px' },
-                transition: { duration: 0.4 },
-              })}
-        >
-          <EaselArt className="w-full" />
-        </motion.div>
-      </div>
+      {/* The 3D scene: holds the print + tools in one preserve-3d space so they
+          share the perspective and tip together under the cursor lean. Living
+          inside the clipped stage, its rendered depth is flattened and clipped
+          on the way out — 3D look and scroll-safety both kept. */}
+      <motion.div
+        className="absolute inset-0"
+        style={
+          scrollLinked
+            ? { transformStyle: 'preserve-3d', rotateX: tiltX, rotateY: tiltY }
+            : undefined
+        }
+      >
+        {/* Portrait centrepiece — the flat print, rising in on scroll. */}
+        <div className="absolute left-1/2 top-[46%] z-10 w-[52%] -translate-x-1/2 -translate-y-1/2">
+          <motion.div
+            {...(scrollLinked
+              ? { style: { opacity: easelOpacity, y: easelY } }
+              : {
+                  initial: { opacity: 0 },
+                  whileInView: { opacity: 1 },
+                  viewport: { once: true, margin: '-60px' },
+                  transition: { duration: 0.4 },
+                })}
+          >
+            <EaselArt className="w-full" />
+          </motion.div>
+        </div>
 
-      {PIECES.map((piece, i) => {
-        const item = KIT.items.find((it) => it.id === piece.id)
-        return (
-          <KitPiece
-            key={piece.id}
-            piece={piece}
-            item={item}
-            order={i}
-            fan={fan}
-            orbit={orbit}
-            drift={drift}
-            halfW={halfW}
-            scrollLinked={scrollLinked}
-            driftScale={heavy ? 1 : 0}
-            reduce={reduce}
-          />
-        )
-      })}
+        {PIECES.map((piece, i) => {
+          const item = KIT.items.find((it) => it.id === piece.id)
+          return (
+            <KitPiece
+              key={piece.id}
+              piece={piece}
+              item={item}
+              order={i}
+              fan={fan}
+              orbit={orbit}
+              drift={drift}
+              halfW={halfW}
+              scrollLinked={scrollLinked}
+              driftScale={heavy ? 1 : 0}
+              heavy={heavy}
+              reduce={reduce}
+            />
+          )
+        })}
+      </motion.div>
     </div>
   )
 }
@@ -207,7 +267,7 @@ export default function KitStage({ className = '' }) {
 /** One object in the fan: the travel from stacked-behind-the-print to its
  *  fanned desk pose, then its revolution around the portrait, plus a small
  *  hover lift so it feels pick-up-able. No label — the motion carries it. */
-function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, driftScale, reduce }) {
+function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, driftScale, heavy, reduce }) {
   const [a, b] = windowFor(order)
   const t = useTransform(fan, [a, b], [0, 1])
 
@@ -239,17 +299,30 @@ function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, 
   const scale = useTransform(t, [0, 1], [0.84, 1])
   const opacity = useTransform(t, [0, 0.22], [0, 1])
 
+  // 2.5D depth. Each tool rests at its own Z (from its `depth`, the same field
+  // that scales its parallax), so the cursor lean parallaxes them apart. As the
+  // ring revolves it floats forward (LIFT_Z) and each tool turns a little on the
+  // yaw/pitch — left/right pieces yaw opposite ways, top/bottom pitch opposite
+  // ways, so the constellation reads as a shallow dish wheeling in space.
+  const restZ = (piece.depth - 0.9) * DEPTH_Z
+  const z = useTransform(orbit, [0, 1], [restZ, restZ + LIFT_Z])
+  const rotateY = useTransform(orbit, [0, 1], [0, TURN_Y_DEG * Math.sign(piece.fx || 1)])
+  const rotateX = useTransform(orbit, [0, 1], [0, -TURN_X_DEG * Math.sign(piece.fy || 1)])
+
   return (
     <div
-      className="absolute left-1/2 top-[46%] -translate-x-1/2 -translate-y-1/2"
+      className="absolute left-1/2 top-[46%] -translate-x-1/2 -translate-y-1/2 [transform-style:preserve-3d]"
       style={{ width: piece.w }}
     >
       <motion.div
         {...(scrollLinked
-          ? { style: { x, y, rotate, scale, opacity } }
+          ? {
+              style: { x, y, z, rotate, rotateX, rotateY, scale, opacity },
+              className: '[transform-style:preserve-3d]',
+            }
           : {
-              // Reduced motion: no travel, no orbit — resolve in the settled
-              // fan pose with an opacity reveal only.
+              // Reduced motion: no travel, no orbit, no depth — resolve in the
+              // settled fan pose with an opacity reveal only.
               initial: { opacity: 0 },
               whileInView: { opacity: 1 },
               viewport: { once: true, margin: '-40px' },
@@ -258,9 +331,9 @@ function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, 
             })}
       >
         <motion.div
-          whileHover={reduce ? undefined : { y: -7, scale: 1.04, rotate: 2 }}
+          whileHover={reduce ? undefined : { y: -7, z: heavy ? 44 : 0, scale: 1.04, rotate: 2 }}
           transition={{ type: 'spring', stiffness: 200, damping: 18 }}
-          className="cursor-default"
+          className="cursor-default [transform-style:preserve-3d]"
         >
           <KitObject piece={piece} item={item} />
         </motion.div>
