@@ -323,7 +323,7 @@ export default function CoverflowCarousel({ items, index, onSelect, sizing, radi
 // never crowds out every slat even at the narrow edge of its tier's viewport
 // range (the `wide` tier starts at a 640px viewport).
 export const COVERFLOW_SIZING = {
-  wide: { activeWidth: 326, activeHeight: 449, restWidth: 173, restHeight: 238, gap: 17, maxActiveWidth: 520 },
-  narrow: { activeWidth: 196, activeHeight: 270, restWidth: 104, restHeight: 143, gap: 10, maxActiveWidth: 260 },
+  wide: { activeWidth: 280, activeHeight: 385, restWidth: 140, restHeight: 193, gap: 14, maxActiveWidth: 420 },
+  narrow: { activeWidth: 168, activeHeight: 231, restWidth: 84, restHeight: 115, gap: 8, maxActiveWidth: 210 },
 }
 export const COVERFLOW_RADIUS = 4

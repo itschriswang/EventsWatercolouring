@@ -126,11 +126,11 @@ export default function SelectedWork() {
                     key={item._idx}
                     item={item}
                     onOpen={item.testimonial ? undefined : () => openItem(item)}
-                    className={item.landscape ? 'col-span-6' : 'col-span-3'}
+                    className={item.landscape ? 'col-span-4' : 'col-span-2'}
                   />
                 ))}
                 {group.key === 'studio' && WORK.reveal && (
-                  <RevealTile reveal={WORK.reveal} className="col-span-3" />
+                  <RevealTile reveal={WORK.reveal} className="col-span-2" />
                 )}
               </div>
             ) : (
