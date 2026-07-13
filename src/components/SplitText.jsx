@@ -217,9 +217,12 @@ export default function SplitText({
   // wash's own inputs change; `applyEmphasisFlow` itself re-measures on
   // resize via ResizeObserver.
   useLayoutEffect(() => {
-    if (!emphasisColors) return undefined
+    // The lite path renders the emphasis word as a single clipped-gradient
+    // span (see the group branch below), so there are no per-glyph
+    // `[data-emph-glyph]` elements to measure and no ResizeObserver to run.
+    if (!emphasisColors || lite) return undefined
     return applyEmphasisFlow(rootRef.current, emphasisColors, emphasisColorStops)
-  }, [emphasisColors, emphasisColorStops, lines, emphasis])
+  }, [emphasisColors, emphasisColorStops, lines, emphasis, lite])
 
   // Ink Bleed cursor tracking — mirrors the entrance/emphasis effects above:
   // a DOM side-effect that measures every plain glyph's rect and drives its
@@ -454,6 +457,58 @@ export default function SplitText({
                       ? { textShadow: emphasisShadow || 'none' }
                       : getGradientStyle(wordIndexInHeading)
                     wordIndexInHeading += group.words.length
+                    // Lite path (touch / reduced-motion): paint the whole
+                    // emphasis word as ONE clipped-gradient span instead of the
+                    // per-glyph measured flow below. The per-glyph flow gives
+                    // each letter its own `background-clip: text` layer, seamed
+                    // together by a pixel-measured background-position. On iOS
+                    // Safari a pinch-zoom re-composites each of those clipped
+                    // layers at a scale the positions weren't measured at, so
+                    // the seams drift and the wash visibly swims across the word
+                    // (the reported zoom glitch). A single span has no
+                    // inter-glyph seams to slide, and the lite path doesn't
+                    // stagger glyphs anyway (the container does one reveal), so
+                    // nothing is lost by not splitting. `background-size` spans
+                    // the word's own box (100%) rather than a measured pixel
+                    // width, so there is nothing to re-measure on resize/zoom.
+                    if (lite && emphasisColors) {
+                      const text = group.words.map((w) => w.word).join(' ')
+                      return [
+                        <span
+                          key={`g${li}-${gi}`}
+                          aria-hidden="true"
+                          className="inline-block"
+                          style={{
+                            backgroundImage: buildFlowGradientCss(emphasisColors, emphasisColorStops),
+                            backgroundSize: '100% 100%',
+                            backgroundRepeat: 'no-repeat',
+                            WebkitBackgroundClip: 'text',
+                            backgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            color: 'transparent',
+                            textShadow: emphasisShadow || 'none',
+                            // Vertical/horizontal bleed so ascenders and
+                            // descenders that overflow the tight display
+                            // line-box still have gradient painted behind them
+                            // (the background paints over the padding box);
+                            // the negative margin hands the space back so
+                            // layout doesn't move. Same trick as EMPH_GLYPH_BLEED.
+                            ...EMPH_GLYPH_BLEED,
+                          }}
+                        >
+                          {text}
+                        </span>,
+                        gi < groupedWords.length - 1 ? (
+                          <span
+                            key={`sp${li}-${gi}`}
+                            aria-hidden="true"
+                            className="inline-block whitespace-pre"
+                          >
+                            {' '}
+                          </span>
+                        ) : null,
+                      ]
+                    }
                     // Fallback fill for the brief window before the
                     // gradient-clip effect measures and takes over (and for
                     // any environment where it can't run) — the flow's own
