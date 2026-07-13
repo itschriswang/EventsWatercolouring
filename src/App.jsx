@@ -18,6 +18,7 @@ import AboutMe from './components/AboutMe.jsx'
 import Packages from './components/Packages.jsx'
 import EnquireForm from './components/EnquireForm.jsx'
 import Footer from './components/Footer.jsx'
+import GlassCurve from './components/GlassCurve.jsx'
 
 /**
  * Live wedding watercolour — a full-bleed, immersive editorial single page.
@@ -94,9 +95,16 @@ export default function App() {
           person you're trusting with the room (the painter), then the
           decision and the ask. */}
       <main id="main" tabIndex={-1} className="relative z-10 outline-none">
+        {/* Decorative glass curves throughout the page */}
+        <GlassCurve />
         <Hero revealed={revealed} />
 
         <EveningTimeline />
+
+        {/* Decorative glass curve between timeline and gallery */}
+        <div className="relative pointer-events-none">
+          <GlassCurve />
+        </div>
 
         {/* One wash behind the gallery through the painter, so those three
             read as a single continuous painting. Masked to fade in over the
@@ -117,6 +125,10 @@ export default function App() {
         <div className="relative bg-paper-deep">
           <DeckleEdge className="absolute inset-x-0 top-0 z-10 h-[18px] w-full md:h-6" />
           <SectionWash variant="warm">
+            {/* Decorative glass curve in the packages section */}
+            <div className="relative pointer-events-none">
+              <GlassCurve />
+            </div>
             <Packages />
             <EnquireForm />
           </SectionWash>
