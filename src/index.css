@@ -311,11 +311,22 @@
      glow reads as a soft halo lifting off the page rather than a single flat
      drop shadow. Hover nudges both the ink brightness and the bloom's reach
      (+15% per the CLAUDE.md vibrancy formula). */
+  /* The pill is GLASS now, not solid ink: the ground drops to a translucent
+     ink so the washes glow through, a backdrop blur (fine-pointer devices
+     only — the media query is the CSS stand-in for `useHeavyFx`) frosts
+     whatever sits beneath, and the inner rim carries chromatic-aberration
+     fringes — warm orange bleeding in from one cap, cool cyan from the
+     other, the light-splitting-at-the-rim read of the glass-ribbon
+     reference. Alpha stays at 0.8 so the gradient label holds AA contrast
+     even where the blur pulls in the lightest washes. */
   .btn-aurora {
-    background-color: theme('colors.ink');
+    background-color: rgb(var(--rgb-ink) / 0.8);
     background-image: none;
     box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+      0 1px 0 rgba(255, 255, 255, 0.18) inset,
+      0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+      8px 0 14px -6px rgba(108, 210, 235, 0.5) inset,
+      -8px 0 14px -6px rgba(255, 150, 66, 0.5) inset,
       0 10px 22px -10px rgba(126, 40, 72, 0.30),
       0 18px 40px -16px rgba(150, 56, 90, 0.52),
       0 30px 64px -26px rgba(126, 40, 72, 0.30);
@@ -324,10 +335,20 @@
       box-shadow 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
+  @media (hover: hover) and (pointer: fine) {
+    .btn-aurora {
+      -webkit-backdrop-filter: blur(12px) saturate(1.5);
+      backdrop-filter: blur(12px) saturate(1.5);
+    }
+  }
+
   .btn-aurora:hover {
     filter: brightness(1.12);
     box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.09) inset,
+      0 1px 0 rgba(255, 255, 255, 0.24) inset,
+      0 0 0 1px rgba(255, 255, 255, 0.11) inset,
+      9px 0 16px -6px rgba(108, 210, 235, 0.58) inset,
+      -9px 0 16px -6px rgba(255, 150, 66, 0.58) inset,
       0 12px 26px -10px rgba(126, 40, 72, 0.35),
       0 20px 46px -16px rgba(150, 56, 90, 0.60),
       0 34px 72px -26px rgba(126, 40, 72, 0.35);
