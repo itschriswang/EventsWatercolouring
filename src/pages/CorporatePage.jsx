@@ -131,7 +131,7 @@ export default function CorporatePage() {
         </section>
 
         {/* ── Kit & Bird Accent ───────────────────────────────────────── */}
-        <section className="relative w-full overflow-hidden px-[5vw] py-[clamp(4rem,8vw,6rem)]">
+        <section className="relative w-full overflow-visible px-[5vw] py-[clamp(4rem,8vw,6rem)]">
           <div className="relative mx-auto max-w-4xl">
             <KitStage />
             <div className="absolute -bottom-8 -right-12 lg:-bottom-16 lg:-right-20 pointer-events-none hidden sm:block">
