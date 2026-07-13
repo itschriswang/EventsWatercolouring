@@ -19,6 +19,7 @@ import Footer from '../components/Footer.jsx'
 import { SPRING, asset } from '../lib/site.js'
 import { withUnderline } from '../components/Underline.jsx'
 import { CORPORATE } from '../content.js'
+import KitStage from '../components/MyKit.jsx'
 
 // The card ground shared with the homepage's package cards, so the two pages
 // read as one paper system.
@@ -126,6 +127,25 @@ export default function CorporatePage() {
                 </figcaption>
               </div>
             </motion.figure>
+          </div>
+        </section>
+
+        {/* ── Kit & Bird Accent ───────────────────────────────────────── */}
+        <section className="relative w-full overflow-hidden px-[5vw] py-[clamp(4rem,8vw,6rem)]">
+          <div className="relative mx-auto max-w-4xl">
+            <KitStage />
+            <div className="absolute -bottom-8 -right-12 lg:-bottom-16 lg:-right-20 pointer-events-none hidden sm:block">
+              <picture>
+                <source srcSet={asset('assets/bird-accent.webp')} type="image/webp" />
+                <img
+                  src={asset('assets/bird-accent.png')}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  className="w-[120px] sm:w-[160px] lg:w-[220px] opacity-80"
+                />
+              </picture>
+            </div>
           </div>
         </section>
 
