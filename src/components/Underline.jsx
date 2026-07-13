@@ -1,5 +1,6 @@
 import { useId, useMemo, useRef, useState } from 'react'
 import { motion, useReducedMotion, useInView } from 'framer-motion'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 
 // Six hand-drawn squiggle paths (viewBox 0 0 310 40), adapted from the
 // underline.js reference brush strokes so the site's key phrases get a
@@ -54,6 +55,8 @@ export default function Underline({ children, seed, className = '' }) {
   const reduce = useReducedMotion()
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-10% 0px' })
+  // Post-pinch, iOS stops servicing the observer (see usePinchZoom) — draw.
+  const zoomed = usePinchZoomed()
   const [hovered, setHovered] = useState(false)
 
   const text = seed ?? (typeof children === 'string' ? children : '')
@@ -61,7 +64,7 @@ export default function Underline({ children, seed, className = '' }) {
   const [flowFrom, flowTo] = useMemo(() => pickFlowPair(text), [text])
   const gradId = `underline-flow-${useId()}`
 
-  const drawn = reduce || (inView && !hovered)
+  const drawn = reduce || ((inView || zoomed) && !hovered)
 
   return (
     <span

@@ -3,6 +3,7 @@ import { Drop } from './Label.jsx'
 import { SmileyThumbsUpIcon } from './icons/FreehandIcons.jsx'
 import Sparkles from './Sparkles.jsx'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 import { SPRING_SOFT, ENQUIRE_HREF } from '../lib/site.js'
 import { PULLQUOTE } from '../content.js'
 
@@ -24,9 +25,11 @@ export default function PullQuote() {
   const lite = reduce || !useHeavyFx()
   const words = PULLQUOTE.quote.split(' ')
 
+  const zoomed = usePinchZoomed()
   const rise = (delay = 0) => ({
     initial: { opacity: 0, y: reduce ? 0 : 24 },
     whileInView: { opacity: 1, y: 0 },
+    animate: zoomed ? { opacity: 1, y: 0 } : undefined,
     viewport: { once: true, margin: '-80px' },
     transition: { ...SPRING_SOFT, delay },
   })
@@ -89,6 +92,7 @@ export default function PullQuote() {
               variants={wordContainer}
               initial="hidden"
               whileInView="show"
+              animate={zoomed ? 'show' : undefined}
               viewport={{ once: true, margin: '-80px' }}
               aria-label={PULLQUOTE.quote}
               className="font-sentient text-[clamp(1.5rem,3.2vw,2.6rem)] leading-[1.15] tracking-[-0.015em] text-ink [text-wrap:balance]"

@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 import Underline from './Underline.jsx'
 import { SPRING } from '../lib/site.js'
 
@@ -202,6 +203,7 @@ export default function SplitText({
 }) {
   const reduce = useReducedMotion()
   const lite = reduce || !useHeavyFx()
+  const zoomed = usePinchZoomed()
   const inkActive = false
   // `motion(Tag)` must stay the same component reference across re-renders —
   // recreating it every render makes React see a new element type each time
@@ -408,7 +410,9 @@ export default function SplitText({
         show: { y: 0, opacity: 1, transition: SPRING },
       }
 
-  const animateProps = playOnMount
+  // After a pinch-zoom the IO behind `whileInView` can stall (see
+  // usePinchZoom), so a latched page plays headings on mount instead.
+  const animateProps = playOnMount || zoomed
     ? { initial: 'hidden', animate: 'show' }
     : { initial: 'hidden', whileInView: 'show', viewport: { once: true, margin: '-60px' } }
 
