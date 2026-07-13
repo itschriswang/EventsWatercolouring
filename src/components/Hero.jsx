@@ -9,6 +9,8 @@ import CornerBloom from './CornerBloom.jsx'
 import Sparkles from './Sparkles.jsx'
 import { withUnderline } from './Underline.jsx'
 import BloomFilter from './WetBloom.jsx'
+import GlassEffect from './GlassEffect.jsx'
+import GlassCurve from './GlassCurve.jsx'
 
 export default function Hero({ revealed }) {
   const reduce = useReducedMotion()
@@ -54,6 +56,8 @@ export default function Hero({ revealed }) {
       ref={ref}
       className="relative w-full overflow-x-clip px-[5vw] pb-[clamp(2.5rem,5vw,4.5rem)] pt-[clamp(1.5rem,4vw,3rem)] lg:pt-8"
     >
+      {/* Decorative glass curve */}
+      <GlassCurve />
       {/* Static bloom field — soft pigment halos in the site's own warm
           pigments, settled into the margins. One cheap paint on every device;
           the WebGL aurora it replaces cost 50KB and continuous GPU time to
@@ -152,30 +156,36 @@ export default function Hero({ revealed }) {
           />
           <motion.div style={parallax ? { y: copyY } : {}}>
             {revealed && (
-              <SplitText
-                as="h1"
-                unit="char"
-                playOnMount
-                lines={isMobile ? HERO.linesMobile : HERO.lines}
-                emphasis={isMobile ? HERO.emphasisMobile : HERO.emphasis}
-                // The accent word carries the action-surface's continuous
-                // flow — a real clipped gradient, not per-letter swatches —
-                // in the true palette voices: Seafoam, Lavender, Lemon Lime
-                // (repeated to hold a flat plateau), Blossom, Rose, exactly as
-                // the button and orb. Blue/purple/pink/red are pinned tight
-                // against the word's edges as near-instant peaks rather than
-                // held plateaus, the Lemon Lime plateau holds a small pocket
-                // dead centre, and the purple→green / green→pink blends fill
-                // most of the remaining width — the transition itself is the
-                // dominant voice, not a seam squeezed out of the way. Those
-                // pastels are too light for the display face's warm backlit
-                // glow, so the accent swaps that glow for a dark tinted drop
-                // (approved shadow palette) and the letters lift off it,
-                // reference-style.
-                emphasisColors={['#BFDCD1', '#D4B6E6', '#D8DB7A', '#D8DB7A', '#F2A6C1', '#E88FA4']}
-                emphasisColorStops={[0, 0.04, 0.48, 0.52, 0.96, 1]}
-                className="display-xl text-ink [line-height:0.80] [font-size:clamp(2.75rem,13vw,4.5rem)] lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)] [text-shadow:none]"
-              />
+              <div className="relative">
+                {/* Glass effect overlay on the headline */}
+                <div className="absolute inset-0 pointer-events-none">
+                  <GlassEffect id="hero-headline-glass" />
+                </div>
+                <SplitText
+                  as="h1"
+                  unit="char"
+                  playOnMount
+                  lines={isMobile ? HERO.linesMobile : HERO.lines}
+                  emphasis={isMobile ? HERO.emphasisMobile : HERO.emphasis}
+                  // The accent word carries the action-surface's continuous
+                  // flow — a real clipped gradient, not per-letter swatches —
+                  // in the true palette voices: Seafoam, Lavender, Lemon Lime
+                  // (repeated to hold a flat plateau), Blossom, Rose, exactly as
+                  // the button and orb. Blue/purple/pink/red are pinned tight
+                  // against the word's edges as near-instant peaks rather than
+                  // held plateaus, the Lemon Lime plateau holds a small pocket
+                  // dead centre, and the purple→green / green→pink blends fill
+                  // most of the remaining width — the transition itself is the
+                  // dominant voice, not a seam squeezed out of the way. Those
+                  // pastels are too light for the display face's warm backlit
+                  // glow, so the accent swaps that glow for a dark tinted drop
+                  // (approved shadow palette) and the letters lift off it,
+                  // reference-style.
+                  emphasisColors={['#BFDCD1', '#D4B6E6', '#D8DB7A', '#D8DB7A', '#F2A6C1', '#E88FA4']}
+                  emphasisColorStops={[0, 0.04, 0.48, 0.52, 0.96, 1]}
+                  className="display-xl text-ink [line-height:0.80] [font-size:clamp(2.75rem,13vw,4.5rem)] lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)] [text-shadow:none]"
+                />
+              </div>
             )}
           </motion.div>
 
@@ -190,7 +200,11 @@ export default function Hero({ revealed }) {
                 {withUnderline(HERO.lede, 'watercolour', { className: 'text-rust' })}
               </p>
             </div>
-            <div className="mt-7 flex flex-wrap items-center gap-5 sm:mt-8">
+            <div className="mt-7 flex flex-wrap items-center gap-5 sm:mt-8 relative">
+              {/* Glass effect overlay on the button */}
+              <div className="absolute inset-0 pointer-events-none">
+                <GlassEffect id="hero-button-glass" />
+              </div>
               <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
             </div>
             <p className="mt-4 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft/85">
