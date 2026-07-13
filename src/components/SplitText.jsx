@@ -28,14 +28,8 @@ import { SPRING } from '../lib/site.js'
  * `.knockout-word` in index.css).
  */
 
-// Deterministic per-glyph baseline lift, seeded by line + glyph position so
-// the scatter is stable across renders (no re-jumbling on hover or route
-// change). In em.
-const jitter = (li, gi) => {
-  const h2 = Math.sin((li + 1) * 269.5 + (gi + 1) * 183.3) * 24634.6345
-  const r2 = h2 - Math.floor(h2)
-  return { lift: (r2 - 0.5) * 0.07 }
-}
+// No jitter — glyphs render at baseline
+const jitter = () => ({ lift: 0 })
 
 // Build a CSS linear-gradient string from a list of hex stops, each
 // optionally pinned to its own position (0-1) rather than spaced uniformly.
@@ -208,7 +202,7 @@ export default function SplitText({
 }) {
   const reduce = useReducedMotion()
   const lite = reduce || !useHeavyFx()
-  const inkActive = inkBleed && unit === 'char' && !lite
+  const inkActive = false
   // `motion(Tag)` must stay the same component reference across re-renders —
   // recreating it every render makes React see a new element type each time
   // and remount the whole heading, which replays the `whileInView once`
@@ -441,18 +435,10 @@ export default function SplitText({
         // a fresh jitter sample — neighbours never share an angle.
         let glyphIdx = 0
 
-        // The reveal mask clips at its padding edge, so anything that paints
-        // past the glyph box — a leading italic overhang, a tilted ascender,
-        // the display styles' soft light bloom — needs bleed room or it
-        // slices into a visible rectangle. The backlit glow spreads further
-        // than the old drop shadow did, so the bleed is generous. Pad the mask
-        // out on every side and pull the same distance back with negative
-        // margins so the layout (including the original 0.08em line gap)
-        // doesn't move.
         return (
           <span
             key={li}
-            className="block overflow-hidden pb-[0.28em] -mb-[0.2em] pt-[0.22em] -mt-[0.22em] -ml-[0.22em] pl-[0.22em]"
+            className="block"
           >
             {unit === 'char'
               ? groupedWords.flatMap((group, gi) => {
