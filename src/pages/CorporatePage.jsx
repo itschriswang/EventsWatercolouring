@@ -19,6 +19,7 @@ import Footer from '../components/Footer.jsx'
 import { SPRING, asset } from '../lib/site.js'
 import { withUnderline } from '../components/Underline.jsx'
 import { CORPORATE } from '../content.js'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 import KitStage from '../components/MyKit.jsx'
 
 // The card ground shared with the homepage's package cards, so the two pages
@@ -36,9 +37,13 @@ const CARD_BG = { background: 'linear-gradient(150deg, rgba(247,195,148,0.18) 0%
 export default function CorporatePage() {
   const reduce = useReducedMotion()
 
+  const zoomed = usePinchZoomed()
   const rise = (i = 0) => ({
     initial: { opacity: 0, y: reduce ? 0 : 28 },
     whileInView: { opacity: 1, y: 0 },
+    // Post-pinch, IO-driven reveals can strand invisible (see usePinchZoom);
+    // `animate` bypasses the observer so the content always arrives.
+    animate: zoomed ? { opacity: 1, y: 0 } : undefined,
     viewport: { once: true, margin: '-60px' },
     transition: { ...SPRING, delay: reduce ? 0 : i * 0.06 },
   })
