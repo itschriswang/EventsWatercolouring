@@ -201,33 +201,18 @@ export default function KitStage({ className = '' }) {
       ref={stageRef}
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
-      // h clamp: tall enough to enclose the settled fan (palette sits near the
-      // bottom) so the vertical clip never cuts real content, only guards the
-      // page's scroll height. overflowY:clip breaks the phone scroll-judder
-      // loop; overflowX stays visible so the wide tools (tubes, spritzer) can
-      // still spill past the column edge as designed. `perspective` makes this
-      // the vanishing point for the 2.5D scene (a clip boundary is fine for
-      // perspective — only preserve-3d, on the inner scene, would be flattened).
       style={{
         overflowX: 'visible',
-        overflowY: 'clip',
-        perspective: (scrollLinked && heavy) ? PERSPECTIVE : undefined,
+        overflowY: 'visible',
       }}
       className={`relative mx-auto h-[clamp(34rem,88vw,40rem)] w-full ${className}`}
       role="group"
       aria-label="Chris's portrait, with the tools of the kit laid out around it"
     >
-      {/* The 3D scene: holds the print + tools in one preserve-3d space so they
-          share the perspective and tip together under the cursor lean. Living
-          inside the clipped stage, its rendered depth is flattened and clipped
-          on the way out — 3D look and scroll-safety both kept. */}
+      {/* The kit scene: holds the print + tools in one space. */}
       <motion.div
         className="absolute inset-0"
-        style={
-          scrollLinked
-            ? { transformStyle: heavy ? 'preserve-3d' : 'flat', rotateX: tiltX, rotateY: tiltY }
-            : undefined
-        }
+        style={scrollLinked ? {} : undefined}
       >
         {/* Portrait centrepiece — the flat print, rising in on scroll. */}
         <div className="absolute left-1/2 top-[46%] z-10 w-[52%] -translate-x-1/2 -translate-y-1/2">
@@ -317,13 +302,12 @@ function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, 
   return (
     <div
       className="absolute left-1/2 top-[46%] -translate-x-1/2 -translate-y-1/2"
-      style={{ width: piece.w, transformStyle: heavy ? 'preserve-3d' : 'flat' }}
+      style={{ width: piece.w }}
     >
       <motion.div
         {...(scrollLinked
           ? {
-              style: { x, y, z, rotate, rotateX, rotateY, scale, opacity },
-              className: heavy ? '[transform-style:preserve-3d]' : '',
+              style: { x, y, rotate, scale, opacity },
             }
           : {
               // Light path (touch / low-end / reduced motion): no travel, no
@@ -337,9 +321,9 @@ function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, 
             })}
       >
         <motion.div
-          whileHover={reduce ? undefined : { y: -7, z: heavy ? 44 : 0, scale: 1.04, rotate: 2 }}
+          whileHover={reduce ? undefined : { y: -7, scale: 1.04, rotate: 2 }}
           transition={{ type: 'spring', stiffness: 200, damping: 18 }}
-          className={`cursor-default ${heavy ? '[transform-style:preserve-3d]' : ''}`}
+          className="cursor-default"
         >
           <KitObject piece={piece} item={item} />
         </motion.div>
