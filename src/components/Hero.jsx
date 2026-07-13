@@ -169,11 +169,15 @@ export default function Hero({ revealed }) {
                 // most of the remaining width — the transition itself is the
                 // dominant voice, not a seam squeezed out of the way. Those
                 // pastels are too light for the display face's warm backlit
-                // glow, so the accent swaps that glow for a dark tinted drop
-                // (approved shadow palette) and the letters lift off it,
-                // reference-style.
+                // glow, so the accent swaps that glow for chromatic-aberration
+                // fringing instead: a warm cast offset right, a cool cast
+                // offset left, plus a soft burgundy ground (approved shadow
+                // palette) — the word reads as type seen through curved
+                // glass, the light splitting at the letter edges. em-based
+                // offsets so the fringe scales with the clamp()ed type.
                 emphasisColors={['#BFDCD1', '#D4B6E6', '#D8DB7A', '#D8DB7A', '#F2A6C1', '#E88FA4']}
                 emphasisColorStops={[0, 0.04, 0.48, 0.52, 0.96, 1]}
+                emphasisShadow="0.032em 0.01em 0.05em rgba(255,138,64,0.8), -0.032em -0.006em 0.05em rgba(96,205,240,0.8), 0 0.05em 0.1em rgba(126,40,72,0.28)"
                 className="display-xl text-ink [line-height:0.80] [font-size:clamp(2.75rem,13vw,4.5rem)] lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)] [text-shadow:none]"
               />
             )}
