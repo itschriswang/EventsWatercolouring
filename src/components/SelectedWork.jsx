@@ -4,6 +4,7 @@ import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
 import useFocusTrap from '../hooks/useFocusTrap.js'
 import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 import { SPRING, SPRING_SOFT, asset } from '../lib/site.js'
 import { WORK } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
@@ -173,6 +174,7 @@ export default function SelectedWork() {
  */
 function Tile({ item, className = '', masonry = false, onOpen }) {
   const reduce = useReducedMotion()
+  const zoomed = usePinchZoomed()
 
   const aspect = masonry
     ? item.landscape ? 'aspect-[4/3]' : 'aspect-[3/4]'
@@ -183,6 +185,7 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
     <motion.figure
       initial={{ opacity: 0, y: reduce ? 0 : 24 }}
       whileInView={{ opacity: 1, y: 0 }}
+      animate={zoomed ? { opacity: 1, y: 0 } : undefined}
       viewport={{ once: true, margin: '-40px' }}
       transition={{ ...SPRING, delay: reduce ? 0 : (item._idx % 4) * 0.05 }}
       className={
@@ -290,6 +293,7 @@ function Testimonial({ item, masonry = false }) {
  */
 function RevealTile({ reveal, className = '' }) {
   const reduce = useReducedMotion()
+  const zoomed = usePinchZoomed()
   const ref = useRef(null)
   const [pct, setPct] = useState(55)
   const [touched, setTouched] = useState(false)
@@ -330,6 +334,7 @@ function RevealTile({ reveal, className = '' }) {
     <motion.figure
       initial={{ opacity: 0, y: reduce ? 0 : 24 }}
       whileInView={{ opacity: 1, y: 0 }}
+      animate={zoomed ? { opacity: 1, y: 0 } : undefined}
       viewport={{ once: true, margin: '-40px' }}
       transition={SPRING}
       className={'group flex flex-col ' + className}

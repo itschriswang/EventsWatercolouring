@@ -2,6 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { Drop } from './Label.jsx'
 import { SPRING } from '../lib/site.js'
 import { FAQ } from '../content.js'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 
 /**
  * The practical bits — every question answered plainly on the page, no
@@ -18,6 +19,7 @@ import { FAQ } from '../content.js'
  */
 export default function Faq() {
   const reduce = useReducedMotion()
+  const zoomed = usePinchZoomed()
 
   return (
     <section id="faq" className="relative w-full px-[5vw] pt-[clamp(1rem,3vw,2rem)] pb-[clamp(5.5rem,11vw,10rem)]">
@@ -28,6 +30,7 @@ export default function Faq() {
               key={i}
               initial={{ opacity: 0, y: reduce ? 0 : 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              animate={zoomed ? { opacity: 1, y: 0 } : undefined}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ ...SPRING, delay: reduce ? 0 : Math.min(i, 5) * 0.05 }}
               className="paper-grain relative overflow-hidden rounded-2xl border border-line/60 bg-paper shadow-[0_18px_36px_-24px_rgba(78,38,57,0.4)]"

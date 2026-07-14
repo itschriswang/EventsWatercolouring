@@ -6,6 +6,7 @@ import GlassCardRim from './GlassCardRim.jsx'
 import { SPRING, ENQUIRE_HREF, CARD_BG } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import { withUnderline } from './Underline.jsx'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 
 // Full-arc pigment pairs for the little keepsake thumbnails — cycled so the
 // grid reads as a spread of different paintings across the whole palette
@@ -41,6 +42,7 @@ const HOURS = [3, 4, 5]
  */
 export default function NightPlanner() {
   const reduce = useReducedMotion()
+  const zoomed = usePinchZoomed()
   const p = PACKAGES.planner
   const [hours, setHours] = useState(3)
 
@@ -51,6 +53,7 @@ export default function NightPlanner() {
     <motion.div
       initial={{ opacity: 0, y: reduce ? 0 : 36 }}
       whileInView={{ opacity: 1, y: 0 }}
+      animate={zoomed ? { opacity: 1, y: 0 } : undefined}
       viewport={{ once: true, margin: '-60px' }}
       transition={SPRING}
       className="relative mt-[clamp(2.5rem,6vw,4rem)] overflow-hidden rounded-2xl border border-line shadow-[0_24px_50px_-20px_rgba(126,40,72,0.25)]"
