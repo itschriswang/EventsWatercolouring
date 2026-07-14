@@ -10,6 +10,7 @@ import GlassPill from './GlassPill.jsx'
 import GlassCardRim from './GlassCardRim.jsx'
 import NightPlanner from './NightPlanner.jsx'
 import { withUnderline } from './Underline.jsx'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 
 // The add-on accordion opens on a quick ease-out tween rather than the shared
 // SPRING — a spring that feels right for entrances reads as sluggish on a
@@ -18,6 +19,7 @@ const ACCORDION = { duration: 0.22, ease: [0.25, 1, 0.5, 1] }
 
 export default function Packages() {
   const reduce = useReducedMotion()
+  const zoomed = usePinchZoomed()
   const [openAddons, setOpenAddons] = useState(() => new Set())
   const toggleAddon = (i) =>
     setOpenAddons((prev) => {
@@ -28,6 +30,9 @@ export default function Packages() {
   const reveal = (i = 0) => ({
     initial: { opacity: 0, y: reduce ? 0 : 36 },
     whileInView: { opacity: 1, y: 0 },
+    // Post-pinch, IO-driven reveals can strand invisible (see usePinchZoom);
+    // `animate` bypasses the observer so the content always arrives.
+    animate: zoomed ? { opacity: 1, y: 0 } : undefined,
     viewport: { once: true, margin: '-60px' },
     transition: { ...SPRING, delay: reduce ? 0 : i * 0.06 },
   })

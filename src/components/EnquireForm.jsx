@@ -12,6 +12,7 @@ import {
   asset,
 } from '../lib/site.js'
 import { ENQUIRY } from '../content.js'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 
 // Pull a first name out of the full name field for the thank-you greeting:
 // the first whitespace-delimited token, with its first letter capitalised so
@@ -104,6 +105,7 @@ const chipClass = (on) =>
  */
 export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding date' }) {
   const reduce = useReducedMotion()
+  const zoomed = usePinchZoomed()
   const uid = useId().replace(/:/g, '')
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
@@ -287,6 +289,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
             <motion.div
               initial={reduce ? false : { opacity: 0, y: 26 }}
               whileInView={{ opacity: 1, y: 0 }}
+              animate={zoomed ? { opacity: 1, y: 0 } : undefined}
               viewport={{ once: true, margin: '-80px' }}
               transition={SPRING}
               className="relative"

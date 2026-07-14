@@ -8,6 +8,7 @@ import WatercolourBloom from './WatercolourBloom.jsx'
 import GlassPill from './GlassPill.jsx'
 import GlassCardRim from './GlassCardRim.jsx'
 import { withUnderline } from './Underline.jsx'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 
 /**
  * "How the evening runs" — a sticky split-screen. A massive section title is
@@ -19,6 +20,7 @@ import { withUnderline } from './Underline.jsx'
  */
 export default function EveningTimeline() {
   const reduce = useReducedMotion()
+  const zoomed = usePinchZoomed()
   // On touch/small devices we keep the entrances simple: a fade with no y
   // translate, and the dot fills on reveal rather than animating its ring.
   const lite = reduce || !useHeavyFx()
@@ -133,6 +135,7 @@ export default function EveningTimeline() {
                   key={beat.no}
                   initial={{ opacity: 0, y: lite ? 0 : 32 }}
                   whileInView={{ opacity: 1, y: 0 }}
+                  animate={zoomed ? { opacity: 1, y: 0 } : undefined}
                   viewport={{ once: true, margin: '-80px' }}
                   transition={
                     lite ? { duration: 0.4 } : { ...SPRING, delay: 0.05 }
@@ -145,6 +148,7 @@ export default function EveningTimeline() {
                   <motion.span
                     initial={lite ? false : { scale: 0.4, opacity: 0 }}
                     whileInView={{ scale: 1, opacity: 1 }}
+                    animate={zoomed ? { scale: 1, opacity: 1 } : undefined}
                     viewport={{ once: true, margin: '-90px' }}
                     transition={lite ? { duration: 0.3 } : { ...SPRING, delay: 0.12 }}
                     className="relative z-10 shrink-0"
