@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import CornerBloom from './CornerBloom.jsx'
 import GlassPill from './GlassPill.jsx'
-import GlassCardRim from './GlassCardRim.jsx'
+import FolderCell from './FolderCell.jsx'
 import { SPRING, ENQUIRE_HREF, CARD_BG } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import { withUnderline } from './Underline.jsx'
@@ -49,19 +49,25 @@ export default function NightPlanner() {
   const pieces = PIECES_PER_HOUR * hours
   const covers = pieces * GUESTS_PER_PIECE
 
+  const reveal = {
+    initial: { opacity: 0, y: reduce ? 0 : 36 },
+    whileInView: { opacity: 1, y: 0 },
+    animate: zoomed ? { opacity: 1, y: 0 } : undefined,
+    viewport: { once: true, margin: '-60px' },
+    transition: SPRING,
+  }
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: reduce ? 0 : 36 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      animate={zoomed ? { opacity: 1, y: 0 } : undefined}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={SPRING}
-      className="relative mt-[clamp(2.5rem,6vw,4rem)] overflow-hidden rounded-2xl border border-line shadow-[0_24px_50px_-20px_rgba(126,40,72,0.25)]"
-      style={{ background: CARD_BG }}
+    <FolderCell
+      label="Plan the night"
+      gradient={['#B04A76', '#8C3656']}
+      bg={CARD_BG}
+      reveal={reveal}
+      tabWidth="min(62%, 15rem)"
+      wrapperClassName="mt-[clamp(2.5rem,6vw,4rem)]"
+      bloom={<CornerBloom from="rgba(140,54,86,0.09)" to="rgba(176,74,118,0.09)" />}
+      contentClassName="grid grid-cols-1 gap-8 px-7 pb-7 sm:px-8 sm:pb-8 lg:grid-cols-2 lg:gap-12"
     >
-      <CornerBloom from="rgba(140,54,86,0.09)" to="rgba(176,74,118,0.09)" />
-      <GlassCardRim />
-      <div className="relative z-10 grid grid-cols-1 gap-8 p-7 sm:p-8 lg:grid-cols-2 lg:gap-12">
         {/* Controls */}
         <div>
           <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">{p.title}</h3>
@@ -188,7 +194,6 @@ export default function NightPlanner() {
             </span>
           </a>
         </div>
-      </div>
-    </motion.div>
+    </FolderCell>
   )
 }

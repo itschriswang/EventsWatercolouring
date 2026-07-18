@@ -35,7 +35,7 @@ export const EVENING = {
     },
     {
       no: '02',
-      title: 'No need to pose',
+      title: 'No need to keep still',
       body: 'Your guests keep enjoying the night. I take a quick photo and note their name as they pass, so nobody has to stop or sit still for me.',
     },
     {
