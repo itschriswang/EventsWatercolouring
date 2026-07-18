@@ -8,6 +8,7 @@ import CornerBloom from './CornerBloom.jsx'
 import Sparkles from './Sparkles.jsx'
 import GlassPill from './GlassPill.jsx'
 import GlassCardRim from './GlassCardRim.jsx'
+import FolderTab from './FolderTab.jsx'
 import NightPlanner from './NightPlanner.jsx'
 import { withUnderline } from './Underline.jsx'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
@@ -203,9 +204,11 @@ export default function Packages() {
       {/* ── Desktop: base package left, add-ons right ────────────────────── */}
       <div className="mt-[clamp(2.5rem,6vw,4rem)] hidden grid-cols-12 gap-8 lg:grid">
         {/* Base package card */}
+        <div className="relative col-span-5">
+        <FolderTab className="left-7" gradient={['#B04A76', '#8C3656']}>The package</FolderTab>
         <motion.article
           {...reveal()}
-          className="relative col-span-5 flex flex-col overflow-hidden rounded-2xl border border-line p-7 shadow-[0_24px_50px_-20px_rgba(126,40,72,0.25)]"
+          className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-line p-7 shadow-[0_24px_50px_-20px_rgba(126,40,72,0.25)]"
           style={{ background: CARD_BG }}
         >
           <CornerBloom from="rgba(176,74,118,0.12)" to="rgba(140,54,86,0.08)" />
@@ -242,20 +245,22 @@ export default function Packages() {
             </ul>
           </div>
         </motion.article>
+        </div>
 
-        {/* Add-ons — right column, replacing "Included as standard" */}
+        {/* Add-ons — right column, replacing "Included as standard". The folder
+            tab carries the "Add-ons" name (as the card's heading), so the row
+            below only needs the pricing note. */}
+        <div className="relative col-span-7">
+        <FolderTab className="left-8" as="h3">{PACKAGES.addonsHead.title}</FolderTab>
         <motion.div
           {...reveal(1)}
-          className="relative col-span-7 overflow-hidden rounded-2xl border border-line shadow-[0_24px_50px_-20px_rgba(126,40,72,0.25)]"
+          className="relative h-full overflow-hidden rounded-2xl border border-line shadow-[0_24px_50px_-20px_rgba(126,40,72,0.25)]"
           style={{ background: CARD_BG }}
         >
           <CornerBloom from="rgba(176,172,66,0.10)" to="rgba(138,145,67,0.08)" />
           <GlassCardRim />
           <div className="relative z-10 flex h-full flex-col">
-            <div className="flex items-baseline justify-between border-b border-line/50 px-8 pb-5 pt-8">
-              <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
-                {PACKAGES.addonsHead.title}
-              </h3>
+            <div className="flex items-baseline justify-end border-b border-line/50 px-8 pb-5 pt-8">
               <span className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
                 {PACKAGES.addonsHead.note}
               </span>
@@ -292,6 +297,7 @@ export default function Packages() {
             </div>
           </div>
         </motion.div>
+        </div>
       </div>
 
       <NightPlanner />
@@ -301,12 +307,14 @@ export default function Packages() {
           footnote. Same paper-card treatment as the package cards above so
           it sits in their family, with a readable sentient headline in
           place of the eyebrow-sized mono text. */}
+      <div className="relative mt-12 w-full">
+      <FolderTab className="left-6 sm:left-7">FAQ</FolderTab>
       <motion.a
         href="/faq/"
         {...reveal()}
         whileHover={reduce ? {} : { y: -3 }}
         transition={SPRING}
-        className="group relative mt-12 flex w-full items-center justify-between gap-4 overflow-hidden rounded-2xl border border-terracotta/30 p-6 shadow-[0_24px_50px_-20px_rgba(126,40,72,0.32)] transition-colors duration-300 hover:border-terracotta/60 sm:p-7"
+        className="group relative flex w-full items-center justify-between gap-4 overflow-hidden rounded-2xl border border-terracotta/30 p-6 shadow-[0_24px_50px_-20px_rgba(126,40,72,0.32)] transition-colors duration-300 hover:border-terracotta/60 sm:p-7"
         style={{ background: CARD_BG }}
       >
         <CornerBloom from="rgba(176,172,66,0.10)" to="rgba(232,155,99,0.09)" />
@@ -336,6 +344,7 @@ export default function Packages() {
           →
         </span>
       </motion.a>
+      </div>
 
       <motion.p {...reveal()} className="mt-10 max-w-2xl text-sm leading-relaxed text-ink-soft">
         <b className="text-ink">A note on style.</b>{' '}
