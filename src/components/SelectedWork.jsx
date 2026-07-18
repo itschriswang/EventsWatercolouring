@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion'
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
 import useFocusTrap from '../hooks/useFocusTrap.js'
@@ -176,6 +176,17 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
   const reduce = useReducedMotion()
   const zoomed = usePinchZoomed()
 
+  // Latch the reveal once, in React state, rather than steering it live off
+  // `whileInView`. Opening/closing the lightbox restores focus to the tapped
+  // tile (a `.focus()` that scrolls) and toggles `body { overflow }` (a reflow
+  // when the scrollbar comes and goes) — both re-fire the reveal's
+  // IntersectionObserver, which used to make already-shown tiles flicker back
+  // to their initial opacity:0 and "glitch away". `useInView({ once })` keeps
+  // `shown` true across those re-renders, so a revealed tile can never revert.
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-40px' })
+  const shown = inView || zoomed
+
   const aspect = masonry
     ? item.landscape ? 'aspect-[4/3]' : 'aspect-[3/4]'
     : item.landscape ? 'aspect-[3/2]' : 'aspect-[3/4]'
@@ -183,10 +194,9 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
 
   return (
     <motion.figure
+      ref={ref}
       initial={{ opacity: 0, y: reduce ? 0 : 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      animate={zoomed ? { opacity: 1, y: 0 } : undefined}
-      viewport={{ once: true, margin: '-40px' }}
+      animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: reduce ? 0 : 24 }}
       transition={{ ...SPRING, delay: reduce ? 0 : (item._idx % 4) * 0.05 }}
       className={
         'group flex flex-col ' +
@@ -295,6 +305,11 @@ function RevealTile({ reveal, className = '' }) {
   const reduce = useReducedMotion()
   const zoomed = usePinchZoomed()
   const ref = useRef(null)
+  // Same latched reveal as Tile (see there) — the seam `ref` measures the
+  // strip's geometry, so give the entrance its own ref to observe.
+  const figureRef = useRef(null)
+  const inView = useInView(figureRef, { once: true, margin: '-40px' })
+  const shown = inView || zoomed
   const [pct, setPct] = useState(55)
   const [touched, setTouched] = useState(false)
   const dragging = useRef(false)
@@ -332,10 +347,9 @@ function RevealTile({ reveal, className = '' }) {
 
   return (
     <motion.figure
+      ref={figureRef}
       initial={{ opacity: 0, y: reduce ? 0 : 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      animate={zoomed ? { opacity: 1, y: 0 } : undefined}
-      viewport={{ once: true, margin: '-40px' }}
+      animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: reduce ? 0 : 24 }}
       transition={SPRING}
       className={'group flex flex-col ' + className}
     >
