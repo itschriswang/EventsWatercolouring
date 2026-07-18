@@ -120,6 +120,18 @@
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
+    /* Clip the horizontal axis on the ROOT, not just body. On iOS Safari the
+       real page scroller is the documentElement, and `overflow-x: hidden` on
+       body alone doesn't clip it — so any *transient* horizontal overflow (a
+       scroll-reveal spring momentarily translating a card past the right edge,
+       a pinch/edge-swipe nudge) latches a horizontal scroll offset here that
+       never snaps back, leaving the page stuck shifted-left with a blank band
+       on the right. `clip` (not `hidden`) hard-clips the overflow WITHOUT
+       creating a scrollport, so there is no horizontal scroll position to get
+       stuck at, and — unlike `hidden` — it never forces the vertical axis to
+       `auto`, so the page scroll and the timeline's sticky title rail are
+       untouched. */
+    overflow-x: clip;
   }
 
   /* Anchor jumps (nav links, /#section arrivals) land with breathing room
@@ -152,7 +164,11 @@
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    overflow-x: hidden;
+    /* Matches the root's `overflow-x: clip` (see `html` above) so the clip
+       holds whichever element a given engine treats as the scroller. `clip`
+       over `hidden`: it doesn't establish a scroll container that could itself
+       hold a stuck offset, nor coerce `overflow-y` to `auto`. */
+    overflow-x: clip;
   }
 
   /* Aurora veil — the reference photograph's light, spread across the whole
