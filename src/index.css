@@ -299,6 +299,50 @@
        the 4.5:1 AA minimum rather than just clearing it. ~7.45:1 on paper. */
     color: #4A4E63;
   }
+
+  /* ── Folder cell ──────────────────────────────────────────────────────────
+     Clips a card into a manila-folder silhouette: a flush-left index tab on
+     top, its right shoulder easing into the body with a cute concave fillet,
+     everything else softly rounded. Crucially this is a CLIP, not a repaint —
+     the element keeps its own ground and bloom; we only cut the shape, so the
+     dusk timeline stays dusk and the cream cards stay cream. The tab and body
+     are one continuous surface, so the join reads as folded paper, never a
+     pill stuck on top.
+
+     Geometry is driven by custom props so each cell can tune its tab width
+     (`--fc-tab-w`) while sharing one shape. `--fc-tab-h` is also the top inset
+     the content sits below (applied by the label/​content in JS). */
+  .folder-cell {
+    --fc-tab-h: 2.25rem;
+    --fc-tab-w: 56%;
+    --fc-tab-r: 0.85rem;   /* tab top corners */
+    --fc-fillet: 1rem;     /* concave curve where the tab meets the body */
+    --fc-body-r: 1.25rem;  /* body corners */
+    /* Fallback for engines without shape(): a plain rounded card. The tab
+       label simply reads as a heading; nothing breaks. */
+    border-radius: var(--fc-body-r);
+  }
+
+  @supports (clip-path: shape(from 0 0, close)) {
+    .folder-cell {
+      border-radius: 0;
+      clip-path: shape(
+        from 0 var(--fc-tab-r),
+        arc to var(--fc-tab-r) 0 of var(--fc-tab-r) cw,
+        line to calc(var(--fc-tab-w) - var(--fc-tab-r)) 0,
+        arc to var(--fc-tab-w) var(--fc-tab-r) of var(--fc-tab-r) cw,
+        line to var(--fc-tab-w) calc(var(--fc-tab-h) - var(--fc-fillet)),
+        arc to calc(var(--fc-tab-w) + var(--fc-fillet)) var(--fc-tab-h) of var(--fc-fillet) ccw,
+        line to calc(100% - var(--fc-body-r)) var(--fc-tab-h),
+        arc to 100% calc(var(--fc-tab-h) + var(--fc-body-r)) of var(--fc-body-r) cw,
+        line to 100% calc(100% - var(--fc-body-r)),
+        arc to calc(100% - var(--fc-body-r)) 100% of var(--fc-body-r) cw,
+        line to var(--fc-body-r) 100%,
+        arc to 0 calc(100% - var(--fc-body-r)) of var(--fc-body-r) cw,
+        close
+      );
+    }
+  }
 }
 
 @layer utilities {
