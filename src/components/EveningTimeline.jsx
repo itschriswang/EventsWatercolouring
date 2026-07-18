@@ -92,7 +92,7 @@ export default function EveningTimeline() {
             </div>
           </>
         }
-        contentClassName="grid grid-cols-12 gap-x-8 px-4 pb-6 sm:px-8 sm:pb-10 lg:px-12 lg:pb-12"
+        contentClassName="flex flex-col gap-x-8 px-4 pb-6 sm:px-8 sm:pb-10 lg:grid lg:grid-cols-12 lg:px-12 lg:pb-12"
       >
         {/* Sticky title rail */}
         <div className="col-span-12 lg:col-span-5">
