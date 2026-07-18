@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import CornerBloom from './CornerBloom.jsx'
 import GlassPill from './GlassPill.jsx'
+import GlassCardRim from './GlassCardRim.jsx'
 import FolderCell from './FolderCell.jsx'
 import { SPRING, ENQUIRE_HREF, CARD_BG } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
@@ -186,10 +187,11 @@ export default function NightPlanner() {
             onClick={() =>
               window.dispatchEvent(new CustomEvent('ew:planner-enquire', { detail: { hours } }))
             }
-            className="group btn-aurora mt-6 inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-paper/70"
+            className="group btn-hero-flow relative isolate overflow-hidden mt-6 inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-ink"
           >
-            <span className="btn-hero-flow-label">{p.cta}</span>
-            <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
+            <GlassCardRim radius={999} baseFrequency="0.05 0.09" baseFrequencyLull="0.035 0.06" scale={4} strokeWidth={1.75} />
+            <span className="relative z-10">{p.cta}</span>
+            <span aria-hidden="true" className="relative z-10 transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>
           </a>

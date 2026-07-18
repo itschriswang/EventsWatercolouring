@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { useEffect, useRef } from 'react'
 import { ENQUIRE_HREF } from '../lib/site.js'
+import GlassCardRim from './GlassCardRim.jsx'
 import {
   ColorBrush2Icon,
   DesignProcessDrawingBoardIcon,
@@ -32,24 +33,27 @@ function DockButton({ item }) {
     <motion.a
       href={href}
       className={[
-        'flex flex-col items-center justify-center gap-[3px] rounded-full select-none',
+        'relative flex flex-col items-center justify-center gap-[3px] rounded-full select-none',
         'px-3 py-2.5',
         highlight
-          ? 'btn-aurora text-paper/70 px-3.5'
+          ? 'btn-hero-flow text-ink isolate overflow-hidden px-3.5'
           : 'text-ink-soft',
       ].join(' ')}
       whileTap={{ scale: 0.86 }}
       transition={{ duration: 0.16, ease: EASE }}
       aria-label={label}
     >
-      <Icon />
-      <span
-        className={
-          (highlight ? 'btn-hero-flow-label ' : '') +
-          'font-mono text-[0.56rem] uppercase tracking-[0.12em] leading-none whitespace-nowrap'
-        }
-      >
-        {label}
+      {/* The highlighted Enquire tab reads as a watercolour bubble: the hero
+          title's emphasis wash filling the pill, ink icon + label, and the
+          site's wet-glass rim wobbling at the edge. */}
+      {highlight && (
+        <GlassCardRim radius={999} baseFrequency="0.06 0.11" baseFrequencyLull="0.04 0.07" scale={3.5} strokeWidth={1.5} />
+      )}
+      <span className="relative z-10 flex flex-col items-center gap-[3px]">
+        <Icon />
+        <span className="font-mono text-[0.56rem] uppercase tracking-[0.12em] leading-none whitespace-nowrap">
+          {label}
+        </span>
       </span>
     </motion.a>
   )
