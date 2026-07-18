@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useLayoutEffect, useRef } from 'react'
 import { Drop } from './Label.jsx'
 
 /**
@@ -24,7 +25,10 @@ import { Drop } from './Label.jsx'
  *   gradient  — orchid Drop tint, matching the section accent
  *   tone      — 'paper' (cream cards) or 'dusk' (the dark timeline) — sets label + shadow
  *   bg        — CSS background for the cell ground (the cell's current colour)
- *   tabWidth  — override `--fc-tab-w` for a wider/narrower cut
+ *   tabWidth  — override `--fc-tab-w` for a wider/narrower cut. Omit (the
+ *               default) to auto-hug the label: the tab is measured to sit an
+ *               equal gap either side of the eyebrow (left inset == right
+ *               gutter), so the cut tracks the text rather than the cell.
  *   bloom     — decorative bloom layer(s) to sit under the content
  *   reveal    — framer entrance props spread onto the wrapper
  *   hover     — lift on hover (default false)
@@ -57,8 +61,41 @@ export default function FolderCell({
   ...rest
 }) {
   const Wrapper = motion[as] || motion.div
+  const auto = !tabWidth
   const cellVars = { background: bg }
   if (tabWidth) cellVars['--fc-tab-w'] = tabWidth
+
+  const cellRef = useRef(null)
+  const labelRef = useRef(null)
+
+  // Auto-hug: size the tab so the gap to the right of the eyebrow equals the
+  // inset on its left. We measure the drop's left edge (the left inset) and the
+  // text's right edge, both relative to the cell, and set `--fc-tab-w` to
+  // `textRight + leftInset` — symmetric by construction, so it survives any
+  // change to the label's own padding. Horizontal deltas are transform-safe, so
+  // an ancestor hover-lift can't skew it. Runs in a layout effect (no flash off
+  // the CSS default), re-runs on resize and once webfonts settle (the mono's
+  // width shifts on load).
+  useLayoutEffect(() => {
+    if (!auto) return
+    const cell = cellRef.current
+    const labelEl = labelRef.current
+    if (!cell || !labelEl) return
+    const drop = labelEl.firstElementChild
+    const text = labelEl.lastElementChild
+    if (!drop || !text) return
+    const measure = () => {
+      const cellLeft = cell.getBoundingClientRect().left
+      const leftInset = drop.getBoundingClientRect().left - cellLeft
+      const textRight = text.getBoundingClientRect().right - cellLeft
+      cell.style.setProperty('--fc-tab-w', `${Math.round(textRight + leftInset)}px`)
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(labelEl)
+    if (document.fonts?.ready) document.fonts.ready.then(measure)
+    return () => ro.disconnect()
+  }, [auto, label])
 
   return (
     <Wrapper
@@ -68,10 +105,11 @@ export default function FolderCell({
       style={{ filter: SHADOW[tone] || SHADOW.paper }}
       className={'relative block ' + wrapperClassName}
     >
-      <div className={'folder-cell relative h-full ' + cellClassName} style={cellVars}>
+      <div ref={cellRef} className={'folder-cell relative h-full ' + cellClassName} style={cellVars}>
         {bloom}
         {/* Tab label, seated in the top-left tab region. */}
         <span
+          ref={labelRef}
           className="pointer-events-none absolute left-0 top-0 z-20 flex items-center gap-1.5 pl-[1.4rem] pr-4"
           style={{ height: 'var(--fc-tab-h)' }}
         >

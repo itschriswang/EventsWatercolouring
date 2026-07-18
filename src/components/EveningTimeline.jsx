@@ -55,11 +55,8 @@ export default function EveningTimeline() {
         label={EVENING.label}
         gradient={['#EFEFA0', '#F7F4EF']}
         labelClassName="!text-paper/90"
-        // Hug the eyebrow: a fixed cut sized to the label group + a symmetric
-        // 1.4rem gutter on the right to match the tab's left inset, so the
-        // spacing reads equal on both sides of the eyebrow. Fixed (not %) so it
-        // tracks the text — whose width is rem-stable — rather than the cell.
-        tabWidth="10.1rem"
+        // tabWidth omitted: FolderCell auto-hugs the eyebrow, sitting an equal
+        // gap either side of the label.
         // Sit the content roughly equidistant from the folder's top clip and
         // its right border — this tracks the content's own side padding
         // (px-4 → sm:px-8 → lg:px-12), so the gap above the first card reads

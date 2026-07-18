@@ -63,7 +63,6 @@ export default function NightPlanner() {
       gradient={['#B04A76', '#8C3656']}
       bg={CARD_BG}
       reveal={reveal}
-      tabWidth="min(62%, 15rem)"
       topGap="1.5rem"
       wrapperClassName="mt-[clamp(2.5rem,6vw,4rem)]"
       bloom={<CornerBloom from="rgba(140,54,86,0.09)" to="rgba(176,74,118,0.09)" />}
