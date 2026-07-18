@@ -1,7 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import useMagnetic from '../hooks/useMagnetic.js'
 import { SPRING } from '../lib/site.js'
-import GlassCardRim from './GlassCardRim.jsx'
 
 /**
  * Primary CTA with a magnetic pull (via useMagnetic) and a reactive label that
@@ -29,7 +28,7 @@ export default function MagneticButton({
     variant === 'paper'
       ? 'bg-paper text-ink hover:bg-terracotta hover:text-paper'
       : flow
-        ? 'btn-hero-flow text-ink overflow-hidden isolate'
+        ? 'btn-hero-flow text-ink'
         : 'btn-aurora text-paper/70'
 
   // On the flow surface the pastel fill already carries the colour, so the
@@ -52,20 +51,6 @@ export default function MagneticButton({
         className
       }
     >
-      {/* The wet-glass rim — the same wobbling water edge the packages' stat
-          pills wear, sized to this pill (radius 999, a higher turbulence
-          frequency for more swells across a shorter edge, gentler
-          displacement so the thin rim never pinches apart). Flow surface only;
-          the aurora/paper variants keep their flat edge. */}
-      {flow && (
-        <GlassCardRim
-          radius={999}
-          baseFrequency="0.05 0.09"
-          baseFrequencyLull="0.035 0.06"
-          scale={4}
-          strokeWidth={1.75}
-        />
-      )}
       <span
         className="relative z-10 h-2 w-2 rounded-full bg-current opacity-60 transition-transform duration-300 group-hover:scale-125"
         aria-hidden="true"
