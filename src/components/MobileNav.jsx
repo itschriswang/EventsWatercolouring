@@ -32,24 +32,24 @@ function DockButton({ item }) {
     <motion.a
       href={href}
       className={[
-        'flex flex-col items-center justify-center gap-[3px] rounded-full select-none',
+        'relative flex flex-col items-center justify-center gap-[3px] rounded-full select-none',
         'px-3 py-2.5',
         highlight
-          ? 'btn-aurora text-paper/70 px-3.5'
+          ? 'btn-hero-flow text-ink px-3.5'
           : 'text-ink-soft',
       ].join(' ')}
       whileTap={{ scale: 0.86 }}
       transition={{ duration: 0.16, ease: EASE }}
       aria-label={label}
     >
-      <Icon />
-      <span
-        className={
-          (highlight ? 'btn-hero-flow-label ' : '') +
-          'font-mono text-[0.56rem] uppercase tracking-[0.12em] leading-none whitespace-nowrap'
-        }
-      >
-        {label}
+      {/* The highlighted Enquire tab reads as a watercolour bubble: the hero
+          title's emphasis wash filling the pill with an ink icon + label and
+          the soft glass rim (see `.btn-hero-flow`). */}
+      <span className="relative z-10 flex flex-col items-center gap-[3px]">
+        <Icon />
+        <span className="font-mono text-[0.56rem] uppercase tracking-[0.12em] leading-none whitespace-nowrap">
+          {label}
+        </span>
       </span>
     </motion.a>
   )

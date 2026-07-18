@@ -147,15 +147,16 @@ export default function SiteHeader({ revealed, className = '', enquireHref = ENQ
           ))}
         </nav>
 
-        {/* Enquire CTA */}
+        {/* Enquire CTA — the hero title's emphasis wash filling the pill with
+            an ink label and a soft glass rim (a watercolour bubble). */}
         <motion.a
           href={enquireHref}
-          className="rounded-full btn-aurora px-5 py-2 font-mono text-[0.64rem] uppercase tracking-[0.18em]"
+          className="rounded-full btn-hero-flow text-ink px-5 py-2 font-mono text-[0.64rem] uppercase tracking-[0.18em]"
           whileHover={{ scale: 1.05, y: -1 }}
           whileTap={{ scale: 0.96 }}
           transition={{ duration: 0.28, ease: EASE }}
         >
-          <span className="btn-hero-flow-label">Enquire</span>
+          <span className="relative z-10">Enquire</span>
         </motion.a>
       </div>
     </motion.header>
