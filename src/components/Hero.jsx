@@ -191,7 +191,7 @@ export default function Hero({ revealed }) {
               </p>
             </div>
             <div className="mt-7 flex flex-wrap items-center gap-5 sm:mt-8">
-              <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
+              <MagneticButton href={ENQUIRE_HREF} flow>Enquire about your day</MagneticButton>
             </div>
             <p className="mt-4 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft/85">
               {HERO.note}
