@@ -56,6 +56,7 @@ export default function EveningTimeline() {
         gradient={['#EFEFA0', '#F7F4EF']}
         labelClassName="!text-paper/90"
         tabWidth="min(58%, 17rem)"
+        topGap="clamp(1.25rem, 3vw, 2.5rem)"
         bg="#2A2226"
         bloom={
           <>

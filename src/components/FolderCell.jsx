@@ -52,6 +52,7 @@ export default function FolderCell({
   cellClassName = '',
   contentClassName = '',
   labelClassName = '',
+  topGap = '0.35rem',
   children,
   ...rest
 }) {
@@ -79,8 +80,8 @@ export default function FolderCell({
         </span>
         <div
           className={'relative z-10 ' + contentClassName}
-          // Content clears the tab band, plus a hair of breathing room.
-          style={{ paddingTop: 'calc(var(--fc-tab-h) + 0.35rem)' }}
+          // Content clears the tab band, plus `topGap` of breathing room below it.
+          style={{ paddingTop: `calc(var(--fc-tab-h) + ${topGap})` }}
         >
           {children}
         </div>
