@@ -425,10 +425,11 @@
     color: transparent;
   }
 
-  /* Label voice for the hero CTA: the same button ground, but the label
-     carries the hero headline's own cool → green → warm emphasis sweep (as on
-     "painted") rather than the aurora surface wash. A real left-to-right
-     linear gradient reads the flow across the whole "Enquire about your day"
+  /* Label voice for every Enquire CTA (hero button, header pill, mobile dock,
+     planner CTA): the same dark button ground, but the label carries the hero
+     headline's own cool → green → warm emphasis sweep (as on "painted") rather
+     than the aurora surface wash — so every call to enquire echoes the title.
+     A real left-to-right linear gradient reads the flow across the whole
      wording the way the title does, instead of the surface's cap-anchored
      radial washes. Uses `--hero-emphasis-gradient-bright` so it stays legible
      on the dark ink ground. */
