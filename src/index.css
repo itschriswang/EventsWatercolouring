@@ -433,11 +433,17 @@
      colour fills the bubble and the wording reads as dark ink on top, so every
      call to enquire looks like one of the site's watercolour bubbles. Uses
      `--hero-emphasis-gradient-bright` (the light stops the title actually
-     renders at) so the pastel fill keeps enough headroom under the ink label,
-     and pairs with a wet-glass rim (GlassCardRim, radius 999) on the button
-     itself so the edge wobbles like the packages' stat pills. Keeps the
-     burgundy lift bloom from the aurora surface (approved shadow palette). */
+     renders at) so the pastel fill keeps enough headroom under the ink label.
+
+     The glass rim is pure CSS, matching the packages' stat pills (GlassPill):
+     a chromatic-aberration hairline where the glass bends light — a faint
+     cool ring, a warm cream catch on the top-left edge, a periwinkle one
+     bottom-right — over the burgundy lift bloom (approved shadow palette). No
+     SVG turbulence: at pill scale a displaced stroke reads as a scribble, so
+     the "wet" quality comes from the soft top sheen (the `::before` below)
+     and the tinted rim, the way a real glass bead catches light. */
   .btn-hero-flow {
+    position: relative;
     background-color: theme('colors.paper');
     background-image: var(--hero-emphasis-gradient-bright);
     background-size: 100% 100%;
@@ -445,22 +451,47 @@
     box-shadow:
       0 10px 22px -10px rgba(126, 40, 72, 0.30),
       0 18px 40px -16px rgba(150, 56, 90, 0.52),
-      0 30px 64px -26px rgba(126, 40, 72, 0.30);
+      0 30px 64px -26px rgba(126, 40, 72, 0.30),
+      inset 0 0 0 1px rgba(216, 218, 236, 0.45),
+      inset 1px 1px 1.5px 0 rgba(255, 252, 242, 0.7),
+      inset -1px -1px 1.5px 0 rgba(201, 196, 232, 0.4);
     transition:
       filter 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
       box-shadow 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
+  /* Specular sheen — the soft catch-light a curved glass/water surface holds
+     along its upper edge, fading out before the middle so the ink label reads
+     against clean colour. `inherit` keeps it clipped to the pill's radius, and
+     it sits below the `z-10` label/icon so it only glazes the fill. */
+  .btn-hero-flow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 252, 242, 0.55) 0%,
+      rgba(255, 252, 242, 0.12) 34%,
+      rgba(255, 252, 242, 0) 60%
+    );
+  }
+
   /* Hover deepens the wash (a touch more saturation, a hair darker) instead of
      brightening it toward white — the pastel fill has no headroom above, so
      `brightness(>1)` would only wash the ink label's contrast away. The bloom
-     reaches a little further, per the CLAUDE.md +15% vibrancy step. */
+     reaches a little further, per the CLAUDE.md +15% vibrancy step; the rim
+     insets ride along unchanged. */
   .btn-hero-flow:hover {
     filter: saturate(1.12) brightness(0.97);
     box-shadow:
       0 12px 26px -10px rgba(126, 40, 72, 0.35),
       0 20px 46px -16px rgba(150, 56, 90, 0.60),
-      0 34px 72px -26px rgba(126, 40, 72, 0.35);
+      0 34px 72px -26px rgba(126, 40, 72, 0.35),
+      inset 0 0 0 1px rgba(216, 218, 236, 0.5),
+      inset 1px 1px 1.5px 0 rgba(255, 252, 242, 0.78),
+      inset -1px -1px 1.5px 0 rgba(201, 196, 232, 0.45);
   }
 
   /* A short emphasis word painted with the hero headline's own cool-to-warm
