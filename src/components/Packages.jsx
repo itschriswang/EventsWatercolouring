@@ -210,7 +210,6 @@ export default function Packages() {
           gradient={['#B04A76', '#8C3656']}
           bg={CARD_BG}
           reveal={reveal()}
-          tabWidth="min(74%, 11rem)"
           topGap="1.5rem"
           wrapperClassName="col-span-5"
           bloom={<CornerBloom from="rgba(176,74,118,0.12)" to="rgba(140,54,86,0.08)" />}
@@ -255,7 +254,6 @@ export default function Packages() {
           gradient={['#8A9143', '#5F662B']}
           bg={CARD_BG}
           reveal={reveal(1)}
-          tabWidth="min(46%, 11rem)"
           topGap="1.5rem"
           wrapperClassName="col-span-7"
           bloom={<CornerBloom from="rgba(176,172,66,0.10)" to="rgba(138,145,67,0.08)" />}
@@ -314,7 +312,6 @@ export default function Packages() {
         bg={CARD_BG}
         reveal={reveal()}
         hover={!reduce}
-        tabWidth="min(34%, 8rem)"
         wrapperClassName="group mt-12 w-full"
         bloom={<CornerBloom from="rgba(176,172,66,0.10)" to="rgba(232,155,99,0.09)" />}
         contentClassName="flex items-center justify-between gap-4 px-6 pb-6 sm:px-7 sm:pb-7"
