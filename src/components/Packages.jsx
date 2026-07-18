@@ -211,6 +211,7 @@ export default function Packages() {
           bg={CARD_BG}
           reveal={reveal()}
           tabWidth="min(74%, 11rem)"
+          topGap="1.5rem"
           wrapperClassName="col-span-5"
           bloom={<CornerBloom from="rgba(176,74,118,0.12)" to="rgba(140,54,86,0.08)" />}
           contentClassName="flex h-full flex-col px-7 pb-7"
@@ -255,6 +256,7 @@ export default function Packages() {
           bg={CARD_BG}
           reveal={reveal(1)}
           tabWidth="min(46%, 11rem)"
+          topGap="1.5rem"
           wrapperClassName="col-span-7"
           bloom={<CornerBloom from="rgba(176,172,66,0.10)" to="rgba(138,145,67,0.08)" />}
           contentClassName="flex h-full flex-col"

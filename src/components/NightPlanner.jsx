@@ -64,6 +64,7 @@ export default function NightPlanner() {
       bg={CARD_BG}
       reveal={reveal}
       tabWidth="min(62%, 15rem)"
+      topGap="1.5rem"
       wrapperClassName="mt-[clamp(2.5rem,6vw,4rem)]"
       bloom={<CornerBloom from="rgba(140,54,86,0.09)" to="rgba(176,74,118,0.09)" />}
       contentClassName="grid grid-cols-1 gap-8 px-7 pb-7 sm:px-8 sm:pb-8 lg:grid-cols-2 lg:gap-12"
