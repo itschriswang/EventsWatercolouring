@@ -11,6 +11,7 @@ export default function MagneticButton({
   children,
   className = '',
   variant = 'ink',
+  flow = false,
 }) {
   const reduce = useReducedMotion()
   // Magnetic pull toward the cursor (no-op on touch / reduced-motion). This is
@@ -27,6 +28,13 @@ export default function MagneticButton({
     variant === 'paper'
       ? 'bg-paper text-ink hover:bg-terracotta hover:text-paper'
       : 'btn-aurora text-paper/70'
+
+  // `flow` swaps the label's aurora surface wash for the hero headline's own
+  // emphasis sweep (the "painted" gradient) — used by the hero CTA so its
+  // wording echoes the title. Ink-ground only; the paper variant keeps its
+  // flat label.
+  const labelClass =
+    variant === 'paper' ? '' : (flow ? 'btn-hero-flow-label ' : 'btn-aurora-label ')
 
   return (
     <motion.a
@@ -50,9 +58,7 @@ export default function MagneticButton({
       <motion.span
         variants={{ hover: reduce ? {} : { skewX: -6} }}
         transition={SPRING}
-        className={
-          (variant === 'paper' ? '' : 'btn-aurora-label ') + 'inline-block'
-        }
+        className={labelClass + 'inline-block'}
       >
         {children}
       </motion.span>
