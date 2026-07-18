@@ -45,7 +45,7 @@ function DockButton({ item }) {
       <Icon />
       <span
         className={
-          (highlight ? 'btn-aurora-label ' : '') +
+          (highlight ? 'btn-hero-flow-label ' : '') +
           'font-mono text-[0.56rem] uppercase tracking-[0.12em] leading-none whitespace-nowrap'
         }
       >

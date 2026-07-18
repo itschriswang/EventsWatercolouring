@@ -188,7 +188,7 @@ export default function NightPlanner() {
             }
             className="group btn-aurora mt-6 inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-paper/70"
           >
-            <span className="btn-aurora-label">{p.cta}</span>
+            <span className="btn-hero-flow-label">{p.cta}</span>
             <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>
