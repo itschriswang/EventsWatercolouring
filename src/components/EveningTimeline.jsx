@@ -56,7 +56,11 @@ export default function EveningTimeline() {
         gradient={['#EFEFA0', '#F7F4EF']}
         labelClassName="!text-paper/90"
         tabWidth="min(58%, 17rem)"
-        topGap="clamp(2rem, 5vw, 4.25rem)"
+        // Sit the content roughly equidistant from the folder's top clip and
+        // its right border — this tracks the content's own side padding
+        // (px-4 → sm:px-8 → lg:px-12), so the gap above the first card reads
+        // the same as the gap beside it.
+        topGap="clamp(1rem, 3.5vw, 3rem)"
         bg="#2A2226"
         bloom={
           <>
