@@ -7,18 +7,9 @@ import { EVENING } from '../content.js'
 import WatercolourBloom from './WatercolourBloom.jsx'
 import GlassPill from './GlassPill.jsx'
 import GlassCardRim from './GlassCardRim.jsx'
-import FolderTab from './FolderTab.jsx'
+import FolderCell from './FolderCell.jsx'
 import { withUnderline } from './Underline.jsx'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
-
-// The dusk folder's ground — a translucent warm-wine lift over the section's
-// base fill, so the whole "how the evening runs" block reads as one big folder
-// laid on the dusk desk while the section's blooms still glow up through it.
-// Kept translucent on purpose (never an opaque cream manila, which would fight
-// the section's light-type-on-dark mood); the tab shares this exact ground so
-// the two read as one continuous sheet.
-const FOLDER_BG =
-  'linear-gradient(180deg, rgba(78,60,68,0.55) 0%, rgba(52,40,46,0.42) 55%, rgba(40,32,37,0.5) 100%)'
 
 /**
  * "How the evening runs" — a sticky split-screen. A massive section title is
@@ -49,78 +40,59 @@ export default function EveningTimeline() {
   const spineFill = useSpring(scrollYProgress, { stiffness: 90, damping: 24 })
 
   return (
+    // The section itself is now just spacing on the paper page; the whole
+    // evening is filed as one big dusk folder floating on it. Crucially the
+    // folder keeps the section's OWN dusk colour and blooms — we only clip the
+    // shape (see FolderCell / `.folder-cell`), never repaint it to a cream
+    // manila. The sticky title rail still pins: `.folder-cell` clips with
+    // `clip-path`, not `overflow`, so it never traps the pin.
     <section
       id="night"
-      // Base ground is a desaturated near-neutral wine (same hue/lightness as
-      // the `wine` token, saturation pulled way down) — this section's own
-      // colour should come from the blooms and gradient overlay above, not
-      // the base fill. Footer keeps the fuller-saturation `wine` token.
-      className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper bg-[#2A2226]"
+      className="relative w-full px-[5vw] py-[clamp(4rem,8vw,7rem)] text-paper"
     >
-      {/* Overlay for text readability and ambience */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          // Bloom alphas raised (from a desaturated base, these now carry
-          // most of the section's colour) — same hues/positions, just
-          // stronger, so they still stay hue-adjacent where they overlap.
-          background:
-            'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(255,165,95,0.20) 0%, transparent 60%), ' +
-            'radial-gradient(ellipse 55% 45% at 90% 10%, rgba(250,170,200,0.17) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 60% 50% at 92% 92%, rgba(175,140,230,0.17) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 45% 40% at 30% 100%, rgba(236,232,108,0.14) 0%, transparent 60%), ' +
-            'radial-gradient(ellipse 48% 40% at 55% 48%, rgba(205,215,80,0.17) 0%, transparent 55%), ' +
-            // Desaturated to match the base ground below — this wash used to
-            // carry a lot of the section's wine colour on its own; now it
-            // just deepens the ground toward the bottom, leaving colour to
-            // the blooms above.
-            'linear-gradient(170deg, rgba(34,26,30,0.25) 0%, rgba(44,34,39,0.45) 35%, rgba(54,42,48,0.65) 100%)',
-        }}
-      />
-      {/* Watercolour pigment wash, bottom-left — the title rail leaves that
-          corner empty once the beats run long down the right, and screen
-          blend reads as a soft glow lifting off the dusk indigo rather than a
-          fill. Anchored to the section's own bottom-left padding edge (not
-          pushed past it) so the wash never bleeds into the section below,
-          and masked to a soft radial fade so its clipping box never reads
-          as a hard-edged square against the dusk background. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-[8vw] bottom-0 h-[52vw] w-[52vw] max-h-[560px] max-w-[560px] overflow-hidden opacity-90"
-        style={{
-          WebkitMaskImage:
-            'radial-gradient(ellipse 70% 70% at 32% 72%, black 0%, black 38%, transparent 76%)',
-          maskImage:
-            'radial-gradient(ellipse 70% 70% at 32% 72%, black 0%, black 38%, transparent 76%)',
-        }}
+      <FolderCell
+        tone="dusk"
+        label={EVENING.label}
+        gradient={['#EFEFA0', '#F7F4EF']}
+        labelClassName="!text-paper/90"
+        tabWidth="min(58%, 17rem)"
+        bg="#2A2226"
+        bloom={
+          <>
+            {/* Overlay for text readability and ambience — same blooms as
+                before, now clipped to the folder shape. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(255,165,95,0.20) 0%, transparent 60%), ' +
+                  'radial-gradient(ellipse 55% 45% at 90% 10%, rgba(250,170,200,0.17) 0%, transparent 55%), ' +
+                  'radial-gradient(ellipse 60% 50% at 92% 92%, rgba(175,140,230,0.17) 0%, transparent 55%), ' +
+                  'radial-gradient(ellipse 45% 40% at 30% 100%, rgba(236,232,108,0.14) 0%, transparent 60%), ' +
+                  'radial-gradient(ellipse 48% 40% at 55% 48%, rgba(205,215,80,0.17) 0%, transparent 55%), ' +
+                  'linear-gradient(170deg, rgba(34,26,30,0.25) 0%, rgba(44,34,39,0.45) 35%, rgba(54,42,48,0.65) 100%)',
+              }}
+            />
+            {/* Watercolour pigment wash, bottom-left — a soft glow lifting off
+                the dusk ground, masked to a radial fade and now tucked inside
+                the folder's own bottom-left. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-0 left-0 h-[52vw] w-[52vw] max-h-[560px] max-w-[560px] overflow-hidden opacity-90"
+              style={{
+                WebkitMaskImage:
+                  'radial-gradient(ellipse 70% 70% at 32% 72%, black 0%, black 38%, transparent 76%)',
+                maskImage:
+                  'radial-gradient(ellipse 70% 70% at 32% 72%, black 0%, black 38%, transparent 76%)',
+              }}
+            >
+              <WatercolourBloom />
+            </div>
+          </>
+        }
+        contentClassName="grid grid-cols-12 gap-x-8 px-4 pb-6 sm:px-8 sm:pb-10 lg:px-12 lg:pb-12"
       >
-        <WatercolourBloom />
-      </div>
-
-      {/* The whole evening, filed as one big dusk folder — its tab carries the
-          section eyebrow, and the timeline lives on the folder's page. No
-          `overflow-hidden` on the panel: it would trap the sticky title rail
-          inside the panel's scroll box and kill the pin. The rounded corners
-          clip the panel's own ground on their own, and GlassCardRim's stroke
-          is inset, so nothing needs the clip. */}
-      <div className="relative">
-        <FolderTab
-          large
-          className="left-4 sm:left-8"
-          gradient={['#EFEFA0', '#F7F4EF']}
-          bg={FOLDER_BG}
-          borderClassName="border-paper/20"
-          labelClassName="!text-paper/90"
-        >
-          {EVENING.label}
-        </FolderTab>
-        <div
-          className="relative rounded-[28px] border border-paper/20 p-5 shadow-[0_34px_64px_-34px_rgba(78,38,57,0.7)] sm:p-8 lg:p-12"
-          style={{ background: FOLDER_BG }}
-        >
-          <GlassCardRim radius={28} />
-          <div className="relative grid grid-cols-12 gap-x-8">
         {/* Sticky title rail */}
         <div className="col-span-12 lg:col-span-5">
           <div className="lg:sticky lg:top-24 lg:h-fit">
@@ -232,9 +204,7 @@ export default function EveningTimeline() {
             })}
           </ol>
         </div>
-          </div>
-        </div>
-      </div>
+      </FolderCell>
     </section>
   )
 }
