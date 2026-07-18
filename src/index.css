@@ -115,6 +115,23 @@
       #C94868,
       #9ED0BD
     );
+
+    /* The hero headline flow again, but at the lighter stops it actually
+       renders at on screen (Hero.jsx's `emphasisColors` / `emphasisColorStops`
+       on "painted"), not the paper-tuned deepened token above. The hero CTA
+       ("Enquire about your day") wears this on its dark ink button ground, so
+       it needs the brighter swatches for legibility — the same reason
+       `--btn-aurora-gradient` lightens the surface wash for this same ground.
+       Keep these values in sync with Hero.jsx's emphasis flow. */
+    --hero-emphasis-gradient-bright: linear-gradient(
+      to right,
+      #BFDCD1 0%,
+      #D4B6E6 4%,
+      #D8DB7A 48%,
+      #D8DB7A 52%,
+      #F2A6C1 96%,
+      #E88FA4 100%
+    );
   }
 
   html {
@@ -401,6 +418,22 @@
      tone against the ink ground, not clip the gradient too. */
   .btn-aurora-label {
     background-image: var(--btn-aurora-gradient);
+    background-size: 100% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Label voice for the hero CTA: the same button ground, but the label
+     carries the hero headline's own cool → green → warm emphasis sweep (as on
+     "painted") rather than the aurora surface wash. A real left-to-right
+     linear gradient reads the flow across the whole "Enquire about your day"
+     wording the way the title does, instead of the surface's cap-anchored
+     radial washes. Uses `--hero-emphasis-gradient-bright` so it stays legible
+     on the dark ink ground. */
+  .btn-hero-flow-label {
+    background-image: var(--hero-emphasis-gradient-bright);
     background-size: 100% 100%;
     -webkit-background-clip: text;
     background-clip: text;
