@@ -20,11 +20,25 @@ import { useHeavyFx } from '../hooks/useMediaQuery.js'
  * in). `radius` should match the card's own Tailwind rounding in pixels
  * (16 = rounded-2xl, the "Packages family" default).
  */
-export default function GlassCardRim({ radius = 16, tint = ['#E4E6A8', '#D6DAF0'], rim = ['rgba(240,228,158,0.5)', 'rgba(201,196,232,0.4)'] }) {
+export default function GlassCardRim({
+  radius = 16,
+  tint = ['#E4E6A8', '#D6DAF0'],
+  rim = ['rgba(240,228,158,0.5)', 'rgba(201,196,232,0.4)'],
+  // Turbulence tuning. The defaults are the long-wavelength, big-swell values
+  // for a full content card. Pill-sized buttons (the Enquire CTAs) pass a
+  // higher base frequency — more wobbles across a much shorter edge — a
+  // smaller displacement and a thinner stroke, so the tight rim swells like a
+  // watercolour bubble without pinching apart.
+  baseFrequency = '0.006 0.009',
+  baseFrequencyLull = '0.004 0.006',
+  scale = 9,
+  strokeWidth = 2.25,
+} = {}) {
   const uid = useId().replace(/:/g, '')
   const heavy = useHeavyFx()
   const reduce = useReducedMotion()
   const animated = heavy && !reduce
+  const wobble = `${baseFrequency};${baseFrequencyLull};${baseFrequency}`
 
   return (
     <>
@@ -42,7 +56,7 @@ export default function GlassCardRim({ radius = 16, tint = ['#E4E6A8', '#D6DAF0'
                 region (±10%) gives that larger swell room before it clips. */}
             <feTurbulence
               type="fractalNoise"
-              baseFrequency="0.006 0.009"
+              baseFrequency={baseFrequency}
               numOctaves="2"
               seed="9"
               result="n"
@@ -50,7 +64,7 @@ export default function GlassCardRim({ radius = 16, tint = ['#E4E6A8', '#D6DAF0'
               {animated && (
                 <animate
                   attributeName="baseFrequency"
-                  values="0.006 0.009;0.004 0.006;0.006 0.009"
+                  values={wobble}
                   dur="12s"
                   calcMode="spline"
                   keySplines="0.45 0 0.55 1;0.45 0 0.55 1"
@@ -61,7 +75,7 @@ export default function GlassCardRim({ radius = 16, tint = ['#E4E6A8', '#D6DAF0'
             {/* Bigger displacement (9 vs 5) makes the swell actually visible;
                 the stroke below is widened to match so the wavier edge stays a
                 continuous ribbon instead of pinching apart at the crests. */}
-            <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" />
+            <feDisplacementMap in="SourceGraphic" in2="n" scale={scale} xChannelSelector="R" yChannelSelector="G" />
           </filter>
           <linearGradient id={`gr-stroke-${uid}`} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#FFFCF2" stopOpacity="0.9" />
@@ -81,7 +95,7 @@ export default function GlassCardRim({ radius = 16, tint = ['#E4E6A8', '#D6DAF0'
           rx={radius}
           fill="none"
           stroke={`url(#gr-stroke-${uid})`}
-          strokeWidth="2.25"
+          strokeWidth={strokeWidth}
           filter={`url(#gr-warp-${uid})`}
         />
       </svg>
