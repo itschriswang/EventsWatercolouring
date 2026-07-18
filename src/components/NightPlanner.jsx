@@ -186,10 +186,10 @@ export default function NightPlanner() {
             onClick={() =>
               window.dispatchEvent(new CustomEvent('ew:planner-enquire', { detail: { hours } }))
             }
-            className="group btn-aurora mt-6 inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-paper/70"
+            className="group btn-hero-flow mt-6 inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-ink"
           >
-            <span className="btn-hero-flow-label">{p.cta}</span>
-            <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
+            <span className="relative z-10">{p.cta}</span>
+            <span aria-hidden="true" className="relative z-10 transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>
           </a>
