@@ -155,7 +155,7 @@ export default function SiteHeader({ revealed, className = '', enquireHref = ENQ
           whileTap={{ scale: 0.96 }}
           transition={{ duration: 0.28, ease: EASE }}
         >
-          <span className="btn-aurora-label">Enquire</span>
+          <span className="btn-hero-flow-label">Enquire</span>
         </motion.a>
       </div>
     </motion.header>
