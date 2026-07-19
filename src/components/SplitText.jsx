@@ -3,7 +3,7 @@ import { useLayoutEffect, useMemo, useRef } from 'react'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
 import Underline from './Underline.jsx'
-import { SPRING } from '../lib/site.js'
+import { SPRING, asset } from '../lib/site.js'
 
 /**
  * Splits a headline into masked lines and reveals each unit (word or character)
@@ -126,6 +126,44 @@ const applyEmphasisFlow = (root, colors, positions) => {
   return () => observer.disconnect()
 }
 
+// A real, hand-painted watercolour brush stroke laid BEHIND an emphasis word
+// (see SplitText's `emphasisStroke`) — a scanned stroke recoloured to the wine
+// deep-anchor palette, with all of its dry-brush bristles, feathered bleeding
+// edges, splatter tendrils and granulation preserved as transparency (see
+// scripts that build public/assets/brush-wine.*). The light pastel emphasis
+// word then reads against dark pigment instead of the bright, blooming page
+// ground. Sits at zIndex -1 inside the (relative, isolated) emphasis span, so
+// it paints behind the glyphs but never escapes to the page. `object-fit: fill`
+// stretches the one stroke to sit around whatever word it backs; `src` is the
+// asset base (without extension) so it can ship webp with a png fallback.
+function EmphasisBrush({ src, inset }) {
+  return (
+    <span
+      aria-hidden="true"
+      className="pointer-events-none"
+      style={{ position: 'absolute', inset, zIndex: -1 }}
+    >
+      <picture>
+        <source srcSet={asset(`${src}.webp`)} type="image/webp" />
+        <img
+          src={asset(`${src}.png`)}
+          alt=""
+          draggable={false}
+          decoding="async"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'fill',
+            display: 'block',
+          }}
+        />
+      </picture>
+    </span>
+  )
+}
+
 export default function SplitText({
   lines = [],
   emphasis = null,
@@ -133,12 +171,12 @@ export default function SplitText({
   emphasisColors = null,
   emphasisColorStops = null,
   emphasisShadow = null,
-  // A CSS `filter` (e.g. a drop-shadow) applied to the emphasis group. Unlike
-  // `text-shadow`, a `filter: drop-shadow()` DOES render on gradient-clipped
-  // text (it works on the painted background-clip pixels, not the transparent
-  // text fill), so this is how a light pastel emphasis word gets the dark
-  // tinted drop that lets it lift off a bright ground.
-  emphasisLift = null,
+  // Asset base path (no extension, e.g. 'assets/brush-wine') for a real
+  // watercolour brush stroke laid BEHIND the emphasis group (see EmphasisBrush
+  // above). The light pastel emphasis word then reads against dark wine pigment
+  // instead of the bright, actively-blooming page ground — far more contrast
+  // than a drop-shadow can give. Only rendered when emphasisColors is set.
+  emphasisStroke = null,
   underline = null,
   knockout = null,
   unit = 'char',
@@ -306,7 +344,10 @@ export default function SplitText({
                     const spanStyle = emphasisColors
                       ? {
                           textShadow: emphasisShadow || 'none',
-                          ...(emphasisLift ? { filter: emphasisLift } : {}),
+                          // A relative, isolated box so the brush stroke can sit
+                          // at zIndex -1 behind the glyphs without escaping to
+                          // the page behind the whole heading.
+                          ...(emphasisStroke ? { position: 'relative', zIndex: 0 } : {}),
                         }
                       : getGradientStyle(wordIndexInHeading)
                     wordIndexInHeading += group.words.length
@@ -340,7 +381,11 @@ export default function SplitText({
                             WebkitTextFillColor: 'transparent',
                             color: 'transparent',
                             textShadow: emphasisShadow || 'none',
-                            ...(emphasisLift ? { filter: emphasisLift } : {}),
+                            // A relative, isolated box so the brush can sit
+                            // behind the clipped text (zIndex -1). A background
+                            // on the child does not affect this element's own
+                            // background-clip: text of `{text}`.
+                            ...(emphasisStroke ? { position: 'relative', zIndex: 0 } : {}),
                             // Vertical/horizontal bleed so ascenders and
                             // descenders that overflow the tight display
                             // line-box still have gradient painted behind them
@@ -350,6 +395,12 @@ export default function SplitText({
                             ...EMPH_GLYPH_BLEED,
                           }}
                         >
+                          {emphasisStroke ? (
+                            <EmphasisBrush
+                              src={emphasisStroke}
+                              inset="0.02em 0em 0.02em 0.02em"
+                            />
+                          ) : null}
                           {text}
                         </span>,
                         gi < groupedWords.length - 1 ? (
@@ -385,6 +436,13 @@ export default function SplitText({
                         className={glyphItalic ? 'inline-block italic' : 'inline-block'}
                         style={spanStyle}
                       >
+                        {emphasisStroke && emphasisColors ? (
+                          <EmphasisBrush
+                            key="eb"
+                            src={emphasisStroke}
+                            inset="-0.16em -0.22em -0.28em -0.2em"
+                          />
+                        ) : null}
                         {group.words.flatMap((w, wi) => [
                           ...Array.from(w.word).map((ch, ci) => (
                             <motion.span
