@@ -18,6 +18,7 @@ import AboutMe from './components/AboutMe.jsx'
 import Packages from './components/Packages.jsx'
 import EnquireForm from './components/EnquireForm.jsx'
 import Footer from './components/Footer.jsx'
+import GlassRibbon from './components/GlassRibbon.jsx'
 
 /**
  * Live wedding watercolour — a full-bleed, immersive editorial single page.
@@ -94,6 +95,10 @@ export default function App() {
           person you're trusting with the room (the painter), then the
           decision and the ask. */}
       <main id="main" tabIndex={-1} className="relative z-10 outline-none">
+        {/* The glass ribbon snakes the full page height BEHIND every section
+            (first child, z-0), refracting the washes beneath it and ducking
+            behind the opaque deep-ground blocks where the page breaks. */}
+        <GlassRibbon />
         <Hero revealed={revealed} />
 
         {/* The evening timeline is now a folder floating on the page, so the
