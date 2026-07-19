@@ -145,7 +145,7 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
       <div className="relative z-10 mt-[clamp(3rem,7vw,6rem)] flex flex-col gap-8 border-t border-paper/15 pt-10 lg:flex-row lg:justify-between">
         <span className="flex flex-col gap-1.5">
           <span className="font-sentient text-2xl tracking-[-0.01em]">{FOOTER.name}</span>
-          <span className="font-mono text-[0.55rem] uppercase tracking-[0.2em] text-paper/40">
+          <span className="font-mono text-[0.55rem] uppercase tracking-[0.2em] text-paper/55">
             © {new Date().getFullYear()} · Melbourne & Sydney
           </span>
         </span>
