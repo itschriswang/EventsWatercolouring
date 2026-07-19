@@ -1,7 +1,16 @@
-import { useCallback, useEffect, useId, useRef, useState } from 'react'
-import { motion, useMotionValue, useTransform } from 'framer-motion'
+import { useEffect, useId, useRef, useState } from 'react'
+import { motion, useSpring, useTransform } from 'framer-motion'
 import { asset } from '../lib/site.js'
 import BloomFilter from './WetBloom.jsx'
+
+// Slide physics for the coverflow position. A spring (not the old constant-
+// velocity linear chase) so the slat travel eases in and out and stays
+// interruptible: tapping through pieces quickly retargets mid-flight and
+// carries velocity across, instead of restarting an abrupt linear crawl.
+// Critically damped (damping ratio ≈ 1.05, no overshoot) so a painting never
+// springs past centre; a touch softer than the shared SPRING for a longer
+// gliding travel. Reduced-motion snaps instantly (see below), bypassing it.
+const COVERFLOW_SPRING = { stiffness: 90, damping: 20, restDelta: 0.0005 }
 
 // Max slats rendered each side of the active piece before they've faded to
 // nothing — keeps the loop seam (where index wraps) safely off-screen.
@@ -221,54 +230,27 @@ export default function CoverflowCarousel({ items, index, onSelect, sizing, radi
   const R = Math.max(1, Math.min(RENDER_RANGE, Math.floor(count / 2) - 1))
   const filterId = useId()
 
-  // Single rAF-driven position. Card size tracks the same value as position,
-  // so a slat grows as it slides toward centre and shrinks as it slides away
-  // — growth and travel stay perfectly in sync with one source of truth.
-  const pos = useMotionValue(index)
+  // Single spring-driven position. Card size tracks the same value as
+  // position, so a slat grows as it slides toward centre and shrinks as it
+  // slides away — growth and travel stay perfectly in sync with one source of
+  // truth. The spring runs off framer-motion's own rAF, so cards still move
+  // without a React re-render per frame; only a real navigation re-renders.
+  const pos = useSpring(index, COVERFLOW_SPRING)
+  // `targetRef` holds the last *unwrapped* target the spring is chasing, so the
+  // shortest-path wrap math below measures from where we last commanded, not
+  // from the live (mid-flight) spring value.
   const targetRef = useRef(index)
-  const rafRef = useRef(null)
-  const lastTRef = useRef(null)
-  const moveDur = 0.5 // seconds per slot
 
-  const tick = useCallback(
-    (t) => {
-      const last = lastTRef.current ?? t
-      const dt = Math.min((t - last) / 1000, 1 / 30)
-      lastTRef.current = t
-
-      const cur = pos.get()
-      const diff = targetRef.current - cur
-      const step = (1 / moveDur) * dt
-      const arriving = reduce || Math.abs(diff) <= step
-
-      if (arriving) {
-        pos.set(targetRef.current)
-        rafRef.current = null
-        lastTRef.current = null
-        return
-      }
-      pos.set(cur + Math.sign(diff) * step)
-      rafRef.current = requestAnimationFrame(tick)
-    },
-    [pos, reduce],
-  )
-
-  const ensureRunning = useCallback(() => {
-    if (rafRef.current == null) {
-      lastTRef.current = null
-      rafRef.current = requestAnimationFrame(tick)
-    }
-  }, [tick])
-
-  // Sync the driver to the controlled `index` prop. First run snaps straight
+  // Sync the spring to the controlled `index` prop. First run snaps straight
   // there (the piece that was just opened shouldn't slide in from slot 0);
-  // afterwards it chases the shortest wrapped path, so crossing the last↔
-  // first seam slides forward instead of crawling back across the wall.
+  // afterwards it springs along the shortest wrapped path, so crossing the
+  // last↔first seam slides forward instead of crawling back across the wall.
+  // Reduced-motion jumps instantly rather than springing.
   const initializedRef = useRef(false)
   useEffect(() => {
     if (!initializedRef.current) {
       initializedRef.current = true
-      pos.set(index)
+      pos.jump(index)
       targetRef.current = index
       return
     }
@@ -276,16 +258,11 @@ export default function CoverflowCarousel({ items, index, onSelect, sizing, radi
     let d = index - cur
     d = ((d % count) + count) % count
     if (d > count / 2) d -= count
-    targetRef.current = cur + d
-    ensureRunning()
-  }, [index, count, ensureRunning, pos])
-
-  useEffect(
-    () => () => {
-      if (rafRef.current != null) cancelAnimationFrame(rafRef.current)
-    },
-    [],
-  )
+    const target = cur + d
+    targetRef.current = target
+    if (reduce) pos.jump(target)
+    else pos.set(target)
+  }, [index, count, reduce, pos])
 
   return (
     <div

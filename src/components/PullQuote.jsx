@@ -10,7 +10,7 @@ import { PULLQUOTE } from '../content.js'
 /**
  * The Clare & William quote, set as a centred editorial moment right after
  * the gallery — the one place the site speaks in a client's voice rather
- * than Christopher's. It follows SelectedWork so "the piece" it praises has
+ * than Chris's. It follows SelectedWork so "the piece" it praises has
  * already been shown, rather than asking for trust in an artefact the
  * visitor hasn't seen yet. Every other section sits on the left-aligned
  * grid, so the centring alone marks it as a held breath rather than a
@@ -132,12 +132,12 @@ export default function PullQuote() {
           <motion.a
             {...rise(0.3)}
             href={ENQUIRE_HREF}
-            className="group mt-7 inline-flex items-center gap-2 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-rust transition-colors duration-300 hover:text-terracotta"
+            className="group mt-7 inline-flex items-center gap-2 rounded font-mono text-[0.66rem] uppercase tracking-[0.2em] text-rust transition-colors duration-300 hover:text-terracotta focus-visible:text-terracotta"
           >
             {PULLQUOTE.cta}
             <span
               aria-hidden="true"
-              className="transition-transform duration-300 group-hover:translate-x-1"
+              className="transition-transform duration-300 group-hover:translate-x-1 group-focus-visible:translate-x-1"
             >
               →
             </span>

@@ -461,7 +461,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                                       // both be true — picking one clears the other.
                                       setF((p) => ({ ...p, date: e.target.value, dateUnknown: false }))
                                     }
-                                    className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors focus:border-terracotta"
+                                    className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors focus:border-terracotta focus-visible:shadow-[0_1.5px_0_0_theme(colors.terracotta)]"
                                   />
                                   <button
                                     type="button"
@@ -561,7 +561,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                                     value={f.message}
                                     onChange={set('message')}
                                     placeholder="Tell me a little about the day, and the people who matter most."
-                                    className="resize-none border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft focus:border-terracotta"
+                                    className="resize-none border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft focus:border-terracotta focus-visible:shadow-[0_1.5px_0_0_theme(colors.terracotta)]"
                                   />
                                 </div>
                               </div>
@@ -724,7 +724,7 @@ function Field({ name, label, type = 'text', required, invalid = false, ...rest 
         required={required}
         aria-invalid={invalid || undefined}
         aria-describedby={invalid ? 'enquire-error' : undefined}
-        className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft focus:border-terracotta"
+        className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft focus:border-terracotta focus-visible:shadow-[0_1.5px_0_0_theme(colors.terracotta)]"
         {...rest}
       />
     </div>
