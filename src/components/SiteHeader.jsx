@@ -12,6 +12,10 @@ function NavLink({ href, label, isActive }) {
   return (
     <a
       href={href}
+      // Expose the active state to assistive tech, not just via colour + the
+      // animated underline: 'page' for the pathname-matched page links
+      // (/faq/, /corporate/), 'true' for the in-view section links.
+      aria-current={isActive ? (href.includes('#') ? 'true' : 'page') : undefined}
       className="relative py-0.5"
       style={{
         color: isActive ? 'rgb(var(--rgb-ink))' : 'rgb(var(--rgb-ink-soft))',
