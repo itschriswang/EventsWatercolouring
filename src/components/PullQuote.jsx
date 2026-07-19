@@ -10,7 +10,7 @@ import { PULLQUOTE } from '../content.js'
 /**
  * The Clare & William quote, set as a centred editorial moment right after
  * the gallery — the one place the site speaks in a client's voice rather
- * than Christopher's. It follows SelectedWork so "the piece" it praises has
+ * than Chris's. It follows SelectedWork so "the piece" it praises has
  * already been shown, rather than asking for trust in an artefact the
  * visitor hasn't seen yet. Every other section sits on the left-aligned
  * grid, so the centring alone marks it as a held breath rather than a
