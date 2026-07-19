@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
+import { useLayoutEffect, useMemo, useRef } from 'react'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
 import Underline from './Underline.jsx'
@@ -126,65 +126,6 @@ const applyEmphasisFlow = (root, colors, positions) => {
   return () => observer.disconnect()
 }
 
-// Ink Bleed — a live cursor-follow lens (adapted from the "Inkbleed" study):
-// wherever the pointer sits over a plain (non-emphasis, non-underlined) word
-// in a title, the glyph underneath it crossfades from crisp ink into a soft
-// wet blur, the way pigment goes soft the moment a brush touches it, then
-// sharpens back up as the cursor moves on. Colour-agnostic (alpha masks
-// only), so it rides on whatever `currentColor` the caller already set — no
-// separate colour prop needed. The reference study's SVG goo/threshold pass
-// (built for a thick 120px Inter Bold glyph) blows out the thin counters of
-// this site's rounder, smaller display face — filling in the bowls of "a",
-// "e", "o" into blobs — so that step is dropped here in favour of a plain
-// masked crossfade; still reads as "ink going wet," just without the
-// neighbour-fusing blob. Desktop (`useHeavyFx`) + motion-safe only;
-// `unit="char"` only.
-const INK_OUTER_RADIUS_EM = 0.42 // spot radius the crossfade fades out at
-const INK_BLUR_EM = 0.1 // CSS blur on the duplicate "wet" layer
-const INK_FOLLOW = 0.3 // cursor smoothing
-const INK_INTENSITY_FOLLOW = 0.25
-const INK_SETTLE_EPSILON = 0.4
-
-// Sharp text shows everywhere the spot is NOT, the wet blur shows only
-// inside it — the spot follows the cursor, not the whole word.
-const inkSharpMask = `radial-gradient(circle calc(${INK_OUTER_RADIUS_EM}em * var(--ink-on, 0)) at var(--mx, -9999px) var(--my, -9999px), transparent 0%, rgba(0,0,0,1) 100%)`
-const inkSpotMask = `radial-gradient(circle calc(${INK_OUTER_RADIUS_EM}em * var(--ink-on, 0)) at var(--mx, -9999px) var(--my, -9999px), rgba(0,0,0,1) 0%, transparent 100%)`
-
-// One glyph's two crossfaded layers: the sharp base and a wet blur
-// duplicate. `idx` addresses this glyph's slot in the ink ref/metrics
-// arrays so the cursor-tracking loop (in the SplitText body) can drive its
-// --mx/--my. The blurred layer strips text-shadow so it blurs only the
-// letterform, not inherited effects that would create visual mud.
-function InkGlyph({ ch, idx, wrapRefs }) {
-  const base = { display: 'inline-block', whiteSpace: 'pre' }
-  return (
-    <span
-      ref={(el) => { wrapRefs.current[idx] = el }}
-      style={{ position: 'relative', display: 'inline-block' }}
-    >
-      <span style={{ ...base, WebkitMaskImage: inkSharpMask, maskImage: inkSharpMask }}>
-        {ch}
-      </span>
-      <span
-        aria-hidden="true"
-        style={{
-          ...base,
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          pointerEvents: 'none',
-          textShadow: 'none',
-          filter: `blur(${INK_BLUR_EM}em)`,
-          WebkitMaskImage: inkSpotMask,
-          maskImage: inkSpotMask,
-        }}
-      >
-        {ch}
-      </span>
-    </span>
-  )
-}
-
 export default function SplitText({
   lines = [],
   emphasis = null,
@@ -205,12 +146,10 @@ export default function SplitText({
   as: Tag = 'h2',
   delay = 0,
   playOnMount = false,
-  inkBleed = false,
 }) {
   const reduce = useReducedMotion()
   const lite = reduce || !useHeavyFx()
   const zoomed = usePinchZoomed()
-  const inkActive = false
   // `motion(Tag)` must stay the same component reference across re-renders —
   // recreating it every render makes React see a new element type each time
   // and remount the whole heading, which replays the `whileInView once`
@@ -231,105 +170,6 @@ export default function SplitText({
     if (!emphasisColors || lite) return undefined
     return applyEmphasisFlow(rootRef.current, emphasisColors, emphasisColorStops)
   }, [emphasisColors, emphasisColorStops, lines, emphasis, lite])
-
-  // Ink Bleed cursor tracking — mirrors the entrance/emphasis effects above:
-  // a DOM side-effect that measures every plain glyph's rect and drives its
-  // --mx/--my custom properties from a smoothed cursor position, only when
-  // active (desktop, motion-safe, `inkBleed` requested).
-  const inkWrapRefs = useRef([])
-  const inkMetrics = useRef([])
-  const inkTarget = useRef({ x: -9999, y: -9999, on: 0 })
-  const inkSmooth = useRef({ x: -9999, y: -9999, on: 0 })
-  const inkRaf = useRef(null)
-
-  const measureInk = () => {
-    inkMetrics.current = inkWrapRefs.current.map((el) => {
-      if (!el) return null
-      const r = el.getBoundingClientRect()
-      return { left: r.left, top: r.top }
-    })
-  }
-
-  useLayoutEffect(() => {
-    if (!inkActive) return undefined
-    measureInk()
-    const ro = new ResizeObserver(measureInk)
-    if (rootRef.current) ro.observe(rootRef.current)
-    window.addEventListener('scroll', measureInk, { passive: true })
-    window.addEventListener('resize', measureInk)
-    return () => {
-      ro.disconnect()
-      window.removeEventListener('scroll', measureInk)
-      window.removeEventListener('resize', measureInk)
-    }
-  }, [inkActive, lines, emphasis])
-
-  const renderInk = () => {
-    const { x: cx, y: cy, on } = inkSmooth.current
-    rootRef.current?.style.setProperty('--ink-on', on.toFixed(3))
-    const ms = inkMetrics.current
-    for (let i = 0; i < ms.length; i++) {
-      const m = ms[i]
-      const wrapEl = inkWrapRefs.current[i]
-      if (!m || !wrapEl) continue
-      wrapEl.style.setProperty('--mx', `${(cx - m.left).toFixed(1)}px`)
-      wrapEl.style.setProperty('--my', `${(cy - m.top).toFixed(1)}px`)
-    }
-  }
-
-  const stopInkLoop = () => {
-    if (inkRaf.current !== null) {
-      cancelAnimationFrame(inkRaf.current)
-      inkRaf.current = null
-    }
-  }
-
-  const tickInk = () => {
-    const t = inkTarget.current
-    const s = inkSmooth.current
-    s.x += (t.x - s.x) * INK_FOLLOW
-    s.y += (t.y - s.y) * INK_FOLLOW
-    s.on += (t.on - s.on) * INK_INTENSITY_FOLLOW
-    renderInk()
-    const settled =
-      Math.abs(t.x - s.x) < INK_SETTLE_EPSILON &&
-      Math.abs(t.y - s.y) < INK_SETTLE_EPSILON &&
-      Math.abs(t.on - s.on) < 0.005
-    if (settled && t.on === 0) {
-      s.on = 0
-      renderInk()
-      inkRaf.current = null
-      return
-    }
-    inkRaf.current = requestAnimationFrame(tickInk)
-  }
-
-  const startInkLoop = () => {
-    if (inkRaf.current !== null) return
-    inkRaf.current = requestAnimationFrame(tickInk)
-  }
-
-  const handleInkMove = (e) => {
-    if (inkTarget.current.on === 0) {
-      inkSmooth.current.x = e.clientX
-      inkSmooth.current.y = e.clientY
-    }
-    inkTarget.current.x = e.clientX
-    inkTarget.current.y = e.clientY
-    inkTarget.current.on = 1
-    startInkLoop()
-  }
-
-  const handleInkLeave = () => {
-    inkTarget.current.on = 0
-    startInkLoop()
-  }
-
-  useEffect(() => stopInkLoop, [])
-
-  // Running index into the ink ref/metrics arrays, spanning every plain
-  // glyph across the whole heading (not just one line) — reset each render.
-  let inkGlyphIdx = 0
 
   const normalise = s => s.toLowerCase().replace(/[^a-z]/g, '')
   const isWordUnderlined = (word) => underline !== null && normalise(word) === normalise(underline)
@@ -431,9 +271,6 @@ export default function SplitText({
       className={className}
       variants={container}
       {...animateProps}
-      {...(inkActive
-        ? { onMouseMove: handleInkMove, onMouseLeave: handleInkLeave }
-        : {})}
       aria-label={lines.join(' ')}
     >
       {lines.map((line, li) => {
@@ -593,9 +430,6 @@ export default function SplitText({
                   const underlined = isWordUnderlined(group.word)
                   const WordTag = underlined ? Underline : 'span'
                   const wordTagProps = underlined ? { seed: group.word } : {}
-                  // Ink Bleed only wraps plain words — underlined/knockout
-                  // words already carry their own decorative treatment.
-                  const wordInkActive = inkActive && !underlined && !isWordKnockout(group.word)
                   return [
                     <WordTag
                       key={`w${li}-${gi}`}
@@ -606,24 +440,17 @@ export default function SplitText({
                       }
                       {...wordTagProps}
                     >
-                      {Array.from(group.word).map((ch, ci) => {
-                        const glyph = wordInkActive ? (
-                          <InkGlyph ch={ch} idx={inkGlyphIdx++} wrapRefs={inkWrapRefs} />
-                        ) : (
-                          ch
-                        )
-                        return (
-                          <motion.span
-                            key={ci}
-                            variants={item}
-                            aria-hidden="true"
-                            className="inline-block"
-                            style={glyphStyle(li, glyphIdx++)}
-                          >
-                            {glyph}
-                          </motion.span>
-                        )
-                      })}
+                      {Array.from(group.word).map((ch, ci) => (
+                        <motion.span
+                          key={ci}
+                          variants={item}
+                          aria-hidden="true"
+                          className="inline-block"
+                          style={glyphStyle(li, glyphIdx++)}
+                        >
+                          {ch}
+                        </motion.span>
+                      ))}
                     </WordTag>,
                     gi < groupedWords.length - 1 ? (
                       <motion.span
