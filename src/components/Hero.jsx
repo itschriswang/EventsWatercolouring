@@ -167,20 +167,13 @@ export default function Hero({ revealed }) {
                 // held plateaus, the Lemon Lime plateau holds a small pocket
                 // dead centre, and the purple→green / green→pink blends fill
                 // most of the remaining width — the transition itself is the
-                // dominant voice, not a seam squeezed out of the way. Those
-                // pastels are too light for the display face's warm backlit
-                // glow, so the accent swaps that glow for chromatic-aberration
-                // fringing instead: a warm cast offset right, a cool cast
-                // offset left, plus a soft burgundy ground (approved shadow
-                // palette) — the word reads as type seen through curved
-                // glass, the light splitting at the letter edges. em-based
-                // offsets so the fringe scales with the clamp()ed type.
+                // dominant voice, not a seam squeezed out of the way. No
+                // chromatic-aberration fringe or backlit glow: the word now
+                // sits on the dark wine brush stroke below, and the pastel
+                // gradient reads cleanly against it — the earlier orange/cyan
+                // fringe read as a glitch on the light ground and is gone.
                 emphasisColors={['#BFDCD1', '#D4B6E6', '#D8DB7A', '#D8DB7A', '#F2A6C1', '#E88FA4']}
                 emphasisColorStops={[0, 0.04, 0.48, 0.52, 0.96, 1]}
-                // Chromatic-aberration fringe, softened to a whisper now the
-                // word sits on the dark brush: the light splitting at the letter
-                // edges reads as glassy refraction, not a glitch, at this alpha.
-                emphasisShadow="0.018em 0.006em 0.035em rgba(255,138,64,0.34), -0.018em -0.004em 0.035em rgba(96,205,240,0.34)"
                 // The pastel swatches are light, and here they sit on the
                 // brightest, actively-blooming part of the page. Rather than a
                 // faint drop-shadow, lay a real hand-painted watercolour brush
