@@ -100,7 +100,6 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
             emphasis={FOOTER.emphasis}
             underline="keep"
             emphasisItalic
-            inkBleed
             className="display-lg max-w-[18ch] [text-shadow:none]"
           />
           <span className="mt-5 inline-flex items-center gap-2.5 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-paper/60 transition-colors duration-300 group-hover:text-paper group-focus-visible:text-paper">

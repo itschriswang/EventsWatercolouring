@@ -59,7 +59,6 @@ export default function FaqPage() {
                 unit="char"
                 playOnMount
                 lines={[FAQ.title]}
-                inkBleed
                 className="mt-5 font-sentient text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.95] tracking-[-0.02em] text-ink"
               />
               <p className="mt-6 max-w-md leading-relaxed text-ink-soft">
