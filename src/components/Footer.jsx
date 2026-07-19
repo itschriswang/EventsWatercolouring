@@ -1,4 +1,3 @@
-import { motion, useReducedMotion } from 'framer-motion'
 import SplitText from './SplitText.jsx'
 import { EMAIL, ENQUIRE_HREF } from '../lib/site.js'
 import { FOOTER } from '../content.js'
@@ -40,8 +39,6 @@ function InstagramIcon() {
  * scrolls up to the on-page form instead of bouncing through the homepage.
  */
 export default function Footer({ enquireHref = ENQUIRE_HREF }) {
-  const reduce = useReducedMotion()
-
   return (
     <footer className="relative w-full overflow-hidden px-[5vw] pt-[clamp(4rem,8vw,7rem)] pb-36 md:pb-[clamp(4rem,8vw,7rem)] text-paper">
       {/* Fireflies night background. A real <picture> rather than a CSS
@@ -83,7 +80,7 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
             highest intent go straight to the reply card. */}
         <a
           href={enquireHref}
-          className="group block"
+          className="group block rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-paper focus-visible:ring-offset-4 focus-visible:ring-offset-transparent"
           // Leave --underline-stroke unset so "keep" picks up <Underline>'s
           // own default — the two-colour pastel flow wash (pickFlowPair),
           // same as EveningTimeline's dark-ground underline. Those raw
@@ -106,11 +103,11 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
             inkBleed
             className="display-lg max-w-[18ch] [text-shadow:none]"
           />
-          <span className="mt-5 inline-flex items-center gap-2.5 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-paper/60 transition-colors duration-300 group-hover:text-paper">
+          <span className="mt-5 inline-flex items-center gap-2.5 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-paper/60 transition-colors duration-300 group-hover:text-paper group-focus-visible:text-paper">
             Start an enquiry
             <span
               aria-hidden="true"
-              className="transition-transform duration-300 group-hover:translate-x-1"
+              className="transition-transform duration-300 group-hover:translate-x-1 group-focus-visible:translate-x-1"
             >
               →
             </span>
@@ -126,16 +123,16 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
           href={FOOTER.instagram}
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-center gap-3"
+          className="group flex items-center gap-3 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-paper focus-visible:ring-offset-4 focus-visible:ring-offset-transparent"
         >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-paper/25 text-paper/70 transition-colors duration-300 group-hover:border-blush group-hover:text-blush">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-paper/25 text-paper/70 transition-colors duration-300 group-hover:border-blush group-hover:text-blush group-focus-visible:border-blush group-focus-visible:text-blush">
             <InstagramIcon />
           </span>
           <span className="flex flex-col">
             <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-paper/50">
               Follow along
             </span>
-            <span className="font-sentient text-xl tracking-[-0.01em] text-paper transition-colors duration-300 group-hover:text-blush sm:text-2xl">
+            <span className="font-sentient text-xl tracking-[-0.01em] text-paper transition-colors duration-300 group-hover:text-blush group-focus-visible:text-blush sm:text-2xl">
               {FOOTER.instagramHandle}
             </span>
           </span>
@@ -154,11 +151,18 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
           className="flex flex-wrap gap-x-6 gap-y-2 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-paper/60"
         >
           {FOOTER.nav.map((n) => (
-            <a key={n.href} href={n.href} className="transition-colors hover:text-paper">
+            <a
+              key={n.href}
+              href={n.href}
+              className="rounded outline-none transition-colors hover:text-paper focus-visible:text-paper focus-visible:ring-2 focus-visible:ring-paper/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            >
               {n.label}
             </a>
           ))}
-          <a href={`mailto:${EMAIL}`} className="transition-colors hover:text-paper">
+          <a
+            href={`mailto:${EMAIL}`}
+            className="rounded outline-none transition-colors hover:text-paper focus-visible:text-paper focus-visible:ring-2 focus-visible:ring-paper/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+          >
             Email
           </a>
         </nav>

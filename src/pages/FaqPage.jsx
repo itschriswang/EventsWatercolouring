@@ -65,7 +65,10 @@ export default function FaqPage() {
               <p className="mt-6 max-w-md leading-relaxed text-ink-soft">
                 Answers to what people usually ask before booking. Can’t find
                 yours?{' '}
-                <a href="#enquiry" className="text-ink underline underline-offset-4">
+                <a
+                  href="/#enquiry"
+                  className="rounded text-ink underline underline-offset-4 outline-none transition-colors hover:text-terracotta focus-visible:text-terracotta"
+                >
                   Send me a note
                 </a>
                 .
