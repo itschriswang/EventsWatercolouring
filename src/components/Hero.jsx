@@ -167,20 +167,21 @@ export default function Hero({ revealed }) {
                 // held plateaus, the Lemon Lime plateau holds a small pocket
                 // dead centre, and the purple→green / green→pink blends fill
                 // most of the remaining width — the transition itself is the
-                // dominant voice, not a seam squeezed out of the way. Those
-                // pastels are too light for the display face's warm backlit
-                // glow, so the accent swaps that glow for a dark tinted drop
-                // (approved shadow palette) and the letters lift off it,
-                // reference-style.
+                // dominant voice, not a seam squeezed out of the way. No
+                // chromatic-aberration fringe or backlit glow: the word now
+                // sits on the dark wine brush stroke below, and the pastel
+                // gradient reads cleanly against it — the earlier orange/cyan
+                // fringe read as a glitch on the light ground and is gone.
                 emphasisColors={['#BFDCD1', '#D4B6E6', '#D8DB7A', '#D8DB7A', '#F2A6C1', '#E88FA4']}
                 emphasisColorStops={[0, 0.04, 0.48, 0.52, 0.96, 1]}
                 // The pastel swatches are light, and here they sit on the
-                // brightest, actively-blooming part of the page — so give the
-                // word the dark tinted drop the design always intended (a
-                // filter drop-shadow, which — unlike text-shadow — renders on
-                // the gradient-clipped fill). Burgundy from the approved shadow
-                // palette; em units so the lift scales with the fluid clamp.
-                emphasisLift="drop-shadow(0 0.035em 0.1em rgba(126,40,72,0.4)) drop-shadow(0 0.01em 0.02em rgba(126,40,72,0.55))"
+                // brightest, actively-blooming part of the page. Rather than a
+                // faint drop-shadow, lay a real hand-painted watercolour brush
+                // stroke behind the word — a scanned stroke recoloured to wine
+                // (its bristles, feathered edges and splatter kept as alpha) —
+                // so the pastel letters read against dark pigment with real
+                // contrast. See EmphasisBrush + public/assets/brush-wine.*.
+                emphasisStroke="assets/brush-wine"
                 className="display-xl text-ink [line-height:0.80] [font-size:clamp(2.75rem,13vw,4.5rem)] lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)] [text-shadow:none]"
               />
             )}
