@@ -183,12 +183,12 @@ export default function Hero({ revealed }) {
                 emphasisShadow="0.018em 0.006em 0.035em rgba(255,138,64,0.34), -0.018em -0.004em 0.035em rgba(96,205,240,0.34)"
                 // The pastel swatches are light, and here they sit on the
                 // brightest, actively-blooming part of the page. Rather than a
-                // faint drop-shadow, lay a dark, hand-painted brush stroke
-                // behind the word — a painter's swash of wine pigment — so the
-                // pastel letters read against dark with real contrast. Wine and
-                // claret from the approved deep-anchor palette (never grey,
-                // never purple); see EmphasisBrush in SplitText.
-                emphasisStroke={['#4C1E34', '#2A1420', '#5C2440']}
+                // faint drop-shadow, lay a real hand-painted watercolour brush
+                // stroke behind the word — a scanned stroke recoloured to wine
+                // (its bristles, feathered edges and splatter kept as alpha) —
+                // so the pastel letters read against dark pigment with real
+                // contrast. See EmphasisBrush + public/assets/brush-wine.*.
+                emphasisStroke="assets/brush-wine"
                 className="display-xl text-ink [line-height:0.80] [font-size:clamp(2.75rem,13vw,4.5rem)] lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)] [text-shadow:none]"
               />
             )}
