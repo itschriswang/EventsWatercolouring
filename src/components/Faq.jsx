@@ -23,12 +23,12 @@ export default function Faq() {
 
   return (
     <section id="faq" className="relative w-full px-[5vw] pt-[clamp(1rem,3vw,2rem)] pb-[clamp(5.5rem,11vw,10rem)]">
-      <div className="relative z-10 mx-auto max-w-3xl">
+      <div className="relative z-10 max-w-3xl">
         <ul className="space-y-5 sm:space-y-6">
           {FAQ.items.map((item, i) => (
             <motion.li
               key={i}
-              initial={{ opacity: 0, y: reduce ? 0 : 20 }}
+              initial={{ opacity: reduce ? 1 : 0, y: reduce ? 0 : 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               animate={zoomed ? { opacity: 1, y: 0 } : undefined}
               viewport={{ once: true, margin: '-60px' }}
@@ -43,10 +43,19 @@ export default function Faq() {
                   <Drop className="h-4 w-auto" gradient={['#F2E982', '#BCB438']} />
                 </span>
                 <div>
-                  <h3 className="font-body text-[clamp(0.95rem,1.3vw,1.15rem)] tracking-[-0.01em] leading-snug text-ink">
+                  {/* h2 (not h3): the questions are the FAQ page's top-level
+                      content under its single h1 — h3 here skipped a level and
+                      read as sub-items of nothing to a screen reader. Weight +
+                      a lifted size floor make each question a clear scan anchor
+                      in a long flat list. Utility classes only, three-font
+                      voice unchanged. */}
+                  <h2 className="font-body font-semibold text-[clamp(1.05rem,1.4vw,1.25rem)] tracking-[-0.01em] leading-snug text-ink">
                     {item.q}
-                  </h3>
-                  <p className="mt-2 leading-relaxed text-ink-soft/85">
+                  </h2>
+                  {/* Full ink-soft (5.49:1), not /85 (4.0:1, under AA); measure
+                      capped so the answer holds a comfortable 65-75ch even on
+                      the wide paper tile. */}
+                  <p className="mt-2 max-w-[64ch] leading-relaxed text-ink-soft">
                     {item.a}
                   </p>
                 </div>

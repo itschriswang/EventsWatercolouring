@@ -192,6 +192,12 @@ export default function SplitText({
   emphasisColors = null,
   emphasisColorStops = null,
   emphasisShadow = null,
+  // A CSS `filter` (e.g. a drop-shadow) applied to the emphasis group. Unlike
+  // `text-shadow`, a `filter: drop-shadow()` DOES render on gradient-clipped
+  // text (it works on the painted background-clip pixels, not the transparent
+  // text fill), so this is how a light pastel emphasis word gets the dark
+  // tinted drop that lets it lift off a bright ground.
+  emphasisLift = null,
   underline = null,
   knockout = null,
   unit = 'char',
@@ -412,7 +418,10 @@ export default function SplitText({
 
   // After a pinch-zoom the IO behind `whileInView` can stall (see
   // usePinchZoom), so a latched page plays headings on mount instead.
-  const animateProps = playOnMount || zoomed
+  // `reduce` joins playOnMount/zoomed on the mount-play path: a reduced-motion
+  // heading resolves to its shown state on mount rather than waiting on a
+  // scroll reveal, so a title can never strand invisible for that audience.
+  const animateProps = playOnMount || zoomed || reduce
     ? { initial: 'hidden', animate: 'show' }
     : { initial: 'hidden', whileInView: 'show', viewport: { once: true, margin: '-60px' } }
 
@@ -458,7 +467,10 @@ export default function SplitText({
                     // So the flow just needs its inherited glow switched off,
                     // not replaced.
                     const spanStyle = emphasisColors
-                      ? { textShadow: emphasisShadow || 'none' }
+                      ? {
+                          textShadow: emphasisShadow || 'none',
+                          ...(emphasisLift ? { filter: emphasisLift } : {}),
+                        }
                       : getGradientStyle(wordIndexInHeading)
                     wordIndexInHeading += group.words.length
                     // Lite path (touch / reduced-motion): paint the whole
@@ -491,6 +503,7 @@ export default function SplitText({
                             WebkitTextFillColor: 'transparent',
                             color: 'transparent',
                             textShadow: emphasisShadow || 'none',
+                            ...(emphasisLift ? { filter: emphasisLift } : {}),
                             // Vertical/horizontal bleed so ascenders and
                             // descenders that overflow the tight display
                             // line-box still have gradient painted behind them
