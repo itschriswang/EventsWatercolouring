@@ -7,8 +7,13 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- The hero study is the above-the-fold LCP candidate but is only
+         discovered once React renders; preload it so it arrives with the
+         document (mirrors the homepage hero preloads). -->
+    <link rel="preload" as="image" href="/assets/art-character-girl.webp" type="image/webp" fetchpriority="high" />
+
     <!-- Primary SEO -->
-    <title>Live Event Painting for Corporate Events and Brand Activations | Christopher Wang</title>
+    <title>Live Event Painting for Corporate Events and Brand Activations | Chris Wang</title>
     <meta
       name="description"
       content="Live watercolour painting for corporate events, brand activations, product launches and client dinners in Melbourne and Sydney. Guests painted live, every piece a hand-made keepsake they keep. From $1000."
@@ -17,22 +22,22 @@
       name="keywords"
       content="brand activation artist, corporate event entertainment Melbourne, corporate event entertainment Sydney, live event painter, product launch entertainment, live painting corporate event, event artist Australia"
     />
-    <meta name="author" content="Christopher Wang" />
+    <meta name="author" content="Chris Wang" />
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#F7F4EF" />
     <link rel="canonical" href="https://chriswangstudio.com/corporate/" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Christopher Wang | Live Event Watercolour" />
+    <meta property="og:site_name" content="Chris Wang | Live Event Watercolour" />
     <meta property="og:title" content="Live Event Painting for Corporate Events and Brand Activations" />
     <meta
       property="og:description"
-      content="An artist painting your guests live in watercolour. It draws a crowd, and every guest leaves with a hand-made keepsake your event is the story behind."
+      content="An artist painting your guests live in watercolour. It draws a crowd, and every guest leaves with a hand-made keepsake to take home."
     />
     <meta property="og:url" content="https://chriswangstudio.com/corporate/" />
-    <meta property="og:image" content="https://chriswangstudio.com/assets/art-bouquet.jpg" />
-    <meta property="og:image:alt" content="Watercolour study of a bouquet painted on cotton-rag paper" />
+    <meta property="og:image" content="https://chriswangstudio.com/assets/art-couple-hanbok.jpg" />
+    <meta property="og:image:alt" content="Watercolour portrait of a couple in traditional Korean hanbok, painted on cotton-rag paper" />
     <meta property="og:locale" content="en_AU" />
 
     <!-- Twitter -->
@@ -42,7 +47,7 @@
       name="twitter:description"
       content="Live watercolour painting for corporate events, brand activations and client dinners in Melbourne and Sydney."
     />
-    <meta name="twitter:image" content="https://chriswangstudio.com/assets/art-bouquet.jpg" />
+    <meta name="twitter:image" content="https://chriswangstudio.com/assets/art-couple-hanbok.jpg" />
 
     <!-- Structured data: the corporate service specifically -->
     <script type="application/ld+json">
@@ -54,10 +59,10 @@
         "name": "Corporate Live Event Watercolour Painting",
         "description": "Live watercolour painting for corporate events, brand activations, product launches, client dinners and conferences. Guests are painted live and take home a hand-painted keepsake on the night.",
         "url": "https://chriswangstudio.com/corporate/",
-        "image": "https://chriswangstudio.com/assets/art-bouquet.jpg",
+        "image": "https://chriswangstudio.com/assets/art-couple-hanbok.jpg",
         "provider": {
           "@type": "Person",
-          "name": "Christopher Wang",
+          "name": "Chris Wang",
           "jobTitle": "Watercolour artist",
           "email": "create@chriswangstudio.com",
           "sameAs": ["https://www.instagram.com/chriswangstudio"]
@@ -79,10 +84,21 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Loaded as a non-blocking preload: a render-blocking stylesheet here
+         would delay React's hydration script, stretching how long the
+         pre-JS fallback below stays on screen. -->
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Mynerve&family=Manrope:wght@400;500;600;700&family=Darumadrop+One&display=swap"
-      rel="stylesheet"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Mynerve&family=Manrope:wght@400;500;600;700&family=Darumadrop+One&display=swap"
+      />
+    </noscript>
 
     <!-- The #root fallback below is kept in the HTML for crawlers and no-JS
          visitors, but hiding it at first paint stops it flashing as raw serif
@@ -105,10 +121,9 @@
            React replaces this on mount; without JavaScript it stays visible
            as a readable fallback page. Keep in step with CORPORATE in
            src/content.js. -->
-      <div style="max-width: 42rem; margin: 0 auto; padding: 3.5rem 1.5rem; font-family: Georgia, 'Times New Roman', serif; color: #352E30; background: #F7F4EF; line-height: 1.65;">
-      <div id="ssr-fallback" style="max-width: 42rem; margin: 0 auto; padding: 3.5rem 1.5rem; font-family: Georgia, 'Times New Roman', serif; color: #2A2724; background: #F4EFE6; line-height: 1.65;">
+      <div id="ssr-fallback" style="max-width: 42rem; margin: 0 auto; padding: 3.5rem 1.5rem; font-family: Georgia, 'Times New Roman', serif; color: #352E30; background: #F7F4EF; line-height: 1.65;">
         <h1 style="font-size: 2rem; line-height: 1.15; font-weight: 400;">Live watercolour painting for corporate events and brand activations</h1>
-        <p>I am Christopher Wang, a watercolour artist based in Melbourne. I paint guests live at brand activations, product launches, client and VIP dinners, end of year parties, conferences and private functions across Melbourne, Sydney and Australia-wide.</p>
+        <p>I am Chris Wang, a watercolour artist based in Melbourne. I paint guests live at brand activations, product launches, client and VIP dinners, end of year parties, conferences and private functions across Melbourne, Sydney and Australia-wide.</p>
         <p>A painter working live draws a crowd and gives your event a centre of gravity. Each piece takes five to ten minutes, around 8 an hour, and every guest leaves holding a hand-painted keepsake that gets kept and framed, with your event as the story behind it.</p>
         <p>The base engagement is <strong>from $1000</strong>: three hours of live painting, around 24 keepsakes on 300gsm A5 cotton paper, every piece sleeved on the spot. Extra hours, multi-day activations and an after-event studio service are available. Public liability insurance included.</p>
         <p><a href="/" style="color: #B04A76;">See the wedding and private events page</a> or <a href="/faq/" style="color: #B04A76;">read the frequently asked questions</a>.</p>

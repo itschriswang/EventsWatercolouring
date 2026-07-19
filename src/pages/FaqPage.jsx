@@ -59,13 +59,15 @@ export default function FaqPage() {
                 unit="char"
                 playOnMount
                 lines={[FAQ.title]}
-                inkBleed
                 className="mt-5 font-sentient text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.95] tracking-[-0.02em] text-ink"
               />
               <p className="mt-6 max-w-md leading-relaxed text-ink-soft">
                 Answers to what people usually ask before booking. Can’t find
                 yours?{' '}
-                <a href="#enquiry" className="text-ink underline underline-offset-4">
+                <a
+                  href="/#enquiry"
+                  className="rounded text-ink underline underline-offset-4 outline-none transition-colors hover:text-terracotta focus-visible:text-terracotta"
+                >
                   Send me a note
                 </a>
                 .

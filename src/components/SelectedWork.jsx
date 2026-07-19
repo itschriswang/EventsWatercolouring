@@ -90,7 +90,6 @@ export default function SelectedWork() {
               lines={WORK.title}
               emphasis={WORK.emphasis}
               emphasisItalic
-              inkBleed
               className="display-lg mt-5 text-ink"
             />
           </div>

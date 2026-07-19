@@ -1,4 +1,4 @@
-// All site copy in one place. Written in Christopher's own voice: plain,
+// All site copy in one place. Written in Chris's own voice: plain,
 // warm and direct, Australian English, no em dashes. Edit here and every
 // section updates.
 
@@ -218,8 +218,11 @@ export const PACKAGES = {
       p: 'Your bouquet painted from photos after the day, on A3 cotton paper. A2 on request.',
     },
   ],
-  licence:
-    'A note on style. What I paint is my interpretation, not a photo-exact likeness, and my style evolves over time, so no two pieces are the same. Booking means you are comfortable with that approach and my style. A 50% retainer holds your date, with the balance due two weeks before your big day.',
+  // Split into label + body so the bold lead-in is structured, not sliced off
+  // the body string at render time (see Packages.jsx).
+  licenceLabel: 'A note on style.',
+  licenceBody:
+    'What I paint is my interpretation, not a photo-exact likeness, and my style evolves over time, so no two pieces are the same. Booking means you are comfortable with that approach and my style. A 50% retainer holds your date, with the balance due two weeks before your big day.',
   planner: {
     title: 'What does a booking cover?',
     lede: 'Pick your hours. I paint around 8 pieces an hour, usually two guests to a piece, up to four when a group shares one.',
@@ -314,7 +317,7 @@ export const ENQUIRY = {
     next: 'Continue',
     what: {
       q: 'What are you after?',
-      hint: 'Pick whatever’s closest — you can say more in a moment.',
+      hint: 'Pick whatever’s closest, you can say more in a moment.',
     },
     when: {
       q: 'When, and where?',
@@ -322,7 +325,7 @@ export const ENQUIRY = {
     },
     who: {
       q: 'Where do I send my reply?',
-      hint: 'Just a name and an email — everything else is optional.',
+      hint: 'Just a name and an email. Everything else is optional.',
     },
     notSure: 'Not sure yet',
   },

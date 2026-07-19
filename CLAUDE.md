@@ -30,7 +30,7 @@ off across it via sessionStorage).
 **Key directories:**
 
 - `src/content.js` — ALL site copy lives here, one export per section.
-  Christopher's voice: plain, warm, Australian English, no em dashes.
+  Chris's voice: plain, warm, Australian English, no em dashes.
 - `src/lib/site.js` — shared constants: `SPRING`/`SPRING_SOFT` (the site-wide
   motion physics), `asset()`, `ENQUIRE_HREF`, `EMAIL`, Formspree config.
 - `src/components/` — one component per file. Homepage section order is set
@@ -199,7 +199,6 @@ When adding shadows to new components:
 - `src/components/EveningTimeline.jsx`
 - `src/components/SelectedWork.jsx`
 - `src/components/Packages.jsx`
-- `src/components/WhatYouKeep.jsx`
 - `src/components/EnquireForm.jsx`
 - `src/components/Footer.jsx`
 

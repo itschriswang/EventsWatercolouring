@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { SPRING, ENQUIRE_HREF } from '../lib/site.js'
 import { NAV } from '../content.js'
@@ -7,7 +7,10 @@ const EASE = [0.25, 1, 0.5, 1]
 
 // Individual nav link with scroll-tracked active underline + hover state.
 function NavLink({ href, label, isActive }) {
-  const [hovered, setHovered] = useState(false)
+  // `lit` covers both pointer hover and keyboard focus so the ink-spread
+  // underline is the same affordance in both modes (the global :focus-visible
+  // outline still shows too — this just brings the underline along for parity).
+  const [lit, setLit] = useState(false)
 
   return (
     <a
@@ -21,11 +24,13 @@ function NavLink({ href, label, isActive }) {
         color: isActive ? 'rgb(var(--rgb-ink))' : 'rgb(var(--rgb-ink-soft))',
         transition: 'color 0.3s cubic-bezier(0.25,1,0.5,1)',
       }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={() => setLit(true)}
+      onMouseLeave={() => setLit(false)}
+      onFocus={() => setLit(true)}
+      onBlur={() => setLit(false)}
     >
       {label}
-      {/* Ink-spread underline: active overrides hover */}
+      {/* Ink-spread underline: active overrides hover/focus */}
       <span
         aria-hidden="true"
         style={{
@@ -34,7 +39,7 @@ function NavLink({ href, label, isActive }) {
           left: 0,
           height: '1px',
           backgroundColor: 'var(--c-terracotta)',
-          width: isActive || hovered ? '100%' : '0%',
+          width: isActive || lit ? '100%' : '0%',
           transition: 'width 0.4s cubic-bezier(0.25,1,0.5,1)',
         }}
       />
@@ -45,6 +50,7 @@ function NavLink({ href, label, isActive }) {
 // `enquireHref` lets pages with their own reply card (e.g. /corporate/)
 // keep the CTA on-page instead of bouncing back to the homepage form.
 export default function SiteHeader({ revealed, className = '', enquireHref = ENQUIRE_HREF }) {
+  const reduce = useReducedMotion()
   const [scrolled, setScrolled] = useState(false)
   const [active, setActive] = useState(null)
 
@@ -96,8 +102,8 @@ export default function SiteHeader({ revealed, className = '', enquireHref = ENQ
 
   return (
     <motion.header
-      initial={{ y: -80, opacity: 0 }}
-      animate={revealed ? { y: 0, opacity: 1 } : { y: -80, opacity: 0 }}
+      initial={{ y: reduce ? 0 : -80, opacity: 0 }}
+      animate={revealed ? { y: 0, opacity: 1 } : { y: reduce ? 0 : -80, opacity: 0 }}
       transition={{ ...SPRING, delay: 0.25 }}
       // hidden on mobile — MobileNav owns small screens
       className={`hidden md:block sticky top-0 z-50 ${className}`}
@@ -156,8 +162,8 @@ export default function SiteHeader({ revealed, className = '', enquireHref = ENQ
         <motion.a
           href={enquireHref}
           className="rounded-full btn-hero-flow text-ink px-5 py-2 font-mono text-[0.64rem] uppercase tracking-[0.18em]"
-          whileHover={{ scale: 1.05, y: -1 }}
-          whileTap={{ scale: 0.96 }}
+          whileHover={reduce ? undefined : { scale: 1.05, y: -1 }}
+          whileTap={reduce ? undefined : { scale: 0.96 }}
           transition={{ duration: 0.28, ease: EASE }}
         >
           <span className="relative z-10">Enquire</span>
