@@ -344,8 +344,8 @@ export default function Packages() {
       </FolderCell>
 
       <motion.p {...reveal()} className="mt-10 max-w-2xl text-sm leading-relaxed text-ink-soft">
-        <b className="text-ink">A note on style.</b>{' '}
-        {PACKAGES.licence.replace('A note on style. ', '')}
+        <b className="text-ink">{PACKAGES.licenceLabel}</b>{' '}
+        {PACKAGES.licenceBody}
       </motion.p>
     </section>
   )

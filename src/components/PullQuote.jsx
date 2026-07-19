@@ -132,12 +132,12 @@ export default function PullQuote() {
           <motion.a
             {...rise(0.3)}
             href={ENQUIRE_HREF}
-            className="group mt-7 inline-flex items-center gap-2 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-rust transition-colors duration-300 hover:text-terracotta"
+            className="group mt-7 inline-flex items-center gap-2 rounded font-mono text-[0.66rem] uppercase tracking-[0.2em] text-rust transition-colors duration-300 hover:text-terracotta focus-visible:text-terracotta"
           >
             {PULLQUOTE.cta}
             <span
               aria-hidden="true"
-              className="transition-transform duration-300 group-hover:translate-x-1"
+              className="transition-transform duration-300 group-hover:translate-x-1 group-focus-visible:translate-x-1"
             >
               →
             </span>

@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { useEffect, useRef } from 'react'
 import { ENQUIRE_HREF } from '../lib/site.js'
 import {
@@ -28,17 +28,19 @@ const EASE = [0.25, 1, 0.5, 1]
 
 function DockButton({ item }) {
   const { href, label, Icon, highlight } = item
+  const reduce = useReducedMotion()
   return (
     <motion.a
       href={href}
       className={[
         'relative flex flex-col items-center justify-center gap-[3px] rounded-full select-none',
         'px-3 py-2.5',
+        'outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-transparent',
         highlight
           ? 'btn-hero-flow text-ink px-3.5'
           : 'text-ink-soft',
       ].join(' ')}
-      whileTap={{ scale: 0.86 }}
+      whileTap={reduce ? undefined : { scale: 0.86 }}
       transition={{ duration: 0.16, ease: EASE }}
       aria-label={label}
     >
