@@ -101,7 +101,14 @@ export default function App() {
         <GlassRibbon />
         <Hero revealed={revealed} />
 
-        <EveningTimeline />
+        {/* The evening timeline is now a folder floating on the page, so the
+            space around it must read as the same painted paper as the sections
+            before and after — the same WatercolourBloom wash the gallery run
+            uses sits behind the folder here too, rather than leaving it on flat
+            paper that looks like a different ground. */}
+        <SectionWash>
+          <EveningTimeline />
+        </SectionWash>
 
         {/* One wash behind the gallery through the painter, so those three
             read as a single continuous painting. Masked to fade in over the

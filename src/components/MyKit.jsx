@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 import { asset } from '../lib/site.js'
 import { KIT } from '../content.js'
 import {
@@ -117,6 +118,7 @@ const windowFor = (i) => {
 
 export default function KitStage({ className = '' }) {
   const reduce = useReducedMotion()
+  const zoomed = usePinchZoomed()
   const heavy = useHeavyFx()
   // The fan + orbit is scroll-linked for everyone but reduced-motion visitors.
   // On phones/low-end, the scroll-linked motion (fan, orbit, drift) still runs,
@@ -222,6 +224,7 @@ export default function KitStage({ className = '' }) {
               : {
                   initial: { opacity: 0 },
                   whileInView: { opacity: 1 },
+                  animate: zoomed ? { opacity: 1 } : undefined,
                   viewport: { once: true, margin: '-60px' },
                   transition: { duration: 0.4 },
                 })}
@@ -258,6 +261,7 @@ export default function KitStage({ className = '' }) {
  *  fanned desk pose, then its revolution around the portrait, plus a small
  *  hover lift so it feels pick-up-able. No label — the motion carries it. */
 function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, driftScale, heavy, reduce }) {
+  const zoomed = usePinchZoomed()
   const [a, b] = windowFor(order)
   const t = useTransform(fan, [a, b], [0, 1])
 
@@ -315,6 +319,7 @@ function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, 
               // with an opacity reveal only.
               initial: { opacity: 0 },
               whileInView: { opacity: 1 },
+              animate: zoomed ? { opacity: 1 } : undefined,
               viewport: { once: true, margin: '-40px' },
               transition: { duration: 0.01 },
               style: { x: fx, y: piece.fy, rotate: piece.r, scale: 1 },

@@ -115,11 +115,40 @@
       #C94868,
       #9ED0BD
     );
+
+    /* The hero headline flow again, but at the lighter stops it actually
+       renders at on screen (Hero.jsx's `emphasisColors` / `emphasisColorStops`
+       on "painted"), not the paper-tuned deepened token above. The hero CTA
+       ("Enquire about your day") wears this on its dark ink button ground, so
+       it needs the brighter swatches for legibility — the same reason
+       `--btn-aurora-gradient` lightens the surface wash for this same ground.
+       Keep these values in sync with Hero.jsx's emphasis flow. */
+    --hero-emphasis-gradient-bright: linear-gradient(
+      to right,
+      #BFDCD1 0%,
+      #D4B6E6 4%,
+      #D8DB7A 48%,
+      #D8DB7A 52%,
+      #F2A6C1 96%,
+      #E88FA4 100%
+    );
   }
 
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
+    /* Clip the horizontal axis on the ROOT, not just body. On iOS Safari the
+       real page scroller is the documentElement, and `overflow-x: hidden` on
+       body alone doesn't clip it — so any *transient* horizontal overflow (a
+       scroll-reveal spring momentarily translating a card past the right edge,
+       a pinch/edge-swipe nudge) latches a horizontal scroll offset here that
+       never snaps back, leaving the page stuck shifted-left with a blank band
+       on the right. `clip` (not `hidden`) hard-clips the overflow WITHOUT
+       creating a scrollport, so there is no horizontal scroll position to get
+       stuck at, and — unlike `hidden` — it never forces the vertical axis to
+       `auto`, so the page scroll and the timeline's sticky title rail are
+       untouched. */
+    overflow-x: clip;
   }
 
   /* Anchor jumps (nav links, /#section arrivals) land with breathing room
@@ -152,7 +181,11 @@
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    overflow-x: hidden;
+    /* Matches the root's `overflow-x: clip` (see `html` above) so the clip
+       holds whichever element a given engine treats as the scroller. `clip`
+       over `hidden`: it doesn't establish a scroll container that could itself
+       hold a stuck offset, nor coerce `overflow-y` to `auto`. */
+    overflow-x: clip;
   }
 
   /* Aurora veil — the reference photograph's light, spread across the whole
@@ -299,6 +332,50 @@
        the 4.5:1 AA minimum rather than just clearing it. ~7.45:1 on paper. */
     color: #4A4E63;
   }
+
+  /* ── Folder cell ──────────────────────────────────────────────────────────
+     Clips a card into a manila-folder silhouette: a flush-left index tab on
+     top, its right shoulder easing into the body with a cute concave fillet,
+     everything else softly rounded. Crucially this is a CLIP, not a repaint —
+     the element keeps its own ground and bloom; we only cut the shape, so the
+     dusk timeline stays dusk and the cream cards stay cream. The tab and body
+     are one continuous surface, so the join reads as folded paper, never a
+     pill stuck on top.
+
+     Geometry is driven by custom props so each cell can tune its tab width
+     (`--fc-tab-w`) while sharing one shape. `--fc-tab-h` is also the top inset
+     the content sits below (applied by the label/​content in JS). */
+  .folder-cell {
+    --fc-tab-h: 2.25rem;
+    --fc-tab-w: 56%;
+    --fc-tab-r: 0.85rem;   /* tab top corners */
+    --fc-fillet: 1rem;     /* concave curve where the tab meets the body */
+    --fc-body-r: 1.25rem;  /* body corners */
+    /* Fallback for engines without shape(): a plain rounded card. The tab
+       label simply reads as a heading; nothing breaks. */
+    border-radius: var(--fc-body-r);
+  }
+
+  @supports (clip-path: shape(from 0 0, close)) {
+    .folder-cell {
+      border-radius: 0;
+      clip-path: shape(
+        from 0 var(--fc-tab-r),
+        arc to var(--fc-tab-r) 0 of var(--fc-tab-r) cw,
+        line to calc(var(--fc-tab-w) - var(--fc-tab-r)) 0,
+        arc to var(--fc-tab-w) var(--fc-tab-r) of var(--fc-tab-r) cw,
+        line to var(--fc-tab-w) calc(var(--fc-tab-h) - var(--fc-fillet)),
+        arc to calc(var(--fc-tab-w) + var(--fc-fillet)) var(--fc-tab-h) of var(--fc-fillet) ccw,
+        line to calc(100% - var(--fc-body-r)) var(--fc-tab-h),
+        arc to 100% calc(var(--fc-tab-h) + var(--fc-body-r)) of var(--fc-body-r) cw,
+        line to 100% calc(100% - var(--fc-body-r)),
+        arc to calc(100% - var(--fc-body-r)) 100% of var(--fc-body-r) cw,
+        line to var(--fc-body-r) 100%,
+        arc to 0 calc(100% - var(--fc-body-r)) of var(--fc-body-r) cw,
+        close
+      );
+    }
+  }
 }
 
 @layer utilities {
@@ -367,6 +444,75 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
+  }
+
+  /* Surface voice for every Enquire CTA (hero button, header pill, mobile dock,
+     planner CTA): the hero headline's own cool → green → warm emphasis sweep
+     (as on "painted") painted straight onto the pill, with the label left in
+     `ink`. This is the inverse of the earlier aurora treatment — there the
+     dark ink ground carried the colour on a clipped-gradient label; here the
+     colour fills the bubble and the wording reads as dark ink on top, so every
+     call to enquire looks like one of the site's watercolour bubbles. Uses
+     `--hero-emphasis-gradient-bright` (the light stops the title actually
+     renders at) so the pastel fill keeps enough headroom under the ink label.
+
+     The glass rim is pure CSS, matching the packages' stat pills (GlassPill):
+     a chromatic-aberration hairline where the glass bends light — a faint
+     cool ring, a warm cream catch on the top-left edge, a periwinkle one
+     bottom-right — over the burgundy lift bloom (approved shadow palette). No
+     SVG turbulence: at pill scale a displaced stroke reads as a scribble, so
+     the "wet" quality comes from the soft top sheen (the `::before` below)
+     and the tinted rim, the way a real glass bead catches light. */
+  .btn-hero-flow {
+    position: relative;
+    background-color: theme('colors.paper');
+    background-image: var(--hero-emphasis-gradient-bright);
+    background-size: 100% 100%;
+    color: theme('colors.ink');
+    box-shadow:
+      0 10px 22px -10px rgba(126, 40, 72, 0.30),
+      0 18px 40px -16px rgba(150, 56, 90, 0.52),
+      0 30px 64px -26px rgba(126, 40, 72, 0.30),
+      inset 0 0 0 1px rgba(216, 218, 236, 0.45),
+      inset 1px 1px 1.5px 0 rgba(255, 252, 242, 0.7),
+      inset -1px -1px 1.5px 0 rgba(201, 196, 232, 0.4);
+    transition:
+      filter 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+      box-shadow 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  /* Specular sheen — the soft catch-light a curved glass/water surface holds
+     along its upper edge, fading out before the middle so the ink label reads
+     against clean colour. `inherit` keeps it clipped to the pill's radius, and
+     it sits below the `z-10` label/icon so it only glazes the fill. */
+  .btn-hero-flow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 252, 242, 0.55) 0%,
+      rgba(255, 252, 242, 0.12) 34%,
+      rgba(255, 252, 242, 0) 60%
+    );
+  }
+
+  /* Hover deepens the wash (a touch more saturation, a hair darker) instead of
+     brightening it toward white — the pastel fill has no headroom above, so
+     `brightness(>1)` would only wash the ink label's contrast away. The bloom
+     reaches a little further, per the CLAUDE.md +15% vibrancy step; the rim
+     insets ride along unchanged. */
+  .btn-hero-flow:hover {
+    filter: saturate(1.12) brightness(0.97);
+    box-shadow:
+      0 12px 26px -10px rgba(126, 40, 72, 0.35),
+      0 20px 46px -16px rgba(150, 56, 90, 0.60),
+      0 34px 72px -26px rgba(126, 40, 72, 0.35),
+      inset 0 0 0 1px rgba(216, 218, 236, 0.5),
+      inset 1px 1px 1.5px 0 rgba(255, 252, 242, 0.78),
+      inset -1px -1px 1.5px 0 rgba(201, 196, 232, 0.45);
   }
 
   /* A short emphasis word painted with the hero headline's own cool-to-warm
@@ -476,18 +622,4 @@
 [data-live-blooms] .wcb-root {
   opacity: 0;
   transition: opacity 0.8s ease;
-}
-
-/* Watercolour bloom-field — soft pigment halos drifting in the margins */
-@keyframes bloom-drift1 {
-  0%   { transform: translate(0, 0) scale(1) rotate(0deg); opacity: .14; }
-  100% { transform: translate(12vmin, -9vmin) scale(1.28) rotate(12deg); opacity: .32; }
-}
-@keyframes bloom-drift2 {
-  0%   { transform: translate(0, 0) scale(1.08) rotate(0deg); opacity: .12; }
-  100% { transform: translate(-11vmin, 12vmin) scale(.85) rotate(-10deg); opacity: .28; }
-}
-@keyframes bloom-drift3 {
-  0%   { transform: translate(0, 3vmin) scale(.92) rotate(0deg); opacity: .16; }
-  100% { transform: translate(10vmin, -8vmin) scale(1.2) rotate(9deg); opacity: .30; }
 }

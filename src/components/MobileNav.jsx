@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useEffect, useRef } from 'react'
 import { ENQUIRE_HREF } from '../lib/site.js'
 import {
   ColorBrush2Icon,
@@ -31,24 +32,24 @@ function DockButton({ item }) {
     <motion.a
       href={href}
       className={[
-        'flex flex-col items-center justify-center gap-[3px] rounded-full select-none',
+        'relative flex flex-col items-center justify-center gap-[3px] rounded-full select-none',
         'px-3 py-2.5',
         highlight
-          ? 'btn-aurora text-paper/70 px-3.5'
+          ? 'btn-hero-flow text-ink px-3.5'
           : 'text-ink-soft',
       ].join(' ')}
       whileTap={{ scale: 0.86 }}
       transition={{ duration: 0.16, ease: EASE }}
       aria-label={label}
     >
-      <Icon />
-      <span
-        className={
-          (highlight ? 'btn-aurora-label ' : '') +
-          'font-mono text-[0.56rem] uppercase tracking-[0.12em] leading-none whitespace-nowrap'
-        }
-      >
-        {label}
+      {/* The highlighted Enquire tab reads as a watercolour bubble: the hero
+          title's emphasis wash filling the pill with an ink icon + label and
+          the soft glass rim (see `.btn-hero-flow`). */}
+      <span className="relative z-10 flex flex-col items-center gap-[3px]">
+        <Icon />
+        <span className="font-mono text-[0.56rem] uppercase tracking-[0.12em] leading-none whitespace-nowrap">
+          {label}
+        </span>
       </span>
     </motion.a>
   )
@@ -59,6 +60,54 @@ function DockButton({ item }) {
 // `enquireHref` mirrors SiteHeader: pages with their own reply card pass a
 // local anchor so the dock's Enquire stays on-page.
 export default function MobileNav({ revealed, enquireHref = ENQUIRE_HREF }) {
+  // Keep the dock riding the *visible* bottom edge while the page is
+  // pinch-zoomed. iOS Safari anchors `position: fixed` to the layout viewport,
+  // not the visual one, so under a pinch-zoom this bar is left stranded over
+  // mid-page content until the zoom resets. The VisualViewport API reports the
+  // zoomed/panned window, so we translate the pill (in layout coordinates,
+  // which iOS then scales along with the page) to sit at the bottom-centre of
+  // what the visitor can actually see, countering the pinch scale so it stays
+  // its normal size. Nothing runs at scale 1 — the transform is cleared, so
+  // the un-zoomed dock is byte-for-byte the plain `bottom-0` bar. Applied to an
+  // inner wrapper so it never fights the outer entrance spring's own transform.
+  const trackRef = useRef(null)
+  useEffect(() => {
+    const vv = window.visualViewport
+    const el = trackRef.current
+    if (!vv || !el) return
+
+    let raf = 0
+    const apply = () => {
+      raf = 0
+      // Only intervene once genuinely zoomed; below this the native fixed
+      // position is already correct and we leave the element untouched.
+      if (vv.scale <= 1.01) {
+        el.style.transform = ''
+        return
+      }
+      const layoutW = window.innerWidth
+      const layoutH = window.innerHeight
+      // Centre of the visible area, and its bottom edge, in layout px.
+      const dx = vv.offsetLeft + vv.width / 2 - layoutW / 2
+      const dy = vv.offsetTop + vv.height - layoutH
+      el.style.transform =
+        `translate(${dx}px, ${dy}px) scale(${(1 / vv.scale).toFixed(4)})`
+      el.style.transformOrigin = 'center bottom'
+    }
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(apply)
+    }
+
+    apply()
+    vv.addEventListener('resize', schedule)
+    vv.addEventListener('scroll', schedule)
+    return () => {
+      if (raf) cancelAnimationFrame(raf)
+      vv.removeEventListener('resize', schedule)
+      vv.removeEventListener('scroll', schedule)
+    }
+  }, [])
+
   return (
     <motion.div
       initial={{ y: 96, opacity: 0 }}
@@ -69,6 +118,7 @@ export default function MobileNav({ revealed, enquireHref = ENQUIRE_HREF }) {
       className="fixed inset-x-0 bottom-0 z-40 flex justify-center md:hidden pointer-events-none"
       style={{ paddingBottom: 'calc(16px + env(safe-area-inset-bottom, 0px))' }}
     >
+     <div ref={trackRef} className="flex justify-center will-change-transform">
       <nav
         className="flex items-center gap-0.5 px-2 py-1.5 pointer-events-auto"
         style={{
@@ -91,6 +141,7 @@ export default function MobileNav({ revealed, enquireHref = ENQUIRE_HREF }) {
           />
         ))}
       </nav>
+     </div>
     </motion.div>
   )
 }

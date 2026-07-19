@@ -35,7 +35,7 @@ export const EVENING = {
     },
     {
       no: '02',
-      title: 'No need to pose',
+      title: 'No need to keep still',
       body: 'Your guests keep enjoying the night. I take a quick photo and note their name as they pass, so nobody has to stop or sit still for me.',
     },
     {
@@ -109,7 +109,7 @@ export const WORK = {
       note: 'This stylised character style is also available as a studio commission, painted from your own photos.',
       items: [
         { img: 'art-character-girl', ttl: 'Little character, in green', meta: 'Studio study', alt: 'Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre' },
-        { img: 'art-character-boy',  ttl: 'At the palette',             meta: 'Studio study', alt: "Small watercolour character portrait with the artist's palette alongside, in warm terracotta and ochre" },
+        { img: 'art-character-boy',  ttl: 'At the palette',             meta: 'Studio study', alt: "Small watercolour character portrait with the artist's palette alongside, in warm rust and ochre" },
         { img: 'art-character-boy2', ttl: 'Warm ochre',                 meta: 'Studio study', alt: 'Small watercolour character portrait of a seated figure in warm ochre tones, holding a jar' },
       ],
     },

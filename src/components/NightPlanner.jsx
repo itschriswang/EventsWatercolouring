@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import CornerBloom from './CornerBloom.jsx'
 import GlassPill from './GlassPill.jsx'
-import GlassCardRim from './GlassCardRim.jsx'
+import FolderCell from './FolderCell.jsx'
 import { SPRING, ENQUIRE_HREF, CARD_BG } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import { withUnderline } from './Underline.jsx'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 
 // Full-arc pigment pairs for the little keepsake thumbnails — cycled so the
 // grid reads as a spread of different paintings across the whole palette
@@ -41,24 +42,33 @@ const HOURS = [3, 4, 5]
  */
 export default function NightPlanner() {
   const reduce = useReducedMotion()
+  const zoomed = usePinchZoomed()
   const p = PACKAGES.planner
   const [hours, setHours] = useState(3)
 
   const pieces = PIECES_PER_HOUR * hours
   const covers = pieces * GUESTS_PER_PIECE
 
+  const reveal = {
+    // Reduced-motion resting state is visible (see CorporatePage rise()).
+    initial: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 36 },
+    whileInView: { opacity: 1, y: 0 },
+    animate: zoomed ? { opacity: 1, y: 0 } : undefined,
+    viewport: { once: true, margin: '-60px' },
+    transition: SPRING,
+  }
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: reduce ? 0 : 36 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={SPRING}
-      className="relative mt-[clamp(2.5rem,6vw,4rem)] overflow-hidden rounded-2xl border border-line shadow-[0_24px_50px_-20px_rgba(126,40,72,0.25)]"
-      style={{ background: CARD_BG }}
+    <FolderCell
+      label="Plan the night"
+      gradient={['#B04A76', '#8C3656']}
+      bg={CARD_BG}
+      reveal={reveal}
+      topGap="1.5rem"
+      wrapperClassName="mt-[clamp(2.5rem,6vw,4rem)]"
+      bloom={<CornerBloom from="rgba(140,54,86,0.09)" to="rgba(176,74,118,0.09)" />}
+      contentClassName="grid grid-cols-1 gap-8 px-7 pb-7 sm:px-8 sm:pb-8 lg:grid-cols-2 lg:gap-12"
     >
-      <CornerBloom from="rgba(140,54,86,0.09)" to="rgba(176,74,118,0.09)" />
-      <GlassCardRim />
-      <div className="relative z-10 grid grid-cols-1 gap-8 p-7 sm:p-8 lg:grid-cols-2 lg:gap-12">
         {/* Controls */}
         <div>
           <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">{p.title}</h3>
@@ -177,15 +187,14 @@ export default function NightPlanner() {
             onClick={() =>
               window.dispatchEvent(new CustomEvent('ew:planner-enquire', { detail: { hours } }))
             }
-            className="group btn-aurora mt-6 inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-paper/70"
+            className="group btn-hero-flow mt-6 inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-ink"
           >
-            <span className="btn-aurora-label">{p.cta}</span>
-            <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
+            <span className="relative z-10">{p.cta}</span>
+            <span aria-hidden="true" className="relative z-10 transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>
           </a>
         </div>
-      </div>
-    </motion.div>
+    </FolderCell>
   )
 }

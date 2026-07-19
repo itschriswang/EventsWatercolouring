@@ -55,7 +55,7 @@ const hideOnError = (e) => {
 // motion value via useTransform, so the rAF driver moves cards without
 // triggering a React re-render per frame — only the settle (a real
 // navigation) ever re-renders.
-function Card({ item, cardIndex, pos, count, R, sizing, radius, onSelect, dressed, filterId }) {
+function Card({ item, cardIndex, pos, count, R, sizing, radius, onSelect, dressed, filterId, active }) {
   const imgRef = useRef(null)
   const [aspect, setAspect] = useState(null)
   const readAspect = (el) => {
@@ -166,7 +166,12 @@ function Card({ item, cardIndex, pos, count, R, sizing, radius, onSelect, dresse
         <motion.img
           ref={imgRef}
           src={asset(`assets/${item.img}.jpg`)}
-          alt={item.alt || item.ttl}
+          // Only the centred piece carries a meaningful alt; the off-centre
+          // slats are navigational peeks, so they go decorative (alt="") — a
+          // screen reader in the open dialog otherwise hears the whole wall of
+          // images at once. The focused piece is also named by the dialog's
+          // aria-label and the figcaption, so nothing is lost.
+          alt={active ? item.alt || item.ttl : ''}
           draggable={false}
           onError={hideOnError}
           onLoad={(e) => readAspect(e.currentTarget)}
@@ -308,6 +313,7 @@ export default function CoverflowCarousel({ items, index, onSelect, sizing, radi
             onSelect={onSelect}
             dressed={dressed}
             filterId={filterId}
+            active={i === index}
           />
         ))}
       </div>

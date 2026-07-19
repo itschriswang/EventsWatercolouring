@@ -12,6 +12,7 @@ import {
   asset,
 } from '../lib/site.js'
 import { ENQUIRY } from '../content.js'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 
 // Pull a first name out of the full name field for the thank-you greeting:
 // the first whitespace-delimited token, with its first letter capitalised so
@@ -104,6 +105,7 @@ const chipClass = (on) =>
  */
 export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding date' }) {
   const reduce = useReducedMotion()
+  const zoomed = usePinchZoomed()
   const uid = useId().replace(/:/g, '')
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
@@ -287,6 +289,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
             <motion.div
               initial={reduce ? false : { opacity: 0, y: 26 }}
               whileInView={{ opacity: 1, y: 0 }}
+              animate={zoomed ? { opacity: 1, y: 0 } : undefined}
               viewport={{ once: true, margin: '-80px' }}
               transition={SPRING}
               className="relative"
@@ -367,6 +370,15 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                         Leave this empty
                         <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" />
                       </label>
+
+                      {/* Screen-reader step announcer. The sheets swap visually
+                          and focus moves to the fresh sheet, but a polite live
+                          region guarantees the step change — and the question it
+                          now asks — is spoken. Visually hidden; the sighted cue
+                          is the "N of 3" counter in the card header. */}
+                      <p className="sr-only" aria-live="polite">
+                        {`Step ${step + 1} of ${STEP_COUNT}: ${[S.what.q, S.when.q, S.who.q][step]}`}
+                      </p>
 
                       <AnimatePresence mode="wait" initial={false} custom={dir}>
                         <motion.div
@@ -549,7 +561,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                                     value={f.message}
                                     onChange={set('message')}
                                     placeholder="Tell me a little about the day, and the people who matter most."
-                                    className="resize-none border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft/60 focus:border-terracotta"
+                                    className="resize-none border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft focus:border-terracotta"
                                   />
                                 </div>
                               </div>
@@ -712,7 +724,7 @@ function Field({ name, label, type = 'text', required, invalid = false, ...rest 
         required={required}
         aria-invalid={invalid || undefined}
         aria-describedby={invalid ? 'enquire-error' : undefined}
-        className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft/60 focus:border-terracotta"
+        className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft focus:border-terracotta"
         {...rest}
       />
     </div>

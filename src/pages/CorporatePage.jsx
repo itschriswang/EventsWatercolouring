@@ -19,6 +19,7 @@ import Footer from '../components/Footer.jsx'
 import { SPRING, asset } from '../lib/site.js'
 import { withUnderline } from '../components/Underline.jsx'
 import { CORPORATE } from '../content.js'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 import KitStage from '../components/MyKit.jsx'
 
 // The card ground shared with the homepage's package cards, so the two pages
@@ -36,9 +37,16 @@ const CARD_BG = { background: 'linear-gradient(150deg, rgba(247,195,148,0.18) 0%
 export default function CorporatePage() {
   const reduce = useReducedMotion()
 
+  const zoomed = usePinchZoomed()
   const rise = (i = 0) => ({
-    initial: { opacity: 0, y: reduce ? 0 : 28 },
+    // Reduced-motion starts visible (opacity 1), so the section is never gated
+    // behind a scroll reveal that a reduced-motion user has no animation for —
+    // content can't strand invisible if the IntersectionObserver misfires.
+    initial: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 28 },
     whileInView: { opacity: 1, y: 0 },
+    // Post-pinch, IO-driven reveals can strand invisible (see usePinchZoom);
+    // `animate` bypasses the observer so the content always arrives.
+    animate: zoomed ? { opacity: 1, y: 0 } : undefined,
     viewport: { once: true, margin: '-60px' },
     transition: { ...SPRING, delay: reduce ? 0 : i * 0.06 },
   })
@@ -94,7 +102,7 @@ export default function CorporatePage() {
                 <div className="mt-8 flex flex-wrap items-center gap-5">
                   <MagneticButton href="#enquiry">{CORPORATE.cta}</MagneticButton>
                 </div>
-                <p className="mt-4 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft/85">
+                <p className="mt-4 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
                   {CORPORATE.note}
                 </p>
               </motion.div>
@@ -114,7 +122,7 @@ export default function CorporatePage() {
                   <source srcSet={asset('assets/art-character-girl.webp')} type="image/webp" />
                   <img
                     src={asset('assets/art-character-girl.jpg')}
-                    alt="A small watercolour character study in olive green and ochre."
+                    alt="A small hand-painted watercolour portrait study on cotton paper, the kind of keepsake each guest takes home."
                     loading="eager"
                     fetchpriority="high"
                     decoding="async"

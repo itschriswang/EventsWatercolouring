@@ -8,8 +8,10 @@ import CornerBloom from './CornerBloom.jsx'
 import Sparkles from './Sparkles.jsx'
 import GlassPill from './GlassPill.jsx'
 import GlassCardRim from './GlassCardRim.jsx'
+import FolderCell from './FolderCell.jsx'
 import NightPlanner from './NightPlanner.jsx'
 import { withUnderline } from './Underline.jsx'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 
 // The add-on accordion opens on a quick ease-out tween rather than the shared
 // SPRING — a spring that feels right for entrances reads as sluggish on a
@@ -18,6 +20,7 @@ const ACCORDION = { duration: 0.22, ease: [0.25, 1, 0.5, 1] }
 
 export default function Packages() {
   const reduce = useReducedMotion()
+  const zoomed = usePinchZoomed()
   const [openAddons, setOpenAddons] = useState(() => new Set())
   const toggleAddon = (i) =>
     setOpenAddons((prev) => {
@@ -26,8 +29,12 @@ export default function Packages() {
       return next
     })
   const reveal = (i = 0) => ({
-    initial: { opacity: 0, y: reduce ? 0 : 36 },
+    // Reduced-motion resting state is visible (see CorporatePage rise()).
+    initial: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 36 },
     whileInView: { opacity: 1, y: 0 },
+    // Post-pinch, IO-driven reveals can strand invisible (see usePinchZoom);
+    // `animate` bypasses the observer so the content always arrives.
+    animate: zoomed ? { opacity: 1, y: 0 } : undefined,
     viewport: { once: true, margin: '-60px' },
     transition: { ...SPRING, delay: reduce ? 0 : i * 0.06 },
   })
@@ -197,60 +204,63 @@ export default function Packages() {
 
       {/* ── Desktop: base package left, add-ons right ────────────────────── */}
       <div className="mt-[clamp(2.5rem,6vw,4rem)] hidden grid-cols-12 gap-8 lg:grid">
-        {/* Base package card */}
-        <motion.article
-          {...reveal()}
-          className="relative col-span-5 flex flex-col overflow-hidden rounded-2xl border border-line p-7 shadow-[0_24px_50px_-20px_rgba(126,40,72,0.25)]"
-          style={{ background: CARD_BG }}
+        {/* Base package card — filed as a folder, tab flush-left */}
+        <FolderCell
+          as="article"
+          label="The package"
+          gradient={['#B04A76', '#8C3656']}
+          bg={CARD_BG}
+          reveal={reveal()}
+          topGap="1.5rem"
+          wrapperClassName="col-span-5"
+          bloom={<CornerBloom from="rgba(176,74,118,0.12)" to="rgba(140,54,86,0.08)" />}
+          contentClassName="flex h-full flex-col px-7 pb-7"
         >
-          <CornerBloom from="rgba(176,74,118,0.12)" to="rgba(140,54,86,0.08)" />
-          <GlassCardRim />
-          <div className="relative z-10 flex flex-1 flex-col">
-            <div className="flex items-baseline justify-between gap-4">
-              <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
-                {PACKAGES.base.title}
-              </h3>
-              <p className="shrink-0 text-right">
-                <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
-                  {PACKAGES.base.priceSmall}{' '}
-                </span>
-                <span className="font-mono text-3xl leading-none text-ink">
-                  {PACKAGES.base.price}
-                </span>
-              </p>
-            </div>
-            <p className="mt-2 text-sm text-ink-soft">{PACKAGES.base.note}</p>
-            <div className="mt-5 flex flex-wrap gap-2">
-              {PACKAGES.base.facts.map((f) => (
-                <GlassPill key={f} className="px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.15em] text-sage-deep">
-                  {f}
-                </GlassPill>
-              ))}
-            </div>
-            <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
-              {PACKAGES.base.bullets.map((b) => (
-                <li key={b} className="flex gap-3">
-                  <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#D8DB7A', '#9BA03E']} />
-                  {b}
-                </li>
-              ))}
-            </ul>
+          <div className="flex items-baseline justify-between gap-4">
+            <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
+              {PACKAGES.base.title}
+            </h3>
+            <p className="shrink-0 text-right">
+              <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
+                {PACKAGES.base.priceSmall}{' '}
+              </span>
+              <span className="font-mono text-3xl leading-none text-ink">
+                {PACKAGES.base.price}
+              </span>
+            </p>
           </div>
-        </motion.article>
+          <p className="mt-2 text-sm text-ink-soft">{PACKAGES.base.note}</p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {PACKAGES.base.facts.map((f) => (
+              <GlassPill key={f} className="px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.15em] text-sage-deep">
+                {f}
+              </GlassPill>
+            ))}
+          </div>
+          <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
+            {PACKAGES.base.bullets.map((b) => (
+              <li key={b} className="flex gap-3">
+                <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#D8DB7A', '#9BA03E']} />
+                {b}
+              </li>
+            ))}
+          </ul>
+        </FolderCell>
 
-        {/* Add-ons — right column, replacing "Included as standard" */}
-        <motion.div
-          {...reveal(1)}
-          className="relative col-span-7 overflow-hidden rounded-2xl border border-line shadow-[0_24px_50px_-20px_rgba(126,40,72,0.25)]"
-          style={{ background: CARD_BG }}
+        {/* Add-ons — right column. The folder tab carries the "Add-ons" name
+            (as the card's heading), so the row below only needs the pricing note. */}
+        <FolderCell
+          label={PACKAGES.addonsHead.title}
+          labelAs="h3"
+          gradient={['#8A9143', '#5F662B']}
+          bg={CARD_BG}
+          reveal={reveal(1)}
+          topGap="1.5rem"
+          wrapperClassName="col-span-7"
+          bloom={<CornerBloom from="rgba(176,172,66,0.10)" to="rgba(138,145,67,0.08)" />}
+          contentClassName="flex h-full flex-col"
         >
-          <CornerBloom from="rgba(176,172,66,0.10)" to="rgba(138,145,67,0.08)" />
-          <GlassCardRim />
-          <div className="relative z-10 flex h-full flex-col">
-            <div className="flex items-baseline justify-between border-b border-line/50 px-8 pb-5 pt-8">
-              <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
-                {PACKAGES.addonsHead.title}
-              </h3>
+            <div className="flex items-baseline justify-end border-b border-line/50 px-8 pb-5">
               <span className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
                 {PACKAGES.addonsHead.note}
               </span>
@@ -285,8 +295,7 @@ export default function Packages() {
                 </motion.div>
               ))}
             </div>
-          </div>
-        </motion.div>
+        </FolderCell>
       </div>
 
       <NightPlanner />
@@ -296,16 +305,18 @@ export default function Packages() {
           footnote. Same paper-card treatment as the package cards above so
           it sits in their family, with a readable sentient headline in
           place of the eyebrow-sized mono text. */}
-      <motion.a
+      <FolderCell
+        as="a"
         href="/faq/"
-        {...reveal()}
-        whileHover={reduce ? {} : { y: -3 }}
-        transition={SPRING}
-        className="group relative mt-12 flex w-full items-center justify-between gap-4 overflow-hidden rounded-2xl border border-terracotta/30 p-6 shadow-[0_24px_50px_-20px_rgba(126,40,72,0.32)] transition-colors duration-300 hover:border-terracotta/60 sm:p-7"
-        style={{ background: CARD_BG }}
+        label="FAQ"
+        gradient={['#D8DB7A', '#9BA03E']}
+        bg={CARD_BG}
+        reveal={reveal()}
+        hover={!reduce}
+        wrapperClassName="group mt-12 w-full"
+        bloom={<CornerBloom from="rgba(176,172,66,0.10)" to="rgba(232,155,99,0.09)" />}
+        contentClassName="flex items-center justify-between gap-4 px-6 pb-6 sm:px-7 sm:pb-7"
       >
-        <CornerBloom from="rgba(176,172,66,0.10)" to="rgba(232,155,99,0.09)" />
-        <GlassCardRim tint={['#F0E4A8', '#F2C378']} rim={['rgba(240,228,158,0.5)', 'rgba(242,195,120,0.4)']} />
         <span className="relative z-10 flex items-center gap-4 sm:gap-5">
           <span
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-paper shadow-[0_2px_10px_rgba(126,40,72,0.30)]"
@@ -330,7 +341,7 @@ export default function Packages() {
         >
           →
         </span>
-      </motion.a>
+      </FolderCell>
 
       <motion.p {...reveal()} className="mt-10 max-w-2xl text-sm leading-relaxed text-ink-soft">
         <b className="text-ink">A note on style.</b>{' '}
