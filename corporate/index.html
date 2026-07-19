@@ -7,6 +7,11 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- The hero study is the above-the-fold LCP candidate but is only
+         discovered once React renders; preload it so it arrives with the
+         document (mirrors the homepage hero preloads). -->
+    <link rel="preload" as="image" href="/assets/art-character-girl.webp" type="image/webp" fetchpriority="high" />
+
     <!-- Primary SEO -->
     <title>Live Event Painting for Corporate Events and Brand Activations | Chris Wang</title>
     <meta
