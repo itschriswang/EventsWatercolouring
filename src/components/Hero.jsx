@@ -178,6 +178,14 @@ export default function Hero({ revealed }) {
                 emphasisColors={['#BFDCD1', '#D4B6E6', '#D8DB7A', '#D8DB7A', '#F2A6C1', '#E88FA4']}
                 emphasisColorStops={[0, 0.04, 0.48, 0.52, 0.96, 1]}
                 emphasisShadow="0.032em 0.01em 0.05em rgba(255,138,64,0.8), -0.032em -0.006em 0.05em rgba(96,205,240,0.8), 0 0.05em 0.1em rgba(126,40,72,0.28)"
+                // The pastel swatches are light, and here they sit on the
+                // brightest, actively-blooming part of the page — so on top of
+                // the chromatic-aberration fringe give the word the dark tinted
+                // drop the design always intended (a filter drop-shadow, which
+                // — unlike text-shadow — renders on the gradient-clipped fill).
+                // Burgundy from the approved shadow palette; em units so the
+                // lift scales with the fluid clamp.
+                emphasisLift="drop-shadow(0 0.035em 0.1em rgba(126,40,72,0.4)) drop-shadow(0 0.01em 0.02em rgba(126,40,72,0.55))"
                 className="display-xl text-ink [line-height:0.80] [font-size:clamp(2.75rem,13vw,4.5rem)] lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)] [text-shadow:none]"
               />
             )}
@@ -195,9 +203,9 @@ export default function Hero({ revealed }) {
               </p>
             </div>
             <div className="mt-7 flex flex-wrap items-center gap-5 sm:mt-8">
-              <MagneticButton href={ENQUIRE_HREF}>Enquire about your day</MagneticButton>
+              <MagneticButton href={ENQUIRE_HREF} flow>Enquire about your day</MagneticButton>
             </div>
-            <p className="mt-4 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft/85">
+            <p className="mt-4 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
               {HERO.note}
             </p>
           </motion.div>

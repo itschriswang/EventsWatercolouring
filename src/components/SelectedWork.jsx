@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion'
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
 import useFocusTrap from '../hooks/useFocusTrap.js'
 import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 import { SPRING, SPRING_SOFT, asset } from '../lib/site.js'
 import { WORK } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
@@ -173,6 +174,20 @@ export default function SelectedWork() {
  */
 function Tile({ item, className = '', masonry = false, onOpen }) {
   const reduce = useReducedMotion()
+  const zoomed = usePinchZoomed()
+
+  // Latch the reveal once, in React state, rather than steering it live off
+  // `whileInView`. Opening/closing the lightbox restores focus to the tapped
+  // tile (a `.focus()` that scrolls) and toggles `body { overflow }` (a reflow
+  // when the scrollbar comes and goes) — both re-fire the reveal's
+  // IntersectionObserver, which used to make already-shown tiles flicker back
+  // to their initial opacity:0 and "glitch away". `useInView({ once })` keeps
+  // `shown` true across those re-renders, so a revealed tile can never revert.
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-40px' })
+  // `|| reduce`: reduced-motion users get the resting (shown) state without
+  // depending on the scroll-triggered reveal firing.
+  const shown = inView || zoomed || reduce
 
   const aspect = masonry
     ? item.landscape ? 'aspect-[4/3]' : 'aspect-[3/4]'
@@ -181,9 +196,9 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
 
   return (
     <motion.figure
+      ref={ref}
       initial={{ opacity: 0, y: reduce ? 0 : 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
+      animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: reduce ? 0 : 24 }}
       transition={{ ...SPRING, delay: reduce ? 0 : (item._idx % 4) * 0.05 }}
       className={
         'group flex flex-col ' +
@@ -290,7 +305,15 @@ function Testimonial({ item, masonry = false }) {
  */
 function RevealTile({ reveal, className = '' }) {
   const reduce = useReducedMotion()
+  const zoomed = usePinchZoomed()
   const ref = useRef(null)
+  // Same latched reveal as Tile (see there) — the seam `ref` measures the
+  // strip's geometry, so give the entrance its own ref to observe.
+  const figureRef = useRef(null)
+  const inView = useInView(figureRef, { once: true, margin: '-40px' })
+  // `|| reduce`: reduced-motion users get the resting (shown) state without
+  // depending on the scroll-triggered reveal firing.
+  const shown = inView || zoomed || reduce
   const [pct, setPct] = useState(55)
   const [touched, setTouched] = useState(false)
   const dragging = useRef(false)
@@ -328,9 +351,9 @@ function RevealTile({ reveal, className = '' }) {
 
   return (
     <motion.figure
+      ref={figureRef}
       initial={{ opacity: 0, y: reduce ? 0 : 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
+      animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: reduce ? 0 : 24 }}
       transition={SPRING}
       className={'group flex flex-col ' + className}
     >
@@ -390,7 +413,7 @@ function RevealTile({ reveal, className = '' }) {
           aria-valuemax={100}
           aria-valuenow={Math.round(pct)}
           onKeyDown={onKeyDown}
-          className="btn-aurora absolute top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full font-mono text-[0.6rem] text-paper outline-none focus-visible:ring-2 focus-visible:ring-paper"
+          className="btn-aurora absolute top-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full font-mono text-[0.6rem] text-paper outline-none focus-visible:ring-2 focus-visible:ring-paper"
           style={{ left: `${pct}%` }}
         >
           <svg
@@ -586,7 +609,7 @@ function Lightbox({ items, index, onClose, onNavigate, onSelect }) {
                   </span>
                 )}
                 {many && (
-                  <span className="text-paper/40">
+                  <span className="text-paper/55">
                     {'  ·  '}
                     {String(index + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}
                   </span>

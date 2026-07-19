@@ -167,9 +167,15 @@ export default function BloomCanvas({ revealed }) {
     // Reused scratch buffer for the band uniform array.
     const bandData = new Float32Array(MAX_BANDS * 4)
 
+    // The [data-wash] sections are rendered once by SectionWash and never
+    // added or removed for the page's lifetime, so match them a single time
+    // rather than re-running querySelectorAll every frame (~30/s) — only their
+    // positions change, which we still read per-frame via getBoundingClientRect.
+    const washEls = document.querySelectorAll('[data-wash]')
+
     const readBands = () => {
       const vh = window.innerHeight || 1
-      const els = document.querySelectorAll('[data-wash]')
+      const els = washEls
       let n = 0
       for (let i = 0; i < els.length && n < MAX_BANDS; i++) {
         const r = els[i].getBoundingClientRect()
