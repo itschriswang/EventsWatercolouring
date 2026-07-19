@@ -185,7 +185,9 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
   // `shown` true across those re-renders, so a revealed tile can never revert.
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-40px' })
-  const shown = inView || zoomed
+  // `|| reduce`: reduced-motion users get the resting (shown) state without
+  // depending on the scroll-triggered reveal firing.
+  const shown = inView || zoomed || reduce
 
   const aspect = masonry
     ? item.landscape ? 'aspect-[4/3]' : 'aspect-[3/4]'
@@ -309,7 +311,9 @@ function RevealTile({ reveal, className = '' }) {
   // strip's geometry, so give the entrance its own ref to observe.
   const figureRef = useRef(null)
   const inView = useInView(figureRef, { once: true, margin: '-40px' })
-  const shown = inView || zoomed
+  // `|| reduce`: reduced-motion users get the resting (shown) state without
+  // depending on the scroll-triggered reveal firing.
+  const shown = inView || zoomed || reduce
   const [pct, setPct] = useState(55)
   const [touched, setTouched] = useState(false)
   const dragging = useRef(false)
@@ -409,7 +413,7 @@ function RevealTile({ reveal, className = '' }) {
           aria-valuemax={100}
           aria-valuenow={Math.round(pct)}
           onKeyDown={onKeyDown}
-          className="btn-aurora absolute top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full font-mono text-[0.6rem] text-paper outline-none focus-visible:ring-2 focus-visible:ring-paper"
+          className="btn-aurora absolute top-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full font-mono text-[0.6rem] text-paper outline-none focus-visible:ring-2 focus-visible:ring-paper"
           style={{ left: `${pct}%` }}
         >
           <svg
@@ -605,7 +609,7 @@ function Lightbox({ items, index, onClose, onNavigate, onSelect }) {
                   </span>
                 )}
                 {many && (
-                  <span className="text-paper/40">
+                  <span className="text-paper/55">
                     {'  ·  '}
                     {String(index + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}
                   </span>

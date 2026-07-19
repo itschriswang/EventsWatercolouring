@@ -371,6 +371,15 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                         <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" />
                       </label>
 
+                      {/* Screen-reader step announcer. The sheets swap visually
+                          and focus moves to the fresh sheet, but a polite live
+                          region guarantees the step change — and the question it
+                          now asks — is spoken. Visually hidden; the sighted cue
+                          is the "N of 3" counter in the card header. */}
+                      <p className="sr-only" aria-live="polite">
+                        {`Step ${step + 1} of ${STEP_COUNT}: ${[S.what.q, S.when.q, S.who.q][step]}`}
+                      </p>
+
                       <AnimatePresence mode="wait" initial={false} custom={dir}>
                         <motion.div
                           key={step}
@@ -552,7 +561,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                                     value={f.message}
                                     onChange={set('message')}
                                     placeholder="Tell me a little about the day, and the people who matter most."
-                                    className="resize-none border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft/60 focus:border-terracotta"
+                                    className="resize-none border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft focus:border-terracotta"
                                   />
                                 </div>
                               </div>
@@ -715,7 +724,7 @@ function Field({ name, label, type = 'text', required, invalid = false, ...rest 
         required={required}
         aria-invalid={invalid || undefined}
         aria-describedby={invalid ? 'enquire-error' : undefined}
-        className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft/60 focus:border-terracotta"
+        className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors placeholder:text-ink-soft focus:border-terracotta"
         {...rest}
       />
     </div>

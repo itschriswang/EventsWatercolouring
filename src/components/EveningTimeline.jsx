@@ -140,7 +140,7 @@ export default function EveningTimeline() {
               return (
                 <motion.li
                   key={beat.no}
-                  initial={{ opacity: 0, y: lite ? 0 : 32 }}
+                  initial={{ opacity: reduce ? 1 : 0, y: lite ? 0 : 32 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   animate={zoomed ? { opacity: 1, y: 0 } : undefined}
                   viewport={{ once: true, margin: '-80px' }}

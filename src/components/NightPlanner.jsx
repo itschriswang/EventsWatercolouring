@@ -50,7 +50,8 @@ export default function NightPlanner() {
   const covers = pieces * GUESTS_PER_PIECE
 
   const reveal = {
-    initial: { opacity: 0, y: reduce ? 0 : 36 },
+    // Reduced-motion resting state is visible (see CorporatePage rise()).
+    initial: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 36 },
     whileInView: { opacity: 1, y: 0 },
     animate: zoomed ? { opacity: 1, y: 0 } : undefined,
     viewport: { once: true, margin: '-60px' },

@@ -29,7 +29,8 @@ export default function Packages() {
       return next
     })
   const reveal = (i = 0) => ({
-    initial: { opacity: 0, y: reduce ? 0 : 36 },
+    // Reduced-motion resting state is visible (see CorporatePage rise()).
+    initial: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 36 },
     whileInView: { opacity: 1, y: 0 },
     // Post-pinch, IO-driven reveals can strand invisible (see usePinchZoom);
     // `animate` bypasses the observer so the content always arrives.
