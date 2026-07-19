@@ -177,15 +177,18 @@ export default function Hero({ revealed }) {
                 // offsets so the fringe scales with the clamp()ed type.
                 emphasisColors={['#BFDCD1', '#D4B6E6', '#D8DB7A', '#D8DB7A', '#F2A6C1', '#E88FA4']}
                 emphasisColorStops={[0, 0.04, 0.48, 0.52, 0.96, 1]}
-                emphasisShadow="0.032em 0.01em 0.05em rgba(255,138,64,0.8), -0.032em -0.006em 0.05em rgba(96,205,240,0.8), 0 0.05em 0.1em rgba(126,40,72,0.28)"
+                // Chromatic-aberration fringe, softened to a whisper now the
+                // word sits on the dark brush: the light splitting at the letter
+                // edges reads as glassy refraction, not a glitch, at this alpha.
+                emphasisShadow="0.018em 0.006em 0.035em rgba(255,138,64,0.34), -0.018em -0.004em 0.035em rgba(96,205,240,0.34)"
                 // The pastel swatches are light, and here they sit on the
-                // brightest, actively-blooming part of the page — so on top of
-                // the chromatic-aberration fringe give the word the dark tinted
-                // drop the design always intended (a filter drop-shadow, which
-                // — unlike text-shadow — renders on the gradient-clipped fill).
-                // Burgundy from the approved shadow palette; em units so the
-                // lift scales with the fluid clamp.
-                emphasisLift="drop-shadow(0 0.035em 0.1em rgba(126,40,72,0.4)) drop-shadow(0 0.01em 0.02em rgba(126,40,72,0.55))"
+                // brightest, actively-blooming part of the page. Rather than a
+                // faint drop-shadow, lay a dark, hand-painted brush stroke
+                // behind the word — a painter's swash of wine pigment — so the
+                // pastel letters read against dark with real contrast. Wine and
+                // claret from the approved deep-anchor palette (never grey,
+                // never purple); see EmphasisBrush in SplitText.
+                emphasisStroke={['#4C1E34', '#2A1420', '#5C2440']}
                 className="display-xl text-ink [line-height:0.80] [font-size:clamp(2.75rem,13vw,4.5rem)] lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)] [text-shadow:none]"
               />
             )}

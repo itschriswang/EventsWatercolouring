@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
+import { useEffect, useId, useLayoutEffect, useMemo, useRef } from 'react'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
 import Underline from './Underline.jsx'
@@ -185,6 +185,58 @@ function InkGlyph({ ch, idx, wrapRefs }) {
   )
 }
 
+// A dark, hand-painted watercolour brush stroke laid BEHIND an emphasis word
+// (see SplitText's `emphasisStroke`). A rough lozenge whose edges are broken up
+// by a turbulence + displacement filter, so it reads as a loaded brush dragged
+// once across the page, not a solid highlight box. Filled with a wine/claret
+// gradient from the approved deep-anchor palette (never grey, never purple),
+// dark enough that the light pastel letters painted on top read with real
+// contrast against the bright, blooming ground. Sits at zIndex -1 inside the
+// (relative, isolated) emphasis span, so it paints behind the glyphs but never
+// escapes to the page. `preserveAspectRatio="none"` lets the one shape stretch
+// to any word width; `id` keeps the filter/gradient refs unique per instance.
+function EmphasisBrush({ id, colors, inset }) {
+  const [c0, c1, c2] =
+    Array.isArray(colors) && colors.length >= 3 ? colors : ['#4A1E33', '#2A1520', '#5B2340']
+  const gid = `eb-grad-${id}`
+  const fid = `eb-rough-${id}`
+  return (
+    <span
+      aria-hidden="true"
+      className="pointer-events-none"
+      style={{ position: 'absolute', inset, zIndex: -1 }}
+    >
+      <svg
+        viewBox="0 0 340 132"
+        preserveAspectRatio="none"
+        width="100%"
+        height="100%"
+        style={{ display: 'block', overflow: 'visible' }}
+      >
+        <defs>
+          <linearGradient id={gid} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor={c0} />
+            <stop offset="52%" stopColor={c1} />
+            <stop offset="100%" stopColor={c2} />
+          </linearGradient>
+          <filter id={fid} x="-10%" y="-24%" width="120%" height="148%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.016 0.032" numOctaves="2" seed="6" result="n" />
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+        {/* A loaded-brush swash: a fat rounded bar (so it backs the whole word
+            height across its full width) with softly rounded, tapering ends —
+            the turbulence filter then breaks the edges into brush texture. */}
+        <path
+          d="M26,26 C120,17 220,17 314,26 C334,33 334,99 314,106 C220,115 120,115 26,106 C6,99 6,33 26,26 Z"
+          fill={`url(#${gid})`}
+          filter={`url(#${fid})`}
+        />
+      </svg>
+    </span>
+  )
+}
+
 export default function SplitText({
   lines = [],
   emphasis = null,
@@ -192,12 +244,13 @@ export default function SplitText({
   emphasisColors = null,
   emphasisColorStops = null,
   emphasisShadow = null,
-  // A CSS `filter` (e.g. a drop-shadow) applied to the emphasis group. Unlike
-  // `text-shadow`, a `filter: drop-shadow()` DOES render on gradient-clipped
-  // text (it works on the painted background-clip pixels, not the transparent
-  // text fill), so this is how a light pastel emphasis word gets the dark
-  // tinted drop that lets it lift off a bright ground.
-  emphasisLift = null,
+  // A dark, hand-painted watercolour brush stroke laid BEHIND the emphasis
+  // group — an array of three hex stops for its wine/claret gradient (see
+  // EmphasisBrush above). The light pastel emphasis word then reads against
+  // dark pigment instead of the bright, actively-blooming page ground, which
+  // carries far more contrast than a drop-shadow can. Only rendered when
+  // emphasisColors is set.
+  emphasisStroke = null,
   underline = null,
   knockout = null,
   unit = 'char',
@@ -218,6 +271,9 @@ export default function SplitText({
   // opening, would silently reset it) instead of leaving it played.
   const MotionTag = useMemo(() => motion(Tag), [Tag])
   const rootRef = useRef(null)
+  // Stable, unique prefix for each emphasis brush's SVG filter/gradient ids so
+  // multiple headings on a page never collide on the same url(#id).
+  const brushUid = useId().replace(/:/g, '')
 
   // Real gradient-clip flow (see `applyEmphasisFlow`) needs post-layout glyph
   // measurements the render pass can't produce, so it runs as a DOM
@@ -469,7 +525,10 @@ export default function SplitText({
                     const spanStyle = emphasisColors
                       ? {
                           textShadow: emphasisShadow || 'none',
-                          ...(emphasisLift ? { filter: emphasisLift } : {}),
+                          // A relative, isolated box so the brush stroke can sit
+                          // at zIndex -1 behind the glyphs without escaping to
+                          // the page behind the whole heading.
+                          ...(emphasisStroke ? { position: 'relative', zIndex: 0 } : {}),
                         }
                       : getGradientStyle(wordIndexInHeading)
                     wordIndexInHeading += group.words.length
@@ -503,7 +562,11 @@ export default function SplitText({
                             WebkitTextFillColor: 'transparent',
                             color: 'transparent',
                             textShadow: emphasisShadow || 'none',
-                            ...(emphasisLift ? { filter: emphasisLift } : {}),
+                            // A relative, isolated box so the brush can sit
+                            // behind the clipped text (zIndex -1). A background
+                            // on the child does not affect this element's own
+                            // background-clip: text of `{text}`.
+                            ...(emphasisStroke ? { position: 'relative', zIndex: 0 } : {}),
                             // Vertical/horizontal bleed so ascenders and
                             // descenders that overflow the tight display
                             // line-box still have gradient painted behind them
@@ -513,6 +576,13 @@ export default function SplitText({
                             ...EMPH_GLYPH_BLEED,
                           }}
                         >
+                          {emphasisStroke ? (
+                            <EmphasisBrush
+                              id={`${brushUid}-${li}-${gi}`}
+                              colors={emphasisStroke}
+                              inset="0.12em 0.1em 0.04em 0.12em"
+                            />
+                          ) : null}
                           {text}
                         </span>,
                         gi < groupedWords.length - 1 ? (
@@ -548,6 +618,14 @@ export default function SplitText({
                         className={glyphItalic ? 'inline-block italic' : 'inline-block'}
                         style={spanStyle}
                       >
+                        {emphasisStroke && emphasisColors ? (
+                          <EmphasisBrush
+                            key="eb"
+                            id={`${brushUid}-${li}-${gi}`}
+                            colors={emphasisStroke}
+                            inset="-0.15em -0.17em -0.27em -0.15em"
+                          />
+                        ) : null}
                         {group.words.flatMap((w, wi) => [
                           ...Array.from(w.word).map((ch, ci) => (
                             <motion.span
