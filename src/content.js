@@ -95,6 +95,14 @@ export const WORK = {
         { img: 'art-couple-blush', ttl: 'Blush & black tie', meta: 'Watercolour · A5', venue: '', alt: 'Watercolour portrait of a couple, the bride in a blush off-shoulder gown beside a groom in a black suit and glasses' },
         { img: 'art-couple-hanbok', ttl: 'Hanbok traditions', meta: 'Watercolour · A5', venue: '', alt: 'Watercolour portrait of a couple in traditional Korean hanbok attire, the bride in a blue jeogori and skirt and the groom in traditional jacket and pants' },
         { img: 'art-toast-friends', ttl: 'The toast', meta: 'Watercolour · A5', landscape: true, venue: '', alt: 'Landscape watercolour of five friends in formal wear laughing together and clinking wine glasses in a toast' },
+        {
+          img: 'art-toast-video-poster',
+          video: 'art-toast-video',
+          ttl: 'Brush in hand',
+          meta: 'Watercolour · A5 · video',
+          venue: '',
+          alt: 'Video of a watercolour portrait being painted live by hand, brush loaded with warm ochre pigment',
+        },
         // Template — swap in a real client quote, then uncomment:
         // {
         //   testimonial: true,
@@ -112,13 +120,6 @@ export const WORK = {
         { img: 'art-character-girl', ttl: 'Little character, in green', meta: 'Studio study', alt: 'Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre' },
         { img: 'art-character-boy',  ttl: 'At the palette',             meta: 'Studio study', alt: "Small watercolour character portrait with the artist's palette alongside, in warm rust and ochre" },
         { img: 'art-character-boy2', ttl: 'Warm ochre',                 meta: 'Studio study', alt: 'Small watercolour character portrait of a seated figure in warm ochre tones, holding a jar' },
-        {
-          img: 'art-toast-video-poster',
-          video: 'art-toast-video',
-          ttl: 'Brush in hand',
-          meta: 'Studio study · video',
-          alt: 'Video of a watercolour character portrait being painted by hand, brush loaded with warm ochre pigment',
-        },
       ],
     },
   ],
