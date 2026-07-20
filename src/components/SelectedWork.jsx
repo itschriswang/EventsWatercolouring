@@ -126,10 +126,15 @@ export default function SelectedWork() {
                     key={item._idx}
                     item={item}
                     onOpen={item.testimonial ? undefined : () => openItem(item)}
-                    // The video runs wide and sits last in the "live" row, so
-                    // it claims the columns the row would otherwise leave
-                    // empty on the right (12 - the other landscape tile's 4).
-                    className={item.video ? 'col-span-8' : item.landscape ? 'col-span-4' : 'col-span-2'}
+                    // The video is portrait footage (its Tile keeps the
+                    // default upright 3:4 crop, same as every other portrait
+                    // tile), so widening it grows its height too — a wider
+                    // span here would tower over its neighbour under
+                    // `items-end`. Double it to col-span-4 (matching the
+                    // "toast" landscape tile beside it) so it reads larger
+                    // and sits at the right of that row, without the
+                    // mismatch a much bigger span would create.
+                    className={item.landscape || item.video ? 'col-span-4' : 'col-span-2'}
                   />
                 ))}
                 {group.key === 'studio' && WORK.reveal && (
