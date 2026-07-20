@@ -127,21 +127,21 @@ const applyEmphasisFlow = (root, colors, positions) => {
 }
 
 // A real, hand-painted watercolour brush stroke laid BEHIND an emphasis word
-// (see SplitText's `emphasisStroke`) — a scanned stroke recoloured to the wine
-// deep-anchor palette, with all of its dry-brush bristles, feathered bleeding
-// edges, splatter tendrils and granulation preserved as transparency (see
-// scripts that build public/assets/brush-wine.*). The light pastel emphasis
-// word then reads against dark pigment instead of the bright, blooming page
-// ground. Sits at zIndex -1 inside the (relative, isolated) emphasis span, so
-// it paints behind the glyphs but never escapes to the page. `object-fit: fill`
-// stretches the one stroke to sit around whatever word it backs; `src` is the
-// asset base (without extension) so it can ship webp with a png fallback.
-function EmphasisBrush({ src, inset }) {
+// (see SplitText's `emphasisStroke`) — a scanned stroke recoloured to a flat
+// ink (the title-text colour), with all of its dry-brush bristles, feathered
+// bleeding edges, splatter tendrils and granulation preserved as transparency
+// (see the script that builds public/assets/brush-ink.*). `opacity` softens it
+// to a tonal wash so the pastel emphasis word still reads on top. Sits at
+// zIndex -1 inside the (relative, isolated) emphasis span, so it paints behind
+// the glyphs but never escapes to the page. `object-fit: fill` stretches the
+// one stroke to sit around whatever word it backs; `src` is the asset base
+// (without extension) so it can ship webp with a png fallback.
+function EmphasisBrush({ src, inset, opacity = 1 }) {
   return (
     <span
       aria-hidden="true"
       className="pointer-events-none"
-      style={{ position: 'absolute', inset, zIndex: -1 }}
+      style={{ position: 'absolute', inset, zIndex: -1, opacity }}
     >
       <picture>
         <source srcSet={asset(`${src}.webp`)} type="image/webp" />
@@ -171,12 +171,12 @@ export default function SplitText({
   emphasisColors = null,
   emphasisColorStops = null,
   emphasisShadow = null,
-  // Asset base path (no extension, e.g. 'assets/brush-wine') for a real
+  // Asset base path (no extension, e.g. 'assets/brush-ink') for a real
   // watercolour brush stroke laid BEHIND the emphasis group (see EmphasisBrush
-  // above). The light pastel emphasis word then reads against dark wine pigment
-  // instead of the bright, actively-blooming page ground — far more contrast
-  // than a drop-shadow can give. Only rendered when emphasisColors is set.
+  // above), plus the opacity to render it at. Only shown when emphasisColors
+  // is set.
   emphasisStroke = null,
+  emphasisStrokeOpacity = 1,
   underline = null,
   knockout = null,
   unit = 'char',
@@ -398,7 +398,8 @@ export default function SplitText({
                           {emphasisStroke ? (
                             <EmphasisBrush
                               src={emphasisStroke}
-                              inset="0.02em 0em 0.02em 0.02em"
+                              opacity={emphasisStrokeOpacity}
+                              inset="0.13em 0em -0.09em 0.02em"
                             />
                           ) : null}
                           {text}
@@ -440,7 +441,8 @@ export default function SplitText({
                           <EmphasisBrush
                             key="eb"
                             src={emphasisStroke}
-                            inset="-0.16em -0.22em -0.28em -0.2em"
+                            opacity={emphasisStrokeOpacity}
+                            inset="-0.05em -0.22em -0.39em -0.2em"
                           />
                         ) : null}
                         {group.words.flatMap((w, wi) => [
