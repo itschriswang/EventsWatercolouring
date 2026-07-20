@@ -174,6 +174,11 @@ export default function SelectedWork() {
 function Tile({ item, className = '', masonry = false, onOpen }) {
   const reduce = useReducedMotion()
   const zoomed = usePinchZoomed()
+  // Autoplaying video is the "heavy" tier of this tile: roomy fine-pointer
+  // desktops get the live loop, touch/low-end devices (and reduced-motion)
+  // get the same still poster frame every other tile already ships.
+  const heavy = useHeavyFx()
+  const playVideo = item.video && heavy && !reduce
 
   // Latch the reveal once, in React state, rather than steering it live off
   // `whileInView`. Opening/closing the lightbox restores focus to the tapped
@@ -229,16 +234,32 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
             ' focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-paper'
           }
         >
-          <picture>
-            <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
-            <motion.img
-              src={asset(`assets/${item.img}.jpg`)}
-              alt={item.alt || item.ttl}
-              loading="lazy"
-              onError={hideOnError}
+          {playVideo ? (
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster={asset(`assets/${item.img}.jpg`)}
+              aria-label={item.alt || item.ttl}
               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-            />
-          </picture>
+            >
+              <source src={asset(`assets/${item.video}.webm`)} type="video/webm" />
+              <source src={asset(`assets/${item.video}.mp4`)} type="video/mp4" />
+            </video>
+          ) : (
+            <picture>
+              <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
+              <motion.img
+                src={asset(`assets/${item.img}.jpg`)}
+                alt={item.alt || item.ttl}
+                loading="lazy"
+                onError={hideOnError}
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+              />
+            </picture>
+          )}
           <CornerBloom from="rgba(176,74,118,0.14)" to="rgba(140,54,86,0.10)" overlay />
         </button>
       )}
