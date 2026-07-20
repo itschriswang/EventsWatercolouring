@@ -112,6 +112,13 @@ export const WORK = {
         { img: 'art-character-girl', ttl: 'Little character, in green', meta: 'Studio study', alt: 'Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre' },
         { img: 'art-character-boy',  ttl: 'At the palette',             meta: 'Studio study', alt: "Small watercolour character portrait with the artist's palette alongside, in warm rust and ochre" },
         { img: 'art-character-boy2', ttl: 'Warm ochre',                 meta: 'Studio study', alt: 'Small watercolour character portrait of a seated figure in warm ochre tones, holding a jar' },
+        {
+          img: 'art-toast-video-poster',
+          video: 'art-toast-video',
+          ttl: 'Brush in hand',
+          meta: 'Studio study · video',
+          alt: 'Video of a watercolour character portrait being painted by hand, brush loaded with warm ochre pigment',
+        },
       ],
     },
   ],
