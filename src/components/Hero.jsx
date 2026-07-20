@@ -176,12 +176,11 @@ export default function Hero({ revealed }) {
                 emphasisColorStops={[0, 0.04, 0.48, 0.52, 0.96, 1]}
                 // A real hand-painted watercolour brush stroke behind the word
                 // — a scanned stroke recoloured to the title's own ink (its
-                // bristles, feathered edges and splatter kept as alpha) — held
-                // at a soft opacity so it reads as a tonal wash under the pastel
-                // letters, not a solid block. See EmphasisBrush +
+                // bristles, feathered edges and splatter kept as alpha) —
+                // shown at full opacity. See EmphasisBrush +
                 // public/assets/brush-ink.*.
                 emphasisStroke="assets/brush-ink"
-                emphasisStrokeOpacity={0.5}
+                emphasisStrokeOpacity={1}
                 className="display-xl text-ink [line-height:0.80] [font-size:clamp(2.75rem,13vw,4.5rem)] lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)] [text-shadow:none]"
               />
             )}
