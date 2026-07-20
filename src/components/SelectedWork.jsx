@@ -126,15 +126,21 @@ export default function SelectedWork() {
                     key={item._idx}
                     item={item}
                     onOpen={item.testimonial ? undefined : () => openItem(item)}
-                    // The video is portrait footage (its Tile keeps the
-                    // default upright 3:4 crop, same as every other portrait
-                    // tile), so widening it grows its height too — a wider
-                    // span here would tower over its neighbour under
-                    // `items-end`. Double it to col-span-4 (matching the
-                    // "toast" landscape tile beside it) so it reads larger
-                    // and sits at the right of that row, without the
-                    // mismatch a much bigger span would create.
-                    className={item.landscape || item.video ? 'col-span-4' : 'col-span-2'}
+                    fill={!!item.video}
+                    // The video is portrait footage, so instead of widening
+                    // it (which would tower under `items-end`), it spans the
+                    // two rows this "live" section already makes — pinned to
+                    // the last 4 columns, explicit placement so it claims
+                    // that block regardless of draw order. `hanbok` (the row
+                    // it would otherwise occupy) auto-flows around it into
+                    // the second row alongside "toast". `self-stretch` opts
+                    // this tile out of the row's `items-end` so it actually
+                    // fills the full two-row height (see Tile's `fill`).
+                    className={
+                      item.video
+                        ? 'col-start-9 col-span-4 row-start-1 row-span-2 self-stretch'
+                        : item.landscape ? 'col-span-4' : 'col-span-2'
+                    }
                   />
                 ))}
                 {group.key === 'studio' && WORK.reveal && (
@@ -179,7 +185,7 @@ export default function SelectedWork() {
  * shape holding a quote. Landscape pieces take the wide slot in their row
  * (3:2); everything else is an upright 3:4.
  */
-function Tile({ item, className = '', masonry = false, onOpen }) {
+function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
   const reduce = useReducedMotion()
   const zoomed = usePinchZoomed()
   // Autoplaying video is the "heavy" tier of this tile: roomy fine-pointer
@@ -201,7 +207,13 @@ function Tile({ item, className = '', masonry = false, onOpen }) {
   // depending on the scroll-triggered reveal firing.
   const shown = inView || zoomed || reduce
 
-  const aspect = masonry
+  // `fill` (the row-spanning video tile) fills whatever height its grid area
+  // resolves to instead of setting its own aspect ratio — the figure itself
+  // opts out of `items-end` (see SelectedWork's `self-stretch`) so this
+  // actually reaches the full two-row height.
+  const aspect = fill
+    ? 'h-full'
+    : masonry
     ? item.landscape ? 'aspect-[4/3]' : 'aspect-[3/4]'
     : item.landscape ? 'aspect-[3/2]' : 'aspect-[3/4]'
   const cardShape = 'relative overflow-hidden rounded-2xl border border-line ' + aspect
