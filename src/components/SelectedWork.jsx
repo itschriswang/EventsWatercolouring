@@ -126,7 +126,10 @@ export default function SelectedWork() {
                     key={item._idx}
                     item={item}
                     onOpen={item.testimonial ? undefined : () => openItem(item)}
-                    className={item.landscape ? 'col-span-4' : 'col-span-2'}
+                    // The video runs wide and sits last in the "live" row, so
+                    // it claims the columns the row would otherwise leave
+                    // empty on the right (12 - the other landscape tile's 4).
+                    className={item.video ? 'col-span-8' : item.landscape ? 'col-span-4' : 'col-span-2'}
                   />
                 ))}
                 {group.key === 'studio' && WORK.reveal && (
