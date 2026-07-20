@@ -100,7 +100,6 @@ export const WORK = {
           video: 'art-toast-video',
           ttl: 'Brush in hand',
           meta: 'Watercolour · A5 · video',
-          landscape: true,
           venue: '',
           alt: 'Video of a watercolour portrait being painted live by hand, brush loaded with warm ochre pigment',
         },
