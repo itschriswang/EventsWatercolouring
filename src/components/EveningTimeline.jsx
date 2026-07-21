@@ -5,6 +5,7 @@ import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING } from '../lib/site.js'
 import { EVENING } from '../content.js'
 import WatercolourBloom from './WatercolourBloom.jsx'
+import Fireflies from './Fireflies.jsx'
 import GlassPill from './GlassPill.jsx'
 import GlassCardRim from './GlassCardRim.jsx'
 import FolderCell from './FolderCell.jsx'
@@ -52,6 +53,7 @@ export default function EveningTimeline() {
     >
       <FolderCell
         tone="dusk"
+        peek
         label={EVENING.label}
         gradient={['#EFEFA0', '#F7F4EF']}
         labelClassName="!text-paper/90"
@@ -95,6 +97,10 @@ export default function EveningTimeline() {
             >
               <WatercolourBloom />
             </div>
+            {/* Fireflies in the dark — chartreuse motes drifting in the
+                folder's negative space, clipped with the rest of the bloom
+                stack to the folder shape. */}
+            <Fireflies />
           </>
         }
         contentClassName="flex flex-col gap-x-8 px-4 pb-6 sm:px-8 sm:pb-10 lg:grid lg:grid-cols-12 lg:px-12 lg:pb-12"

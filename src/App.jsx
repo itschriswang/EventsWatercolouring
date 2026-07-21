@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import GradientDefs from './components/GradientDefs.jsx'
 import GrainCanvas from './components/GrainCanvas.jsx'
+import EveningLight from './components/EveningLight.jsx'
+import PigmentTrail from './components/PigmentTrail.jsx'
 import BloomCanvas from './components/BloomCanvas.jsx'
 import SectionWash from './components/SectionWash.jsx'
 import DeckleEdge from './components/DeckleEdge.jsx'
@@ -76,6 +78,12 @@ export default function App() {
           static CSS washes / SVG grain on mobile, reduced-motion or no-WebGL. */}
       <GradientDefs />
       <BloomCanvas revealed={revealed} />
+      {/* Scroll-driven time of day: golden hour → dusk → nightfall tints in
+          the paper's negative space (above the bloom, below the content). */}
+      <EveningLight />
+      {/* Heavy-fx only: the cursor drags a faint pigment wash across the
+          paper's negative space (multiply blend, under the content). */}
+      <PigmentTrail />
       <GrainCanvas />
       <Preloader onDone={() => setRevealed(true)} />
       {/* Ink wipe to/from /corporate/ (see PageTransition). Independent of the
