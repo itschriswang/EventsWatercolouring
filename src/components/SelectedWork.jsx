@@ -10,6 +10,7 @@ import { WORK } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
 import GlassCardRim from './GlassCardRim.jsx'
 import CoverflowCarousel, { COVERFLOW_SIZING, COVERFLOW_RADIUS } from './CoverflowCarousel.jsx'
+import { WashiTape, PaperClip, TAPE_TINTS } from './Ephemera.jsx'
 
 // Flatten the curated groups once, giving every entry a stable index. The
 // lightbox walks this flat list, and `_idx` (not `item.img`, which repeats
@@ -218,6 +219,14 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
     : item.landscape ? 'aspect-[3/2]' : 'aspect-[3/4]'
   const cardShape = 'relative overflow-hidden rounded-2xl border border-line ' + aspect
 
+  // Washi tape across a top corner of each print — the wall reads as prints
+  // taped up in the studio rather than tiles in a grid. Corner and tint are
+  // hand-varied off the stable index so the arrangement never looks stamped;
+  // the video tile skips it (tape over moving footage reads as a glitch).
+  const tape = !item.testimonial && !item.video
+    ? { tint: TAPE_TINTS[item._idx % TAPE_TINTS.length], right: item._idx % 2 === 1 }
+    : null
+
   return (
     <motion.figure
       ref={ref}
@@ -225,22 +234,28 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
       animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: reduce ? 0 : 24 }}
       transition={{ ...SPRING, delay: reduce ? 0 : (item._idx % 4) * 0.05 }}
       className={
-        'group flex flex-col ' +
+        'group relative flex flex-col ' +
         (masonry ? 'mb-3 break-inside-avoid ' : '') +
         className
       }
     >
       {item.testimonial ? (
-        <div className={cardShape + ' bg-paper-deep'}>
-          <CornerBloom from="rgba(176,172,66,0.14)" to="rgba(138,145,67,0.11)" />
-          {/* A quote is a text card, so it wears the same wet, water-wobbled
-              edge as the Packages family — the painting tiles beside it keep a
-              clean crop for the photo. */}
-          <GlassCardRim />
-          <div className="relative z-10 flex h-full flex-col">
-            <Testimonial item={item} masonry={masonry} />
+        <>
+          {/* A quote is a note among the prints: paperclipped over the card's
+              top edge (from here, the unclipped figure — inside the card the
+              poking half would be cut off) and sitting a hair off square. */}
+          <PaperClip className="absolute -top-2.5 left-6 z-20 h-9 w-auto rotate-[8deg]" />
+          <div className={cardShape + ' rotate-[0.7deg] bg-paper-deep'}>
+            <CornerBloom from="rgba(176,172,66,0.14)" to="rgba(138,145,67,0.11)" />
+            {/* A quote is a text card, so it wears the same wet, water-wobbled
+                edge as the Packages family — the painting tiles beside it keep a
+                clean crop for the photo. */}
+            <GlassCardRim />
+            <div className="relative z-10 flex h-full flex-col">
+              <Testimonial item={item} masonry={masonry} />
+            </div>
           </div>
-        </div>
+        </>
       ) : (
         <button
           type="button"
@@ -281,6 +296,27 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
             </picture>
           )}
           <CornerBloom from="rgba(176,74,118,0.14)" to="rgba(140,54,86,0.10)" overlay />
+          {/* Re-wet on hover — pigment pools back into the painting's edges
+              (blush and periwinkle inset glows in multiply), as if the wash
+              never quite dried. Opacity-only, so it costs one composite;
+              hover means it simply never fires on touch. */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-700 ease-organic group-hover:opacity-100"
+            style={{
+              boxShadow:
+                'inset 0 0 34px 6px rgba(244,196,210,0.30), inset 0 0 90px 24px rgba(216,218,236,0.20)',
+              mixBlendMode: 'multiply',
+            }}
+          />
+          {tape && (
+            <WashiTape
+              tint={tape.tint}
+              className={
+                'top-4 z-20 ' + (tape.right ? '-right-7 rotate-45' : '-left-7 -rotate-45')
+              }
+            />
+          )}
         </button>
       )}
     </motion.figure>

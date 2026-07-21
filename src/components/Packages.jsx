@@ -206,6 +206,7 @@ export default function Packages() {
         {/* Base package card — filed as a folder, tab flush-left */}
         <FolderCell
           as="article"
+          peek
           label="The package"
           gradient={['#B04A76', '#8C3656']}
           bg={CARD_BG}
@@ -249,6 +250,7 @@ export default function Packages() {
         {/* Add-ons — right column. The folder tab carries the "Add-ons" name
             (as the card's heading), so the row below only needs the pricing note. */}
         <FolderCell
+          peek
           label={PACKAGES.addonsHead.title}
           labelAs="h3"
           gradient={['#8A9143', '#5F662B']}
@@ -307,6 +309,7 @@ export default function Packages() {
       <FolderCell
         as="a"
         href="/faq/"
+        peek
         label="FAQ"
         gradient={['#D8DB7A', '#9BA03E']}
         bg={CARD_BG}
