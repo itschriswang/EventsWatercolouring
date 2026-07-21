@@ -136,12 +136,21 @@ const applyEmphasisFlow = (root, colors, positions) => {
 // the glyphs but never escapes to the page. `object-fit: fill` stretches the
 // one stroke to sit around whatever word it backs; `src` is the asset base
 // (without extension) so it can ship webp with a png fallback.
-function EmphasisBrush({ src, inset, opacity = 1 }) {
+// `scaleY` squashes the stroke vertically about its centre without touching
+// its horizontal length — the box is sized by `inset` (object-fit: fill), so a
+// transform is the clean way to make the stroke shorter but not shorter-worded.
+function EmphasisBrush({ src, inset, opacity = 1, scaleY = 1 }) {
   return (
     <span
       aria-hidden="true"
       className="pointer-events-none"
-      style={{ position: 'absolute', inset, zIndex: -1, opacity }}
+      style={{
+        position: 'absolute',
+        inset,
+        zIndex: -1,
+        opacity,
+        ...(scaleY !== 1 ? { transform: `scaleY(${scaleY})`, transformOrigin: 'center' } : {}),
+      }}
     >
       <picture>
         <source srcSet={asset(`${src}.webp`)} type="image/webp" />
@@ -367,54 +376,75 @@ export default function SplitText({
                     // width, so there is nothing to re-measure on resize/zoom.
                     if (lite && emphasisColors) {
                       const text = group.words.map((w) => w.word).join(' ')
+                      // -webkit-background-clip can't be set through React's
+                      // camelCase style prop — same silent no-op documented
+                      // above `applyEmphasisFlow` — so it's applied via
+                      // setProperty on mount instead, exactly like the
+                      // per-glyph flow does. Without it the word stays truly
+                      // `color: transparent` with no clip to reveal it, so
+                      // only the opaque brush stroke shows, blotting it out.
+                      const clip = (el) => {
+                        if (!el) return
+                        el.style.setProperty('-webkit-background-clip', 'text')
+                        el.style.setProperty('background-clip', 'text')
+                        el.style.setProperty('-webkit-text-fill-color', 'transparent')
+                      }
+                      const textStyle = {
+                        backgroundImage: buildFlowGradientCss(emphasisColors, emphasisColorStops),
+                        backgroundSize: '100% 100%',
+                        backgroundRepeat: 'no-repeat',
+                        color: 'transparent',
+                        textShadow: emphasisShadow || 'none',
+                        // Vertical/horizontal bleed so ascenders and
+                        // descenders that overflow the tight display line-box
+                        // still have gradient painted behind them (the
+                        // background paints over the padding box); the
+                        // negative margin hands the space back so layout
+                        // doesn't move. Same trick as EMPH_GLYPH_BLEED.
+                        ...EMPH_GLYPH_BLEED,
+                      }
                       return [
-                        <span
-                          key={`g${li}-${gi}`}
-                          aria-hidden="true"
-                          className="inline-block"
-                          // -webkit-background-clip can't be set through React's
-                          // camelCase style prop — same silent no-op documented
-                          // above `applyEmphasisFlow` — so it's applied via
-                          // setProperty on mount instead, exactly like the
-                          // per-glyph flow does. Without it the word stays
-                          // truly `color: transparent` with no clip to reveal
-                          // it, so only the opaque brush stroke behind shows,
-                          // blotting the word out entirely.
-                          ref={(el) => {
-                            if (!el) return
-                            el.style.setProperty('-webkit-background-clip', 'text')
-                            el.style.setProperty('background-clip', 'text')
-                            el.style.setProperty('-webkit-text-fill-color', 'transparent')
-                          }}
-                          style={{
-                            backgroundImage: buildFlowGradientCss(emphasisColors, emphasisColorStops),
-                            backgroundSize: '100% 100%',
-                            backgroundRepeat: 'no-repeat',
-                            color: 'transparent',
-                            textShadow: emphasisShadow || 'none',
-                            // A relative, isolated box so the brush can sit
-                            // behind the clipped text (zIndex -1). A background
-                            // on the child does not affect this element's own
-                            // background-clip: text of `{text}`.
-                            ...(emphasisStroke ? { position: 'relative', zIndex: 0 } : {}),
-                            // Vertical/horizontal bleed so ascenders and
-                            // descenders that overflow the tight display
-                            // line-box still have gradient painted behind them
-                            // (the background paints over the padding box);
-                            // the negative margin hands the space back so
-                            // layout doesn't move. Same trick as EMPH_GLYPH_BLEED.
-                            ...EMPH_GLYPH_BLEED,
-                          }}
-                        >
-                          {emphasisStroke ? (
+                        emphasisStroke ? (
+                          // With a brush behind, the clipped-gradient text MUST
+                          // live on its own in-flow child, not on this wrapper.
+                          // `background-clip: text` paints the visible letters
+                          // into an element's OWN background layer, which the
+                          // browser draws BEFORE that element's negative-z-index
+                          // children — so a brush at zIndex -1 on the same span
+                          // paints on top of the letters (the mobile bug where
+                          // the stroke sat above "painted"). Here the wrapper only
+                          // positions the brush; the inner span paints the text in
+                          // the in-flow content layer, after the brush, so the
+                          // stroke stays behind. The wrapper keeps the same
+                          // padding/margin bleed as the old single span, so the
+                          // brush's em-based inset geometry is unchanged.
+                          <span
+                            key={`g${li}-${gi}`}
+                            aria-hidden="true"
+                            className="inline-block"
+                            style={{ position: 'relative', zIndex: 0, ...EMPH_GLYPH_BLEED }}
+                          >
                             <EmphasisBrush
                               src={emphasisStroke}
                               opacity={emphasisStrokeOpacity}
                               inset="0.13em 0em -0.09em 0.02em"
+                              scaleY={0.85}
                             />
-                          ) : null}
-                          {text}
-                        </span>,
+                            <span aria-hidden="true" className="inline-block" ref={clip} style={textStyle}>
+                              {text}
+                            </span>
+                          </span>
+                        ) : (
+                          <span
+                            key={`g${li}-${gi}`}
+                            aria-hidden="true"
+                            className="inline-block"
+                            ref={clip}
+                            style={textStyle}
+                          >
+                            {text}
+                          </span>
+                        ),
                         gi < groupedWords.length - 1 ? (
                           <span
                             key={`sp${li}-${gi}`}
