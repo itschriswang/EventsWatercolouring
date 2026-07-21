@@ -15,43 +15,58 @@ import usePinchZoomed from '../hooks/usePinchZoom.js'
  *
  * The list is set as a card catalogue: each question is an index card cut
  * with the same tab silhouette as the homepage folders (FolderCell), the tab
- * carrying its running number as the index cut. Cards past the first stagger
- * a step to the right, like cards standing behind one another in a drawer.
- * Each card stays a plain paper tile — opaque, grained, no colour of its
- * own — so the bloom only shows in the negative space around the cards,
- * like paper cut-outs laid over a wet wash.
+ * carrying its running number as the index cut. The cards pile as you scroll:
+ * each folder overlaps the tail of the one above it, and drops onto the stack
+ * with a slight 3D hinge (rotateX about its top edge, under a shared
+ * `perspective`) rather than a flat slide — so scrolling reads as filing one
+ * card on top of the next. Each card stays a plain paper tile — opaque,
+ * grained, no colour of its own — so the bloom only shows in the negative
+ * space around the cards, like paper cut-outs laid over a wet wash.
+ * Reduced-motion visitors get the resting stack with no hinge.
  */
 export default function Faq() {
   const reduce = useReducedMotion()
   const zoomed = usePinchZoomed()
 
+  // The 3D drop: the card starts tilted back on its top edge and a little
+  // low, then settles flat onto the pile. Transform-only, so it composites
+  // cheaply; `once` so a filed card never un-files on a scroll back up.
+  const settled = { opacity: 1, y: 0, rotateX: 0 }
   const reveal = (i) => ({
-    initial: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 20 },
-    whileInView: { opacity: 1, y: 0 },
-    animate: zoomed ? { opacity: 1, y: 0 } : undefined,
-    viewport: { once: true, margin: '-60px' },
-    transition: { ...SPRING, delay: reduce ? 0 : Math.min(i, 5) * 0.05 },
+    initial: reduce ? settled : { opacity: 0, y: 30, rotateX: -18 },
+    whileInView: settled,
+    animate: zoomed ? settled : undefined,
+    viewport: { once: true, margin: '-80px' },
+    transition: { ...SPRING, delay: reduce ? 0 : Math.min(i, 5) * 0.04 },
   })
 
   return (
     <section id="faq" className="relative w-full px-[5vw] pt-[clamp(1rem,3vw,2rem)] pb-[clamp(5.5rem,11vw,10rem)]">
-      <div className="relative z-10 max-w-3xl">
-        <ul className="space-y-4 sm:space-y-5">
-          {FAQ.items.map((item, i) => (
-            <FolderCell
-              key={i}
-              as="li"
-              label={`Q.${String(i + 1).padStart(2, '0')}`}
-              gradient={['#F2E982', '#BCB438']}
-              bg="#F7F4EF"
-              reveal={reveal(i)}
-              topGap="0.15rem"
-              // The drawer stagger — every second card steps right, so the
-              // numbered tabs read as two offset index runs.
-              wrapperClassName={i % 2 === 1 ? 'sm:ml-12' : ''}
-              cellClassName="paper-grain"
-              contentClassName="px-6 pb-5 sm:px-7"
-            >
+      {/* `perspective` on the list is what makes each card's rotateX read as a
+          real hinge in depth rather than a squash; it lives here, above the
+          per-card transforms, so all the cards share one vanishing point. */}
+      <ul className="relative z-10 mx-auto max-w-3xl [perspective:1600px]">
+        {FAQ.items.map((item, i) => (
+          <FolderCell
+            key={i}
+            as="li"
+            label={`Q.${String(i + 1).padStart(2, '0')}`}
+            gradient={['#F2E982', '#BCB438']}
+            bg="#F7F4EF"
+            reveal={reveal(i)}
+            // More air between the tab band and the question than the tight
+            // homepage folders — the FAQ card is a reading surface first.
+            topGap="0.85rem"
+            // The pile: every card but the first laps up over the tail of the
+            // one above (into its bottom padding, so no answer text is
+            // covered), and each hinges about its own top edge. Later cards
+            // sit on top by DOM order, so the newest question crowns the stack.
+            wrapperClassName={
+              'origin-top will-change-transform ' + (i > 0 ? '-mt-3 sm:-mt-4' : '')
+            }
+            cellClassName="paper-grain"
+            contentClassName="px-6 pb-6 sm:px-7 sm:pb-7"
+          >
               {/* h2 (not h3): the questions are the FAQ page's top-level
                   content under its single h1 — h3 here skipped a level and
                   read as sub-items of nothing to a screen reader. Weight +
@@ -67,10 +82,9 @@ export default function Faq() {
               <p className="mt-2 max-w-[64ch] leading-relaxed text-ink-soft">
                 {item.a}
               </p>
-            </FolderCell>
-          ))}
-        </ul>
-      </div>
+          </FolderCell>
+        ))}
+      </ul>
     </section>
   )
 }
