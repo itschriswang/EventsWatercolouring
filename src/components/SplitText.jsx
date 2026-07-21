@@ -484,6 +484,7 @@ export default function SplitText({
                             src={emphasisStroke}
                             opacity={emphasisStrokeOpacity}
                             inset="-0.05em -0.22em -0.39em -0.2em"
+                            scaleY={0.85}
                           />
                         ) : null}
                         {group.words.flatMap((w, wi) => [
