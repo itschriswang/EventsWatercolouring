@@ -136,12 +136,21 @@ const applyEmphasisFlow = (root, colors, positions) => {
 // the glyphs but never escapes to the page. `object-fit: fill` stretches the
 // one stroke to sit around whatever word it backs; `src` is the asset base
 // (without extension) so it can ship webp with a png fallback.
-function EmphasisBrush({ src, inset, opacity = 1 }) {
+// `scaleY` squashes the stroke vertically about its centre without touching
+// its horizontal length — the box is sized by `inset` (object-fit: fill), so a
+// transform is the clean way to make the stroke shorter but not shorter-worded.
+function EmphasisBrush({ src, inset, opacity = 1, scaleY = 1 }) {
   return (
     <span
       aria-hidden="true"
       className="pointer-events-none"
-      style={{ position: 'absolute', inset, zIndex: -1, opacity }}
+      style={{
+        position: 'absolute',
+        inset,
+        zIndex: -1,
+        opacity,
+        ...(scaleY !== 1 ? { transform: `scaleY(${scaleY})`, transformOrigin: 'center' } : {}),
+      }}
     >
       <picture>
         <source srcSet={asset(`${src}.webp`)} type="image/webp" />
@@ -419,6 +428,7 @@ export default function SplitText({
                               src={emphasisStroke}
                               opacity={emphasisStrokeOpacity}
                               inset="0.13em 0em -0.09em 0.02em"
+                              scaleY={0.85}
                             />
                             <span aria-hidden="true" className="inline-block" ref={clip} style={textStyle}>
                               {text}
