@@ -372,13 +372,24 @@ export default function SplitText({
                           key={`g${li}-${gi}`}
                           aria-hidden="true"
                           className="inline-block"
+                          // -webkit-background-clip can't be set through React's
+                          // camelCase style prop — same silent no-op documented
+                          // above `applyEmphasisFlow` — so it's applied via
+                          // setProperty on mount instead, exactly like the
+                          // per-glyph flow does. Without it the word stays
+                          // truly `color: transparent` with no clip to reveal
+                          // it, so only the opaque brush stroke behind shows,
+                          // blotting the word out entirely.
+                          ref={(el) => {
+                            if (!el) return
+                            el.style.setProperty('-webkit-background-clip', 'text')
+                            el.style.setProperty('background-clip', 'text')
+                            el.style.setProperty('-webkit-text-fill-color', 'transparent')
+                          }}
                           style={{
                             backgroundImage: buildFlowGradientCss(emphasisColors, emphasisColorStops),
                             backgroundSize: '100% 100%',
                             backgroundRepeat: 'no-repeat',
-                            WebkitBackgroundClip: 'text',
-                            backgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
                             color: 'transparent',
                             textShadow: emphasisShadow || 'none',
                             // A relative, isolated box so the brush can sit
