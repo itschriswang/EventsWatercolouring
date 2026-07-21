@@ -52,6 +52,7 @@ export default function EveningTimeline() {
     >
       <FolderCell
         tone="dusk"
+        peek
         label={EVENING.label}
         gradient={['#EFEFA0', '#F7F4EF']}
         labelClassName="!text-paper/90"

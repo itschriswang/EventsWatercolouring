@@ -60,6 +60,7 @@ export default function NightPlanner() {
 
   return (
     <FolderCell
+      peek
       label="Plan the night"
       gradient={['#B04A76', '#8C3656']}
       bg={CARD_BG}
