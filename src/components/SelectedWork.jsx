@@ -296,6 +296,19 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
             </picture>
           )}
           <CornerBloom from="rgba(176,74,118,0.14)" to="rgba(140,54,86,0.10)" overlay />
+          {/* Re-wet on hover — pigment pools back into the painting's edges
+              (blush and periwinkle inset glows in multiply), as if the wash
+              never quite dried. Opacity-only, so it costs one composite;
+              hover means it simply never fires on touch. */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-700 ease-organic group-hover:opacity-100"
+            style={{
+              boxShadow:
+                'inset 0 0 34px 6px rgba(244,196,210,0.30), inset 0 0 90px 24px rgba(216,218,236,0.20)',
+              mixBlendMode: 'multiply',
+            }}
+          />
           {tape && (
             <WashiTape
               tint={tape.tint}
