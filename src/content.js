@@ -169,6 +169,22 @@ export const KIT = {
   ],
 }
 
+// The studio ledger — a hand-ruled register of real nights painted, the
+// social-proof sibling of the gallery's testimonials. Same rule as those:
+// REAL entries only, added as they happen; never invent names or venues.
+// The section stays completely hidden until at least one entry exists.
+// Keep `names` to initials or first names unless the couple has okayed more.
+export const LEDGER = {
+  label: 'The ledger',
+  title: ['Nights on', 'the books.'],
+  emphasis: 'the books.',
+  note: 'A running register of evenings painted live. Yours goes here next.',
+  entries: [
+    // Template — fill from a real booking, then uncomment:
+    // { date: 'Mar 2026', names: 'S. & T.', event: 'Wedding', venue: 'Fitzroy Gardens, Melbourne', pieces: '24 keepsakes' },
+  ],
+}
+
 export const PACKAGES = {
   label: 'Packages',
   title: ['One base package,', 'built around your day.'],

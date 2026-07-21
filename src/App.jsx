@@ -15,6 +15,7 @@ import PullQuote from './components/PullQuote.jsx'
 import EveningTimeline from './components/EveningTimeline.jsx'
 import SelectedWork from './components/SelectedWork.jsx'
 import AboutMe from './components/AboutMe.jsx'
+import StudioLedger from './components/StudioLedger.jsx'
 import Packages from './components/Packages.jsx'
 import EnquireForm from './components/EnquireForm.jsx'
 import Footer from './components/Footer.jsx'
@@ -115,6 +116,11 @@ export default function App() {
           {/* The painter — bio beside the portrait, which is itself the kit
               stage: the print with the tools of the desk fanning out around it. */}
           <AboutMe />
+          {/* The studio ledger — the register of real nights painted. Hidden
+              until LEDGER.entries has real bookings (see content.js); it
+              closes the painter's stretch as a piece of desk admin, right
+              before the sheet tears off into the offerings. */}
+          <StudioLedger />
         </SectionWash>
 
         {/* Hard editorial break: the painter's sheet tears off along a
