@@ -27,6 +27,15 @@ import FolderCell from './FolderCell.jsx'
  * gapped list with no stacking (sticky, and the entrance, are both dropped).
  */
 
+// A tighter drop-shadow than the homepage folders' big lift: when the cards
+// stack ~11px apart near the header, the default 20px-offset/22px-blur shadow
+// bleeds above each sliver and the halos compound into dark bands. This one
+// hugs the card's bottom edge (offset ≈ blur, so almost no upward bleed) and
+// runs at low opacity, so a pile of a dozen cards still reads as clean layered
+// paper. Stays on the approved burgundy shadow tint (no grey).
+const CARD_SHADOW =
+  'drop-shadow(0 7px 8px rgba(126,40,72,0.15)) drop-shadow(0 1px 2px rgba(126,40,72,0.10))'
+
 function FaqCard({ item, i, reduce }) {
   return (
     <motion.li
@@ -55,6 +64,7 @@ function FaqCard({ item, i, reduce }) {
         label={`Q.${String(i + 1).padStart(2, '0')}`}
         gradient={['#F2E982', '#BCB438']}
         bg="#F7F4EF"
+        shadow={CARD_SHADOW}
         // More air between the tab band and the question than the tight
         // homepage folders — the FAQ card is a reading surface first.
         topGap="0.85rem"
