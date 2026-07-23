@@ -39,6 +39,9 @@ import { SPRING } from '../lib/site.js'
  *               Sheets render BEHIND the clipped cell, in the wrapper's
  *               transparent band beside the tab, so the clip never cuts them.
  *   peekTints — override the two sheet colours (defaults per tone)
+ *   shadow    — override the wrapper drop-shadow `filter` (defaults per tone).
+ *               Pass a tighter shadow where many cells stack (the FAQ pile),
+ *               so the big default lift shadow doesn't compound into bands.
  *   contentClassName — padding/layout for the content region (sides + bottom;
  *                      the top inset for the tab is applied here automatically)
  */
@@ -96,6 +99,7 @@ export default function FolderCell({
   hover = false,
   peek = false,
   peekTints,
+  shadow,
   wrapperClassName = '',
   cellClassName = '',
   contentClassName = '',
@@ -162,7 +166,7 @@ export default function FolderCell({
       {...rest}
       {...peekHandlers}
       whileHover={hover ? { y: -3 } : undefined}
-      style={{ filter: SHADOW[tone] || SHADOW.paper }}
+      style={{ filter: shadow || SHADOW[tone] || SHADOW.paper }}
       className={'relative block ' + wrapperClassName}
     >
       {/* Peek sheets — before the cell in the DOM so the opaque cell paints
