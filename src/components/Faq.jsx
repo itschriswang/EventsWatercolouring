@@ -14,35 +14,41 @@ import FolderCell from './FolderCell.jsx'
  *
  * The list is set as a card catalogue: each question is an index card cut
  * with the same tab silhouette as the homepage folders (FolderCell), the tab
- * carrying its running number as the index cut. The pile is graded down the
- * page: the cards near the top overlap — filed tight onto the stack — and the
- * spacing fans open into clear gaps toward the bottom, so the top of the page
- * reads as a settled stack and the newest questions have room to breathe. As
- * each card scrolls into view it drops onto the stack with a slight 3D hinge
- * (rotateX about its top edge, under a shared `perspective`) rather than a
- * flat slide. Each card stays a plain paper tile — opaque, grained, no colour
- * of its own — so the bloom only shows in the negative space around the
- * cards. Reduced-motion visitors get the graded stack with no hinge.
+ * carrying its running number as the index cut. The cards flow with easy,
+ * airy gaps while you read, then FILE THEMSELVES as you scroll: each card is
+ * `position: sticky`, so once it reaches the top of the page it parks just
+ * below the header and the next card slides up and stacks over it — the
+ * questions you've passed pile into a fanned stack near the header while the
+ * one you're reading sits full below. Successive stick points step down a
+ * touch (`--faq-step`) and z-index rises with the index, so the pile fans
+ * cleanly with the newest card on top. Each card stays a plain paper tile —
+ * opaque, grained, no colour of its own — so the bloom only shows in the
+ * negative space around the cards. Reduced-motion visitors get the plain
+ * gapped list with no stacking (sticky, and the entrance, are both dropped).
  */
 
-// The spacing grade, in px: cards near the top of the list lap up over the one
-// above (negative margin = overlap), easing to a clear gap by the bottom.
-const OVERLAP = -16
-const GAP = 44
-
-function FaqCard({ item, i, marginTop, reduce }) {
-  // The 3D drop: tilted back on its top edge and a little low, settling flat
-  // onto the pile. Transform-only, so it composites cheaply; `once` so a filed
-  // card never un-files on a scroll back up.
-  const settled = { opacity: 1, y: 0, rotateX: 0 }
+function FaqCard({ item, i, reduce }) {
   return (
     <motion.li
-      initial={reduce ? settled : { opacity: 0, y: 26, rotateX: -16 }}
-      whileInView={settled}
+      initial={reduce ? { opacity: 1 } : { opacity: 0, y: 26 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-70px' }}
       transition={{ ...SPRING, delay: reduce ? 0 : Math.min(i, 5) * 0.04 }}
-      style={{ marginTop }}
-      className="origin-top will-change-transform"
+      // The stack: each card sticks a step lower than the one before and sits
+      // a layer higher, so as they reach the header they pile onto one another
+      // rather than scrolling away. Dropped entirely under reduced motion.
+      style={
+        reduce
+          ? undefined
+          : {
+              position: 'sticky',
+              top: `calc(var(--faq-stick) + ${i} * var(--faq-step))`,
+              zIndex: i + 1,
+            }
+      }
+      // Airy gap between cards while reading — this is the resting spacing the
+      // stack eats into as the cards climb toward the header.
+      className={i > 0 ? 'mt-10 sm:mt-12' : ''}
     >
       <FolderCell
         as="div"
@@ -75,23 +81,17 @@ function FaqCard({ item, i, marginTop, reduce }) {
 
 export default function Faq() {
   const reduce = useReducedMotion()
-  const n = FAQ.items.length
 
   return (
     <section id="faq" className="relative w-full px-[5vw] pt-[clamp(1rem,3vw,2rem)] pb-[clamp(5.5rem,11vw,10rem)]">
-      {/* `perspective` on the list is what makes each card's rotateX read as a
-          real hinge in depth rather than a squash; it lives here, above the
-          per-card transforms, so all the cards share one vanishing point. */}
-      <ul className="relative z-10 mx-auto max-w-3xl [perspective:1600px]">
-        {FAQ.items.map((item, i) => {
-          // First card flush; the rest grade from OVERLAP (top of the page) to
-          // GAP (bottom), so the stack tightens upward and opens downward.
-          const t = n > 2 ? (i - 1) / (n - 2) : 1
-          const marginTop = i === 0 ? 0 : Math.round(OVERLAP + t * (GAP - OVERLAP))
-          return (
-            <FaqCard key={i} item={item} i={i} marginTop={marginTop} reduce={reduce} />
-          )
-        })}
+      {/* `--faq-stick` is where the pile parks: clear of the sticky header on
+          desktop, near the top on mobile (no top header there). `--faq-step`
+          is how far each successive card parks below the last, fanning the
+          stack instead of burying it flush. */}
+      <ul className="relative z-10 mx-auto max-w-3xl [--faq-step:0.7rem] [--faq-stick:1.25rem] md:[--faq-stick:4.75rem]">
+        {FAQ.items.map((item, i) => (
+          <FaqCard key={i} item={item} i={i} reduce={reduce} />
+        ))}
       </ul>
     </section>
   )

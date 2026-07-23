@@ -8,6 +8,7 @@ import WatercolourBloom from '../components/WatercolourBloom.jsx'
 import Label from '../components/Label.jsx'
 import SplitText from '../components/SplitText.jsx'
 import Faq from '../components/Faq.jsx'
+import Underline from '../components/Underline.jsx'
 import EnquireForm from '../components/EnquireForm.jsx'
 import Footer from '../components/Footer.jsx'
 import { FAQ } from '../content.js'
@@ -66,9 +67,12 @@ export default function FaqPage() {
                 yours?{' '}
                 <a
                   href="/#enquiry"
-                  className="rounded text-ink underline underline-offset-4 outline-none transition-colors hover:text-terracotta focus-visible:text-terracotta"
+                  className="rounded text-ink outline-none transition-colors hover:text-terracotta focus-visible:text-terracotta"
                 >
-                  Send me a note
+                  {/* The site's hand-drawn brush underline, not a plain CSS
+                      rule — same playful stroke the rest of the copy uses for
+                      its key phrases (draws in on view, erases on hover). */}
+                  <Underline>Send me a note</Underline>
                 </a>
                 .
               </p>
