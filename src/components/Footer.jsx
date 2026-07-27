@@ -1,5 +1,6 @@
 import SplitText from './SplitText.jsx'
-import { EMAIL, ENQUIRE_HREF } from '../lib/site.js'
+import CopyEmail from './CopyEmail.jsx'
+import { ENQUIRE_HREF } from '../lib/site.js'
 import { FOOTER } from '../content.js'
 
 // Hand-sketched, matching the mobile dock's icon set (MobileNav.jsx): a
@@ -136,6 +137,17 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
             </span>
           </span>
         </a>
+
+        {/* The address gets the same standing as the Instagram handle here
+            rather than hiding in the nav row as a bare mailto — this is the
+            warmest point on the page, and some people would rather write from
+            their own account than be thrown into a mail client. */}
+        <div className="flex flex-col lg:items-end">
+          <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-paper/50">
+            Write to me
+          </span>
+          <CopyEmail tone="dark" className="mt-1.5 text-sm lg:justify-end" />
+        </div>
       </div>
 
       <div className="relative z-10 mt-[clamp(3rem,7vw,6rem)] flex flex-col gap-8 border-t border-paper/15 pt-10 lg:flex-row lg:justify-between">
@@ -158,12 +170,9 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
               {n.label}
             </a>
           ))}
-          <a
-            href={`mailto:${EMAIL}`}
-            className="rounded outline-none transition-colors hover:text-paper focus-visible:text-paper focus-visible:ring-2 focus-visible:ring-paper/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
-          >
-            Email
-          </a>
+          {/* No "Email" item here any more — the address now sits in the band
+              above with its copy action, and two links to the same address in
+              one footer only splits the attention. */}
         </nav>
       </div>
     </footer>
