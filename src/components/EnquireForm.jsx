@@ -160,16 +160,11 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
   // has already typed.
   useEffect(() => {
     const onPlanner = (e) => {
-      const { hours, guests } = e.detail || {}
+      const { hours } = e.detail || {}
       if (!hours) return
-      // The planner already asked both questions — carry the answers over so
-      // the enquiry arrives with the shape of the night on it.
-      const summary = guests
-        ? `Thinking around ${hours} hours live, for about ${guests} guests.`
-        : `Thinking around ${hours} hours live.`
       setF((p) => ({
         ...p,
-        message: p.message || summary,
+        message: p.message || `Thinking around ${hours} hours live.`,
         package: p.package || 'Live on the day',
       }))
     }

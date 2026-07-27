@@ -3,7 +3,6 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import CornerBloom from './CornerBloom.jsx'
 import GlassPill from './GlassPill.jsx'
 import FolderCell from './FolderCell.jsx'
-import GuestScrub from './GuestScrub.jsx'
 import { SPRING, ENQUIRE_HREF, CARD_BG } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import { withUnderline } from './Underline.jsx'
@@ -46,9 +45,6 @@ export default function NightPlanner() {
   const zoomed = usePinchZoomed()
   const p = PACKAGES.planner
   const [hours, setHours] = useState(3)
-  // A middling Australian wedding, so the coverage line below says something
-  // real on first paint rather than sitting empty until it's touched.
-  const [guests, setGuests] = useState(120)
 
   const pieces = PIECES_PER_HOUR * hours
   const covers = pieces * GUESTS_PER_PIECE
@@ -131,15 +127,6 @@ export default function NightPlanner() {
               )}
             </div>
           </div>
-
-          {/* Hours are three fixed options, so they stay three buttons. The
-              guest count is a genuinely continuous figure the couple already
-              knows, so it gets a control you sweep through instead. */}
-          <GuestScrub
-            value={guests}
-            onChange={setGuests}
-            label={p.guestsLabel}
-          />
         </div>
 
         {/* The arithmetic */}
@@ -186,24 +173,8 @@ export default function NightPlanner() {
               )
             })}
           </div>
-          {/* The coverage line, read back against the visitor's own room. When
-              the booked hours already reach everyone it says so plainly; when
-              they don't, it says that just as plainly rather than rounding the
-              claim up — the honest number is what makes the add-on below it
-              read as the answer instead of an upsell. */}
           <p className="mt-4 text-sm leading-relaxed text-ink/85">
-            {covers >= guests ? (
-              <>
-                {p.covers.allLead} <b className="num-wide text-ink">{guests}</b>{' '}
-                {p.covers.allTail}
-              </>
-            ) : (
-              <>
-                {p.covers.lead} <b className="num-wide text-ink">{covers}</b>{' '}
-                {p.covers.mid} <b className="num-wide text-ink">{guests}</b>{' '}
-                {p.covers.tail}
-              </>
-            )}
+            {p.coversUnit} <b className="num-wide text-ink">{covers}</b> {p.coversTail}.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-ink/85">{p.more}</p>
           <p className="mt-5 font-mono text-[0.55rem] uppercase tracking-[0.18em] text-ink-soft">
@@ -215,9 +186,7 @@ export default function NightPlanner() {
           <a
             href={ENQUIRE_HREF}
             onClick={() =>
-              window.dispatchEvent(
-                new CustomEvent('ew:planner-enquire', { detail: { hours, guests } }),
-              )
+              window.dispatchEvent(new CustomEvent('ew:planner-enquire', { detail: { hours } }))
             }
             className="group btn-hero-flow mt-6 inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-ink"
           >
