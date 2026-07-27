@@ -197,7 +197,9 @@ export default function EveningTimeline() {
                   <motion.div
                     whileHover={reduce ? {} : { y: -6 }}
                     transition={SPRING}
-                    className="group relative -mt-px flex-1 rounded-2xl border border-paper/15 bg-paper-deep/95 p-4 shadow-[0_10px_30px_-18px_rgba(78,38,57,0.58)] backdrop-blur-[1px] sm:p-5"
+                    // zoom-flat: even a 1px backdrop blur re-rasters the card
+                    // during pinch zoom; the /95 ground carries it (index.css).
+                    className="zoom-flat group relative -mt-px flex-1 rounded-2xl border border-paper/15 bg-paper-deep/95 p-4 shadow-[0_10px_30px_-18px_rgba(78,38,57,0.58)] backdrop-blur-[1px] sm:p-5"
                   >
                     <GlassCardRim />
                     <span

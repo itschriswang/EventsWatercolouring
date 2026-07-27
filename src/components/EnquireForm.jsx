@@ -308,7 +308,10 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                   <span
                     key={i}
                     aria-hidden="true"
-                    className={`absolute ${b.pos} rounded-full mix-blend-multiply`}
+                    // zoom-mute: blurred multiply blobs glitch during
+                    // pinch-zoom re-raster; at 0.12–0.14 opacity their
+                    // absence while zoomed is invisible (see index.css).
+                    className={`zoom-mute absolute ${b.pos} rounded-full mix-blend-multiply`}
                     style={{
                       opacity: b.o,
                       background: `radial-gradient(circle at 50% 50%, ${b.c}, transparent 68%)`,
@@ -322,7 +325,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                     initial={reduce ? { opacity: 0.12 } : { opacity: 0, scale: 0.4 }}
                     animate={reduce ? { opacity: 0.12 } : { opacity: [0, 0.22, 0.12], scale: 1.7 }}
                     transition={reduce ? { duration: 0 } : { duration: 1.6, ease: [0.22, 0.61, 0.36, 1] }}
-                    className="absolute left-1/2 top-1/2 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-multiply"
+                    className="zoom-mute absolute left-1/2 top-1/2 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-multiply"
                     style={{
                       background:
                         'radial-gradient(circle at 50% 50%, #F2A6C1, rgba(212,182,230,0.5) 45%, transparent 72%)',
