@@ -7,18 +7,303 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Page not found | Chris Wang</title>
     <meta name="robots" content="noindex" />
-    <meta name="theme-color" content="#F4EFE6" />
+    <meta name="theme-color" content="#F7F4EF" />
+
+    <!--
+      This page is served straight by GitHub Pages for any unmatched URL, so it
+      gets no Vite bundle, no Tailwind and no React — everything it needs is
+      inlined here. It deliberately mirrors the site's design system by hand:
+      the Pastel Bloom palette, the three-font voice (Darumadrop One titles,
+      Manrope body, Mynerve for the handwritten aside) and the deckle-edged
+      paper card from the enquiry form. Keep those values in sync with
+      tailwind.config.js / index.css if the palette is ever retuned.
+
+      The concept is the one honest metaphor for a missing page in a painter's
+      site: a sheet that was started and never finished. The wash is there, the
+      subject never arrived.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Mynerve&family=Manrope:wght@400;500;600;700&family=Darumadrop+One&display=swap"
+    />
+
+    <style>
+      :root {
+        --paper: #f7f4ef;
+        --ink: #352e30;
+        --ink-soft: #6b6065;
+        --line: #e1d6e0;
+        --rose: #b04a76;
+        --rust: #963b5a;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: clamp(1.5rem, 5vw, 4rem) 5vw;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: 'Manrope', system-ui, sans-serif;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* The ambient wash. Blooms are ordered along the Pastel Bloom arc
+         (apricot → butter → yellow-green → periwinkle → lilac → blush) so
+         every overlap sits between hue neighbours, with a near-white cream
+         radial laid over the centre where they meet — the site's anti-mud
+         rule, so the middle glows instead of averaging to grey. */
+      .wash {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(circle 26vw at 50% 44%, rgba(255, 252, 242, 0.55), transparent 66%),
+          radial-gradient(circle 30vw at 12% 22%, rgba(247, 195, 148, 0.28), transparent 70%),
+          radial-gradient(circle 26vw at 32% 72%, rgba(226, 232, 138, 0.24), transparent 70%),
+          radial-gradient(circle 28vw at 54% 18%, rgba(212, 226, 130, 0.22), transparent 70%),
+          radial-gradient(circle 30vw at 76% 60%, rgba(216, 218, 236, 0.26), transparent 72%),
+          radial-gradient(circle 26vw at 90% 26%, rgba(210, 196, 232, 0.24), transparent 72%),
+          radial-gradient(circle 28vw at 68% 92%, rgba(244, 196, 210, 0.24), transparent 72%);
+      }
+
+      /* Paper grain, matching .paper-grain in index.css — a tiny inline SVG
+         turbulence tile at very low opacity so the sheet has tooth. */
+      .grain {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0.35;
+        mix-blend-mode: multiply;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
+      }
+
+      .sheet {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        max-width: 40rem;
+        padding: clamp(2rem, 6vw, 3.5rem);
+        /* The deckle: a torn-edge clip so the card reads as a hand-cut sheet
+           of cotton rag rather than a rounded rectangle. Values are a coarse
+           hand-drawn tear — deliberately irregular. */
+        background: linear-gradient(160deg, #fffdf9 0%, #fbf9f4 55%, #f8f4ec 100%);
+        filter: drop-shadow(0 18px 38px rgba(78, 38, 57, 0.21))
+          drop-shadow(0 2px 4px rgba(126, 40, 72, 0.1));
+        clip-path: polygon(
+          0.6% 1.2%, 12% 0.4%, 26% 1.6%, 39% 0.5%, 53% 1.4%, 67% 0.3%,
+          81% 1.5%, 93% 0.6%, 99.4% 1.8%, 99% 14%, 99.6% 28%, 98.8% 42%,
+          99.5% 57%, 98.9% 71%, 99.6% 85%, 99.2% 98.4%, 87% 99.5%,
+          73% 98.4%, 59% 99.6%, 45% 98.5%, 31% 99.6%, 17% 98.4%,
+          4% 99.5%, 0.5% 98%, 1.2% 84%, 0.4% 69%, 1.4% 55%, 0.5% 40%,
+          1.3% 26%, 0.4% 13%
+        );
+      }
+
+      /* The unfinished wash on the sheet itself: a bloom that was laid down
+         and then abandoned, stopping short of any subject. Hue-adjacent pairs
+         only (blush → lilac, butter → yellow-green), per the anti-mud rules. */
+      .sheet::before {
+        content: '';
+        position: absolute;
+        inset: 6%;
+        z-index: 0;
+        pointer-events: none;
+        border-radius: 40%;
+        opacity: 0.55;
+        filter: blur(28px);
+        background:
+          radial-gradient(circle at 22% 26%, rgba(242, 194, 207, 0.5), transparent 62%),
+          radial-gradient(circle at 70% 20%, rgba(210, 196, 232, 0.42), transparent 62%),
+          radial-gradient(circle at 78% 74%, rgba(226, 232, 138, 0.38), transparent 62%);
+        animation: bloom 1.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+      }
+
+      @keyframes bloom {
+        from {
+          opacity: 0;
+          transform: scale(0.82);
+        }
+        to {
+          opacity: 0.55;
+          transform: scale(1);
+        }
+      }
+
+      .inner {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* The handwritten aside — Mynerve is the site's voice for logistics and
+         numerals, which is exactly what a status code is. */
+      .code {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.55rem;
+        font-family: 'Mynerve', cursive;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: var(--ink-soft);
+      }
+
+      .code b {
+        font-weight: 400;
+        font-size: 1.05rem;
+        letter-spacing: 0.06em;
+        color: var(--rose);
+      }
+
+      h1 {
+        margin: 1.1rem 0 0;
+        font-family: 'Darumadrop One', cursive;
+        font-size: clamp(1.9rem, 5.5vw, 3rem);
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        font-weight: 400;
+      }
+
+      p {
+        margin: 1.1rem 0 0;
+        max-width: 38ch;
+        color: var(--ink-soft);
+      }
+
+      .links {
+        margin-top: clamp(1.75rem, 4vw, 2.5rem);
+        padding-top: clamp(1.25rem, 3vw, 1.75rem);
+        border-top: 1px solid var(--line);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+      }
+
+      /* Same pill language as the site's GlassPill / hour buttons. */
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.6rem 1.1rem;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.6);
+        font-family: 'Mynerve', cursive;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--ink);
+        text-decoration: none;
+        transition: border-color 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+          color 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+          transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+
+      .pill span[aria-hidden] {
+        transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+
+      .pill:hover,
+      .pill:focus-visible {
+        border-color: var(--rose);
+        color: var(--rose);
+        transform: translateY(-1px);
+      }
+
+      .pill:hover span[aria-hidden],
+      .pill:focus-visible span[aria-hidden] {
+        transform: translateX(3px);
+      }
+
+      /* The primary route back gets the accent fill, so there is one clear
+         action rather than four equal ones. */
+      .pill.lead {
+        border-color: var(--rose);
+        background: var(--rose);
+        color: var(--paper);
+      }
+
+      .pill.lead:hover,
+      .pill.lead:focus-visible {
+        background: var(--rust);
+        border-color: var(--rust);
+        color: var(--paper);
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--rose);
+        outline-offset: 3px;
+      }
+
+      .sign {
+        margin-top: 1.6rem;
+        font-size: 0.86rem;
+      }
+
+      .sign a {
+        color: var(--rose);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      /* The global reduced-motion safety net, mirrored from index.css. */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
   </head>
-  <body style="margin: 0; background: #F4EFE6;">
-    <div style="max-width: 42rem; margin: 0 auto; padding: 5rem 1.5rem; font-family: Georgia, 'Times New Roman', serif; color: #352E30; line-height: 1.65;">
-      <h1 style="font-size: 2rem; line-height: 1.15; font-weight: 400;">That page has wandered off the paper.</h1>
-      <p>The page you were after isn&rsquo;t here. It may have moved, or the link had a typo in it.</p>
-      <p>
-        <a href="/" style="color: #B04A76;">Back to the homepage</a> &middot;
-        <a href="/faq/" style="color: #B04A76;">Read the FAQ</a> &middot;
-        <a href="/#enquiry" style="color: #B04A76;">Make an enquiry</a>
-      </p>
-      <p>Or email <a href="mailto:create@chriswangstudio.com" style="color: #B04A76;">create@chriswangstudio.com</a> and I&rsquo;ll point you the right way.</p>
-    </div>
+  <body>
+    <div class="wash" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <main class="sheet">
+      <div class="inner">
+        <p class="code">Error <b>404</b></p>
+
+        <h1>This one never got finished.</h1>
+
+        <p>
+          The wash went down, then the page wandered off before it became
+          anything. It may have moved, or the link had a typo in it.
+        </p>
+
+        <nav class="links" aria-label="Where to next">
+          <a class="pill lead" href="/">
+            Back to the studio <span aria-hidden="true">&rarr;</span>
+          </a>
+          <a class="pill" href="/#work">
+            See the work <span aria-hidden="true">&rarr;</span>
+          </a>
+          <a class="pill" href="/faq/">
+            Read the FAQ <span aria-hidden="true">&rarr;</span>
+          </a>
+          <a class="pill" href="/#enquiry">
+            Make an enquiry <span aria-hidden="true">&rarr;</span>
+          </a>
+        </nav>
+
+        <p class="sign">
+          Or email
+          <a href="mailto:create@chriswangstudio.com">create@chriswangstudio.com</a>
+          and I&rsquo;ll point you the right way.
+        </p>
+      </div>
+    </main>
   </body>
 </html>
