@@ -247,9 +247,13 @@ function Postmark({ date, top, bottom }) {
     </g>
   )
   return (
+    // zoom-unfilter (not zoom-mute): the postmark is a mark the visitor can
+    // see, so it stays — but its multiply blend and the inner displacement
+    // filter both re-run on every pinch-zoom re-raster and tear (see
+    // index.css). Dark ink on paper, so flat-blended it reads much the same.
     <svg
       viewBox="0 0 160 90"
-      className="block w-full"
+      className="zoom-unfilter block w-full"
       style={{ mixBlendMode: 'multiply', transform: 'rotate(-8deg)' }}
       aria-hidden="true"
     >

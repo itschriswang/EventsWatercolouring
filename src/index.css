@@ -650,17 +650,28 @@ html[data-pinch-zoom] body {
 html[data-pinch-zoom] .paper-grain {
   background-image: none;
 }
-/* Dot-screens, blurred blend overlays, fixed multiply grain: hide outright. */
+/* Dot-screens, blurred blend overlays, fixed multiply grain: stop painting.
+   `visibility`, NOT `display`: this toggles in the middle of a live gesture,
+   and `display: none` would rip the elements out of the layout tree and force
+   a reflow at exactly the wrong moment — the mobile gallery is a CSS
+   multi-column container, so a mid-pinch reflow re-fragments the whole wall.
+   `visibility: hidden` drops the layer (and its blend) from painting with no
+   layout work at all, and it inherits, so nested decoration goes quiet too. */
 html[data-pinch-zoom] .zoom-mute {
-  display: none !important;
+  visibility: hidden !important;
 }
 /* Fixed/sticky chrome keeps its translucent ground but drops the blur. */
 html[data-pinch-zoom] .zoom-flat {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
-/* Filter-only offenders (drop-shadowed deckle edge): keep the element,
-   lose the filter graph. */
-html[data-pinch-zoom] .zoom-unfilter {
+/* Offenders that carry a visible mark and so can't just be hidden (the
+   drop-shadowed deckle edge, the postcard's stamp): keep the element, lose the
+   filter graph and the blend. Descendants too — an SVG `filter="url(#…)"` is a
+   presentation attribute, so any CSS `filter` overrides it, which is how the
+   stamp's inner displacement map is reached. */
+html[data-pinch-zoom] .zoom-unfilter,
+html[data-pinch-zoom] .zoom-unfilter * {
   filter: none !important;
+  mix-blend-mode: normal !important;
 }
