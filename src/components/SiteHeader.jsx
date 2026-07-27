@@ -106,7 +106,10 @@ export default function SiteHeader({ revealed, className = '', enquireHref = ENQ
       animate={revealed ? { y: 0, opacity: 1 } : { y: reduce ? 0 : -80, opacity: 0 }}
       transition={{ ...SPRING, delay: 0.25 }}
       // hidden on mobile — MobileNav owns small screens
-      className={`hidden md:block sticky top-0 z-50 ${className}`}
+      // zoom-flat: backdrop blur on fixed/sticky chrome flickers white while
+      // pinch-zoomed (tablets hit this breakpoint); the translucent paper
+      // ground stays, only the blur drops (see index.css).
+      className={`zoom-flat hidden md:block sticky top-0 z-50 ${className}`}
       style={{
         background: scrolled ? 'rgb(var(--rgb-paper) / 0.97)' : 'rgb(var(--rgb-paper) / 0.74)',
         backdropFilter: 'blur(18px) saturate(1.1)',
