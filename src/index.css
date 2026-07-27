@@ -623,3 +623,44 @@
   opacity: 0;
   transition: opacity 0.8s ease;
 }
+
+/* ── Pinch-zoom artifact guard ────────────────────────────────────────────
+   `data-pinch-zoom` sits on <html> for exactly as long as the visitor is
+   pinch-zoomed in (toggled live by usePinchZoom.js). While zoomed, mobile
+   GPUs re-rasterise every composited layer at the pinched scale, and the
+   decorative texture stack breaks down in two ways:
+
+   1. The fine dot-screens (the body's 3px dither ground, DitherField's
+      dot-screen over the washes, `.paper-grain`) are built from sub-pixel
+      dots. Resampled at an arbitrary zoom scale they alias into shimmering
+      moiré — "white lines everywhere".
+   2. The blend/filter layers (the fixed multiply grain canvas, CornerBloom's
+      blurred multiply overlays sitting OVER the gallery paintings, the nav
+      chrome's backdrop blur, warped SVG rims) force whole-layer re-raster
+      mid-gesture; when the GPU drops or misdraws one, it flashes white or
+      blanks the artwork beneath it.
+
+   Every layer muted here is screen-space paper texture — sub-perceptual when
+   the visitor is zoomed into a painting — and all of it returns the moment
+   scale settles back to 1. Unlayered, so these win over the layered rules
+   above; `!important` so they also beat inline styles. */
+html[data-pinch-zoom] body {
+  background-image: none;
+}
+html[data-pinch-zoom] .paper-grain {
+  background-image: none;
+}
+/* Dot-screens, blurred blend overlays, fixed multiply grain: hide outright. */
+html[data-pinch-zoom] .zoom-mute {
+  display: none !important;
+}
+/* Fixed/sticky chrome keeps its translucent ground but drops the blur. */
+html[data-pinch-zoom] .zoom-flat {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+/* Filter-only offenders (drop-shadowed deckle edge): keep the element,
+   lose the filter graph. */
+html[data-pinch-zoom] .zoom-unfilter {
+  filter: none !important;
+}

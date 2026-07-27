@@ -23,11 +23,14 @@ const FRINGE =
 
 export default function DeckleEdge({ className = '' }) {
   return (
+    // zoom-unfilter: the full-width drop-shadow re-rasters the torn contour
+    // during pinch zoom; the edge itself stays, only its shadow rests
+    // (see index.css).
     <svg
       aria-hidden="true"
       viewBox="0 0 1440 24"
       preserveAspectRatio="none"
-      className={className}
+      className={'zoom-unfilter ' + className}
       style={{ filter: 'drop-shadow(0 5px 10px rgba(126,40,72,0.22))' }}
     >
       <path d={FRINGE} fill="#F7F4EF" fillOpacity="0.55" />

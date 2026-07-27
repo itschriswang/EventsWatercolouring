@@ -122,7 +122,9 @@ export default function MobileNav({ revealed, enquireHref = ENQUIRE_HREF }) {
     >
      <div ref={trackRef} className="flex justify-center will-change-transform">
       <nav
-        className="flex items-center gap-0.5 px-2 py-1.5 pointer-events-auto"
+        // zoom-flat: the pill's backdrop blur flickers white while
+        // pinch-zoomed; its translucent ground stays (see index.css).
+        className="zoom-flat flex items-center gap-0.5 px-2 py-1.5 pointer-events-auto"
         style={{
           background: 'rgb(var(--rgb-paper) / 0.72)',
           backdropFilter: 'blur(26px) saturate(1.15)',

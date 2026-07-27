@@ -36,7 +36,10 @@ export default function DitherField({
   return (
     <div
       aria-hidden="true"
-      className={'pointer-events-none ' + className}
+      // zoom-mute: sub-pixel dots resampled at a pinched scale alias into
+      // moiré banding ("white lines"), so the screen sits out the zoom
+      // (see index.css).
+      className={'zoom-mute pointer-events-none ' + className}
       style={{
         opacity,
         mixBlendMode: blend,
