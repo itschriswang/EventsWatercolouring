@@ -236,9 +236,19 @@ export const PACKAGES = {
     title: 'What does a booking cover?',
     lede: 'Pick your hours. I paint around 8 pieces an hour, usually two guests to a piece, up to four when a group shares one.',
     hoursLabel: 'Hours booked',
+    guestsLabel: 'Guests you are expecting',
     piecesUnit: 'keepsakes painted live',
-    coversUnit: 'Room for around',
-    coversTail: 'guests on them at two to a piece, more when groups of up to four share one',
+    // The coverage line, composed against the visitor's own guest count (see
+    // NightPlanner). Two forms: the usual one, where the live hours cover part
+    // of the room and the add-ons cover the rest, and the happy one where the
+    // booked hours already reach everybody.
+    covers: {
+      lead: 'Room for around',
+      mid: 'of your',
+      tail: 'guests, at two to a piece and more when groups of up to four share one.',
+      allLead: 'Enough for all',
+      allTail: 'guests you are expecting, at two to a piece.',
+    },
     more: 'Want more covered? Add live hours, or the after-event service adds studio-painted pieces at a per-portrait rate.',
     small: 'Numbers to plan around, not a stopwatch. Groups and pacing vary on the night.',
     // The planner's own next step — carries the chosen hours into the

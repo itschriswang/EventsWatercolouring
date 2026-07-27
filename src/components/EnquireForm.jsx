@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label, { Drop } from './Label.jsx'
+import CopyEmail from './CopyEmail.jsx'
 import Postcard from './Postcard.jsx'
 import { CalendarDateIcon } from './icons/FreehandIcons.jsx'
 import {
@@ -159,11 +160,16 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
   // has already typed.
   useEffect(() => {
     const onPlanner = (e) => {
-      const { hours } = e.detail || {}
+      const { hours, guests } = e.detail || {}
       if (!hours) return
+      // The planner already asked both questions — carry the answers over so
+      // the enquiry arrives with the shape of the night on it.
+      const summary = guests
+        ? `Thinking around ${hours} hours live, for about ${guests} guests.`
+        : `Thinking around ${hours} hours live.`
       setF((p) => ({
         ...p,
-        message: p.message || `Thinking around ${hours} hours live.`,
+        message: p.message || summary,
         package: p.package || 'Live on the day',
       }))
     }
@@ -262,15 +268,15 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
             <em className="text-hero-flow [text-shadow:none]">{ENQUIRY.title[1]}</em>
           </h2>
           <p className="mt-6 max-w-sm leading-relaxed text-ink-soft">{ENQUIRY.intro}</p>
-          <p className="mt-6 flex flex-col gap-1 font-mono text-xs uppercase tracking-[0.15em] text-ink-soft sm:flex-row sm:items-baseline sm:gap-1.5">
-            <span>Or email</span>
-            <a
-              href={`mailto:${EMAIL}`}
-              className="text-ink underline underline-offset-4 [overflow-wrap:anywhere]"
-            >
-              {EMAIL}
-            </a>
-          </p>
+          {/* The address, with a copy action beside it — a visitor who would
+              rather write from their own mail account shouldn't have to hand
+              select it off the page (see CopyEmail). */}
+          <div className="mt-6">
+            <span className="font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
+              Or email
+            </span>
+            <CopyEmail className="mt-1.5 text-sm" />
+          </div>
           {/* Bouquet — flipped, beneath the heading, widescreen only */}
           <img
             src={asset('assets/art-bouquet_transparent.webp')}
