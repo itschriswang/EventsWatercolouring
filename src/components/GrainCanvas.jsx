@@ -105,7 +105,10 @@ export default function GrainCanvas() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-[60] h-full w-full opacity-[0.075] mix-blend-multiply"
+      // zoom-mute: a fixed multiply layer re-composited over the whole page
+      // glitches white during pinch-zoom re-raster, and the noise is
+      // screen-space — magnified grain is wrong anyway (see index.css).
+      className="zoom-mute pointer-events-none fixed inset-0 z-[60] h-full w-full opacity-[0.075] mix-blend-multiply"
     />
   )
 }

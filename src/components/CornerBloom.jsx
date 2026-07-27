@@ -24,7 +24,11 @@ export default function CornerBloom({ from, to, overlay = false }) {
   return (
     <div
       aria-hidden="true"
-      className={'pointer-events-none absolute inset-0' + (overlay ? ' z-10' : '')}
+      // zoom-mute: a blurred multiply layer the size of the card — in the
+      // gallery it sits OVER the painting (`overlay`), and when a pinch-zoom
+      // re-raster drops it the artwork beneath appears to vanish. The fringe
+      // is imperceptible at zoom, so it sits the gesture out (see index.css).
+      className={'zoom-mute pointer-events-none absolute inset-0' + (overlay ? ' z-10' : '')}
       style={{
         background:
           // Primary diagonal — stronger bloom

@@ -28,9 +28,13 @@ export default function GlassCardRim({ radius = 16, tint = ['#E4E6A8', '#D6DAF0'
 
   return (
     <>
+      {/* zoom-mute: the displacement-warped stroke re-runs its SVG filter
+          graph on every pinch-zoom re-raster and tears into white streaks on
+          mobile GPUs; the plain hairline span below keeps the rim readable
+          while zoomed (see index.css). */}
       <svg
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 h-full w-full"
+        className="zoom-mute pointer-events-none absolute inset-0 h-full w-full"
         preserveAspectRatio="none"
       >
         <defs>
