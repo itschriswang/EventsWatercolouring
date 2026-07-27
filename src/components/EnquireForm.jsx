@@ -690,7 +690,9 @@ function SealButton({ sending }) {
             blooming brighter on hover as if it were tilted to the light. */}
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-[10%] rounded-full opacity-60 transition-opacity duration-300 group-hover:opacity-100"
+          // zoom-mute: a screen-blend bloom on the seal — same pinch-zoom
+          // re-raster hazard as the multiply blobs above (see index.css).
+          className="zoom-mute pointer-events-none absolute inset-[10%] rounded-full opacity-60 transition-opacity duration-300 group-hover:opacity-100"
           style={{
             background: [
               'radial-gradient(circle at 30% 20%, rgba(226,232,138,0.22) 0%, rgba(226,232,138,0) 44%)',

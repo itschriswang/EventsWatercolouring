@@ -302,7 +302,11 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
               hover means it simply never fires on touch. */}
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-700 ease-organic group-hover:opacity-100"
+            // zoom-mute: a multiply layer covering the whole painting. Even at
+            // opacity 0 it is a blend layer the compositor has to re-read the
+            // artwork through on every pinch-zoom re-raster, and a dropped
+            // read paints the tile flat — the painting "disappears".
+            className="zoom-mute pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-700 ease-organic group-hover:opacity-100"
             style={{
               boxShadow:
                 'inset 0 0 34px 6px rgba(244,196,210,0.30), inset 0 0 90px 24px rgba(216,218,236,0.20)',

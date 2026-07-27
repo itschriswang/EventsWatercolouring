@@ -152,7 +152,10 @@ function Bloom({ active, reduce }) {
         return (
           <motion.span
             key={i}
-            className="absolute inset-0 m-auto rounded-full mix-blend-multiply"
+            // zoom-mute: blurred multiply blobs — the same pinch-zoom re-raster
+            // hazard as every other blend layer (see index.css). Reachable if a
+            // visitor pinches while the page is still loading.
+            className="zoom-mute absolute inset-0 m-auto rounded-full mix-blend-multiply"
             style={{
               width: '62%',
               height: '62%',
