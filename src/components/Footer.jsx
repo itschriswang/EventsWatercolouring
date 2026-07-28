@@ -123,7 +123,7 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
           href={FOOTER.instagram}
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-center gap-3 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-paper focus-visible:ring-offset-4 focus-visible:ring-offset-transparent"
+          className="no-ext-mark group flex items-center gap-3 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-paper focus-visible:ring-offset-4 focus-visible:ring-offset-transparent"
         >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-paper/25 text-paper/70 transition-colors duration-300 group-hover:border-blush group-hover:text-blush group-focus-visible:border-blush group-focus-visible:text-blush">
             <InstagramIcon />
