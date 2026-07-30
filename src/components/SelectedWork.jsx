@@ -10,7 +10,7 @@ import { WORK } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
 import GlassCardRim from './GlassCardRim.jsx'
 import CoverflowCarousel, { COVERFLOW_SIZING, COVERFLOW_RADIUS } from './CoverflowCarousel.jsx'
-import { WashiTape, PaperClip, TAPE_TINTS } from './Ephemera.jsx'
+import { PaperClip } from './Ephemera.jsx'
 
 // Flatten the curated groups once, giving every entry a stable index. The
 // lightbox walks this flat list, and `_idx` (not `item.img`, which repeats
@@ -30,10 +30,29 @@ const ALL_ITEMS = GROUPS.flatMap((g) => g.items)
 // static, so this is computed once, not per render.
 const PAINTINGS = ALL_ITEMS.filter((g) => !g.testimonial)
 
-// Graceful fallback when an image fails to load: hide the broken <img> so the
-// paper-toned card remains instead of a broken-image glyph.
+// Graceful fallback when an image fails to load: retry a couple of times
+// before giving up, THEN hide the broken <img> so the paper-toned card remains
+// instead of a broken-image glyph. The retries matter on iOS: Safari fires
+// `error` for transient decode failures under memory pressure (not just
+// missing files), and a permanent `display: none` on the first blip left a
+// painting blanked for the rest of the visit — the card and its dressing
+// still rendered, the artwork never came back. Re-assigning `src` re-runs the
+// <picture> selection algorithm, which re-attempts the load (usually straight
+// from cache).
 const hideOnError = (e) => {
-  e.currentTarget.style.display = 'none'
+  const img = e.currentTarget
+  const tries = Number(img.dataset.retries || 0)
+  if (tries < 2) {
+    img.dataset.retries = String(tries + 1)
+    const src = img.getAttribute('src')
+    setTimeout(() => {
+      // Unmounted (lightbox churn, layout swap) — nothing to retry.
+      if (!img.isConnected) return
+      img.src = src
+    }, 600 * (tries + 1))
+  } else {
+    img.style.display = 'none'
+  }
 }
 
 /**
@@ -219,14 +238,6 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
     : item.landscape ? 'aspect-[3/2]' : 'aspect-[3/4]'
   const cardShape = 'relative overflow-hidden rounded-2xl border border-line ' + aspect
 
-  // Washi tape across a top corner of each print — the wall reads as prints
-  // taped up in the studio rather than tiles in a grid. Corner and tint are
-  // hand-varied off the stable index so the arrangement never looks stamped;
-  // the video tile skips it (tape over moving footage reads as a glitch).
-  const tape = !item.testimonial && !item.video
-    ? { tint: TAPE_TINTS[item._idx % TAPE_TINTS.length], right: item._idx % 2 === 1 }
-    : null
-
   return (
     <motion.figure
       ref={ref}
@@ -333,14 +344,6 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
             )}
           </div>
           <CornerBloom from="rgba(176,74,118,0.14)" to="rgba(140,54,86,0.10)" overlay />
-          {tape && (
-            <WashiTape
-              tint={tape.tint}
-              className={
-                'top-4 z-20 ' + (tape.right ? '-right-7 rotate-45' : '-left-7 -rotate-45')
-              }
-            />
-          )}
         </button>
       )}
     </motion.figure>
