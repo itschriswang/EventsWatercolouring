@@ -1,3 +1,5 @@
+import { useHeavyFx } from '../hooks/useMediaQuery.js'
+
 /**
  * CornerBloom — a soft watercolour bloom that feathers in from all four corners
  * of a card, framing the clean "unpainted paper" interior (negative space).
@@ -21,6 +23,13 @@
  *             rather than behind text content (default false)
  */
 export default function CornerBloom({ from, to, overlay = false }) {
+  // The blur is desktop-only. A per-card blur(14px) + multiply forces the
+  // whole card to render as an offscreen compositor group, and on iOS those
+  // groups are the first thing WebKit sheds during a momentum-scroll re-raster
+  // — entire gallery tiles pop out of existence for a few frames and pop
+  // back. The gradients are already soft radials, so on touch/low-end devices
+  // the blur is sub-perceptual anyway; the multiply pigment recipe stays.
+  const heavy = useHeavyFx()
   return (
     <div
       aria-hidden="true"
@@ -38,7 +47,7 @@ export default function CornerBloom({ from, to, overlay = false }) {
           `radial-gradient(circle at 110%  -10%, ${from}, transparent 42%), ` +
           `radial-gradient(circle at  -10% 110%, ${to},   transparent 42%)`,
         mixBlendMode: 'multiply',
-        filter: 'blur(14px)',
+        ...(heavy ? { filter: 'blur(14px)' } : null),
       }}
     />
   )
