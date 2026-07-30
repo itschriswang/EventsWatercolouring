@@ -308,24 +308,29 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
             )}
             {/* Re-wet on hover — pigment pools back into the painting's edges
                 (blush and periwinkle inset glows in multiply), as if the wash
-                never quite dried. Opacity-only, so it costs one composite;
-                hover means it simply never fires on touch. Lives inside the
+                never quite dried. Opacity-only, so it costs one composite.
+                `heavy`-gated: hover never fires on touch, but even at opacity
+                0 this is a blend layer the compositor must group the artwork
+                under, and iOS sheds exactly those groups during momentum
+                scroll — so phones don't mount it at all. Lives inside the
                 clip wrapper: the opacity transition promotes it to its own
                 layer, and its inset glows reach into the box's square corners
                 — outside the wrapper they flash past the radius mid-hover. */}
-            <span
-              aria-hidden="true"
-              // zoom-mute: a multiply layer covering the whole painting. Even at
-              // opacity 0 it is a blend layer the compositor has to re-read the
-              // artwork through on every pinch-zoom re-raster, and a dropped
-              // read paints the tile flat — the painting "disappears".
-              className="zoom-mute pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-700 ease-organic group-hover:opacity-100"
-              style={{
-                boxShadow:
-                  'inset 0 0 34px 6px rgba(244,196,210,0.30), inset 0 0 90px 24px rgba(216,218,236,0.20)',
-                mixBlendMode: 'multiply',
-              }}
-            />
+            {heavy && (
+              <span
+                aria-hidden="true"
+                // zoom-mute: a multiply layer covering the whole painting. Even at
+                // opacity 0 it is a blend layer the compositor has to re-read the
+                // artwork through on every pinch-zoom re-raster, and a dropped
+                // read paints the tile flat — the painting "disappears".
+                className="zoom-mute pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-700 ease-organic group-hover:opacity-100"
+                style={{
+                  boxShadow:
+                    'inset 0 0 34px 6px rgba(244,196,210,0.30), inset 0 0 90px 24px rgba(216,218,236,0.20)',
+                  mixBlendMode: 'multiply',
+                }}
+              />
+            )}
           </div>
           <CornerBloom from="rgba(176,74,118,0.14)" to="rgba(140,54,86,0.10)" overlay />
           {tape && (
