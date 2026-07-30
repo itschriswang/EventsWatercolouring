@@ -269,50 +269,70 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
             ' focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-paper'
           }
         >
-          {playVideo ? (
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              poster={asset(`assets/${item.img}.jpg`)}
-              aria-label={item.alt || item.ttl}
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-            >
-              <source src={asset(`assets/${item.video}.webm`)} type="video/webm" />
-              <source src={asset(`assets/${item.video}.mp4`)} type="video/mp4" />
-            </video>
-          ) : (
-            <picture>
-              <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
-              <motion.img
-                src={asset(`assets/${item.img}.jpg`)}
-                alt={item.alt || item.ttl}
-                loading="lazy"
-                onError={hideOnError}
+          {/* The card's overflow-hidden radius clip is rasterised, and both
+              engines drop it whenever the media inside is composited — the
+              hover scale's transform transition, video, an iOS scroll
+              re-raster — flashing the artwork's corners square. clip-path is
+              geometry the compositor itself honours for descendant layers, so
+              this wrapper re-rounds the media no matter which layer it paints
+              on. It lives here and not on the card, because on the card it
+              would also clip the hover lift shadow and focus ring (clip-path
+              cuts an element's own box-shadow; overflow never did). 1rem =
+              rounded-2xl. */}
+          <div className="relative h-full w-full [clip-path:inset(0_round_1rem)]">
+            {playVideo ? (
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                poster={asset(`assets/${item.img}.jpg`)}
+                aria-label={item.alt || item.ttl}
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+              >
+                <source src={asset(`assets/${item.video}.webm`)} type="video/webm" />
+                <source src={asset(`assets/${item.video}.mp4`)} type="video/mp4" />
+              </video>
+            ) : (
+              <picture>
+                <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
+                <motion.img
+                  src={asset(`assets/${item.img}.jpg`)}
+                  alt={item.alt || item.ttl}
+                  loading="lazy"
+                  onError={hideOnError}
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                />
+              </picture>
+            )}
+            {/* Re-wet on hover — pigment pools back into the painting's edges
+                (blush and periwinkle inset glows in multiply), as if the wash
+                never quite dried. Opacity-only, so it costs one composite.
+                `heavy`-gated: hover never fires on touch, but even at opacity
+                0 this is a blend layer the compositor must group the artwork
+                under, and iOS sheds exactly those groups during momentum
+                scroll — so phones don't mount it at all. Lives inside the
+                clip wrapper: the opacity transition promotes it to its own
+                layer, and its inset glows reach into the box's square corners
+                — outside the wrapper they flash past the radius mid-hover. */}
+            {heavy && (
+              <span
+                aria-hidden="true"
+                // zoom-mute: a multiply layer covering the whole painting. Even at
+                // opacity 0 it is a blend layer the compositor has to re-read the
+                // artwork through on every pinch-zoom re-raster, and a dropped
+                // read paints the tile flat — the painting "disappears".
+                className="zoom-mute pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-700 ease-organic group-hover:opacity-100"
+                style={{
+                  boxShadow:
+                    'inset 0 0 34px 6px rgba(244,196,210,0.30), inset 0 0 90px 24px rgba(216,218,236,0.20)',
+                  mixBlendMode: 'multiply',
+                }}
               />
-            </picture>
-          )}
+            )}
+          </div>
           <CornerBloom from="rgba(176,74,118,0.14)" to="rgba(140,54,86,0.10)" overlay />
-          {/* Re-wet on hover — pigment pools back into the painting's edges
-              (blush and periwinkle inset glows in multiply), as if the wash
-              never quite dried. Opacity-only, so it costs one composite;
-              hover means it simply never fires on touch. */}
-          <span
-            aria-hidden="true"
-            // zoom-mute: a multiply layer covering the whole painting. Even at
-            // opacity 0 it is a blend layer the compositor has to re-read the
-            // artwork through on every pinch-zoom re-raster, and a dropped
-            // read paints the tile flat — the painting "disappears".
-            className="zoom-mute pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-700 ease-organic group-hover:opacity-100"
-            style={{
-              boxShadow:
-                'inset 0 0 34px 6px rgba(244,196,210,0.30), inset 0 0 90px 24px rgba(216,218,236,0.20)',
-              mixBlendMode: 'multiply',
-            }}
-          />
           {tape && (
             <WashiTape
               tint={tape.tint}
@@ -443,7 +463,12 @@ function RevealTile({ reveal, className = '' }) {
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
-        className="relative aspect-[3/4] cursor-ew-resize touch-pan-y select-none overflow-hidden rounded-2xl border border-line bg-paper-deep"
+        // The extra clip-path re-rounds the corners even when the layers
+        // inside are composited (the seam's clip-path animation, a scroll
+        // re-raster) and escape the rasterised overflow clip — same fix as
+        // the gallery tiles' media wrapper. Safe directly on this box: unlike
+        // the tile button it paints no outer shadow or focus ring of its own.
+        className="relative aspect-[3/4] cursor-ew-resize touch-pan-y select-none overflow-hidden rounded-2xl border border-line bg-paper-deep [clip-path:inset(0_round_1rem)]"
       >
         {/* Base layer — the piece still on the easel */}
         <picture>
