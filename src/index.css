@@ -104,17 +104,16 @@
       #F674A2 96%,
       #C94868 100%
     );
-    /* Same wash, wrapped for a rotating ring (`.gradient-frame`) — the first
-       stop repeats at the end so the loop has no seam. */
-    --hero-emphasis-gradient-conic: conic-gradient(
-      from var(--gf-angle),
-      #9ED0BD,
-      #C18DE1,
-      #D8DC4B,
-      #F674A2,
-      #C94868,
-      #9ED0BD
-    );
+    /* Same wash as a bare stop list, for the rotating ring (`.gradient-frame`)
+       to wrap into its own conic — the first stop repeats at the end so the
+       loop has no seam. Only the stops are shared: the conic itself is written
+       out on `.gradient-frame`, because Chromium only repaints an animated
+       registered property (`--gf-angle`) when it appears directly in the
+       element's own background value. Routing the whole conic through an
+       intermediate custom property froze the ring at its first frame even
+       though the angle kept animating. */
+    --hero-emphasis-conic-stops: #9ED0BD, #C18DE1, #D8DC4B, #F674A2, #C94868,
+      #9ED0BD;
 
     /* The hero headline flow again, but at the lighter stops it actually
        renders at on screen (Hero.jsx's `emphasisColors` / `emphasisColorStops`
@@ -554,6 +553,10 @@
      The angle keeps drifting via @property so the gradient itself slowly
      turns rather than sitting static. */
   .gradient-frame {
+    /* The conic must be spelled out here, angle-first — see the
+       `--hero-emphasis-conic-stops` note up top for the Chromium repaint
+       pitfall that forbids sharing it as a whole-gradient token. */
+    background: conic-gradient(from var(--gf-angle), var(--hero-emphasis-conic-stops));
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -596,6 +599,27 @@
 @media (pointer: coarse) {
   .gradient-frame {
     animation: none;
+  }
+}
+
+/* `.gradient-frame` sped up into a working indicator (the enquiry seal while
+   the post is in flight). Unlike the ambient 14s drift, this one is bounded —
+   it only exists for the seconds a submit takes — and the motion *is* the
+   message, so it stays live on coarse pointers too (after the freeze above,
+   so it wins there). The reduced-motion net below still zeroes it.
+   It spins `transform` rather than `--gf-angle`: on the live site Chromium
+   never repaints the angle-driven gradient (the computed angle animates but
+   the paint stays at its first frame), and a transform runs on the
+   compositor anyway, so it keeps turning even while the main thread is busy
+   with the very fetch it reports on. Only valid on circular rings, where
+   rotating the element is indistinguishable from rotating the gradient. */
+.gradient-frame-live {
+  animation: gf-spin 1.6s linear infinite;
+}
+
+@keyframes gf-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 

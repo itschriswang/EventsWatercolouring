@@ -114,7 +114,6 @@ export default function NightPlanner() {
                     <span
                       aria-hidden="true"
                       className="gradient-frame absolute -inset-[1.5px] rounded-full p-[1.5px]"
-                      style={{ background: 'var(--hero-emphasis-gradient-conic)' }}
                     />
                     <GlassPill
                       opaque
