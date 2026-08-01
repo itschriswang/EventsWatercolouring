@@ -672,6 +672,18 @@ function SealButton({ sending }) {
       className="group inline-flex w-fit items-center gap-4 outline-none disabled:cursor-not-allowed disabled:opacity-60"
     >
       <span className="relative h-20 w-20 shrink-0 transition-transform duration-200 ease-organic group-hover:translate-y-0.5 group-active:translate-y-1 group-focus-visible:ring-2 group-focus-visible:ring-terracotta group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-transparent">
+        {/* While the post is in flight, the seal wears a turning hairline of
+            the hero flow — the site's own "working" indicator instead of a
+            generic spinner. Same separate-empty-layer setup as the planner's
+            hour pills: `.gradient-frame`'s mask would hide the seal itself if
+            the class sat on a wrapping element. Mounted only while sending so
+            the per-frame repaint never runs ambiently. */}
+        {sending && (
+          <span
+            aria-hidden="true"
+            className="gradient-frame gradient-frame-live absolute inset-0 rounded-full p-[2px]"
+          />
+        )}
         <picture>
           <source srcSet={asset('assets/seal.webp')} type="image/webp" />
           <img
