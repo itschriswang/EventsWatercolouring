@@ -1,5 +1,6 @@
 import GradientDefs from '../components/GradientDefs.jsx'
 import GrainOverlay from '../components/GrainOverlay.jsx'
+import PageTransition from '../components/PageTransition.jsx'
 import ScrollProgress from '../components/ScrollProgress.jsx'
 import SkipLink from '../components/SkipLink.jsx'
 import SiteHeader from '../components/SiteHeader.jsx'
@@ -29,6 +30,10 @@ export default function FaqPage() {
     <div className="relative min-h-screen bg-paper">
       <GradientDefs />
       <GrainOverlay />
+      {/* Ink wipe for in-site navigation — the homepage and /corporate/ both
+          mount this; without it /faq/ was the one page that skipped the
+          site's arrival transition (and couldn't hand one off on the way out). */}
+      <PageTransition />
       <SkipLink />
       <ScrollProgress />
       <SiteHeader revealed enquireHref="#enquiry" />

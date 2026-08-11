@@ -53,8 +53,10 @@ export function EaselArt({ className = '' }) {
 
       {/* the single rectangle — a matted print */}
       <rect x="14" y="12" width="212" height="272" rx="10" fill="#FFFDF7" stroke="#E7DCE6" strokeWidth="1.5" />
+      {/* .webp directly — SVG <image> has no <picture> fallback, and the
+          .jpg twin is 616 KB against this 209 KB for a ~192px rendered box. */}
       <image
-        href={asset('assets/portrait-christopher.jpg')}
+        href={asset('assets/portrait-christopher.webp')}
         x="24"
         y="22"
         width="192"

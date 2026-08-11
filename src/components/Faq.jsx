@@ -3,6 +3,7 @@ import { SPRING } from '../lib/site.js'
 import { FAQ } from '../content.js'
 import FolderCell from './FolderCell.jsx'
 import { Drop } from './Label.jsx'
+import usePinchZoomed from '../hooks/usePinchZoom.js'
 
 /**
  * The practical bits — every question answered plainly on the page, no
@@ -54,10 +55,15 @@ const CARD_SHADOW =
 const TAB_GRADIENT = ['#F2E982', '#BCB438']
 
 function FaqCard({ item, i, number, reduce }) {
+  // Same pinch-zoom bypass every other whileInView component carries: iOS
+  // pinching can strand a scroll reveal at opacity 0, and this was the one
+  // page missing it — a blank FAQ on the most mobile-read page.
+  const zoomed = usePinchZoomed()
   return (
     <motion.li
       initial={reduce ? { opacity: 1 } : { opacity: 0, y: 26 }}
       whileInView={{ opacity: 1, y: 0 }}
+      animate={zoomed ? { opacity: 1, y: 0 } : undefined}
       viewport={{ once: true, margin: '-70px' }}
       transition={{ ...SPRING, delay: reduce ? 0 : Math.min(i, 5) * 0.04 }}
       // The stack: each card sticks a step lower than the one before and sits
@@ -113,11 +119,13 @@ function FaqCard({ item, i, number, reduce }) {
  *  pill language rather than a tab bar. Plain anchors, so it works before
  *  hydration and a middle-click still opens the section. */
 function JumpNav({ reduce }) {
+  const zoomed = usePinchZoomed()
   return (
     <motion.nav
       aria-label="Question categories"
       initial={reduce ? { opacity: 1 } : { opacity: 0, y: 14 }}
       whileInView={{ opacity: 1, y: 0 }}
+      animate={zoomed ? { opacity: 1, y: 0 } : undefined}
       viewport={{ once: true, margin: '-40px' }}
       transition={SPRING}
       className="mx-auto mb-[clamp(2.5rem,6vw,4rem)] max-w-3xl"
@@ -141,6 +149,7 @@ function JumpNav({ reduce }) {
 
 export default function Faq() {
   const reduce = useReducedMotion()
+  const zoomed = usePinchZoomed()
   // Question numbers run continuously across the drawers, so the tab cuts read
   // as one catalogue rather than four restarting at Q.01.
   let n = 0
@@ -174,6 +183,7 @@ export default function Faq() {
               id={`${cat.id}-head`}
               initial={reduce ? { opacity: 1 } : { opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
+              animate={zoomed ? { opacity: 1, y: 0 } : undefined}
               viewport={{ once: true, margin: '-60px' }}
               transition={SPRING}
               className="eyebrow mb-7 flex items-center gap-3 sm:mb-8"

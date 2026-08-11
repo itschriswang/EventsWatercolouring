@@ -6,6 +6,8 @@ import useFocusTrap from '../hooks/useFocusTrap.js'
 import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
 import { SPRING, SPRING_SOFT, asset, artSrcset } from '../lib/site.js'
+import { hideOnError } from '../lib/imageRetry.js'
+import { lockScroll, unlockScroll } from '../lib/scrollLock.js'
 import { WORK } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
 import GlassCardRim from './GlassCardRim.jsx'
@@ -30,30 +32,8 @@ const ALL_ITEMS = GROUPS.flatMap((g) => g.items)
 // static, so this is computed once, not per render.
 const PAINTINGS = ALL_ITEMS.filter((g) => !g.testimonial)
 
-// Graceful fallback when an image fails to load: retry a couple of times
-// before giving up, THEN hide the broken <img> so the paper-toned card remains
-// instead of a broken-image glyph. The retries matter on iOS: Safari fires
-// `error` for transient decode failures under memory pressure (not just
-// missing files), and a permanent `display: none` on the first blip left a
-// painting blanked for the rest of the visit — the card and its dressing
-// still rendered, the artwork never came back. Re-assigning `src` re-runs the
-// <picture> selection algorithm, which re-attempts the load (usually straight
-// from cache).
-const hideOnError = (e) => {
-  const img = e.currentTarget
-  const tries = Number(img.dataset.retries || 0)
-  if (tries < 2) {
-    img.dataset.retries = String(tries + 1)
-    const src = img.getAttribute('src')
-    setTimeout(() => {
-      // Unmounted (lightbox churn, layout swap) — nothing to retry.
-      if (!img.isConnected) return
-      img.src = src
-    }, 600 * (tries + 1))
-  } else {
-    img.style.display = 'none'
-  }
-}
+// Image error recovery lives in lib/imageRetry.js — shared with the
+// coverflow so the lightbox carries the same iOS transient-decode retry.
 
 /**
  * Selected work — a curated wall driven by `WORK.groups` (see content.js).
@@ -86,14 +66,15 @@ export default function SelectedWork() {
   // Jump straight to a piece — used when a visitor taps a slat in the coverflow.
   const selectIndex = useCallback((i) => setActiveIndex(i), [])
 
-  // Lock background scroll while the lightbox is open. Escape, focus trapping
-  // and focus restoration are handled by useFocusTrap inside the Lightbox.
+  // Lock background scroll while the lightbox is open — lockScroll, not a
+  // bare body overflow, because iOS Safari scrolls the documentElement and
+  // ignores the body override entirely (the page kept moving behind the
+  // dialog). Escape, focus trapping and focus restoration are handled by
+  // useFocusTrap inside the Lightbox.
   useEffect(() => {
     if (!open) return
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = ''
-    }
+    lockScroll()
+    return unlockScroll
   }, [open])
 
   const openItem = (item) => setActiveIndex(paintings.indexOf(item))
@@ -653,7 +634,9 @@ function Lightbox({ items, index, onClose, onNavigate, onSelect }) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
           className={
-            'fixed inset-0 z-[120] flex items-center justify-center p-[5vw] ' +
+            // overscroll-contain: with the page scroll-locked underneath, a
+            // drag inside the dialog must not chain into pull-to-refresh.
+            'fixed inset-0 z-[120] flex items-center justify-center overscroll-contain p-[5vw] ' +
             (dressed ? 'bg-ink/85 backdrop-blur-sm' : 'bg-ink/90')
           }
         >
@@ -716,6 +699,7 @@ function Lightbox({ items, index, onClose, onNavigate, onSelect }) {
                 items={items}
                 index={index}
                 onSelect={onSelect}
+                onNavigate={onNavigate}
                 sizing={sizing}
                 radius={COVERFLOW_RADIUS}
                 dressed={dressed}

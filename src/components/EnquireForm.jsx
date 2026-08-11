@@ -26,7 +26,9 @@ const firstNameOf = (name = '') => {
 
 // Compose a mailto: link from the enquiry fields — used as a graceful fallback
 // when the Formspree endpoint is not yet configured or the request fails.
-const mailtoFor = (data) => {
+// `subject` follows the page's audience (see the mailSubject prop): a planner
+// enquiring from /corporate/ shouldn't send "Wedding watercolour enquiry".
+const mailtoFor = (data, subject = 'Wedding watercolour enquiry') => {
   const body = [
     `Name: ${data.name}`,
     data.phone && `Phone: ${data.phone}`,
@@ -44,9 +46,7 @@ const mailtoFor = (data) => {
   ]
     .filter(Boolean)
     .join('\n')
-  return `mailto:${EMAIL}?subject=${encodeURIComponent(
-    'Wedding watercolour enquiry',
-  )}&body=${encodeURIComponent(body)}`
+  return `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
 }
 
 // Local-timezone YYYY-MM-DD for the date picker's `min` — the event is always
@@ -76,8 +76,10 @@ const stepVariants = (reduce) => ({
 
 // Tappable answer chip — same family as the planner's hour buttons, so the
 // quiz reads as more of the site's existing language, not a new widget.
+// min-h + inline-flex centre: py-2 alone left the chip ~36px tall, under the
+// 44px touch-target minimum — and these chips ARE the enquiry flow on a phone.
 const chipClass = (on) =>
-  'rounded-full border px-4 py-2 text-left text-sm transition-colors duration-300 ' +
+  'inline-flex min-h-[44px] items-center rounded-full border px-4 py-2 text-left text-sm transition-colors duration-300 ' +
   (on
     ? 'border-terracotta bg-terracotta text-paper'
     : 'border-ink/25 text-ink-soft hover:border-terracotta/60 hover:text-ink')
@@ -105,7 +107,17 @@ const chipClass = (on) =>
  * in lib/site.js); if the endpoint is unconfigured or the request fails it
  * falls back to opening the visitor's email client.
  */
-export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding date' }) {
+/**
+ * `title` and `mailSubject` let the standalone pages speak to their own
+ * audience — /corporate/ passes "your event." and an event mail subject so
+ * the card stops assuming every enquirer is a couple.
+ */
+export default function EnquireForm({
+  initialPackage = '',
+  dateLabel = 'Wedding date',
+  title = ENQUIRY.title,
+  mailSubject = 'Wedding watercolour enquiry',
+}) {
   const reduce = useReducedMotion()
   const zoomed = usePinchZoomed()
   const uid = useId().replace(/:/g, '')
@@ -240,10 +252,14 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
         fd.append(k, f[k])
       }
       if (f.dateUnknown) fd.append('date_unknown', 'true')
+      // Abort after 15s: a stalled connection (venue wifi) otherwise never
+      // rejects, leaving the seal spinning forever with the retry/mailto
+      // fallback in the catch below never offered.
       const res = await fetch(FORMSPREE_ENDPOINT, {
         method: 'POST',
         headers: { Accept: 'application/json' },
         body: fd,
+        signal: AbortSignal.timeout(15000),
       })
       if (!res.ok) throw new Error('Bad response')
       // Only now, on a confirmed send, do we show the thank-you — greeted by
@@ -271,17 +287,23 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
   const S = ENQUIRY.steps
 
   return (
-    <section id="enquiry" className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(3.5rem,7vw,6rem)]">
+    // !scroll-mt: the global `section[id]` rule (56px) sits under the 64px
+    // desktop header, so the header CTA / dock / footer jumps that target
+    // this card landed clipped — same override Faq.jsx documents.
+    <section
+      id="enquiry"
+      className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(3.5rem,7vw,6rem)] !scroll-mt-20 md:!scroll-mt-28"
+    >
       <div className="grid grid-cols-12 gap-x-8 gap-y-12">
         <div className="relative col-span-12 lg:col-span-4">
           <Label gradient={['#F2A6C1', '#DB6E97']}>{ENQUIRY.label}</Label>
           <h2 className="display-lg mt-5 text-ink">
-            {ENQUIRY.title[0]}
+            {title[0]}
             <br />
             {/* The inherited display glow (a warm near-white backlight) washes
                 a transparent gradient-clipped fill out to almost nothing —
                 same reason the hero's own "painted" drops it. */}
-            <em className="text-hero-flow [text-shadow:none]">{ENQUIRY.title[1]}</em>
+            <em className="text-hero-flow [text-shadow:none]">{title[1]}</em>
           </h2>
           <p className="mt-6 max-w-sm leading-relaxed text-ink-soft">{ENQUIRY.intro}</p>
           {/* The address, with a copy action beside it — a visitor who would
@@ -613,10 +635,10 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                                 )}
                                 {mailtoVisible && (
                                   <a
-                                    href={mailtoFor({
-                                      ...f,
-                                      date_unknown: f.dateUnknown ? 'true' : '',
-                                    })}
+                                    href={mailtoFor(
+                                      { ...f, date_unknown: f.dateUnknown ? 'true' : '' },
+                                      mailSubject,
+                                    )}
                                     onClick={() => track('Enquiry Mailto')}
                                     className="w-fit rounded font-mono text-xs text-ink underline decoration-terracotta/60 underline-offset-4 outline-none transition-colors hover:text-terracotta focus-visible:text-terracotta"
                                   >
@@ -659,7 +681,7 @@ function NextButton({ onClick, label }) {
       className="group inline-flex items-center gap-2.5 rounded-full bg-terracotta px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-paper transition-colors duration-300 hover:bg-rust"
     >
       {label}
-      <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
+      <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1 group-focus-visible:translate-x-1">
         →
       </span>
     </button>
@@ -758,9 +780,9 @@ function SealButton({ sending }) {
           }}
         />
       </span>
-      <span className="font-sentient text-2xl tracking-[-0.02em] text-ink transition-colors group-hover:text-terracotta">
+      <span className="font-sentient text-2xl tracking-[-0.02em] text-ink transition-colors group-hover:text-terracotta group-focus-visible:text-terracotta">
         {sending ? 'Sealing…' : 'Seal & send'}
-        <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
+        <span className="ml-2 inline-block transition-transform group-hover:translate-x-1 group-focus-visible:translate-x-1">→</span>
       </span>
     </button>
   )

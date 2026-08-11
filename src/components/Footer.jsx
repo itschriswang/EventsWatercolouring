@@ -1,6 +1,6 @@
 import SplitText from './SplitText.jsx'
 import CopyEmail from './CopyEmail.jsx'
-import { ENQUIRE_HREF } from '../lib/site.js'
+import { ENQUIRE_HREF, asset } from '../lib/site.js'
 import { FOOTER } from '../content.js'
 
 // Hand-sketched, matching the mobile dock's icon set (MobileNav.jsx): a
@@ -49,9 +49,9 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
           (or if) the photo is still arriving. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-wine">
         <picture>
-          <source srcSet="/assets/fireflies-night.webp" type="image/webp" />
+          <source srcSet={asset('assets/fireflies-night.webp')} type="image/webp" />
           <img
-            src="/assets/fireflies-night.jpg"
+            src={asset('assets/fireflies-night.jpg')}
             alt=""
             loading="lazy"
             decoding="async"

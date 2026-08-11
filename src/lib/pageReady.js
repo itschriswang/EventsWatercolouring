@@ -2,6 +2,8 @@
 // and the home↔corporate PageTransition). The point of both: never peel the ink
 // back until there's actually a finished page underneath to reveal.
 
+import { asset } from './site.js'
+
 const timeout = (ms) => new Promise((r) => setTimeout(r, ms))
 
 /**
@@ -65,5 +67,5 @@ export function whenPageReady(cap = 2500) {
 // is half the .png's weight, which matters doubly here: this decode gates the
 // intro reveal on every first visit.
 export function whenInkReady() {
-  return decodeImage('/assets/ink-spread.webp')
+  return decodeImage(asset('assets/ink-spread.webp'))
 }
