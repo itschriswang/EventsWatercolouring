@@ -1,4 +1,5 @@
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
+import { useHeavyFx } from '../hooks/useMediaQuery.js'
 
 /**
  * Evening light — the page's ambient ground drifts with the scroll the way
@@ -54,12 +55,17 @@ function Layer({ progress, layer }) {
 
 export default function EveningLight() {
   const reduce = useReducedMotion()
+  const heavy = useHeavyFx()
   const { scrollYProgress } = useScroll()
   // A soft spring so the light trails the scroll like a slow sunset rather
   // than tracking the thumb — same wet-pigment lag as the timeline spine.
   const progress = useSpring(scrollYProgress, { stiffness: 55, damping: 20 })
 
-  if (reduce) return null
+  // heavyFx-gated like the site's other ambient layers: three fixed
+  // full-viewport gradients recomposited through every scroll frame is
+  // exactly the paint mobile GPUs shed frames on, and the drift is subtle
+  // enough that phones lose nothing the static section washes don't cover.
+  if (reduce || !heavy) return null
   return (
     <>
       {LAYERS.map((layer, i) => (

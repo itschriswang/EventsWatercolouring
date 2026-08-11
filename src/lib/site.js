@@ -23,6 +23,19 @@ export const CARD_BG =
 export const asset = (path) =>
   `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
 
+// srcset for a gallery painting's WebP <source>, built from the manifest that
+// scripts/generate-image-variants.mjs writes — so every entry names a file
+// that exists, at its true width. Names without variants (or added before the
+// script is re-run) fall back to the original alone, which is exactly what
+// the <source> shipped before variants existed.
+import ART_VARIANTS from './artVariants.json'
+export const artSrcset = (name) => {
+  const v = ART_VARIANTS[name]
+  const original = `${asset(`assets/${name}.webp`)}${v ? ` ${v.width}w` : ''}`
+  if (!v) return original
+  return [...v.widths.map((w) => `${asset(`assets/${name}-${w}.webp`)} ${w}w`), original].join(', ')
+}
+
 // Where the "Enquire" actions point. Root-relative (not a bare `#enquiry`
 // hash) so the link still works from other static pages, like /faq/ — same
 // document, same-page smooth scroll on the homepage; a normal navigation

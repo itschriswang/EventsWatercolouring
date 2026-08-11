@@ -26,10 +26,24 @@ export default function useMagnetic({ radius = 45, strength = 0.5 } = {}) {
     if (typeof window === 'undefined') return
     if (!window.matchMedia('(pointer: fine)').matches) return
 
-    const onMove = (e) => {
+    // getBoundingClientRect forces a style/layout flush, and with several
+    // magnetic CTAs mounted that used to happen per instance per mousemove.
+    // Cache the rect until scroll/resize moves it, and fold the stream of
+    // move events into one rAF so we measure/update at most once a frame.
+    let rect = null
+    let raf = 0
+    let last = null
+
+    const invalidate = () => {
+      rect = null
+    }
+
+    const update = () => {
+      raf = 0
       const el = ref.current
-      if (!el) return
-      const rect = el.getBoundingClientRect()
+      if (!el || !last) return
+      if (!rect) rect = el.getBoundingClientRect()
+      const e = last
       const dx = Math.max(rect.left - e.clientX, 0, e.clientX - rect.right)
       const dy = Math.max(rect.top - e.clientY, 0, e.clientY - rect.bottom)
       if (Math.hypot(dx, dy) < radius) {
@@ -43,8 +57,20 @@ export default function useMagnetic({ radius = 45, strength = 0.5 } = {}) {
       }
     }
 
-    window.addEventListener('mousemove', onMove)
-    return () => window.removeEventListener('mousemove', onMove)
+    const onMove = (e) => {
+      last = e
+      if (!raf) raf = requestAnimationFrame(update)
+    }
+
+    window.addEventListener('mousemove', onMove, { passive: true })
+    window.addEventListener('scroll', invalidate, { passive: true })
+    window.addEventListener('resize', invalidate, { passive: true })
+    return () => {
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('scroll', invalidate)
+      window.removeEventListener('resize', invalidate)
+      if (raf) cancelAnimationFrame(raf)
+    }
   }, [reduce, radius, strength, x, y])
 
   return { ref, style: { x: sx, y: sy } }

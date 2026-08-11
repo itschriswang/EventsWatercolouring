@@ -66,7 +66,7 @@ export default function FaqPage() {
                 Answers to what people usually ask before booking. Can’t find
                 yours?{' '}
                 <a
-                  href="/#enquiry"
+                  href="#enquiry"
                   className="rounded text-ink outline-none transition-colors hover:text-terracotta focus-visible:text-terracotta"
                 >
                   {/* The site's hand-drawn brush underline, not a plain CSS
