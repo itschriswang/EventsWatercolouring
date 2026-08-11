@@ -18,10 +18,6 @@
       name="description"
       content="Chris Wang paints live at Melbourne and Sydney weddings, creating hand-painted watercolour keepsakes for your guests and a couple portrait on the night. Studio commissions from photographs also available. Packages from $1000."
     />
-    <meta
-      name="keywords"
-      content="live wedding painting Melbourne, live wedding painting Sydney, wedding watercolour artist, live wedding artist, watercolour portrait, wedding keepsakes, event painter Melbourne, event painter Sydney, brand activation artist"
-    />
     <meta name="author" content="Chris Wang" />
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#F7F4EF" />
@@ -96,6 +92,16 @@
       }
     </script>
 
+    <!-- Cookieless analytics (Plausible): no cookies, no personal data, so no
+         consent banner needed. Deferred and fire-and-forget — if it's blocked
+         or the domain isn't registered yet, the site behaves identically.
+         The inline stub queues custom events (see src/lib/analytics.js)
+         until the script arrives. -->
+    <script>
+      window.plausible = window.plausible || function () { (window.plausible.q = window.plausible.q || []).push(arguments) }
+    </script>
+    <script defer data-domain="chriswangstudio.com" src="https://plausible.io/js/script.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- Loaded as a non-blocking preload: a render-blocking stylesheet here
@@ -139,7 +145,7 @@
         <h1 style="font-size: 2rem; line-height: 1.15; font-weight: 400;">Live wedding and event watercolour painting in Melbourne and Sydney</h1>
         <p>I am Chris Wang, a watercolour artist based in Melbourne. I paint live at weddings, corporate events, brand activations and private celebrations: a hand-painted watercolour keepsake for each of your guests, painted while the night carries on, and a portrait of the two of you painted first while everything is fresh.</p>
         <p>The base package is <strong>from $1000</strong>: three hours of live painting, around 24 keepsakes on 300gsm A5 cotton paper, every piece sleeved to take home on the night. Travel is included within about an hour of Melbourne or Sydney metro, and I travel Australia-wide for weddings and events further afield.</p>
-        <p>Studio commissions from your photographs are also available, including A3 family and bridal-party portraits from $400 and wedding bouquet illustrations from $500.</p>
+        <p>Studio commissions from your photographs are also available, including A3 family and bridal-party portraits and wedding bouquet illustrations, priced on enquiry.</p>
         <p><a href="/faq/" style="color: #B04A76;">Read the frequently asked questions</a> about booking, travel, timing and materials.</p>
         <p>To get in touch, email
           <a href="mailto:create@chriswangstudio.com" style="color: #B04A76;">create@chriswangstudio.com</a>

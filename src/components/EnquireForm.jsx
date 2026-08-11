@@ -13,6 +13,7 @@ import {
   asset,
 } from '../lib/site.js'
 import { ENQUIRY } from '../content.js'
+import { track } from '../lib/analytics.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
 
 // Pull a first name out of the full name field for the thank-you greeting:
@@ -117,6 +118,13 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
   const [invalidField, setInvalidField] = useState('')
   // Neutral, non-error guidance (e.g. when we hand off to the email client).
   const [notice, setNotice] = useState('')
+  // When a send can't be confirmed, offer the email route as a visible link
+  // instead of auto-navigating to mailto: — on a machine with no mail handler
+  // that navigation does nothing visible and the enquiry looks lost.
+  const [mailtoVisible, setMailtoVisible] = useState(false)
+  // Second spam tripwire beside the honeypot: a human takes longer than a few
+  // seconds to get through three sheets; a scripted POST fills them instantly.
+  const startedAt = useRef(Date.now())
 
   // Every answer, across all three sheets. `initialPackage` lets other pages
   // (e.g. /corporate/) open the card with their audience's option already
@@ -144,6 +152,9 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
   const navigated = useRef(false)
   const stepRef = useRef(null)
   const goto = (next) => {
+    // Leaving the first sheet for the first time is the "someone is actually
+    // filling this in" moment — the funnel's entry event.
+    if (next === 1 && step === 0 && !navigated.current) track('Enquiry Started')
     navigated.current = true
     setDir(next > step ? 1 : -1)
     setStep(next)
@@ -180,6 +191,9 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
     e.preventDefault()
     const form = e.currentTarget
     if (form._gotcha.value) return // honeypot tripped
+    // Sub-4-second completion of a three-sheet card is a bot, not a person.
+    // Same silent drop as the honeypot so scripts learn nothing.
+    if (step === LAST_STEP && Date.now() - startedAt.current < 4000) return
     // Enter partway through the quiz means "continue", not "send" — the seal
     // only exists on the last sheet, but implicit submission doesn't care.
     if (step < LAST_STEP) {
@@ -207,12 +221,12 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
 
     // No real Formspree id set yet: hand the enquiry to the visitor's email
     // client. We can't confirm it actually sent, so we DON'T show the success
-    // state — we guide them instead.
+    // state — we guide them, with the mailto as a visible link they choose.
     if (!FORMSPREE_READY) {
-      window.location.href = mailtoFor(data)
       setNotice(
-        `Opening your email app so you can send this straight to me. If nothing happens, email ${EMAIL} directly.`,
+        `The reply card isn't wired up just yet — use the pre-filled email below, or write to ${EMAIL} directly.`,
       )
+      setMailtoVisible(true)
       return
     }
 
@@ -236,12 +250,19 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
       // name, so it reads like a real reply rather than a generic receipt.
       setFirstName(firstNameOf(data.name))
       setSent(true)
+      setMailtoVisible(false)
+      track('Enquiry Sent', { package: f.package || 'unspecified' })
     } catch {
-      // Network or server error — let them reach me by email instead.
+      track('Enquiry Failed')
+      // Network or server error. The answers stay in state, the seal stays on
+      // the sheet, so "try again" is just pressing it again — plus a visible
+      // pre-filled email link as the second route out.
       setError(
-        `Something went wrong sending that. Please email me directly at ${EMAIL} and I will reply.`,
+        navigator.onLine === false
+          ? 'You look offline. Your answers are safe on this page — reconnect and press the seal again, or use the email link below.'
+          : 'Something went wrong sending that. Your answers are still here — press the seal to try again, or use the email link below.',
       )
-      window.location.href = mailtoFor(data)
+      setMailtoVisible(true)
     } finally {
       setSending(false)
     }
@@ -411,34 +432,42 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                           {step === 0 && (
                             <>
                               <StepHeading q={S.what.q} hint={S.what.hint} />
-                              <div
-                                role="group"
-                                aria-label={S.what.q}
-                                className="mt-6 flex flex-wrap gap-2"
-                              >
-                                {ENQUIRY.packageOptions.map((o) => (
-                                  <button
-                                    key={o}
-                                    type="button"
-                                    aria-pressed={f.package === o}
-                                    onClick={() => {
-                                      setF((p) => ({ ...p, package: o }))
-                                      goto(1)
-                                    }}
-                                    className={chipClass(f.package === o)}
-                                  >
-                                    {o}
-                                  </button>
-                                ))}
-                              </div>
-                              {/* A tap advances on its own; the button only
-                                  appears when the answer arrived prefilled
-                                  (planner, /corporate/) or via Back. */}
-                              {f.package && (
-                                <div className="mt-8">
-                                  <NextButton onClick={() => goto(1)} label={S.next} />
+                              {/* Real radios (visually hidden) under the chip
+                                  styling: mutually exclusive answers get radio
+                                  semantics and native arrow-key movement for
+                                  free, instead of a row of aria-pressed
+                                  toggles. Choosing no longer advances the
+                                  sheet on its own — an answer changing your
+                                  context the instant it's touched is exactly
+                                  the WCAG 3.2.2 surprise — the Next button
+                                  below is always there to move on. */}
+                              <fieldset className="mt-6 border-0 p-0">
+                                <legend className="sr-only">{S.what.q}</legend>
+                                <div className="flex flex-wrap gap-2">
+                                  {ENQUIRY.packageOptions.map((o) => (
+                                    <label
+                                      key={o}
+                                      className={
+                                        chipClass(f.package === o) +
+                                        ' cursor-pointer has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-terracotta has-[:focus-visible]:ring-offset-2'
+                                      }
+                                    >
+                                      <input
+                                        type="radio"
+                                        name="package-choice"
+                                        value={o}
+                                        checked={f.package === o}
+                                        onChange={() => setF((p) => ({ ...p, package: o }))}
+                                        className="sr-only"
+                                      />
+                                      {o}
+                                    </label>
+                                  ))}
                                 </div>
-                              )}
+                              </fieldset>
+                              <div className="mt-8">
+                                <NextButton onClick={() => goto(1)} label={S.next} />
+                              </div>
                             </>
                           )}
 
@@ -573,7 +602,7 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                               <div className="mt-8 flex flex-col gap-4">
                                 <SealButton sending={sending} />
                                 {error && (
-                                  <p id="enquire-error" role="alert" className="font-mono text-xs text-rust">
+                                  <p id="enquire-error" role="alert" className="max-w-md font-mono text-xs leading-relaxed text-rust">
                                     {error}
                                   </p>
                                 )}
@@ -581,6 +610,18 @@ export default function EnquireForm({ initialPackage = '', dateLabel = 'Wedding 
                                   <p role="status" className="max-w-md font-mono text-xs leading-relaxed text-ink-soft">
                                     {notice}
                                   </p>
+                                )}
+                                {mailtoVisible && (
+                                  <a
+                                    href={mailtoFor({
+                                      ...f,
+                                      date_unknown: f.dateUnknown ? 'true' : '',
+                                    })}
+                                    onClick={() => track('Enquiry Mailto')}
+                                    className="w-fit rounded font-mono text-xs text-ink underline decoration-terracotta/60 underline-offset-4 outline-none transition-colors hover:text-terracotta focus-visible:text-terracotta"
+                                  >
+                                    Open a pre-filled email with your answers
+                                  </a>
                                 )}
                               </div>
                             </>

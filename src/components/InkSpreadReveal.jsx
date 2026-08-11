@@ -56,8 +56,15 @@ export default function InkSpreadReveal({ reveal }) {
           /* The sprite is 25 frames wide; stretch it to 25× the viewport so
              each frame fills the screen (full coverage, no corner peek), and
              use only its alpha as the mask. */
-          -webkit-mask-image: url(/assets/ink-spread.png);
-          mask-image: url(/assets/ink-spread.png);
+          /* .webp: half the bytes of the .png original (only the alpha
+             channel matters to a mask, so its RGB is crushed flat), and this
+             asset gates the intro reveal so its weight is felt on every
+             first visit. If an old engine can't decode it, a failed mask
+             layer is transparent black — the sheet just doesn't render and
+             the page shows immediately, a benign fallback. The .png source
+             stays in assets/ for regenerating. */
+          -webkit-mask-image: url(/assets/ink-spread.webp);
+          mask-image: url(/assets/ink-spread.webp);
           -webkit-mask-repeat: no-repeat;
           mask-repeat: no-repeat;
           -webkit-mask-size: 2500% 100%;

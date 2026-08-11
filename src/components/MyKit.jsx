@@ -337,13 +337,18 @@ function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, 
   )
 }
 
+// Flip to true once real cut-out photos exist at public/assets/kit/<id>.webp
+// + .png. While the slot is empty, attempting the photo first costs every
+// visitor a burst of guaranteed-404 requests before the SVG fallback renders.
+const KIT_PHOTOS = false
+
 /**
  * The tool artwork itself. Tries the real cut-out photo slot first
  * (assets/kit/<id>.webp + .png, transparent background, natural shadow
  * kept in the cut-out); a 404 falls back silently to the painted SVG.
  */
 function KitObject({ piece, item }) {
-  const [photoOk, setPhotoOk] = useState(true)
+  const [photoOk, setPhotoOk] = useState(KIT_PHOTOS)
   const label = item ? `${item.name}. ${item.note}` : piece.id
 
   const Art = ART[piece.id]

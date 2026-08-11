@@ -1,0 +1,66 @@
+{
+  "art-couple-vows": {
+    "widths": [
+      480,
+      960,
+      1440
+    ],
+    "width": 1500
+  },
+  "art-couple-sage": {
+    "widths": [
+      480,
+      960
+    ],
+    "width": 1242
+  },
+  "art-couple-blush": {
+    "widths": [
+      480,
+      960
+    ],
+    "width": 1242
+  },
+  "art-couple-hanbok": {
+    "widths": [
+      480,
+      960
+    ],
+    "width": 1242
+  },
+  "art-toast-friends": {
+    "widths": [
+      480,
+      960,
+      1440
+    ],
+    "width": 1600
+  },
+  "art-toast-video-poster": {
+    "widths": [
+      480
+    ],
+    "width": 720
+  },
+  "art-character-girl": {
+    "widths": [
+      480,
+      960
+    ],
+    "width": 1242
+  },
+  "art-character-boy": {
+    "widths": [
+      480,
+      960
+    ],
+    "width": 1242
+  },
+  "art-character-boy2": {
+    "widths": [
+      480,
+      960
+    ],
+    "width": 1242
+  }
+}

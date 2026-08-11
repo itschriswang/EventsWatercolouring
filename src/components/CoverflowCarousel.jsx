@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { motion, useSpring, useTransform } from 'framer-motion'
-import { asset } from '../lib/site.js'
+import { asset, artSrcset } from '../lib/site.js'
 import BloomFilter from './WetBloom.jsx'
 
 // Slide physics for the coverflow position. A spring (not the old constant-
@@ -153,6 +153,22 @@ function Card({ item, cardIndex, pos, count, R, sizing, radius, onSelect, dresse
   return (
     <motion.div
       onClick={() => onSelect(cardIndex)}
+      // The slats are real controls, not just pointer targets: button
+      // semantics + Enter/Space so keyboard and AT users can jump to a piece
+      // the same way a tap does. The centred card is the current piece —
+      // selecting it is a no-op — so it drops out of the tab order and
+      // reads as the dialog's image instead of a button. Focus ring is an
+      // outline (not a ring shadow) because boxShadow here is animated.
+      role={active ? undefined : 'button'}
+      tabIndex={active ? -1 : 0}
+      aria-label={active ? undefined : `View ${item.ttl}`}
+      onKeyDown={(e) => {
+        if (active) return
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onSelect(cardIndex)
+        }
+      }}
       style={{
         position: 'absolute',
         left: '50%',
@@ -168,10 +184,17 @@ function Card({ item, cardIndex, pos, count, R, sizing, radius, onSelect, dresse
         boxShadow,
         cursor: 'pointer',
       }}
-      className="bg-paper-deep"
+      className="bg-paper-deep outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper"
     >
       <picture className="block h-full w-full">
-        <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
+        {/* sizes = the widest box this card can occupy in its tier (the
+            centred active piece; slats are narrower and reuse whichever
+            variant the grid tile already cached). */}
+        <source
+          srcSet={artSrcset(item.img)}
+          sizes="(min-width: 640px) 520px, 260px"
+          type="image/webp"
+        />
         <motion.img
           ref={imgRef}
           src={asset(`assets/${item.img}.jpg`)}
@@ -181,6 +204,8 @@ function Card({ item, cardIndex, pos, count, R, sizing, radius, onSelect, dresse
           // images at once. The focused piece is also named by the dialog's
           // aria-label and the figcaption, so nothing is lost.
           alt={active ? item.alt || item.ttl : ''}
+          decoding="async"
+          loading={active ? 'eager' : 'lazy'}
           draggable={false}
           onError={hideOnError}
           onLoad={(e) => readAspect(e.currentTarget)}
