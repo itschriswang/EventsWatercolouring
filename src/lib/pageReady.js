@@ -59,9 +59,11 @@ export function whenPageReady(cap = 2500) {
 }
 
 // The ink sprite drives every reveal's CSS mask. If the peel starts before the
-// 380 KB PNG is decoded, the mask snaps from "no mask" (fully covered) to a
+// sprite is decoded, the mask snaps from "no mask" (fully covered) to a
 // mid-animation frame — the glitch. Decode it up front and share the promise so
-// callers can wait for it (and so merely importing this warms it).
+// callers can wait for it (and so merely importing this warms it). The .webp
+// is half the .png's weight, which matters doubly here: this decode gates the
+// intro reveal on every first visit.
 export function whenInkReady() {
-  return decodeImage('/assets/ink-spread.png')
+  return decodeImage('/assets/ink-spread.webp')
 }

@@ -5,7 +5,7 @@ import SplitText from './SplitText.jsx'
 import useFocusTrap from '../hooks/useFocusTrap.js'
 import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
-import { SPRING, SPRING_SOFT, asset } from '../lib/site.js'
+import { SPRING, SPRING_SOFT, asset, artSrcset } from '../lib/site.js'
 import { WORK } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
 import GlassCardRim from './GlassCardRim.jsx'
@@ -291,7 +291,11 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
               cuts an element's own box-shadow; overflow never did). 1rem =
               rounded-2xl. */}
           <div className="relative h-full w-full [clip-path:inset(0_round_1rem)]">
-            {playVideo ? (
+            {/* `&& shown`: autoPlay overrides preload="metadata", so mounting
+                the <video> at page load fetched ~315 KB several viewports
+                before the tile could be seen, competing with the hero LCP.
+                The poster <picture> stands in until the reveal latch fires. */}
+            {playVideo && shown ? (
               <video
                 autoPlay
                 muted
@@ -307,7 +311,18 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
               </video>
             ) : (
               <picture>
-                <source srcSet={asset(`assets/${item.img}.webp`)} type="image/webp" />
+                {/* Variant srcset (see scripts/generate-image-variants.mjs):
+                    a tile renders ~320 CSS px wide, and the flat original was
+                    shipping its full ~1242px source to every visitor. sizes
+                    mirrors the wall's layout tiers: ~a quarter of the row on
+                    the desktop grid, ~half in the two-column mobile masonry.
+                    The <img> fallback keeps the single original — engines old
+                    enough to lack WebP predate srcset shopping anyway. */}
+                <source
+                  srcSet={artSrcset(item.img)}
+                  sizes="(min-width: 768px) 25vw, 46vw"
+                  type="image/webp"
+                />
                 <motion.img
                   src={asset(`assets/${item.img}.jpg`)}
                   alt={item.alt || item.ttl}
@@ -578,6 +593,9 @@ function NavControl({ label, onClick, className, children }) {
       className={
         'absolute top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center ' +
         'rounded-full border border-paper/30 text-2xl text-paper transition-colors hover:bg-paper/10 ' +
+        // The global focus ring is dark olive — invisible on the ink backdrop —
+        // so the lightbox controls carry their own paper-light ring.
+        'outline-none focus-visible:ring-2 focus-visible:ring-paper focus-visible:ring-offset-2 focus-visible:ring-offset-transparent ' +
         className
       }
     >
@@ -643,7 +661,7 @@ function Lightbox({ items, index, onClose, onNavigate, onSelect }) {
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-paper/30 text-2xl text-paper transition-colors hover:bg-paper/10"
+            className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-paper/30 text-2xl text-paper transition-colors hover:bg-paper/10 outline-none focus-visible:ring-2 focus-visible:ring-paper focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
           >
             ×
           </button>
@@ -686,7 +704,7 @@ function Lightbox({ items, index, onClose, onNavigate, onSelect }) {
               space is `pointer-events: none` so backdrop-click-to-close still
               reaches the dialog underneath; the carousel and caption opt back
               into pointer events for themselves. */}
-          <motion.div
+          <motion.figure
             initial={{ scale: reduce ? 1 : 0.94, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: reduce ? 1 : 0.96, opacity: 0 }}
@@ -704,27 +722,32 @@ function Lightbox({ items, index, onClose, onNavigate, onSelect }) {
                 reduce={reduce}
               />
             </div>
+            {/* aria-live so arrow-key navigation — which only swaps content
+                inside the already-open dialog — is announced. Caption alphas
+                sit at /85+ because /55-60 at this size lands ~3:1 on ink/85,
+                under AA, and these lines are the dialog's only orientation cues. */}
             <figcaption
               onClick={(e) => e.stopPropagation()}
+              aria-live="polite"
               className="pointer-events-auto text-center"
             >
               <span className="block font-sentient tracking-[-0.03em] text-lg text-paper">{item.ttl}</span>
-              <span className="mt-0.5 block font-mono text-[0.6rem] uppercase tracking-[0.18em] text-paper/60">
+              <span className="mt-0.5 block font-mono text-[0.6rem] uppercase tracking-[0.18em] text-paper/85">
                 {item.meta}
                 {item.venue && (
-                  <span className="text-paper/80">
+                  <span className="text-paper">
                     {'  ·  '}Painted live at {item.venue}
                   </span>
                 )}
                 {many && (
-                  <span className="text-paper/55">
+                  <span className="text-paper/85">
                     {'  ·  '}
                     {String(index + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}
                   </span>
                 )}
               </span>
             </figcaption>
-          </motion.div>
+          </motion.figure>
         </motion.div>
       )}
     </AnimatePresence>

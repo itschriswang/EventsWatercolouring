@@ -63,8 +63,12 @@ export default function GrainCanvas() {
     if (!prog) return
 
     let seed = 0
+    // DPR capped at 1 off the heavy tier: retina grain on a phone means
+    // rasterising ~4x the pixels for a texture that reads identically at
+    // this opacity, and the buffer lives for the whole session.
+    const maxDpr = heavyFx ? 2 : 1
     const render = () => {
-      resizeCanvas(gl, canvas, 1, 2)
+      resizeCanvas(gl, canvas, 1, maxDpr)
       gl.useProgram(prog.program)
       gl.uniform2f(prog.uniforms('u_res'), canvas.width, canvas.height)
       gl.uniform1f(prog.uniforms('u_seed'), seed)

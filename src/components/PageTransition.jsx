@@ -164,9 +164,10 @@ export default function PageTransition() {
           inset: 0,
           background: PAPER,
           // Stretch the 25-frame sprite to 25× the viewport so each frame fills
-          // the screen; use only its alpha as the mask.
-          WebkitMaskImage: 'url(/assets/ink-spread.png)',
-          maskImage: 'url(/assets/ink-spread.png)',
+          // the screen; use only its alpha as the mask. .webp — see the note
+          // in InkSpreadReveal.jsx for why, and for the benign failure mode.
+          WebkitMaskImage: 'url(/assets/ink-spread.webp)',
+          maskImage: 'url(/assets/ink-spread.webp)',
           WebkitMaskRepeat: 'no-repeat',
           maskRepeat: 'no-repeat',
           WebkitMaskSize: '2500% 100%',

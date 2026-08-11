@@ -129,7 +129,10 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
             <InstagramIcon />
           </span>
           <span className="flex flex-col">
-            <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-paper/50">
+            {/* /75 minimum on the micro-labels: /50-55 passed on the flat wine
+                ground but dips under AA where the fireflies photo's bright
+                motes and the warm radials show through the 0.6-alpha scrim. */}
+            <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-paper/75">
               Follow along
             </span>
             <span className="font-sentient text-xl tracking-[-0.01em] text-paper transition-colors duration-300 group-hover:text-blush group-focus-visible:text-blush sm:text-2xl">
@@ -143,7 +146,7 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
             warmest point on the page, and some people would rather write from
             their own account than be thrown into a mail client. */}
         <div className="flex flex-col lg:items-end">
-          <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-paper/50">
+          <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-paper/75">
             Write to me
           </span>
           <CopyEmail tone="dark" className="mt-1.5 text-sm lg:justify-end" />
@@ -153,7 +156,7 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
       <div className="relative z-10 mt-[clamp(3rem,7vw,6rem)] flex flex-col gap-8 border-t border-paper/15 pt-10 lg:flex-row lg:justify-between">
         <span className="flex flex-col gap-1.5">
           <span className="font-sentient text-2xl tracking-[-0.01em]">{FOOTER.name}</span>
-          <span className="font-mono text-[0.55rem] uppercase tracking-[0.2em] text-paper/55">
+          <span className="font-mono text-[0.55rem] uppercase tracking-[0.2em] text-paper/75">
             © {new Date().getFullYear()} · Melbourne & Sydney
           </span>
         </span>

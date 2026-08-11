@@ -59,7 +59,11 @@ Every expensive effect is tiered, and new effects must follow the same ladder:
 
 Images ship as `<picture>` webp + jpg/png pairs in `public/assets/`; anything
 below the fold is `loading="lazy"`. The two hero paintings are preloaded from
-`index.html` (LCP) — keep those hrefs in sync if the hero art changes.
+`index.html` (LCP) — keep those hrefs in sync if the hero art changes. The
+gallery wall serves downscaled WebP variants via `srcset` — after adding or
+replacing gallery art, run `node scripts/generate-image-variants.mjs` to
+regenerate the variants and the manifest (`src/lib/artVariants.json`) that
+`artSrcset()` in `lib/site.js` reads.
 
 ## Working in this codebase
 

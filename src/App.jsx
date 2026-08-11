@@ -46,8 +46,14 @@ export default function App() {
     if (!revealed) return
     const id = window.location.hash.slice(1)
     if (!id) return
+    // `scroll-behavior: auto` in index.css covers CSS-driven scrolling under
+    // prefers-reduced-motion, but an explicit `behavior: 'smooth'` here would
+    // override that reset — honour the preference at the call site too.
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const scrollToTarget = () => {
-      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      document
+        .getElementById(id)
+        ?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' })
     }
     // A single rAF isn't always enough: hero art, WatercolourBloom and
     // webfonts can still be settling layout, which shifts the target's
