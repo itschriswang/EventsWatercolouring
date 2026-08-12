@@ -16,15 +16,17 @@ import CornerBloom from '../components/CornerBloom.jsx'
 import Sparkles from '../components/Sparkles.jsx'
 import EnquireForm from '../components/EnquireForm.jsx'
 import Footer from '../components/Footer.jsx'
-import { SPRING, asset } from '../lib/site.js'
+import { SPRING, asset, CARD_BG as SHARED_CARD_BG } from '../lib/site.js'
 import { withUnderline } from '../components/Underline.jsx'
 import { CORPORATE } from '../content.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
 import KitStage from '../components/MyKit.jsx'
 
-// The card ground shared with the homepage's package cards, so the two pages
-// read as one paper system.
-const CARD_BG = { background: 'linear-gradient(150deg, rgba(247,195,148,0.18) 0%, rgba(242,194,207,0.14) 48%, rgba(212,226,130,0.16) 100%), radial-gradient(ellipse 120% 90% at 50% 0%, #FDFBF7 0%, #F7F4EF 62%)' }
+// The card ground genuinely shared with the homepage's package cards now —
+// this page used to redeclare its own pastel-tinted variant while claiming to
+// share, which is exactly the tint lib/site.js documents removing (tinted
+// cards stopped separating from the page wash behind them).
+const CARD_BG = { background: SHARED_CARD_BG }
 
 /**
  * The corporate landing page (/corporate/) — a standalone static page like
@@ -137,9 +139,19 @@ export default function CorporatePage() {
           </div>
         </section>
 
-        {/* ── Kit & Bird Accent ───────────────────────────────────────── */}
+        {/* ── The painter (kit stage) & bird accent ───────────────────── */}
         <section className="relative w-full overflow-visible px-[5vw] py-[clamp(4rem,8vw,6rem)]">
           <div className="relative mx-auto max-w-4xl">
+            {/* A label and one line introduce the borrowed portrait stage —
+                without them this read as an unexplained artwork dropped
+                between the hero and "Why it works" (and screen readers met
+                an unintroduced portrait). */}
+            <motion.div {...rise()} className="mb-8">
+              <Label gradient={['#F2E982', '#BCB438']}>{CORPORATE.painter.label}</Label>
+              <p className="mt-4 max-w-md leading-relaxed text-ink-soft">
+                {CORPORATE.painter.line}
+              </p>
+            </motion.div>
             <KitStage />
             <div className="absolute -bottom-8 -right-12 lg:-bottom-16 lg:-right-20 pointer-events-none hidden sm:block">
               <picture>
@@ -341,6 +353,8 @@ export default function CorporatePage() {
             <EnquireForm
               initialPackage="Corporate event or brand activation"
               dateLabel="Event date"
+              title={CORPORATE.enquiryTitle}
+              mailSubject={CORPORATE.mailSubject}
             />
           </SectionWash>
         </div>

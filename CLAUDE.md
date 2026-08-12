@@ -37,8 +37,10 @@ off across it via sessionStorage).
   in `App.jsx`; the section comments there explain the narrative pacing.
 - `src/hooks/useMediaQuery.js` — exports `useHeavyFx()`, the performance gate
   (see below).
-- `docs/` — business documents (contract, pricing models, copy notes,
-  content plans). Not part of the build.
+- Business documents (contract, pricing models, copy notes, content plans)
+  live in a separate private repository, not here — this repo is public and
+  they were moved out of the old `docs/` directory. (They remain in git
+  history before 2026-08.)
 - `reference/` — design references and adapted third-party studies. Not part
   of the build.
 
@@ -61,7 +63,7 @@ Images ship as `<picture>` webp + jpg/png pairs in `public/assets/`; anything
 below the fold is `loading="lazy"`. The two hero paintings are preloaded from
 `index.html` (LCP) — keep those hrefs in sync if the hero art changes. The
 gallery wall serves downscaled WebP variants via `srcset` — after adding or
-replacing gallery art, run `node scripts/generate-image-variants.mjs` to
+replacing gallery art, run `npm run variants` to
 regenerate the variants and the manifest (`src/lib/artVariants.json`) that
 `artSrcset()` in `lib/site.js` reads.
 
@@ -100,8 +102,8 @@ values point at the pastel scheme's anchors (see `tailwind.config.js`).
 depth in the decorative layer — shadows, the dark "nightfall" grounds (`wine`),
 label-gradient dark stops, bloom pairs — it reaches for burgundy/claret wine
 tones (hue ≈ 335–345°), the chic counterpart to the chartreuse accent. **Body
-and title text is the exception: `ink` (#423A3D) is a near-neutral dark grey
-with only an ever-so-slight burgundy lean (hue ≈ 337°)** — deliberately not the
+and title text is the exception: `ink` (#352E30) is a near-neutral dark grey
+with only an ever-so-slight burgundy lean (hue ≈ 343°)** — deliberately not the
 old mauve/violet cast, and never a full wine. That one deep slot reads as a true
 neutral slate first, warmth second, so the copy never looks purple or wine. The
 light pastels (soft lilac, periwinkle, lavender washes) stay on the arc as-is.
@@ -127,6 +129,13 @@ warms belong there.
 4. `BloomCanvas.jsx`'s shader ramp is ordered along the arc so every
    interpolation segment blends neighbours; keep it that way.
 
+Documented exceptions (deliberate, per their in-code comments — do not
+"fix" them, and do not use them as precedent for new work): the hero's
+aurora orb (`Hero.jsx`) dissolves yellow-green through to blush inside one
+composed orb, and two `CornerBloom` pairs skip a step on the arc
+(`Packages.jsx` ochre→apricot, `CorporatePage.jsx` apricot→lime). All three
+were art-directed against the built page.
+
 ## Shadow Palette: No Grey Shadows
 
 **Critical Rule: Never use grey, black, or neutral shadows. All shadows must use tinted, editorial colours from the site's palette.**
@@ -141,10 +150,20 @@ All shadows must use these RGBA values (or derived variants at +15% vibrancy):
 | Colour | Use Case | RGBA |
 |--------|----------|------|
 | **Burgundy** (deep) | Primary lift shadows, cards, general elevation | `rgba(126,40,72,0.30)` |
-| **Claret Rose** (token: rust) | Timeline markers, strong shadows | `rgba(150,56,90,0.52)` |
-| **Deep Ink** | Deep shadows on overlays, keepsake cards | `rgba(78,38,57,0.58)` |
+| **Claret Rose** | Strong shadows, aurora button glows | `rgba(150,56,90,0.52)` |
+| **Deep Ink** | Deep shadows on overlays, keepsake cards, timeline markers | `rgba(78,38,57,0.58)` |
 | **Ink** | Paper shadows, subtle depth | `rgba(78,38,57,0.21)` |
 | **Burgundy** | Accent shadows (form elements, special cases) | `rgba(126,40,72,0.25)` |
+
+Note: these are literal RGBA values, NOT token names. In particular the
+`rust` *token* resolves to a deep olive (`--rgb-rust`, a Lemon Lime
+hover/dark-ground colour) — writing `shadow-rust` does not give you Claret
+Rose. Always spell shadows out as arbitrary values from this table.
+
+**Glows are not shadows.** Light-emitting box-shadows (the firefly motes'
+warm glow in `Fireflies.jsx`, the lightbox's inset blush/periwinkle glaze in
+`SelectedWork.jsx`) may use luminous palette colours — the no-grey rule
+governs *darkening* shadows.
 
 ### Component Shadow Reference
 
@@ -155,8 +174,8 @@ shadow-[0_28px_52px_-18px_rgba(126,40,72,0.30),0_6px_16px_-6px_rgba(126,40,72,0.
 
 **Timeline Markers**:
 ```
-shadow-[0_2px_12px_rgba(150,56,90,0.52)]  /* Primary marker */
-shadow-[0_2px_12px_rgba(150,56,90,0.40)]  /* Numbered dots */
+shadow-[0_2px_12px_rgba(78,38,57,0.55)]  /* Primary marker */
+shadow-[0_2px_12px_rgba(78,38,57,0.42)]  /* Numbered dots */
 ```
 
 **Gallery/Lightbox Images**:
@@ -197,14 +216,14 @@ When adding shadows to new components:
 - **-15% decrease** for subtle background shadows
 - Formula: Multiply both RGB and alpha by the percentage (e.g., `0.30 * 1.15 ≈ 0.35`)
 
-### Files Containing Shadows
+### Finding Shadows
 
-- `src/components/Hero.jsx`
-- `src/components/EveningTimeline.jsx`
-- `src/components/SelectedWork.jsx`
-- `src/components/Packages.jsx`
-- `src/components/EnquireForm.jsx`
-- `src/components/Footer.jsx`
+Shadows now live in ~20 files (every card, folder, pill and page family).
+Do not rely on a hand-kept list — audit with:
+
+```
+grep -rE 'box-shadow|shadow-\[|drop-shadow' src/
+```
 
 ### Design Philosophy
 

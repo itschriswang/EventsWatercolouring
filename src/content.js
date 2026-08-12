@@ -51,7 +51,7 @@ export const EVENING = {
     {
       no: '05',
       title: 'A number you can count on',
-      body: 'I aim for around 8 pieces an hour. The number you book is the number I plan for and the number I paint. Want more covered? Extra live hours or the after-event service add more pieces.',
+      body: 'I aim for around 8 pieces an hour. The number you book is the number I plan for. Want more covered? Extra live hours or the after-event service add more pieces.',
     },
   ],
 }
@@ -142,9 +142,6 @@ export const PAINTER = {
   label: 'The painter',
   title: ['A bit', 'about me.'],
   emphasis: 'about me.',
-  portrait: 'assets/portrait-christopher.jpg',
-  portraitWebp: 'assets/portrait-christopher.webp',
-  caption: 'Chris Wang',
   body: [
     'I am Chris. I grew up in Sydney and I am based in Melbourne now, and I have been painting in watercolour for more than ten years.',
     'Painting live at a wedding is the part I love most. Special moments with each guest, a small portrait made by hand while the night carries on, and something real to take home at the end.',
@@ -216,7 +213,7 @@ export const PACKAGES = {
     },
     {
       h: 'Stationery licensing',
-      p: 'A digital file of your portrait, licensed for save-the-dates, invitations and thank-you cards.',
+      p: 'A digital file of your portrait, licensed for save-the-dates, invitations, and thank-you cards.',
     },
     {
       h: 'Travel further afield',
@@ -276,7 +273,7 @@ export const FAQ = {
         },
         {
           q: 'Do you paint events other than weddings?',
-          a: 'Yes. As well as weddings I do brand activations, corporate events and private parties across Melbourne and Australia-wide. It bends to fit the room, so tell me what you have in mind.',
+          a: 'Yes. As well as weddings I do brand activations, corporate events, and private parties across Melbourne and Australia-wide. It bends to fit the room, so tell me what you have in mind.',
         },
         {
           q: 'How should we send photos for a commission?',
@@ -365,11 +362,11 @@ export const ENQUIRY = {
     next: 'Continue',
     what: {
       q: 'What are you after?',
-      hint: 'Pick whatever’s closest, you can say more in a moment.',
+      hint: 'Pick whatever is closest. You can say more in a moment.',
     },
     when: {
       q: 'When, and where?',
-      hint: 'A rough idea is plenty. Skip what you don’t know yet.',
+      hint: 'A rough idea is plenty. Skip what you do not know yet.',
     },
     who: {
       q: 'Where do I send my reply?',
@@ -407,8 +404,20 @@ export const CORPORATE = {
   lines: ['The activation', 'guests queue for'],
   emphasis: 'queue',
   lede: 'I paint your guests live in watercolour, right in the room. It draws a crowd, gives people a reason to stay, and every guest leaves holding something made by hand.',
-  note: 'Melbourne and Sydney based, travelling Australia-wide.',
+  note: 'Based in Melbourne, regularly in Sydney, travelling Australia-wide.',
   cta: 'Enquire about your event',
+
+  // The borrowed portrait-and-kit stage from the homepage — introduced here
+  // with its own label and a line, so it does not appear as an unexplained
+  // section between the hero and the argument.
+  painter: {
+    label: 'The painter',
+    line: 'The same hands and the same kit as every wedding I paint, set up in your room.',
+  },
+
+  // The reply card on this page speaks to planners, not couples.
+  enquiryTitle: ['Tell me about', 'your event.'],
+  mailSubject: 'Live event watercolour enquiry',
 
   why: {
     label: 'Why it works',
@@ -425,7 +434,7 @@ export const CORPORATE = {
       },
       {
         h: 'Effortless to run',
-        p: 'I need a table, a chair and a corner of the room. I bring everything else, arrive before doors, and pace myself across the booking. Public liability insurance included.',
+        p: 'I need a table, a chair, and a corner of the room. I bring everything else, arrive before doors, and pace myself across the booking. Public liability insurance included.',
       },
     ],
   },
@@ -516,6 +525,9 @@ export const CORPORATE = {
 }
 
 export const FOOTER = {
+  // “Let’s” keeps its contraction deliberately: the house style writes
+  // contractions out in explanatory copy, but “Let us make something” reads
+  // as a butler, not a painter. A rallying CTA is the one place it stays.
   cta: ['Let’s make something', 'to keep.'],
   emphasis: 'to keep.',
   name: 'chris wang',

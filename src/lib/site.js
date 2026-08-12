@@ -42,18 +42,17 @@ export const artSrcset = (name) => {
 // back to the homepage anchor from anywhere else.
 export const ENQUIRE_HREF = '/#enquiry'
 
-// Placeholder enquiry address — swap for your real address before launch.
+// The live enquiry address.
 export const EMAIL = 'create@chriswangstudio.com'
 
-// Formspree endpoint that receives enquiry submissions. Create a free form at
-// https://formspree.io, then paste its endpoint here (it looks like
-// https://formspree.io/f/abcdwxyz). Until a real id is set, the form falls
-// back to opening the visitor's email client with the enquiry pre-filled.
+// Formspree endpoint that receives enquiry submissions.
 export const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mwvdvory'
 
-// True once a real Formspree endpoint has been set (i.e. the placeholder id is
-// gone). The form uses this to decide whether it can confirm a real send.
-export const FORMSPREE_READY = !FORMSPREE_ENDPOINT.includes('your-form-id')
+// Flip to false if the endpoint above ever reverts to a placeholder — the
+// form then routes visitors to a pre-filled email instead of pretending a
+// POST can succeed. (The old `!includes('your-form-id')` check was a
+// tautology once the real id landed.)
+export const FORMSPREE_READY = true
 
 // Lightweight email shape check — enough to catch typos before submit without
 // rejecting valid-but-unusual addresses.

@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import InkSpreadReveal from './InkSpreadReveal'
 import { whenFontsReady, whenImagesReady, whenInkReady } from '../lib/pageReady.js'
+import { asset } from '../lib/site.js'
 
 // The two hero paintings — the LCP art the reveal exists to unveil. They're
 // <link rel="preload"> in index.html, so gating on them (rather than the whole
 // page's `load`) lifts the curtain the moment the hero can paint, not after
 // every below-fold asset has arrived. Keep in step with index.html's preloads.
-const HERO_ART = ['/assets/art-character-boy.webp', '/assets/art-bouquet.webp']
+const HERO_ART = [asset('assets/art-character-boy.webp'), asset('assets/art-bouquet.webp')]
 
 // Session flag so the intro plays once per visit, not once per page load —
 // coming back from /faq/ (or any internal navigation) skips straight to the
@@ -29,14 +30,19 @@ const shouldSkip = () => {
 }
 
 /**
- * Full-viewport intro. A brief, honest one: a watercolour bloom breathes in,
- * then dissolves through a fluid clip-path mask to reveal the hero — around a
- * second, start to finish. It is an entrance, not a loading screen: it tracks
- * no progress and gates nothing, so it never pretends to a number, and it
- * plays only on the first arrival of a session (see shouldSkip above).
+ * Full-viewport intro. A watercolour bloom breathes in while a capped
+ * readiness gate holds the curtain — fonts, the two preloaded hero paintings
+ * and the ink sprite, raced against a hard CAP so a slow asset can never
+ * leave the intro hanging. Once ready (or capped out) the sheet fades and
+ * hands the reveal to InkSpreadReveal's peel. It shows no progress number,
+ * and plays only on the first arrival of a session (see shouldSkip above).
  */
 export default function Preloader({ onDone }) {
-  const done = onDone
+  // Ref, not a dep: App passes a fresh inline arrow every render, and having
+  // it in the effect's deps would tear down and restart the timer chain and
+  // the MIN/CAP baseline on any parent re-render.
+  const doneRef = useRef(onDone)
+  doneRef.current = onDone
   const reduce = useReducedMotion()
   const [skip] = useState(shouldSkip)
   const [bloom, setBloom] = useState(false)
@@ -49,7 +55,7 @@ export default function Preloader({ onDone }) {
       // Best effort — without storage the intro simply replays next visit.
     }
     if (skip) {
-      done?.()
+      doneRef.current?.()
       return
     }
 
@@ -77,7 +83,7 @@ export default function Preloader({ onDone }) {
         window.setTimeout(() => {
           if (cancelled) return
           setGone(true)
-          timers.push(window.setTimeout(() => done?.(), reduce ? 80 : 260))
+          timers.push(window.setTimeout(() => doneRef.current?.(), reduce ? 80 : 260))
         }, wait),
       )
     })
@@ -86,7 +92,7 @@ export default function Preloader({ onDone }) {
       cancelled = true
       timers.forEach(window.clearTimeout)
     }
-  }, [skip, reduce, done])
+  }, [skip, reduce])
 
   if (skip) return null
 

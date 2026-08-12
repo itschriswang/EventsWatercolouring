@@ -4,10 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Page not found | Chris Wang</title>
     <meta name="robots" content="noindex" />
     <meta name="theme-color" content="#F7F4EF" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2D1824" />
 
     <!--
       This page is served straight by GitHub Pages for any unmatched URL, so it
@@ -24,10 +26,21 @@
     -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Same non-blocking preload swap the three real pages use — this was
+         the one page still loading the fonts render-blocking. System-font
+         fallbacks paint immediately; the webfonts swap in when they land. -->
     <link
-      rel="stylesheet"
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Mynerve&family=Manrope:wght@400;500;600;700&family=Darumadrop+One&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Mynerve&family=Manrope:wght@400;500;600;700&family=Darumadrop+One&display=swap"
+      />
+    </noscript>
 
     <style>
       :root {
@@ -289,6 +302,9 @@
           </a>
           <a class="pill" href="/#work">
             See the work <span aria-hidden="true">&rarr;</span>
+          </a>
+          <a class="pill" href="/corporate/">
+            Corporate events <span aria-hidden="true">&rarr;</span>
           </a>
           <a class="pill" href="/faq/">
             Read the FAQ <span aria-hidden="true">&rarr;</span>

@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { motion, useSpring, useTransform } from 'framer-motion'
 import { asset, artSrcset } from '../lib/site.js'
+import { hideOnError } from '../lib/imageRetry.js'
 import BloomFilter from './WetBloom.jsx'
 
 // Slide physics for the coverflow position. A spring (not the old constant-
@@ -56,9 +57,9 @@ function activeBoxFor(ar, sizing) {
   return { width: sizing.maxActiveWidth, height: sizing.maxActiveWidth / ar }
 }
 
-const hideOnError = (e) => {
-  e.currentTarget.style.display = 'none'
-}
+// Image error recovery comes from lib/imageRetry.js — the naive permanent
+// display:none this file used to carry was exactly the iOS transient-decode
+// bug SelectedWork's retrying handler documents fixing.
 
 // One flat slat. Every visual property is derived from the shared `pos`
 // motion value via useTransform, so the rAF driver moves cards without
@@ -250,7 +251,7 @@ function Card({ item, cardIndex, pos, count, R, sizing, radius, onSelect, dresse
  * is fully controlled by the parent (arrow buttons / ← → keys live in
  * Lightbox); clicking a slat calls `onSelect` to jump straight to it.
  */
-export default function CoverflowCarousel({ items, index, onSelect, sizing, radius, dressed, reduce }) {
+export default function CoverflowCarousel({ items, index, onSelect, onNavigate, sizing, radius, dressed, reduce }) {
   const count = Math.max(1, items.length)
   const R = Math.max(1, Math.min(RENDER_RANGE, Math.floor(count / 2) - 1))
   const filterId = useId()
@@ -290,8 +291,8 @@ export default function CoverflowCarousel({ items, index, onSelect, sizing, radi
   }, [index, count, reduce, pos])
 
   return (
-    <div
-      className="relative overflow-hidden"
+    <motion.div
+      className="relative touch-pan-y overflow-hidden"
       // `100vw`, not a percentage: this stage's only children are absolutely
       // positioned slats, so it has no in-flow content to size a `width:
       // 100%` against inside the lightbox's flex column — it would collapse
@@ -299,6 +300,19 @@ export default function CoverflowCarousel({ items, index, onSelect, sizing, radi
       // Lightbox) mounts this stage in a `position: fixed` wrapper specifically
       // so `100vw` here means the true browser width, edge to edge.
       style={{ height: sizing.activeHeight, width: '100vw' }}
+      // Swipe navigation: on a phone the two arrow buttons were the only way
+      // to move between pieces — a horizontal swipe is the expected gesture
+      // on a full-screen carousel. A pan (not `drag`) so the spring keeps
+      // sole ownership of card positions; the 60px / 500px-per-second
+      // thresholds keep slat taps (tiny offsets) falling through to onClick.
+      // touch-pan-y above leaves vertical gestures to the browser so the
+      // pan only ever claims deliberate horizontal movement.
+      onPanEnd={(e, info) => {
+        if (!onNavigate) return
+        const dx = info.offset.x
+        if (Math.abs(dx) < 60 && Math.abs(info.velocity.x) < 500) return
+        onNavigate(dx < 0 ? 1 : -1)
+      }}
     >
       {dressed && <BloomFilter id={filterId} />}
       <div className="absolute inset-0" style={{ isolation: 'isolate' }}>
@@ -319,7 +333,7 @@ export default function CoverflowCarousel({ items, index, onSelect, sizing, radi
           />
         ))}
       </div>
-    </div>
+    </motion.div>
   )
 }
 

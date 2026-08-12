@@ -89,7 +89,7 @@ export default function NightPlanner() {
                     type="button"
                     onClick={() => setHours(h)}
                     aria-pressed
-                    className="btn-aurora rounded-full px-4 py-1.5 font-mono text-sm"
+                    className="btn-aurora inline-flex min-h-[44px] items-center rounded-full px-4 py-1.5 font-mono text-sm"
                   >
                     <span className="btn-aurora-label">{h}</span>
                   </button>
@@ -117,7 +117,7 @@ export default function NightPlanner() {
                     />
                     <GlassPill
                       opaque
-                      className="relative justify-center px-4 py-1.5 font-mono text-sm text-ink-soft transition-colors duration-300 hover:text-ink"
+                      className="relative inline-flex min-h-[44px] items-center justify-center px-4 py-1.5 font-mono text-sm text-ink-soft transition-colors duration-300 hover:text-ink"
                     >
                       {h}
                     </GlassPill>
@@ -190,7 +190,7 @@ export default function NightPlanner() {
             className="group btn-hero-flow mt-6 inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-ink"
           >
             <span className="relative z-10">{p.cta}</span>
-            <span aria-hidden="true" className="relative z-10 transition-transform duration-300 group-hover:translate-x-1">
+            <span aria-hidden="true" className="relative z-10 transition-transform duration-300 group-hover:translate-x-1 group-focus-visible:translate-x-1">
               →
             </span>
           </a>

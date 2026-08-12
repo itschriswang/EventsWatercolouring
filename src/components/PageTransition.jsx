@@ -114,6 +114,25 @@ export default function PageTransition() {
     return () => document.removeEventListener('click', onClick)
   }, [reduce])
 
+  // Fail-safe for the intercepted click: navigation only happens from
+  // onAnimationEnd, so if the cover animation never completes (mask dropped
+  // by the engine, animations suppressed, the element torn down) the click
+  // would be swallowed and the visitor stranded on the page with a dead
+  // link. A timer slightly longer than the 0.6s cover performs the same
+  // handoff; whichever fires first wins (location.assign is idempotent).
+  useEffect(() => {
+    if (phase !== 'leave-cover') return
+    const t = window.setTimeout(() => {
+      try {
+        window.sessionStorage.setItem(FLAG, '1')
+      } catch {
+        // No storage — the destination just won't play the reveal half.
+      }
+      if (hrefRef.current) window.location.assign(hrefRef.current)
+    }, 1100)
+    return () => window.clearTimeout(t)
+  }, [phase])
+
   // Back/forward from the bfcache can restore this page mid-cover — reset it.
   useEffect(() => {
     const onPageShow = (e) => {

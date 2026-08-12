@@ -339,7 +339,7 @@ export default function Packages() {
         </span>
         <span
           aria-hidden="true"
-          className="relative z-10 shrink-0 text-2xl text-terracotta transition-transform duration-300 group-hover:translate-x-1.5"
+          className="relative z-10 shrink-0 text-2xl text-terracotta transition-transform duration-300 group-hover:translate-x-1.5 group-focus-visible:translate-x-1.5"
         >
           →
         </span>

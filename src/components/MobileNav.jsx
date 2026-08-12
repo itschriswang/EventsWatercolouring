@@ -116,8 +116,12 @@ export default function MobileNav({ revealed, enquireHref = ENQUIRE_HREF }) {
       animate={revealed ? { y: 0, opacity: 1 } : { y: 96, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 220, damping: 28, delay: 0.45 }}
       // Outer wrapper is full-width but pointer-events-none so it doesn't
-      // block the page. Only the inner nav pill is interactive.
-      className="fixed inset-x-0 bottom-0 z-40 flex justify-center md:hidden pointer-events-none"
+      // block the page. Only the inner nav pill is interactive. On landscape
+      // phones (short viewport, still under the md width) the dock ate ~18%
+      // of the height and sat straight over the hero headline — hide it
+      // there, same short-viewport escape hatch Hero.jsx uses; rotating back
+      // to portrait brings it home.
+      className="fixed inset-x-0 bottom-0 z-40 flex justify-center md:hidden pointer-events-none [@media(max-height:420px)]:hidden"
       style={{ paddingBottom: 'calc(16px + env(safe-area-inset-bottom, 0px))' }}
     >
      <div ref={trackRef} className="flex justify-center will-change-transform">

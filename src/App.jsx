@@ -20,21 +20,24 @@ import AboutMe from './components/AboutMe.jsx'
 import Packages from './components/Packages.jsx'
 import EnquireForm from './components/EnquireForm.jsx'
 import Footer from './components/Footer.jsx'
+import { lockScroll, unlockScroll } from './lib/scrollLock.js'
 
 /**
  * Live wedding watercolour — a full-bleed, immersive editorial single page.
- * The preloader auto-dissolves (no gate); `revealed` then releases scroll and
- * plays the hero entrance, with each section revealing organically on scroll.
+ * The preloader holds a capped readiness gate (see Preloader.jsx); `revealed`
+ * then releases scroll and plays the hero entrance, with each section
+ * revealing organically on scroll.
  */
 export default function App() {
   const [revealed, setRevealed] = useState(false)
 
-  // Lock scroll only while the preloader owns the viewport.
+  // Lock scroll only while the preloader owns the viewport. lockScroll (not
+  // a bare body overflow) so the lock actually holds on iOS Safari, where
+  // the documentElement is the real scroller.
   useEffect(() => {
-    document.body.style.overflow = revealed ? '' : 'hidden'
-    return () => {
-      document.body.style.overflow = ''
-    }
+    if (revealed) return
+    lockScroll()
+    return unlockScroll
   }, [revealed])
 
   // A URL hash (e.g. arriving at /#offerings from the /faq/ page) can't land
