@@ -95,7 +95,7 @@ export default function EveningTimeline() {
                   'radial-gradient(ellipse 70% 70% at 32% 72%, black 0%, black 38%, transparent 76%)',
               }}
             >
-              <WatercolourBloom />
+              <WatercolourBloom canvas={false} />
             </div>
             {/* Fireflies in the dark — chartreuse motes drifting in the
                 folder's negative space, clipped with the rest of the bloom

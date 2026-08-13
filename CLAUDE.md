@@ -186,6 +186,47 @@ uses it, so the tooth holds a fixed physical size and the wash granulates into
 the same hollows the grain overlay darkens. Sample it in device pixels and the
 texture gets finer on retina, which is sensor noise, not paper.
 
+### Where blooms live
+
+Every bloom field is declared once, as data, through `BloomField`:
+
+```jsx
+<BloomField blooms={[{ pigment: 'apricot', x: 0.28, at: [0.14, 0.22], size: [0.42, 0.36] }]} />
+```
+
+That one spec drives two renderings. `fieldCss()` writes CSS for it, and
+`BloomCanvas` — one fixed full-viewport WebGL layer — paints the same blooms
+optically where the device can afford it, handing over via `data-live-blooms`.
+
+**The canvas is the point.** CSS alpha-blends overlapping washes, which averages
+colour toward grey; that is the mud the anti-mud rules above police by hand. On
+the canvas an overlap is one layer holding several pigments, K and S weighted by
+relative thickness and the thicknesses summed exactly as §5.2 prescribes, so
+crossing washes deepen along their own curves instead. It also removes the
+banding CSS colour stops produce, and granulates into the shared paper.
+
+**`canvas={false}` when the canvas structurally can't follow.** It is one layer
+at one z-index painting one viewport, so it cannot serve a field that an
+ancestor masks, that clips to a rounded folder, that blends, or that stacks over
+a photograph — the wash would escape the shape it is meant to live in. Those
+fields (the masked section washes, EveningTimeline's folder, Footer over its
+photo, the hero orb behind its blur) stay on CSS and still get the model, just
+through `fieldCss` rather than optically. Element-scoped blooms — `CornerBloom`
+over gallery art, the enquiry seal, the lightbox glow — are the same story.
+
+Only fields the canvas actually paints hand over: the fade rule in `index.css`
+is scoped to `[data-bloom-field='canvas']`, because hiding an opted-out field
+would simply delete its wash.
+
+**Two spec shapes.** `size: [fx, fy]` is a percentage ellipse, fractions of the
+element. `sizeVw: N` is a circle of radius N vw — use it behind sections that
+run many viewport-heights tall, where a two-axis percentage resolves against
+width and height independently and stretches every wash into a sliver.
+
+**`lift`** is unpainted paper held open, not paint: the near-white cores that
+keep the busiest overlaps luminous. It subtracts thickness on the canvas
+(§4.5's desorption) and stays a cream radial in CSS. It never enters the K/S mix.
+
 ### Authoring a bloom as paint
 
 Don't hand-write `radial-gradient(… rgba(r,g,b,a), transparent NN%)` for a new

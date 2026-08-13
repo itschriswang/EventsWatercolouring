@@ -54,7 +54,7 @@ export default function FaqPage() {
               maskImage: 'linear-gradient(to bottom, transparent 0%, black 16%, black 100%)',
             }}
           >
-            <WatercolourBloom />
+            <WatercolourBloom canvas={false} />
           </div>
 
           <section className="relative w-full px-[5vw] pt-[clamp(7rem,16vw,10rem)] pb-[clamp(1.5rem,4vw,2.5rem)]">

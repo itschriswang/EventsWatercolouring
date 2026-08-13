@@ -7,6 +7,8 @@ import PageTransition from '../components/PageTransition.jsx'
 import SiteHeader from '../components/SiteHeader.jsx'
 import MobileNav from '../components/MobileNav.jsx'
 import WatercolourBloom from '../components/WatercolourBloom.jsx'
+import BloomField from '../components/BloomField.jsx'
+import BloomCanvas from '../components/BloomCanvas.jsx'
 import SectionWash from '../components/SectionWash.jsx'
 import DeckleEdge from '../components/DeckleEdge.jsx'
 import Label, { Drop } from '../components/Label.jsx'
@@ -36,6 +38,15 @@ const CARD_BG = { background: SHARED_CARD_BG }
  * enquiry card is the same reply card as the homepage, opened with the
  * corporate option preselected.
  */
+// The corporate hero's wash, as paint — same treatment as the homepage hero.
+const CORPORATE_HERO = [
+  { pigment: 'apricot', x: 0.251, at: [0.14, 0.22], size: [0.42, 0.36], extent: 0.72 },
+  { pigment: 'rose', x: 0.134, at: [0.88, 0.12], size: [0.32, 0.28], extent: 0.72 },
+  { pigment: 'yellowgreen', x: 0.197, at: [0.86, 0.84], size: [0.34, 0.3], extent: 0.72 },
+  { pigment: 'yellowgreen', x: 0.136, at: [0.06, 0.88], size: [0.3, 0.28], extent: 0.72 },
+  { pigment: 'butter', x: 0.184, at: [0.6, 0.06], size: [0.28, 0.24], extent: 0.72 },
+]
+
 export default function CorporatePage() {
   const reduce = useReducedMotion()
 
@@ -60,24 +71,16 @@ export default function CorporatePage() {
       <PageTransition />
       <SkipLink />
       <ScrollProgress />
+      {/* The corporate hero's wash is a full-bleed field on the paper ground,
+          so it can be painted properly rather than alpha-blended. */}
+      <BloomCanvas revealed />
       <SiteHeader revealed enquireHref="#enquiry" />
       <MobileNav revealed enquireHref="#enquiry" />
 
       <main id="main" tabIndex={-1} className="relative z-10 pb-28 md:pb-0 outline-none">
         {/* ── Hero ─────────────────────────────────────────────────────── */}
         <section className="relative w-full overflow-x-clip px-[5vw] pt-[clamp(6rem,14vw,9rem)] pb-[clamp(2.5rem,5vw,4.5rem)]">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-0"
-            style={{
-              backgroundImage:
-                'radial-gradient(42% 36% at 14% 22%, rgba(247,195,148, 0.34), transparent 72%), ' +
-                'radial-gradient(32% 28% at 88% 12%, rgba(242,194,207, 0.30), transparent 72%), ' +
-                'radial-gradient(34% 30% at 86% 84%, rgba(212,226,130, 0.26), transparent 72%), ' +
-                'radial-gradient(30% 28% at 6% 88%, rgba(212,226,130, 0.18), transparent 72%), ' +
-                'radial-gradient(28% 24% at 60% 6%, rgba(226,232,138, 0.24), transparent 72%)',
-            }}
-          />
+          <BloomField blooms={CORPORATE_HERO} className="pointer-events-none absolute inset-0 z-0" />
           <div className="relative z-10 grid grid-cols-12 items-end gap-x-8 gap-y-12">
             <div className="col-span-12 lg:col-span-7">
               <span className="eyebrow">{CORPORATE.eyebrow}</span>

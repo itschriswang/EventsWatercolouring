@@ -12,11 +12,25 @@ import FolderCell from './FolderCell.jsx'
 import NightPlanner from './NightPlanner.jsx'
 import { withUnderline } from './Underline.jsx'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
+import BloomField from './BloomField.jsx'
+import { PAPER_DEEP } from '../lib/watercolour.js'
 
 // The add-on accordion opens on a quick ease-out tween rather than the shared
 // SPRING — a spring that feels right for entrances reads as sluggish on a
 // tap-to-reveal, where the row should snap open the moment it's asked.
 const ACCORDION = { duration: 0.22, ease: [0.25, 1, 0.5, 1] }
+
+// The wash behind the packages, on the deeper paper ground. The cream core is
+// a LIFT rather than paint — unpainted sheet held open where the blooms meet.
+const PACKAGES_FIELD = [
+  { lift: 0.5, at: [0.5, 0.56], size: [0.2, 0.2], extent: 0.66 },
+  { pigment: 'apricot', x: 0.142, at: [0.1, 0.46], size: [0.26, 0.26], extent: 0.7 },
+  { pigment: 'butter', x: 0.136, at: [0.3, 0.66], size: [0.22, 0.22], extent: 0.7 },
+  { pigment: 'butter', x: 0.168, at: [0.47, 0.4], size: [0.24, 0.24], extent: 0.7 },
+  { pigment: 'periwinkle', x: 0.107, at: [0.65, 0.62], size: [0.24, 0.24], extent: 0.72 },
+  { pigment: 'lilac', x: 0.121, at: [0.82, 0.44], size: [0.22, 0.22], extent: 0.72 },
+  { pigment: 'rose', x: 0.068, at: [0.94, 0.68], size: [0.24, 0.24], extent: 0.72 },
+]
 
 export default function Packages() {
   const reduce = useReducedMotion()
@@ -52,20 +66,7 @@ export default function Packages() {
           between hue neighbours, and a near-white cream radial lifts the
           centre where they meet so it glows rather than averaging to grey
           (Pastel Bloom anti-mud rules). */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background:
-            'radial-gradient(circle 20vw at 50% 56%, rgba(255,252,242,0.5), transparent 66%), ' +
-            'radial-gradient(circle 26vw at 10% 46%, rgba(247,195,148,0.20), transparent 70%), ' +
-            'radial-gradient(circle 22vw at 30% 66%, rgba(226,232,138,0.18), transparent 70%), ' +
-            'radial-gradient(circle 24vw at 47% 40%, rgba(212,226,130,0.20), transparent 70%), ' +
-            'radial-gradient(circle 24vw at 65% 62%, rgba(216,218,236,0.18), transparent 72%), ' +
-            'radial-gradient(circle 22vw at 82% 44%, rgba(210,196,232,0.18), transparent 72%), ' +
-            'radial-gradient(circle 24vw at 94% 68%, rgba(244,196,210,0.18), transparent 72%)',
-        }}
-      />
+      <BloomField blooms={PACKAGES_FIELD} over={PAPER_DEEP} className="pointer-events-none absolute inset-0 -z-10" />
       <Sparkles className="absolute right-[5vw] top-[clamp(3rem,6vw,5.5rem)] hidden h-12 w-12 md:block" />
       <Label gradient={['#D8DB7A', '#9BA03E']}>{PACKAGES.label}</Label>
       <SplitText

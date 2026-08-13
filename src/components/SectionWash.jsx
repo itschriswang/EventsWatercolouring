@@ -25,7 +25,7 @@ export default function SectionWash({ mask, seamGradient, variant, children }) {
           ...(mask ? { WebkitMaskImage: mask, maskImage: mask } : {}),
         }}
       >
-        <WatercolourBloom variant={variant} />
+        <WatercolourBloom variant={variant} canvas={!mask} />
         {/* Break the smooth wash into a printed dither dot-screen so the bloom
             reads as pigment on paper, not a CSS gradient. Sits in the same
             masked, overflow-clipped box as the wash, and — unlike `.wcb-root` —

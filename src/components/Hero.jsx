@@ -9,7 +9,33 @@ import CornerBloom from './CornerBloom.jsx'
 import Sparkles from './Sparkles.jsx'
 import { withUnderline } from './Underline.jsx'
 import BloomFilter from './WetBloom.jsx'
-import { bloom } from '../lib/watercolour.js'
+import BloomField from './BloomField.jsx'
+import { fieldCss } from '../lib/watercolour.js'
+
+// The hero's two washes, as paint. Geometry is inherited from the hand-written
+// gradients these replace, and each thickness was solved to reproduce that
+// bloom's area-weighted load, so the conversion changed the model and not the
+// weight. Both are declared as data so BloomField can render them as CSS and
+// BloomCanvas can render the same paint optically.
+const HERO_FIELD = [
+  { pigment: 'apricot', x: 0.281, at: [0.14, 0.22], size: [0.42, 0.36], extent: 0.72 },
+  { pigment: 'blush', x: 0.263, at: [0.88, 0.12], size: [0.34, 0.3], extent: 0.72 },
+  { pigment: 'yellowgreen', x: 0.229, at: [0.86, 0.82], size: [0.36, 0.32], extent: 0.72 },
+  { pigment: 'lilac', x: 0.151, at: [0.06, 0.86], size: [0.32, 0.3], extent: 0.72 },
+  { pigment: 'butter', x: 0.215, at: [0.6, 0.06], size: [0.3, 0.26], extent: 0.72 },
+  { pigment: 'apricot', x: 0.191, at: [1.0, 0.48], size: [0.32, 0.28], extent: 0.72 },
+  { pigment: 'periwinkle', x: 0.099, at: [0.34, 0.54], size: [0.26, 0.24], extent: 0.74 },
+]
+
+// The aurora orb — the client's swatch sheet, wet-in-wet (§2.2), so it feathers
+// with no pinned contact line and takes no rim.
+const HERO_ORB = [
+  { pigment: 'seafoam', x: 0.803, at: [0.28, 0.2], size: [0.48, 0.48], extent: 0.72, wetness: 'wet' },
+  { pigment: 'lavender', x: 0.741, at: [0.14, 0.5], size: [0.44, 0.44], extent: 0.72, wetness: 'wet' },
+  { pigment: 'lemonlime', x: 0.787, at: [0.48, 0.52], size: [0.54, 0.54], extent: 0.74, wetness: 'wet' },
+  { pigment: 'blossom', x: 0.842, at: [0.72, 0.64], size: [0.46, 0.46], extent: 0.74, wetness: 'wet' },
+  { pigment: 'aurora_rose', x: 0.788, at: [0.86, 0.84], size: [0.4, 0.4], extent: 0.72, wetness: 'wet' },
+]
 
 export default function Hero({ revealed }) {
   const reduce = useReducedMotion()
@@ -67,21 +93,7 @@ export default function Hero({ revealed }) {
           wet-on-dry — laid on the paper — so they carry the edge-darkened rim.
           Geometry is unchanged, and each x was solved to reproduce the
           area-weighted load of the hand-written bloom it replaces. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          backgroundImage: [
-            bloom('apricot', { x: 0.281, size: '42% 36%', at: '14% 22%', extent: 0.72 }),
-            bloom('blush', { x: 0.263, size: '34% 30%', at: '88% 12%', extent: 0.72 }),
-            bloom('yellowgreen', { x: 0.229, size: '36% 32%', at: '86% 82%', extent: 0.72 }),
-            bloom('lilac', { x: 0.151, size: '32% 30%', at: '6% 86%', extent: 0.72 }),
-            bloom('butter', { x: 0.215, size: '30% 26%', at: '60% 6%', extent: 0.72 }),
-            bloom('apricot', { x: 0.191, size: '32% 28%', at: '100% 48%', extent: 0.72 }),
-            bloom('periwinkle', { x: 0.099, size: '26% 24%', at: '34% 54%', extent: 0.74 }),
-          ].join(', '),
-        }}
-      />
+      <BloomField blooms={HERO_FIELD} className="pointer-events-none absolute inset-0 z-0" />
 
       {/* Local hero bloom — bottom-right, behind artwork */}
       <div
@@ -106,19 +118,13 @@ export default function Hero({ revealed }) {
               bottom: '-4vmin',
               width: '74vmin',
               height: '74vmin',
-              // The five swatches as actual paints. Unlike the field above
-              // these are wet-in-wet (§2.2): the orb is pigment bleeding into
-              // an already-wet ground, so it feathers with no pinned contact
-              // line and takes no rim — which is also why reaching for the
-              // wet-on-dry profile here shifted the accent, pulling pigment
-              // out of the centre of a blurred, masked glow.
-              background: [
-                bloom('seafoam', { x: 0.803, size: '48% 48%', at: '28% 20%', extent: 0.72, wetness: 'wet' }),
-                bloom('lavender', { x: 0.741, size: '44% 44%', at: '14% 50%', extent: 0.72, wetness: 'wet' }),
-                bloom('lemonlime', { x: 0.787, size: '54% 54%', at: '48% 52%', extent: 0.74, wetness: 'wet' }),
-                bloom('blossom', { x: 0.842, size: '46% 46%', at: '72% 64%', extent: 0.74, wetness: 'wet' }),
-                bloom('aurora_rose', { x: 0.788, size: '40% 40%', at: '86% 84%', extent: 0.72, wetness: 'wet' }),
-              ].join(', '),
+              // Stays CSS rather than joining BloomCanvas: this orb is one
+              // composed element with its own blur, mask and opacity, and it
+              // isn't a field of overlapping washes competing to turn muddy —
+              // which is the problem the canvas exists to solve. Reproducing a
+              // 26px blur and a radial mask on the canvas would buy nothing and
+              // cost a second render target.
+              background: fieldCss(HERO_ORB),
               filter: 'blur(26px)',
               opacity: 0.62,
               WebkitMaskImage:

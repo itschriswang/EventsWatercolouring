@@ -67,6 +67,10 @@ const hex = (h) => [
 
 /** `paper` (#F7F4EF) as a reflectance — the backing every glaze composites over. */
 export const PAPER_REFLECTANCE = hex('#F7F4EF')
+/** `paper-deep` (#F4ECEF) — the warmer ground under the packages/enquiry run. */
+export const PAPER_DEEP = hex('#F4ECEF')
+/** `wine` (#311B26) — the nightfall ground the interference glows sit on. */
+export const WINE = hex('#311B26')
 
 /* ------------------------------------------------------------------ *
  * The palette as pigments
@@ -117,6 +121,25 @@ export const PIGMENTS = {
   burgundy: { rw: hex('#7E2848'), body: 0.07, gran: 0.81 }, // ≈ Quinacridone Rose — warm, staining
   ultramarine: { rw: hex('#2E3A6B'), body: 0.06, gran: 0.91 }, // ≈ French Ultramarine — cool, heavy
   olive: { rw: hex('#5F662B'), body: 0.08, gran: 0.41 }, // ≈ Hookers Green — the site's own sage-deep
+
+  // The nightfall glows, as INTERFERENCE paints (§5.1's third kind).
+  //
+  // The dark sections light their wine ground with warm and cool halos, and
+  // those can't be transparent pigment: a transparent glaze over a dark backing
+  // only darkens it further, which is why §5.1 says such paints go "nearly
+  // black on black". Interference paints invert that — high scattering in their
+  // own wavelengths, almost no absorption — so they read near-nothing on paper
+  // and bloom into colour over the dark ground, which is exactly the job. Hence
+  // rw near-paper and rb carrying the colour: over wine these land around
+  // #a06a47 while over paper they stay within a couple of levels of the sheet.
+  //
+  // (The paper still needs rb < rw per channel, and that holds: an interference
+  // paint over black is a mid-tone, not brighter than its appearance on white.)
+  nightAmber: { rw: hex('#F8F5F0'), rb: hex('#9E6A3C'), gran: 0.14 },
+  nightLime: { rw: hex('#F7F6EC'), rb: hex('#8E9440'), gran: 0.12 },
+  nightBlossom: { rw: hex('#FAF2F4'), rb: hex('#9B4A6B'), gran: 0.81 },
+  nightLavender: { rw: hex('#F5F1F8'), rb: hex('#6E5691'), gran: 0.55 },
+  nightSage: { rw: hex('#F2F5F1'), rb: hex('#4C7060'), gran: 0.41 },
 
   // The client's reference swatch sheet (see index.css) as paints in their own
   // right. These are the aurora accents — off the pastel arc on purpose — and
@@ -407,6 +430,45 @@ export function bloom(name, { x = 0.4, size = 'circle 30vw', at = '50% 50%', ...
   return `radial-gradient(${size} at ${at}, ${bloomStops(name, x, rest)})`
 }
 
+/**
+ * A field of blooms, as one `background-image`.
+ *
+ * Blooms are specified numerically — `at`/`size` as fractions of the element,
+ * matching what CSS resolves percentages against — so the same spec can drive
+ * both this CSS and BloomCanvas's shader. That matters: the canvas is the real
+ * rendering (it composites the blooms optically, §5.2) and this is the fallback
+ * beneath it, so they have to agree about where the paint is.
+ */
+export function fieldCss(blooms, over = PAPER_REFLECTANCE) {
+  return blooms
+    .map((b) =>
+      // A lift is unpainted paper held open, not paint — the near-white cores
+      // that keep the busiest overlaps luminous. On the canvas it subtracts
+      // thickness (§4.5's desorption); in CSS the nearest thing is the cream
+      // radial it always was.
+      b.lift
+        ? `radial-gradient(${b.sizeVw ? `circle ${b.sizeVw}vw` : `${(b.size[0] * 100).toFixed(2)}% ${(b.size[1] * 100).toFixed(2)}%`} at ` +
+          `${(b.at[0] * 100).toFixed(2)}% ${(b.at[1] * 100).toFixed(2)}%, ` +
+          `rgba(255,252,242,${b.lift.toFixed(3)}), transparent ${((b.extent ?? 0.72) * 100).toFixed(0)}%)`
+        : bloom(b.pigment, {
+        x: b.x,
+        // A circle sized in vw, not a percentage ellipse: the sections these
+        // sit behind can run many viewport-heights tall, and a two-axis
+        // percentage resolves against width and height independently, which
+        // stretches every wash into a sliver. One radius keyed to viewport
+        // width keeps a bloom round however tall its section is.
+        size: b.sizeVw
+          ? `circle ${b.sizeVw}vw`
+          : `${(b.size[0] * 100).toFixed(2)}% ${(b.size[1] * 100).toFixed(2)}%`,
+        at: `${(b.at[0] * 100).toFixed(2)}% ${(b.at[1] * 100).toFixed(2)}%`,
+        extent: b.extent ?? 0.72,
+        wetness: b.wetness ?? 'dry',
+        over,
+      }),
+    )
+    .join(', ')
+}
+
 /* ------------------------------------------------------------------ *
  * GLSL chunks
  * ------------------------------------------------------------------ */
@@ -571,7 +633,13 @@ export const GLSL_WASH = `
   // and far too much for a wash this pale.
   float granulation(float h, float gamma, float amount){
     float g = (1.0 - pow(h, gamma)) / max(1.0 - pow(0.5, gamma), 1e-3);
-    return mix(1.0, g, amount);
+    // gamma has to scale the texture's CONTRAST, not just its shape. Dividing
+    // (1 - h^gamma) by its value at mean height normalises the average away,
+    // but the ratio's spread then grows as gamma shrinks — which would make
+    // Hansa Yellow (0.08) the grainiest paint on the palette and French
+    // Ultramarine (0.91) the smoothest, exactly backwards. Folding gamma into
+    // the blend restores the ordering the paper's Figure 5 describes.
+    return mix(1.0, g, clamp(amount * gamma, 0.0, 1.0));
   }
 
   // §4.7. Drybrush excludes from the wet-area mask any pixel whose height is
