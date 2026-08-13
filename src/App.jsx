@@ -126,7 +126,7 @@ export default function App() {
             read as a single continuous painting. Masked to fade in over the
             gallery rather than switching on abruptly below it — but allowed
             to stop dead at the bottom, where the page deliberately breaks. */}
-        <SectionWash mask="linear-gradient(to bottom, transparent 0%, black 30%, black 100%)">
+        <SectionWash fadeTop={0.3}>
           <SelectedWork />
           <PullQuote />
           {/* The painter — bio beside the portrait, which is itself the kit

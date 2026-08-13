@@ -186,6 +186,99 @@ uses it, so the tooth holds a fixed physical size and the wash granulates into
 the same hollows the grain overlay darkens. Sample it in device pixels and the
 texture gets finer on retina, which is sensor noise, not paper.
 
+### Where blooms live
+
+Every bloom field is declared once, as data, through `BloomField`:
+
+```jsx
+<BloomField blooms={[{ pigment: 'apricot', x: 0.28, at: [0.14, 0.22], size: [0.42, 0.36] }]} />
+```
+
+That one spec drives two renderings. `fieldCss()` writes CSS for it, and
+`BloomCanvas` — one fixed full-viewport WebGL layer — paints the same blooms
+optically where the device can afford it, handing over via `data-live-blooms`.
+
+**The canvas is the point.** CSS alpha-blends overlapping washes, which averages
+colour toward grey; that is the mud the anti-mud rules above police by hand. On
+the canvas an overlap is one layer holding several pigments, K and S weighted by
+relative thickness and the thicknesses summed exactly as §5.2 prescribes, so
+crossing washes deepen along their own curves instead. It also removes the
+banding CSS colour stops produce, and granulates into the shared paper.
+
+**`canvas={false}` when the canvas structurally can't follow.** It is one layer
+at one z-index painting one viewport, so it cannot serve a field that an
+ancestor masks, that clips to a rounded folder, that blends, or that stacks over
+a photograph — the wash would escape the shape it is meant to live in. Those
+fields (the masked section washes, EveningTimeline's folder, Footer over its
+photo, the hero orb behind its blur) stay on CSS and still get the model, just
+through `fieldCss` rather than optically. Element-scoped blooms — `CornerBloom`
+over gallery art, the enquiry seal, the lightbox glow — are the same story.
+
+Only fields the canvas actually paints hand over: the fade rule in `index.css`
+is scoped to `[data-bloom-field='canvas']`, because hiding an opted-out field
+would simply delete its wash.
+
+**Two spec shapes.** `size: [fx, fy]` is a percentage ellipse, fractions of the
+element. `sizeVw: N` is a circle of radius N vw — use it behind sections that
+run many viewport-heights tall, where a two-axis percentage resolves against
+width and height independently and stretches every wash into a sliver.
+
+**`lift`** is unpainted paper held open, not paint: the near-white cores that
+keep the busiest overlaps luminous. It subtracts thickness on the canvas
+(§4.5's desorption) and stays a cream radial in CSS. It never enters the K/S mix.
+
+### Authoring a bloom as paint
+
+Don't hand-write `radial-gradient(… rgba(r,g,b,a), transparent NN%)` for a new
+bloom. Call `bloom()` from `lib/watercolour.js`: name the pigment and how thick
+the wash is, and it returns the stops the KM model says that paint produces as
+it thins — hue and saturation drifting along Figure 6's curve rather than one
+fixed colour fading in alpha. `size`/`at`/`extent` pass the geometry straight
+through, so converting an existing bloom changes only its colour.
+
+Two things to get right:
+
+- **`wetness`.** `dry` (default) is wet-on-dry — a wash on paper, so it carries
+  the edge-darkened rim. `wet` is wet-in-wet, which §2.2 describes as spreading
+  freely into soft feathery shapes: no pinned contact line, so no rim. The hero
+  orb is `wet`; forcing the rim there pulled pigment out of the centre and
+  visibly shifted an art-directed accent (and the 26px blur would have eaten
+  the rim anyway).
+- **Solve `x`, don't guess it.** Pick the thickness that reproduces the
+  area-weighted load of whatever it replaces, so a conversion is a change of
+  model and not a change of weight.
+
+### Darks are mixed, not bought
+
+There is no black pigment. `INK_WASH` is a dark mixed from three transparent
+paints — burgundy, olive, ultramarine — solved by `separate()` to land on `ink`
+(#352E30) at full thickness. Two pigments aren't enough: burgundy and
+ultramarine alone leave blue unabsorbed and land on a violet the palette rules
+out, so the third is what pulls the mix back to neutral.
+
+Mixing also buys the thing a bought black can't do — **separation** (§2.2): the
+heavy ultramarine settles out where the wash pooled while the light staining
+quinacridone stays in suspension and ends up in the thin passages. That's what
+paints the hero's brush stroke (`EmphasisBrush` in `SplitText.jsx`): the scan
+carries its bristles and bleeding edges in the alpha channel, and an SVG filter
+copies alpha into RGB and looks colour up by it, so the stroke reads neutral
+where it pooled and burgundy through the dry-brush bristles.
+
+Two constraints if you retune it. Hold luminance constant — the stroke's density
+is art direction, and alpha compositing already supplies the fade, so letting
+the model set lightness too thins the mid-tones twice and washes the stroke out.
+And tune against the *composited* result, not the pigment: paper dilutes exactly
+the thin passages where the swing is largest, so a separation that looks ample
+in the paint can round away to a pixel or two on the page.
+
+`PIGMENTS` is the paint box; `ARC` is the ordered subset the live wash
+interpolates along. Accents that sit off the arc — the client's swatch sheet
+(seafoam, lavender, lemonlime, blossom) — belong in the box but not the arc.
+Add a pigment when separation can't reach a colour: `separate()` implements
+§6.2's colour search and will tell you how far off the palette a target is.
+It left the orb's seafoam and lavender 12-19/255 adrift, which is what said
+they were paints in their own right rather than mixtures.
+
 **Weight is set by thickness alone.** In `BloomCanvas` the wash's visual load
 comes from `X_BASE`/`X_EDGE`; `ALPHA_GAIN` only buys gamut headroom for the
 colour/coverage split and cancels out of the composite. When retuning, measure

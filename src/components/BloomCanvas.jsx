@@ -2,58 +2,51 @@ import { useEffect, useRef } from 'react'
 import { useReducedMotion } from 'framer-motion'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { webglSupported, getContext, createQuadProgram, resizeCanvas } from '../lib/webgl.js'
+import { bloomFields } from './BloomField.jsx'
 import {
   GLSL_PRECISION,
   GLSL_NOISE,
   GLSL_PAPER,
   GLSL_KM,
   GLSL_WASH,
-  GLSL_PAPER_REFLECTANCE,
-  glslPigmentRamp,
+  pigment,
 } from '../lib/watercolour.js'
 
 /**
- * BloomCanvas — the live watercolour wash behind the page.
+ * BloomCanvas — every bloom field on the page, painted as actual paint.
  *
- * The static CSS washes (WatercolourBloom) paint the full height of each
- * section, even the parts scrolled off-screen, which is why they were kept
- * static: animating that much area would thrash the frame budget. This is the
- * efficient inverse — ONE fixed, full-viewport WebGL canvas that only ever
- * shades the visible pixels. The pigment genuinely diffuses (domain-warped
- * fBm = wet-on-wet bleed) and each wash floods in along an organic noise
- * front as its section scrolls into view.
+ * One fixed, full-viewport WebGL canvas that reads the registered BloomFields
+ * each frame, masks each to its element's rect, and renders its blooms with the
+ * Curtis et al. model (see lib/watercolour.js).
  *
- * It reproduces the existing design rather than replacing it: every frame it
- * reads the on-screen rect of each `[data-wash]` section and masks the blooms
- * to exactly those bands, carrying each section's warm/cool recipe through a
- * per-band `warm` flag. When it's live it hides the CSS washes (via the
- * `data-live-blooms` root flag) so the two never double-paint.
+ * The thing CSS cannot do, and the reason this exists: where blooms overlap,
+ * the browser alpha-blends them, which averages colour and slides toward grey —
+ * the mud CLAUDE.md's anti-mud rules exist to route around by hand. Here the
+ * overlap is a single layer holding several pigments, with K and S weighted by
+ * each pigment's relative thickness and the thicknesses summed, exactly as §5.2
+ * prescribes. Two washes crossing then deepen along their own characteristic
+ * curves instead of averaging, so they stay luminous on their own.
  *
- * The pigment model is Curtis et al.'s (see `lib/watercolour.js`): the wash is
- * a glaze of real K/S pigments composited onto the paper with Kubelka-Munk
- * rather than alpha-blended, it deposits a darker rim where the water stopped
- * (§4.3.3 — the effect that paper credits for watercolour's luminosity), it
- * granulates into the hollows of the sheet at a rate set by each pigment's
- * granularity (§4.5), and its flow is deflected by the paper's slope into
- * striations (§4.3). What used to be one smooth noise field is now a wash with
- * edges, tooth and grain that vary by hue.
+ * On top of that the wash granulates into the sheet's hollows at a rate set by
+ * each pigment's γ (§4.5), and its flow is deflected by the paper's slope into
+ * striations (§4.3). The blooms carry their own edge darkening in their
+ * thickness profiles (§4.3.3).
  *
  * Cost control: half-resolution buffer, DPR capped at 1, ~30fps throttle,
  * paused when the tab is hidden or the page hasn't been revealed. It only
- * mounts on capable, motion-friendly devices (`useHeavyFx`); everywhere else
- * — mobile, reduced-motion, no WebGL — the static CSS washes remain.
+ * mounts on capable, motion-friendly devices (`useHeavyFx`); everywhere else —
+ * touch, reduced-motion, no WebGL — BloomField's CSS rendering stays up. The
+ * canvas signals the handover with `data-live-blooms` on the root, which fades
+ * the CSS layers out (index.css), and clearing it on teardown fades them back.
  */
 
-// Wash constants. Thickness is in the KM sense: x = 1 is the unit glaze that
-// reproduces a palette colour exactly over white paper, so these thin values
-// are what keep the wash a pale, luminous glaze rather than flat paint.
-const X_BASE = '0.055' // interior thickness of the wash at full coverage
-const X_EDGE = '0.22' //  extra pigment carried to the dried rim (§4.3.3)
-const EDGE_BLUR = '0.13' //  width of the blurred wet-area mask M', as density
+const MAX_FIELDS = 4
+const MAX_BLOOMS = 24
+
+// Coverage headroom for the colour/alpha split, matching lib/watercolour.js.
+const ALPHA_GAIN = '1.6'
 const FLOW_SLOPE = '0.22' //  how hard the paper's slope streaks the flow (§4.3)
-const GRAN_AMOUNT = '0.55' //  how far to take granulation at full wetness (§4.5)
-const DRY_AMOUNT = '0.55' //  drybrush gating at the dry fringe (§4.7)
-const ALPHA_GAIN = '1.65' //  gamut headroom for the colour/coverage split below
+const GRAN_AMOUNT = '1.1' //  granulation at full wetness; γ scales it per pigment (§4.5)
 
 const FRAG = `
 ${GLSL_PRECISION}
@@ -61,105 +54,153 @@ ${GLSL_PRECISION}
   uniform float u_time;
   uniform float u_scroll;
   uniform float u_alpha;
-  uniform float u_px;        // device pixels per CSS pixel, so the paper tooth
-                             // is the same physical size as GrainCanvas's
-  uniform int u_bandCount;
-  uniform vec4 u_bands[4];   // (top, bottom, warm, reveal), normalised screen space (0 = top)
+  uniform float u_px;          // device px per CSS px, so paper tooth holds its size
+  uniform int u_bloomCount;
+  uniform int u_fieldCount;
+
+  // Per field: rect in normalised screen space (x, y, w, h), and the backdrop
+  // its glazes composite onto plus the scroll-reveal progress.
+  uniform vec4 u_fieldRect[${MAX_FIELDS}];   // x, y, w, h (normalised screen)
+  uniform float u_fieldFade[${MAX_FIELDS}]; // vertical fade-in, fraction of height
+  uniform vec4 u_fieldOver[${MAX_FIELDS}];   // rgb = backdrop, a = reveal 0..1
+
+  // Per bloom: placement within its field, then the paint.
+  uniform vec4 u_bloomGeom[${MAX_BLOOMS}];   // at.xy, size.xy (fractions of field)
+  uniform vec4 u_bloomArgs[${MAX_BLOOMS}];   // peak thickness, extent, wetness, field index
+  uniform vec4 u_bloomK[${MAX_BLOOMS}];      // K.rgb, granulation exponent
+  uniform vec4 u_bloomS[${MAX_BLOOMS}];      // S.rgb
 
 ${GLSL_NOISE}
 ${GLSL_PAPER}
 ${GLSL_KM}
 ${GLSL_WASH}
-${glslPigmentRamp()}
+
+  // Thickness across a bloom at radial distance d (1 = the gradient's radius),
+  // matching BLOOM_PROFILES in lib/watercolour.js so the canvas and the CSS
+  // fallback describe the same paint. Wet-on-dry carries the dried rim; wet-in-
+  // wet feathers out with none (§2.2).
+  float profileDry(float p){
+    if (p >= 0.80) return 0.0;
+    if (p < 0.34) return mix(0.75, 0.50, p / 0.34);
+    if (p < 0.54) return mix(0.50, 0.30, (p - 0.34) / 0.20);
+    if (p < 0.65) return mix(0.30, 0.34, (p - 0.54) / 0.11);   // the dried rim
+    if (p < 0.72) return mix(0.34, 0.12, (p - 0.65) / 0.07);
+    return mix(0.12, 0.0, (p - 0.72) / 0.08);
+  }
+  float profileWet(float p){
+    if (p >= 1.0) return 0.0;
+    if (p < 0.30) return mix(1.00, 0.72, p / 0.30);
+    if (p < 0.55) return mix(0.72, 0.40, (p - 0.30) / 0.25);
+    if (p < 0.75) return mix(0.40, 0.15, (p - 0.55) / 0.20);
+    if (p < 0.90) return mix(0.15, 0.04, (p - 0.75) / 0.15);
+    return mix(0.04, 0.0, (p - 0.90) / 0.10);
+  }
+  // d is 0..1 across the wash's extent; each profile is walked over its own
+  // span so the canvas lands on the same stops fieldCss() writes.
+  float bloomProfile(float d, float wet){
+    return mix(profileDry(d * 0.80), profileWet(d), wet);
+  }
 
   void main(){
     vec2 uv = gl_FragCoord.xy / u_res;
-    float sv = 1.0 - uv.y;                 // 0 at top of viewport, to match band coords
-    float aspect = u_res.x / u_res.y;
-    vec2 p = vec2(uv.x * aspect, sv);
+    vec2 sv = vec2(uv.x, 1.0 - uv.y);          // 0 at top, to match DOM rects
 
-    float t = u_time * 0.03;
-    float drift = u_scroll / u_res.y * 0.15;   // gentle parallax as the page scrolls
-
-    // The sheet (§4.1). Sampled in CSS pixels so the tooth stays put and stays
-    // the same size whatever the buffer is scaled to.
+    // The sheet (§4.1), in CSS pixels so the tooth holds a fixed size.
     vec2 sheet = gl_FragCoord.xy / u_px;
     float mottle = paperMottle(sheet);
-    float fibre = paperFieldAt(sheet, mottle, 0.35);   // what a brush skims
-    float hollow = paperFieldAt(sheet, mottle, 0.78);  // where pigment pools
+    float fibre = paperFieldAt(sheet, mottle, 0.35);
+    float hollow = paperFieldAt(sheet, mottle, 0.78);
 
-    // Wet-on-wet: warp the sampling domain with slowly evolving noise so the
-    // pigment bleeds and breathes at its edges rather than sitting still. The
-    // paper's slope then streaks that flow (§4.3, condition 4) — the term that
-    // pulls a wash into delicate striations running with the water instead of
-    // leaving it perfectly isotropic.
-    vec2 fp = p * 2.4 + vec2(0.0, drift);
+    // Wet-on-wet: the pigment bleeds and breathes at its edges rather than
+    // sitting still, and the paper's slope streaks that flow (§4.3, cond. 4).
+    float t = u_time * 0.03;
+    float drift = u_scroll / u_res.y * 0.15;
+    vec2 fp = vec2(sv.x * (u_res.x / u_res.y), sv.y) * 2.4 + vec2(0.0, drift);
     vec2 warp = vec2(fbm(fp + t), fbm(fp.yx + 5.2 - t));
-    vec2 q = fp + 0.85 * warp
-           + flowStreak(paperSlope(sheet, mottle), warp - 0.5) * ${FLOW_SLOPE};
+    vec2 bleed = (0.85 * warp - 0.42
+               + flowStreak(paperSlope(sheet, mottle), warp - 0.5) * ${FLOW_SLOPE}) * 0.06;
 
-    float density = fbm(q * 1.15 + 1.7);
+    // §5.2 — one layer, several pigments. Accumulate K and S weighted by each
+    // pigment's thickness and sum the thicknesses; the division below is the
+    // "in proportion to that pigment's relative thickness" the paper asks for.
+    vec3 Kacc = vec3(0.0);
+    vec3 Sacc = vec3(0.0);
+    float X = 0.0;
+    float lift = 0.0;
+    float gran = 0.0;
+    vec3 backdrop = vec3(1.0);
+    float painted = 0.0;
 
-    // Wet-area mask, and the pigment the drying wash drags out to its rim.
-    float wet = smoothstep(0.42, 0.86, density);
-    float rim = edgeDeposit(density, 0.42, 0.86, ${EDGE_BLUR});
+    // Nested so both array indices are loop counters: GLSL ES 1.00 only allows
+    // uniform arrays to be indexed by a constant expression, which a value
+    // pulled out of another uniform is not.
+    for (int fi = 0; fi < ${MAX_FIELDS}; fi++){
+      if (fi >= u_fieldCount) break;
+      vec4 rect = u_fieldRect[fi];
+      // Blooms are clipped to their field's box, the way a background-image is.
+      vec2 f = (sv - rect.xy) / max(rect.zw, vec2(1e-4));
+      if (f.x < 0.0 || f.x > 1.0 || f.y < 0.0 || f.y > 1.0) continue;
+      vec4 over = u_fieldOver[fi];
+      // The vertical fade a masked field would have had in CSS.
+      float fade = u_fieldFade[fi] > 0.0 ? smoothstep(0.0, u_fieldFade[fi], f.y) : 1.0;
 
-    // Accumulate the on-screen wash bands, feathering their edges and letting
-    // each flood in along a noise front (the scroll reveal).
-    float mask = 0.0;
-    float warm = 0.0;
-    for (int i = 0; i < 4; i++){
-      if (i >= u_bandCount) break;
-      vec4 b = u_bands[i];
-      float edge = smoothstep(b.x - 0.06, b.x + 0.10, sv)
-                 * (1.0 - smoothstep(b.y - 0.10, b.y + 0.06, sv));
-      float front = 0.55 * fbm(vec2(q.x * 1.3, b.x * 3.0) + 2.0);
-      float reveal = smoothstep(0.0, 0.5, b.w - 0.45 + front * 0.9);
-      float w = edge * reveal;
-      mask += w;
-      warm += w * b.z;
+      for (int i = 0; i < ${MAX_BLOOMS}; i++){
+        if (i >= u_bloomCount) break;
+        vec4 args = u_bloomArgs[i];
+        if (abs(args.w - float(fi)) > 0.5) continue;   // belongs to another field
+
+        vec4 geom = u_bloomGeom[i];
+        float d = length((f + bleed - geom.xy) / max(geom.zw, vec2(1e-4)));
+        float p = bloomProfile(d / max(args.y, 1e-3), args.z) * over.a * fade;
+        if (p <= 0.0) continue;
+        // Negative thickness is a LIFT, not paint: the near-white cores that
+        // hold the overlap zones open are unpainted paper showing through, and
+        // §4.5's desorption is the model's name for pigment coming back off the
+        // sheet. Tracked apart so it never pollutes the K/S mix.
+        if (args.x < 0.0) { lift += -args.x * p; painted = 1.0; continue; }
+        float x = args.x * p;
+
+        Kacc += u_bloomK[i].rgb * x;
+        Sacc += u_bloomS[i].rgb * x;
+        gran += u_bloomK[i].w * x;
+        X += x;
+        painted = 1.0;
+      }
+      if (painted > 0.5) backdrop = over.rgb;
     }
-    mask = clamp(mask, 0.0, 1.0);
-    warm = mask > 0.001 ? warm / mask : 0.0;
-    wet *= mask;
-    rim *= mask;
 
-    vec3 K, S;
-    float gamma;
-    pigmentKS(density * 0.9 + warp.x * 0.35, warm, K, S, gamma);
+    // Weight the mix by the pigment actually laid down, then let the lift take
+    // thickness off the result — a lift changes how much paint is there, not
+    // which paints they are.
+    float laid = X;
+    X *= clamp(1.0 - lift, 0.0, 1.0);
+    if (painted < 0.5 || X <= 0.0 || laid <= 0.0) { gl_FragColor = vec4(0.0); return; }
 
-    // Deposited pigment: the pale interior plus the dark ring at the edge.
-    float x = wet * ${X_BASE} + rim * ${X_EDGE};
-    // Granulation settles it into the hollows of the sheet, hardest where the
-    // paper is wettest and hardest for the coarse pigments (periwinkle, rose)
-    // — the yellow-green glow stays glassy. This replaces the old uniform
-    // spray-dither: the tooth is now the paper's, and differs by hue.
-    x *= granulation(hollow, gamma, wet * ${GRAN_AMOUNT});
-    // ...and the dry fringe breaks up on the sheet's peaks instead of fading
-    // out cleanly, which is what stops the edge reading as an airbrush.
-    x *= drybrush(fibre, 0.42, ${DRY_AMOUNT} * (1.0 - wet));
+    vec3 K = Kacc / laid;
+    vec3 S = Sacc / laid;
+    gran /= laid;
 
-    // §5.2 — render the glaze optically over the paper rather than blending a
-    // colour onto it. Coverage then follows from how much the glaze actually
-    // darkens the sheet, which keeps thickness, hue and opacity in step: thin
-    // pigment is automatically both paler and more transparent.
+    // Granulation settles the wash into the hollows of the sheet, hardest for
+    // the coarse pigments; the dry fringe breaks up on its peaks (§4.5, §4.7).
+    float wet = clamp(X * 6.0, 0.0, 1.0);
+    X *= granulation(hollow, gran, wet * ${GRAN_AMOUNT});
+    X *= drybrush(fibre, 0.42, 0.5 * (1.0 - wet));
+
     vec3 R, T;
-    kmLayer(K, S, x, R, T);
-    vec3 paper = ${GLSL_PAPER_REFLECTANCE};
-    vec3 drop = paper - kmOver(R, T, paper);
+    kmLayer(K, S, X, R, T);
+    vec3 drop = backdrop - kmOver(R, T, backdrop);
 
-    float alpha = clamp(max(drop.r, max(drop.g, drop.b)) * ${ALPHA_GAIN}, 0.0, 1.0) * u_alpha;
-    // Recover the source colour that lands on that reflectance once the
-    // compositor has blended it over the page at this alpha. ALPHA_GAIN > 1
-    // keeps the result inside gamut, so the clamp never actually bites.
-    vec3 col = clamp(paper - drop / max(alpha, 1e-3), 0.0, 1.0);
+    // Coverage follows how far the glaze moved the ground — in either
+    // direction, since the nightfall fields use interference pigments that
+    // lighten a dark backdrop rather than darkening a light one.
+    float mag = max(max(abs(drop.r), abs(drop.g)), abs(drop.b));
+    float alpha = clamp(mag * ${ALPHA_GAIN}, 0.0, 1.0) * u_alpha;
+    vec3 col = clamp(backdrop - drop / max(alpha, 1e-3), 0.0, 1.0);
 
     // Premultiplied output (context is premultipliedAlpha, blend ONE / 1-SRC_A).
     gl_FragColor = vec4(col * alpha, alpha);
   }
 `
-
-const MAX_BANDS = 4
 
 export default function BloomCanvas({ revealed }) {
   const reduce = useReducedMotion()
@@ -175,13 +216,17 @@ export default function BloomCanvas({ revealed }) {
     const gl = getContext(canvas)
     if (!gl) return
 
+    // The uniform arrays are the one hard limit here; bail to the CSS fields
+    // rather than shipping a shader the driver will refuse to link.
+    const vectors = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS)
+    if (vectors < MAX_FIELDS * 2 + MAX_BLOOMS * 4 + 8) return
+
     const prog = createQuadProgram(gl, FRAG)
     if (!prog) return
 
     gl.enable(gl.BLEND)
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
 
-    // Take over from the static CSS washes while we're live.
     root.dataset.liveBlooms = ''
 
     const start = performance.now()
@@ -190,33 +235,63 @@ export default function BloomCanvas({ revealed }) {
     let running = true
     const FRAME_MS = 1000 / 30
 
-    // Reused scratch buffer for the band uniform array.
-    const bandData = new Float32Array(MAX_BANDS * 4)
+    // Reused scratch buffers — these are rewritten every frame, and allocating
+    // ~30 typed arrays a second would hand the GC work for no reason.
+    const fieldRect = new Float32Array(MAX_FIELDS * 4)
+    const fieldOver = new Float32Array(MAX_FIELDS * 4)
+    const fieldFade = new Float32Array(MAX_FIELDS)
+    const bloomGeom = new Float32Array(MAX_BLOOMS * 4)
+    const bloomArgs = new Float32Array(MAX_BLOOMS * 4)
+    const bloomK = new Float32Array(MAX_BLOOMS * 4)
+    const bloomS = new Float32Array(MAX_BLOOMS * 4)
 
-    // The [data-wash] sections are rendered once by SectionWash and never
-    // added or removed for the page's lifetime, so match them a single time
-    // rather than re-running querySelectorAll every frame (~30/s) — only their
-    // positions change, which we still read per-frame via getBoundingClientRect.
-    const washEls = document.querySelectorAll('[data-wash]')
+    // K/S never change for a pigment, so resolve them once instead of inverting
+    // the KM equations for every bloom on every frame.
+    const BLANK = { K: [0, 0, 0], S: [0, 0, 0], gran: 0 }
+    const paints = new Map()
+    const paint = (name) => {
+      if (!paints.has(name)) paints.set(name, pigment(name))
+      return paints.get(name)
+    }
 
-    const readBands = () => {
+    const readFields = () => {
+      const vw = window.innerWidth || 1
       const vh = window.innerHeight || 1
-      const els = washEls
-      let n = 0
-      for (let i = 0; i < els.length && n < MAX_BANDS; i++) {
-        const r = els[i].getBoundingClientRect()
-        if (r.bottom < 0 || r.top > vh) continue // fully off-screen — skip
-        const warm = els[i].dataset.warm != null ? 1 : 0
-        // Flood-in progress: 0 as the band's top crosses the bottom edge, 1
-        // once it has risen through the lower ~60% of the viewport.
+      let nf = 0
+      let nb = 0
+      for (const field of bloomFields()) {
+        if (nf >= MAX_FIELDS || !field.el?.isConnected) continue
+        const r = field.el.getBoundingClientRect()
+        if (r.bottom < 0 || r.top > vh || r.width <= 0 || r.height <= 0) continue
+
+        // Flood-in: 0 as the field's top crosses the bottom edge, 1 once it has
+        // risen through the lower ~60% of the viewport.
         const reveal = Math.max(0, Math.min(1, (vh - r.top) / (vh * 0.6)))
-        bandData[n * 4] = r.top / vh
-        bandData[n * 4 + 1] = r.bottom / vh
-        bandData[n * 4 + 2] = warm
-        bandData[n * 4 + 3] = reveal
-        n++
+        fieldRect.set([r.left / vw, r.top / vh, r.width / vw, r.height / vh], nf * 4)
+        fieldOver.set([field.over[0], field.over[1], field.over[2], reveal], nf * 4)
+        fieldFade[nf] = field.fadeTop || 0
+
+        for (const b of field.blooms) {
+          if (nb >= MAX_BLOOMS) break
+          // vw-sized circles are resolved against the viewport here, then
+          // expressed in the field's own fractions for the shader.
+          const rx = b.sizeVw ? (b.sizeVw * vw) / 100 / r.width : b.size[0]
+          const ry = b.sizeVw ? (b.sizeVw * vw) / 100 / r.height : b.size[1]
+          bloomGeom.set([b.at[0], b.at[1], rx, ry], nb * 4)
+          // Lifts ride the same array with a negative thickness — they occupy a
+          // bloom slot but carry no paint, so K/S stay zero.
+          const { K, S, gran } = b.lift ? BLANK : paint(b.pigment)
+          bloomArgs.set(
+            [b.lift ? -b.lift : b.x, b.extent ?? 0.72, b.wetness === 'wet' ? 1 : 0, nf],
+            nb * 4,
+          )
+          bloomK.set([K[0], K[1], K[2], gran], nb * 4)
+          bloomS.set([S[0], S[1], S[2], 0], nb * 4)
+          nb++
+        }
+        nf++
       }
-      return n
+      return { blooms: nb, fields: nf }
     }
 
     const frame = (now) => {
@@ -226,7 +301,7 @@ export default function BloomCanvas({ revealed }) {
       lastDraw = now
 
       resizeCanvas(gl, canvas, 0.5, 1)
-      const count = readBands()
+      const { blooms, fields } = readFields()
 
       gl.useProgram(prog.program)
       gl.uniform2f(prog.uniforms('u_res'), canvas.width, canvas.height)
@@ -235,8 +310,15 @@ export default function BloomCanvas({ revealed }) {
       gl.uniform1f(prog.uniforms('u_scroll'), window.scrollY || 0)
       // Ease the whole layer in so it doesn't pop on first paint.
       gl.uniform1f(prog.uniforms('u_alpha'), Math.min(1, (now - start) / 900))
-      gl.uniform1i(prog.uniforms('u_bandCount'), count)
-      gl.uniform4fv(prog.uniforms('u_bands'), bandData)
+      gl.uniform1i(prog.uniforms('u_bloomCount'), blooms)
+      gl.uniform1i(prog.uniforms('u_fieldCount'), fields)
+      gl.uniform4fv(prog.uniforms('u_fieldRect'), fieldRect)
+      gl.uniform4fv(prog.uniforms('u_fieldOver'), fieldOver)
+      gl.uniform1fv(prog.uniforms('u_fieldFade'), fieldFade)
+      gl.uniform4fv(prog.uniforms('u_bloomGeom'), bloomGeom)
+      gl.uniform4fv(prog.uniforms('u_bloomArgs'), bloomArgs)
+      gl.uniform4fv(prog.uniforms('u_bloomK'), bloomK)
+      gl.uniform4fv(prog.uniforms('u_bloomS'), bloomS)
 
       gl.clearColor(0, 0, 0, 0)
       gl.clear(gl.COLOR_BUFFER_BIT)

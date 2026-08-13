@@ -1,9 +1,10 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { useLayoutEffect, useMemo, useRef } from 'react'
+import { useId, useLayoutEffect, useMemo, useRef } from 'react'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
 import Underline from './Underline.jsx'
 import { SPRING, asset } from '../lib/site.js'
+import { inkWashTable } from '../lib/watercolour.js'
 
 /**
  * Splits a headline into masked lines and reveals each unit (word or character)
@@ -127,19 +128,29 @@ const applyEmphasisFlow = (root, colors, positions) => {
 }
 
 // A real, hand-painted watercolour brush stroke laid BEHIND an emphasis word
-// (see SplitText's `emphasisStroke`) — a scanned stroke recoloured to a flat
-// ink (the title-text colour), with all of its dry-brush bristles, feathered
-// bleeding edges, splatter tendrils and granulation preserved as transparency
-// (see the script that builds public/assets/brush-ink.*). `opacity` softens it
-// to a tonal wash so the pastel emphasis word still reads on top. Sits at
-// zIndex -1 inside the (relative, isolated) emphasis span, so it paints behind
-// the glyphs but never escapes to the page. `object-fit: fill` stretches the
-// one stroke to sit around whatever word it backs; `src` is the asset base
-// (without extension) so it can ship webp with a png fallback.
+// (see SplitText's `emphasisStroke`) — a scanned stroke with all of its
+// dry-brush bristles, feathered bleeding edges, splatter tendrils and
+// granulation preserved as transparency. `opacity` softens it to a tonal wash
+// so the pastel emphasis word still reads on top. Sits at zIndex -1 inside the
+// (relative, isolated) emphasis span, so it paints behind the glyphs but never
+// escapes to the page. `object-fit: fill` stretches the one stroke to sit
+// around whatever word it backs; `src` is the asset base (without extension)
+// so it can ship webp with a png fallback.
 // `scaleY` squashes the stroke vertically about its centre without touching
 // its horizontal length — the box is sized by `inset` (object-fit: fill), so a
 // transform is the clean way to make the stroke shorter but not shorter-worded.
+//
+// The scan's own RGB is flat ink and gets discarded: the filter copies ALPHA
+// into the colour channels and then looks colour up by it, so the stroke is
+// painted from its own thickness map with the mixed dark of INK_WASH. That is
+// what makes it read as watercolour rather than as an ink silhouette — pigment
+// deepens toward ink's faint burgundy lean where it pooled and drifts warm
+// through the dry-brush bristles, because thickness moves it along the
+// characteristic curve (Curtis et al. Figure 6) instead of merely fading out.
+// sRGB interpolation because the table was solved in sRGB.
 function EmphasisBrush({ src, inset, opacity = 1, scaleY = 1 }) {
+  const id = useId().replace(/:/g, '')
+  const table = useMemo(() => inkWashTable(), [])
   return (
     <span
       aria-hidden="true"
@@ -152,6 +163,20 @@ function EmphasisBrush({ src, inset, opacity = 1, scaleY = 1 }) {
         ...(scaleY !== 1 ? { transform: `scaleY(${scaleY})`, transformOrigin: 'center' } : {}),
       }}
     >
+      <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
+        <filter id={id} colorInterpolationFilters="sRGB">
+          {/* RGB <- A, so the transfer table below is indexed by thickness. */}
+          <feColorMatrix
+            type="matrix"
+            values="0 0 0 1 0  0 0 0 1 0  0 0 0 1 0  0 0 0 1 0"
+          />
+          <feComponentTransfer>
+            <feFuncR type="table" tableValues={table.r} />
+            <feFuncG type="table" tableValues={table.g} />
+            <feFuncB type="table" tableValues={table.b} />
+          </feComponentTransfer>
+        </filter>
+      </svg>
       <picture>
         <source srcSet={asset(`${src}.webp`)} type="image/webp" />
         <img
@@ -166,6 +191,7 @@ function EmphasisBrush({ src, inset, opacity = 1, scaleY = 1 }) {
             height: '100%',
             objectFit: 'fill',
             display: 'block',
+            filter: `url(#${id})`,
           }}
         />
       </picture>

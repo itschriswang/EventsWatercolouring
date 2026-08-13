@@ -12,11 +12,25 @@ import FolderCell from './FolderCell.jsx'
 import NightPlanner from './NightPlanner.jsx'
 import { withUnderline } from './Underline.jsx'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
+import BloomField from './BloomField.jsx'
+import { PAPER_DEEP } from '../lib/watercolour.js'
 
 // The add-on accordion opens on a quick ease-out tween rather than the shared
 // SPRING — a spring that feels right for entrances reads as sluggish on a
 // tap-to-reveal, where the row should snap open the moment it's asked.
 const ACCORDION = { duration: 0.22, ease: [0.25, 1, 0.5, 1] }
+
+// The wash behind the packages, on the deeper paper ground. The cream core is
+// a LIFT rather than paint — unpainted sheet held open where the blooms meet.
+const PACKAGES_FIELD = [
+  { lift: 0.5, at: [0.5, 0.56], size: [0.2, 0.2], extent: 0.66 },
+  { pigment: 'apricot', x: 0.142, at: [0.1, 0.46], size: [0.26, 0.26], extent: 0.7 },
+  { pigment: 'butter', x: 0.136, at: [0.3, 0.66], size: [0.22, 0.22], extent: 0.7 },
+  { pigment: 'butter', x: 0.168, at: [0.47, 0.4], size: [0.24, 0.24], extent: 0.7 },
+  { pigment: 'periwinkle', x: 0.107, at: [0.65, 0.62], size: [0.24, 0.24], extent: 0.72 },
+  { pigment: 'lilac', x: 0.121, at: [0.82, 0.44], size: [0.22, 0.22], extent: 0.72 },
+  { pigment: 'rose', x: 0.068, at: [0.94, 0.68], size: [0.24, 0.24], extent: 0.72 },
+]
 
 export default function Packages() {
   const reduce = useReducedMotion()
@@ -52,20 +66,7 @@ export default function Packages() {
           between hue neighbours, and a near-white cream radial lifts the
           centre where they meet so it glows rather than averaging to grey
           (Pastel Bloom anti-mud rules). */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background:
-            'radial-gradient(circle 20vw at 50% 56%, rgba(255,252,242,0.5), transparent 66%), ' +
-            'radial-gradient(circle 26vw at 10% 46%, rgba(247,195,148,0.20), transparent 70%), ' +
-            'radial-gradient(circle 22vw at 30% 66%, rgba(226,232,138,0.18), transparent 70%), ' +
-            'radial-gradient(circle 24vw at 47% 40%, rgba(212,226,130,0.20), transparent 70%), ' +
-            'radial-gradient(circle 24vw at 65% 62%, rgba(216,218,236,0.18), transparent 72%), ' +
-            'radial-gradient(circle 22vw at 82% 44%, rgba(210,196,232,0.18), transparent 72%), ' +
-            'radial-gradient(circle 24vw at 94% 68%, rgba(244,196,210,0.18), transparent 72%)',
-        }}
-      />
+      <BloomField blooms={PACKAGES_FIELD} over={PAPER_DEEP} className="pointer-events-none absolute inset-0 -z-10" />
       <Sparkles className="absolute right-[5vw] top-[clamp(3rem,6vw,5.5rem)] hidden h-12 w-12 md:block" />
       <Label gradient={['#D8DB7A', '#9BA03E']}>{PACKAGES.label}</Label>
       <SplitText
@@ -103,7 +104,7 @@ export default function Packages() {
           className="relative z-20 mt-4 max-w-[calc(100vw-5vw*2)] overflow-hidden rounded-2xl border border-line p-6 shadow-[0_24px_50px_-20px_rgba(126,40,72,0.32)]"
           style={{ background: CARD_BG }}
         >
-          <CornerBloom from="rgba(176,74,118,0.12)" to="rgba(140,54,86,0.08)" />
+          <CornerBloom from={['blush', 0.341]} to={['blush', 0.276]} />
           <GlassCardRim />
           <div className="relative z-10">
             <p className="text-sm text-ink-soft">{PACKAGES.base.note}</p>
@@ -213,7 +214,7 @@ export default function Packages() {
           reveal={reveal()}
           topGap="1.5rem"
           wrapperClassName="col-span-5"
-          bloom={<CornerBloom from="rgba(176,74,118,0.12)" to="rgba(140,54,86,0.08)" />}
+          bloom={<CornerBloom from={['blush', 0.341]} to={['blush', 0.276]} />}
           contentClassName="flex h-full flex-col px-7 pb-7"
         >
           <div className="flex items-baseline justify-between gap-4">
@@ -258,7 +259,7 @@ export default function Packages() {
           reveal={reveal(1)}
           topGap="1.5rem"
           wrapperClassName="col-span-7"
-          bloom={<CornerBloom from="rgba(176,172,66,0.10)" to="rgba(138,145,67,0.08)" />}
+          bloom={<CornerBloom from={['yellowgreen', 0.128]} to={['lemonlime', 0.082]} />}
           contentClassName="flex h-full flex-col"
         >
             <div className="flex items-baseline justify-end border-b border-line/50 px-8 pb-5">
@@ -316,7 +317,7 @@ export default function Packages() {
         reveal={reveal()}
         hover={!reduce}
         wrapperClassName="group mt-12 w-full"
-        bloom={<CornerBloom from="rgba(176,172,66,0.10)" to="rgba(232,155,99,0.09)" />}
+        bloom={<CornerBloom from={['yellowgreen', 0.128]} to={['apricot', 0.103]} />}
         contentClassName="flex items-center justify-between gap-4 px-6 pb-6 sm:px-7 sm:pb-7"
       >
         <span className="relative z-10 flex items-center gap-4 sm:gap-5">

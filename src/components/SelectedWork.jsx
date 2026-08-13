@@ -238,7 +238,7 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
               poking half would be cut off) and sitting a hair off square. */}
           <PaperClip className="absolute -top-2.5 left-6 z-20 h-9 w-auto rotate-[8deg]" />
           <div className={cardShape + ' rotate-[0.7deg] bg-paper-deep'}>
-            <CornerBloom from="rgba(176,172,66,0.14)" to="rgba(138,145,67,0.11)" />
+            <CornerBloom from={['lemonlime', 0.128]} to={['lemonlime', 0.113]} />
             {/* A quote is a text card, so it wears the same wet, water-wobbled
                 edge as the Packages family — the painting tiles beside it keep a
                 clean crop for the photo. */}
@@ -339,7 +339,7 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
               />
             )}
           </div>
-          <CornerBloom from="rgba(176,74,118,0.14)" to="rgba(140,54,86,0.10)" overlay />
+          <CornerBloom from={['blush', 0.4]} to={['blush', 0.346]} overlay />
         </button>
       )}
     </motion.figure>

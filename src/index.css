@@ -660,7 +660,10 @@
 /* When the live WebGL wash (BloomCanvas) is running it owns the pigment, so
    the static CSS washes fade out to avoid double-painting. Fades back in
    cleanly if the canvas ever tears down (context loss, tab returns). */
-[data-live-blooms] .wcb-root {
+/* Only the fields the canvas actually paints hand over. A field opted out of
+   the canvas (masked, clipped, or over a photograph — see BloomField) is the
+   only rendering there is, so hiding it would simply delete the wash. */
+[data-live-blooms] .bloom-field[data-bloom-field='canvas'] {
   opacity: 0;
   transition: opacity 0.8s ease;
 }

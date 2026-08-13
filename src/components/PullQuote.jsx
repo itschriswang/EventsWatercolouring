@@ -6,6 +6,7 @@ import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
 import { SPRING_SOFT, ENQUIRE_HREF } from '../lib/site.js'
 import { PULLQUOTE } from '../content.js'
+import BloomField from './BloomField.jsx'
 
 /**
  * The Clare & William quote, set as a centred editorial moment right after
@@ -20,6 +21,13 @@ import { PULLQUOTE } from '../content.js'
  * ink drying on the page. Lite devices (touch, reduced-motion) get a single
  * quiet fade instead.
  */
+// The lime-and-blush moment, as paint in the margins.
+const QUOTE_FIELD = [
+  { pigment: 'lemonlime', x: 0.067, at: [0.06, 0.22], size: [0.34, 0.55], extent: 0.74 },
+  { pigment: 'yellowgreen', x: 0.12, at: [0.94, 0.78], size: [0.36, 0.58], extent: 0.74 },
+  { pigment: 'yellowgreen', x: 0.067, at: [0.88, 0.12], size: [0.24, 0.4], extent: 0.72 },
+]
+
 export default function PullQuote() {
   const reduce = useReducedMotion()
   const lite = reduce || !useHeavyFx()
@@ -56,16 +64,7 @@ export default function PullQuote() {
       {/* The lime-and-blush moment — the two fresh accents the hero used to
           spend now frame the quote instead, as soft static washes in the
           margins. Cheap: two gradients, no filters, no animation. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(34% 55% at 6% 22%, rgba(216,220,143,0.14), transparent 74%), ' +
-            'radial-gradient(36% 58% at 94% 78%, rgba(212,226,130,0.16), transparent 74%), ' +
-            'radial-gradient(24% 40% at 88% 12%, rgba(226,232,138,0.10), transparent 72%)',
-        }}
-      />
+      <BloomField blooms={QUOTE_FIELD} />
       <figure className="relative mx-auto flex max-w-3xl flex-col items-center text-center">
         <motion.span
           {...rise(0)}

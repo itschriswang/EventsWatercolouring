@@ -11,6 +11,7 @@ import GlassCardRim from './GlassCardRim.jsx'
 import FolderCell from './FolderCell.jsx'
 import { withUnderline } from './Underline.jsx'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
+import { fieldCss, WINE } from '../lib/watercolour.js'
 
 /**
  * "How the evening runs" — a sticky split-screen. A massive section title is
@@ -20,6 +21,15 @@ import usePinchZoomed from '../hooks/usePinchZoom.js'
  * the final beat. Dusk-drenched — the aurora palette after sundown — single
  * layout from phone to desktop so the two never drift apart.
  */
+// The folder's ambience, as interference paint on the wine ground.
+const DUSK_GLOW = [
+  { pigment: 'nightAmber', x: 0.178, at: [0.08, 0.05], size: [0.7, 0.55], extent: 0.6 },
+  { pigment: 'nightBlossom', x: 0.181, at: [0.9, 0.1], size: [0.55, 0.45], extent: 0.55 },
+  { pigment: 'nightLavender', x: 0.159, at: [0.92, 0.92], size: [0.6, 0.5], extent: 0.55 },
+  { pigment: 'nightLime', x: 0.119, at: [0.3, 1], size: [0.45, 0.4], extent: 0.6 },
+  { pigment: 'nightLime', x: 0.126, at: [0.55, 0.48], size: [0.48, 0.4], extent: 0.55 },
+]
+
 export default function EveningTimeline() {
   const reduce = useReducedMotion()
   const zoomed = usePinchZoomed()
@@ -73,13 +83,11 @@ export default function EveningTimeline() {
               aria-hidden="true"
               className="pointer-events-none absolute inset-0"
               style={{
+                // Interference glows on the dusk ground (§5.1), with the
+                // readability scrim kept last beneath them.
                 background:
-                  'radial-gradient(ellipse 70% 55% at 8% 5%, rgba(255,165,95,0.20) 0%, transparent 60%), ' +
-                  'radial-gradient(ellipse 55% 45% at 90% 10%, rgba(250,170,200,0.17) 0%, transparent 55%), ' +
-                  'radial-gradient(ellipse 60% 50% at 92% 92%, rgba(175,140,230,0.17) 0%, transparent 55%), ' +
-                  'radial-gradient(ellipse 45% 40% at 30% 100%, rgba(236,232,108,0.14) 0%, transparent 60%), ' +
-                  'radial-gradient(ellipse 48% 40% at 55% 48%, rgba(205,215,80,0.17) 0%, transparent 55%), ' +
-                  'linear-gradient(170deg, rgba(34,26,30,0.25) 0%, rgba(44,34,39,0.45) 35%, rgba(54,42,48,0.65) 100%)',
+                  fieldCss(DUSK_GLOW, WINE) +
+                  ', linear-gradient(170deg, rgba(34,26,30,0.25) 0%, rgba(44,34,39,0.45) 35%, rgba(54,42,48,0.65) 100%)',
               }}
             />
             {/* Watercolour pigment wash, bottom-left — a soft glow lifting off
@@ -95,7 +103,7 @@ export default function EveningTimeline() {
                   'radial-gradient(ellipse 70% 70% at 32% 72%, black 0%, black 38%, transparent 76%)',
               }}
             >
-              <WatercolourBloom />
+              <WatercolourBloom canvas={false} />
             </div>
             {/* Fireflies in the dark — chartreuse motes drifting in the
                 folder's negative space, clipped with the rest of the bloom
