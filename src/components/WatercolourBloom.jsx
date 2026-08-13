@@ -57,11 +57,12 @@ const WASH_WARM = [
   { pigment: 'aurora_rose', x: 0.071, sizeVw: 20, at: [0.44, 0.62], extent: 0.74 },
 ]
 
-export default function WatercolourBloom({ className = '', variant = 'default', canvas = true }) {
+export default function WatercolourBloom({ className = '', variant = 'default', canvas = true, fadeTop = 0 }) {
   return (
     <BloomField
       blooms={variant === 'warm' ? WASH_WARM : WASH_STATIC}
       canvas={canvas}
+      fadeTop={fadeTop}
       className={`pointer-events-none absolute inset-0 ${className}`}
     />
   )

@@ -246,7 +246,7 @@ export default function Hero({ revealed }) {
                   whileHover={reduce ? {} : { rotate: -2, scale: 1.03 }}
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(126,40,72,0.30),0_6px_16px_-6px_rgba(126,40,72,0.12)]"
                 >
-                  <CornerBloom from="rgba(242,194,207,0.15)" to="rgba(140,54,86,0.11)" overlay />
+                  <CornerBloom from={['blossom', 0.067]} to={['blush', 0.382]} overlay />
                   {wick && (
                     <BloomFilter id="hero-wick-1" dur="1.2s" begin="0.8s" />
                   )}
@@ -282,7 +282,7 @@ export default function Hero({ revealed }) {
                   whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(126,40,72,0.30),0_6px_16px_-6px_rgba(126,40,72,0.12)]"
                 >
-                  <CornerBloom from="rgba(247,195,148,0.20)" to="rgba(242,194,207,0.14)" overlay />
+                  <CornerBloom from={['apricot', 0.142]} to={['blossom', 0.062]} overlay />
                   {wick && (
                     <BloomFilter id="hero-wick-2" dur="1.2s" begin="0.95s" />
                   )}

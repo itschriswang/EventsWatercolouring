@@ -408,7 +408,10 @@ export function bloomStops(name, x, { over = PAPER_REFLECTANCE, wetness = 'dry',
       const l = kmLayer(K, S, x * rel)
       const lit = kmOver(l.R, l.T, over)
       const drop = over.map((c, i) => c - lit[i])
-      const a = Math.min(1, Math.max(...drop) * COVER_GAIN)
+      // Magnitude, not the signed maximum: an interference glaze LIGHTENS its
+      // ground (§5.1), so its drop is negative throughout and taking the max
+      // would hand back a negative alpha and paint nothing at all.
+      const a = Math.min(1, Math.max(...drop.map(Math.abs)) * COVER_GAIN)
       if (a <= 0.0005) return `transparent ${at}%`
       return `${rgba255(
         over.map((c, i) => c - drop[i] / a),

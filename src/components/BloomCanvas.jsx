@@ -60,7 +60,8 @@ ${GLSL_PRECISION}
 
   // Per field: rect in normalised screen space (x, y, w, h), and the backdrop
   // its glazes composite onto plus the scroll-reveal progress.
-  uniform vec4 u_fieldRect[${MAX_FIELDS}];
+  uniform vec4 u_fieldRect[${MAX_FIELDS}];   // x, y, w, h (normalised screen)
+  uniform float u_fieldFade[${MAX_FIELDS}]; // vertical fade-in, fraction of height
   uniform vec4 u_fieldOver[${MAX_FIELDS}];   // rgb = backdrop, a = reveal 0..1
 
   // Per bloom: placement within its field, then the paint.
@@ -140,6 +141,8 @@ ${GLSL_WASH}
       vec2 f = (sv - rect.xy) / max(rect.zw, vec2(1e-4));
       if (f.x < 0.0 || f.x > 1.0 || f.y < 0.0 || f.y > 1.0) continue;
       vec4 over = u_fieldOver[fi];
+      // The vertical fade a masked field would have had in CSS.
+      float fade = u_fieldFade[fi] > 0.0 ? smoothstep(0.0, u_fieldFade[fi], f.y) : 1.0;
 
       for (int i = 0; i < ${MAX_BLOOMS}; i++){
         if (i >= u_bloomCount) break;
@@ -148,7 +151,7 @@ ${GLSL_WASH}
 
         vec4 geom = u_bloomGeom[i];
         float d = length((f + bleed - geom.xy) / max(geom.zw, vec2(1e-4)));
-        float p = bloomProfile(d / max(args.y, 1e-3), args.z) * over.a;
+        float p = bloomProfile(d / max(args.y, 1e-3), args.z) * over.a * fade;
         if (p <= 0.0) continue;
         // Negative thickness is a LIFT, not paint: the near-white cores that
         // hold the overlap zones open are unpainted paper showing through, and
@@ -236,6 +239,7 @@ export default function BloomCanvas({ revealed }) {
     // ~30 typed arrays a second would hand the GC work for no reason.
     const fieldRect = new Float32Array(MAX_FIELDS * 4)
     const fieldOver = new Float32Array(MAX_FIELDS * 4)
+    const fieldFade = new Float32Array(MAX_FIELDS)
     const bloomGeom = new Float32Array(MAX_BLOOMS * 4)
     const bloomArgs = new Float32Array(MAX_BLOOMS * 4)
     const bloomK = new Float32Array(MAX_BLOOMS * 4)
@@ -265,6 +269,7 @@ export default function BloomCanvas({ revealed }) {
         const reveal = Math.max(0, Math.min(1, (vh - r.top) / (vh * 0.6)))
         fieldRect.set([r.left / vw, r.top / vh, r.width / vw, r.height / vh], nf * 4)
         fieldOver.set([field.over[0], field.over[1], field.over[2], reveal], nf * 4)
+        fieldFade[nf] = field.fadeTop || 0
 
         for (const b of field.blooms) {
           if (nb >= MAX_BLOOMS) break
@@ -309,6 +314,7 @@ export default function BloomCanvas({ revealed }) {
       gl.uniform1i(prog.uniforms('u_fieldCount'), fields)
       gl.uniform4fv(prog.uniforms('u_fieldRect'), fieldRect)
       gl.uniform4fv(prog.uniforms('u_fieldOver'), fieldOver)
+      gl.uniform1fv(prog.uniforms('u_fieldFade'), fieldFade)
       gl.uniform4fv(prog.uniforms('u_bloomGeom'), bloomGeom)
       gl.uniform4fv(prog.uniforms('u_bloomArgs'), bloomArgs)
       gl.uniform4fv(prog.uniforms('u_bloomK'), bloomK)

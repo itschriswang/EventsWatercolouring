@@ -44,11 +44,19 @@ export default function BloomField({
   blooms,
   over = PAPER_REFLECTANCE,
   canvas = true,
+  fadeTop = 0,
   className = 'pointer-events-none absolute inset-0',
   style,
 }) {
   const ref = useRef(null)
 
+  // `fadeTop` describes a vertical ramp — transparent at the field's top edge,
+  // full by this fraction of its height — that the CALLER already applies in
+  // CSS. It's declared here purely so the canvas can reproduce it, because a
+  // vertical ramp is the one mask shape a shader can follow, and a wash that
+  // merely fades in shouldn't have to drop off the canvas for want of it.
+  // Applying the mask here too would fade the CSS layer twice.
+  //
   // `canvas={false}` keeps a field on CSS. The canvas is one layer at one
   // z-index painting into one viewport, so it cannot follow a field that an
   // ancestor masks, clips to a rounded folder, blends, or stacks over a
@@ -56,10 +64,10 @@ export default function BloomField({
   // Those fields still get the model; they just get it through fieldCss.
   useEffect(() => {
     if (!canvas) return
-    const entry = { el: ref.current, blooms, over }
+    const entry = { el: ref.current, blooms, over, fadeTop }
     fields.add(entry)
     return () => fields.delete(entry)
-  }, [blooms, over, canvas])
+  }, [blooms, over, canvas, fadeTop])
 
   const backgroundImage = useMemo(() => fieldCss(blooms, over), [blooms, over])
 

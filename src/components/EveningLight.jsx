@@ -1,5 +1,6 @@
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
+import { fieldCss } from '../lib/watercolour.js'
 
 /**
  * Evening light — the page's ambient ground drifts with the scroll the way
@@ -19,16 +20,19 @@ import { useHeavyFx } from '../hooks/useMediaQuery.js'
 const LAYERS = [
   {
     // Golden hour — apricot into butter, pouring from the top of the sky.
-    background:
-      'radial-gradient(120% 60% at 50% 0%, rgba(247,195,148,0.20) 0%, rgba(242,233,130,0.10) 45%, transparent 72%)',
+    background: fieldCss([
+      { pigment: 'apricot', x: 0.146, at: [0.5, 0], size: [1.2, 0.6], extent: 0.72 },
+      { pigment: 'butter', x: 0.08, at: [0.5, 0], size: [1.2, 0.6], extent: 0.45 },
+    ]),
     stops: [0, 0.22, 0.45],
     opacities: [1, 0.45, 0],
   },
   {
     // Dusk — periwinkle and soft lilac drifting in from the margins.
-    background:
-      'radial-gradient(70% 55% at 10% 42%, rgba(196,202,235,0.16) 0%, transparent 70%), ' +
-      'radial-gradient(70% 55% at 90% 58%, rgba(210,196,232,0.14) 0%, transparent 70%)',
+    background: fieldCss([
+      { pigment: 'periwinkle', x: 0.185, at: [0.1, 0.42], size: [0.7, 0.55], extent: 0.7 },
+      { pigment: 'lilac', x: 0.105, at: [0.9, 0.58], size: [0.7, 0.55], extent: 0.7 },
+    ]),
     stops: [0.18, 0.45, 0.8],
     opacities: [0, 1, 0.35],
   },

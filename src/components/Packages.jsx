@@ -104,7 +104,7 @@ export default function Packages() {
           className="relative z-20 mt-4 max-w-[calc(100vw-5vw*2)] overflow-hidden rounded-2xl border border-line p-6 shadow-[0_24px_50px_-20px_rgba(126,40,72,0.32)]"
           style={{ background: CARD_BG }}
         >
-          <CornerBloom from="rgba(176,74,118,0.12)" to="rgba(140,54,86,0.08)" />
+          <CornerBloom from={['blush', 0.341]} to={['blush', 0.276]} />
           <GlassCardRim />
           <div className="relative z-10">
             <p className="text-sm text-ink-soft">{PACKAGES.base.note}</p>
@@ -214,7 +214,7 @@ export default function Packages() {
           reveal={reveal()}
           topGap="1.5rem"
           wrapperClassName="col-span-5"
-          bloom={<CornerBloom from="rgba(176,74,118,0.12)" to="rgba(140,54,86,0.08)" />}
+          bloom={<CornerBloom from={['blush', 0.341]} to={['blush', 0.276]} />}
           contentClassName="flex h-full flex-col px-7 pb-7"
         >
           <div className="flex items-baseline justify-between gap-4">
@@ -259,7 +259,7 @@ export default function Packages() {
           reveal={reveal(1)}
           topGap="1.5rem"
           wrapperClassName="col-span-7"
-          bloom={<CornerBloom from="rgba(176,172,66,0.10)" to="rgba(138,145,67,0.08)" />}
+          bloom={<CornerBloom from={['yellowgreen', 0.128]} to={['lemonlime', 0.082]} />}
           contentClassName="flex h-full flex-col"
         >
             <div className="flex items-baseline justify-end border-b border-line/50 px-8 pb-5">
@@ -317,7 +317,7 @@ export default function Packages() {
         reveal={reveal()}
         hover={!reduce}
         wrapperClassName="group mt-12 w-full"
-        bloom={<CornerBloom from="rgba(176,172,66,0.10)" to="rgba(232,155,99,0.09)" />}
+        bloom={<CornerBloom from={['yellowgreen', 0.128]} to={['apricot', 0.103]} />}
         contentClassName="flex items-center justify-between gap-4 px-6 pb-6 sm:px-7 sm:pb-7"
       >
         <span className="relative z-10 flex items-center gap-4 sm:gap-5">

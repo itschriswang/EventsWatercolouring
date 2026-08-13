@@ -120,7 +120,7 @@ export default function CorporatePage() {
               whileHover={reduce ? {} : { rotate: 0, scale: 1.02 }}
               className="relative col-span-8 col-start-3 sm:col-span-5 sm:col-start-7 lg:col-span-3 lg:col-start-9 overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(126,40,72,0.30),0_6px_16px_-6px_rgba(126,40,72,0.12)]"
             >
-              <CornerBloom from="rgba(247,195,148,0.20)" to="rgba(242,194,207,0.14)" overlay />
+              <CornerBloom from={['apricot', 0.142]} to={['blossom', 0.062]} overlay />
               <div className="relative z-10">
                 <picture>
                   <source srcSet={asset('assets/art-character-girl.webp')} type="image/webp" />
@@ -191,7 +191,7 @@ export default function CorporatePage() {
                   className="relative overflow-hidden rounded-2xl border border-line/45 p-6 shadow-[0_24px_50px_-20px_rgba(126,40,72,0.25)] sm:p-7"
                   style={CARD_BG}
                 >
-                  <CornerBloom from="rgba(247,195,148,0.18)" to="rgba(212,226,130,0.14)" />
+                  <CornerBloom from={['apricot', 0.128]} to={['butter', 0.117]} />
                   <div className="relative z-10">
                     <Drop className="h-5 w-auto" gradient={['#F2E982', '#BCB438']} />
                     <h3 className="mt-4 font-sentient text-2xl tracking-[-0.02em] text-ink">{c.h}</h3>
@@ -283,7 +283,7 @@ export default function CorporatePage() {
                   className="relative col-span-12 flex flex-col overflow-hidden rounded-2xl border border-line/45 p-7 shadow-[0_24px_50px_-20px_rgba(126,40,72,0.32)] lg:col-span-5"
                   style={CARD_BG}
                 >
-                  <CornerBloom from="rgba(176,74,118,0.18)" to="rgba(140,54,86,0.12)" />
+                  <CornerBloom from={['blush', 0.517]} to={['aurora_rose', 0.186]} />
                   <div className="relative z-10 flex flex-1 flex-col">
                     <div className="flex items-baseline justify-between gap-4">
                       <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
@@ -324,7 +324,7 @@ export default function CorporatePage() {
                   className="relative col-span-12 overflow-hidden rounded-2xl border border-line/45 shadow-[0_24px_50px_-20px_rgba(126,40,72,0.25)] lg:col-span-7"
                   style={CARD_BG}
                 >
-                  <CornerBloom from="rgba(176,172,66,0.16)" to="rgba(138,145,67,0.12)" />
+                  <CornerBloom from={['yellowgreen', 0.207]} to={['lemonlime', 0.124]} />
                   <div className="relative z-10 flex h-full flex-col">
                     <div className="border-b border-line/50 px-7 pb-5 pt-7">
                       <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">

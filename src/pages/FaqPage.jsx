@@ -6,6 +6,7 @@ import SkipLink from '../components/SkipLink.jsx'
 import SiteHeader from '../components/SiteHeader.jsx'
 import MobileNav from '../components/MobileNav.jsx'
 import WatercolourBloom from '../components/WatercolourBloom.jsx'
+import BloomCanvas from '../components/BloomCanvas.jsx'
 import Label from '../components/Label.jsx'
 import SplitText from '../components/SplitText.jsx'
 import Faq from '../components/Faq.jsx'
@@ -36,6 +37,8 @@ export default function FaqPage() {
       <PageTransition />
       <SkipLink />
       <ScrollProgress />
+      {/* The FAQ's wash fades in vertically, which the canvas can follow. */}
+      <BloomCanvas revealed />
       <SiteHeader revealed enquireHref="#enquiry" />
       <MobileNav revealed enquireHref="#enquiry" />
 
@@ -54,7 +57,7 @@ export default function FaqPage() {
               maskImage: 'linear-gradient(to bottom, transparent 0%, black 16%, black 100%)',
             }}
           >
-            <WatercolourBloom canvas={false} />
+            <WatercolourBloom fadeTop={0.16} />
           </div>
 
           <section className="relative w-full px-[5vw] pt-[clamp(7rem,16vw,10rem)] pb-[clamp(1.5rem,4vw,2.5rem)]">

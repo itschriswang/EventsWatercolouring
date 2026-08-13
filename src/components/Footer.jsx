@@ -2,6 +2,7 @@ import SplitText from './SplitText.jsx'
 import CopyEmail from './CopyEmail.jsx'
 import { ENQUIRE_HREF, asset } from '../lib/site.js'
 import { FOOTER } from '../content.js'
+import { fieldCss } from '../lib/watercolour.js'
 
 // Hand-sketched, matching the mobile dock's icon set (MobileNav.jsx): a
 // rounded lens body, an aperture ring, and the shutter dot — roughed up with
@@ -39,6 +40,19 @@ function InstagramIcon() {
  * card (e.g. /corporate/, /faq/) pass a local anchor so the closing line
  * scrolls up to the on-page form instead of bouncing through the homepage.
  */
+// The photograph sits behind a 160deg scrim, so the effective ground these
+// glazes light is close to wine; they were separated against it.
+const FOOTER_GROUND = [0x36 / 255, 0x1e / 255, 0x2b / 255]
+const FOOTER_GLOW = [
+  { pigment: 'nightAmber', x: 0.133, at: [0.88, 0.02], size: [0.7, 0.6], extent: 0.55 },
+  { pigment: 'nightLime', x: 0.102, at: [0.7, 0.18], size: [0.44, 0.38], extent: 0.55 },
+  { pigment: 'nightLime', x: 0.111, at: [0.58, 0.42], size: [0.48, 0.42], extent: 0.55 },
+  { pigment: 'nightBlossom', x: 0.072, at: [0.04, 0.96], size: [0.52, 0.44], extent: 0.52 },
+  { pigment: 'nightBlossom', x: 0.073, at: [0.22, 0.7], size: [0.4, 0.36], extent: 0.55 },
+  { pigment: 'nightSage', x: 0.101, at: [0.42, 0.88], size: [0.46, 0.4], extent: 0.55 },
+  { pigment: 'nightSage', x: 0.117, at: [0.96, 0.78], size: [0.36, 0.32], extent: 0.58 },
+]
+
 export default function Footer({ enquireHref = ENQUIRE_HREF }) {
   return (
     <footer className="relative w-full overflow-hidden px-[5vw] pt-[clamp(4rem,8vw,7rem)] pb-36 md:pb-[clamp(4rem,8vw,7rem)] text-paper">
@@ -64,15 +78,13 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
+          // The glows are INTERFERENCE paints (§5.1) separated against the
+          // scrimmed photograph beneath, because a transparent glaze over a
+          // dark ground only darkens it further — it cannot glow. The scrim
+          // stays last in the stack, under the light.
           background:
-            'radial-gradient(ellipse 70% 60% at 88% 2%, rgba(255,165,95,0.15) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 44% 38% at 70% 18%, rgba(236,232,108,0.12) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 48% 42% at 58% 42%, rgba(205,215,80,0.15) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 52% 44% at 4% 96%, rgba(245,120,175,0.08) 0%, transparent 52%), ' +
-            'radial-gradient(ellipse 40% 36% at 22% 70%, rgba(250,170,200,0.07) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 46% 40% at 42% 88%, rgba(120,180,150,0.10) 0%, transparent 55%), ' +
-            'radial-gradient(ellipse 36% 32% at 96% 78%, rgba(150,190,170,0.10) 0%, transparent 58%), ' +
-            'linear-gradient(160deg, rgba(45,24,36,0.65) 0%, rgba(54,30,43,0.60) 55%, rgba(66,36,50,0.65) 100%)',
+            fieldCss(FOOTER_GLOW, FOOTER_GROUND) +
+            ', linear-gradient(160deg, rgba(45,24,36,0.65) 0%, rgba(54,30,43,0.60) 55%, rgba(66,36,50,0.65) 100%)',
         }}
       />
       <div className="relative z-10 flex flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">

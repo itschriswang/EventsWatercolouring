@@ -2,6 +2,7 @@ import { useId } from 'react'
 import { motion } from 'framer-motion'
 import { SPRING, SPRING_SOFT, asset } from '../lib/site.js'
 import { ENQUIRY } from '../content.js'
+import { fieldCss } from '../lib/watercolour.js'
 
 /**
  * The enquiry confirmation as a mailed postcard (see EnquireForm.jsx). The
@@ -16,6 +17,12 @@ import { ENQUIRY } from '../content.js'
  * over it on a quick ease-out — deliberately not a spring, a rubber stamp
  * doesn't bounce. Under reduced motion every stage becomes a plain fade.
  */
+// Blush into lilac across the card, as paint.
+const POSTCARD_WASH = [
+  { pigment: 'blush', x: 0.077, at: [0.12, 0], size: [0.8, 0.6], extent: 0.6 },
+  { pigment: 'lilac', x: 0.063, at: [1, 1], size: [0.7, 0.6], extent: 0.55 },
+]
+
 export default function Postcard({ firstName = '', reduce = false }) {
   const C = ENQUIRY.confirm
   const P = C.postcard
@@ -53,10 +60,7 @@ export default function Postcard({ firstName = '', reduce = false }) {
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                'radial-gradient(ellipse 80% 60% at 12% 0%, rgba(242,194,207,0.10) 0%, transparent 60%), radial-gradient(ellipse 70% 60% at 100% 100%, rgba(214,205,236,0.10) 0%, transparent 55%)',
-            }}
+            style={{ background: fieldCss(POSTCARD_WASH) }}
           />
 
           <div className="relative grid grid-cols-1 sm:grid-cols-[1.15fr_1fr]">
