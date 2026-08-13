@@ -33,6 +33,10 @@ off across it via sessionStorage).
   Chris's voice: plain, warm, Australian English, no em dashes.
 - `src/lib/site.js` — shared constants: `SPRING`/`SPRING_SOFT` (the site-wide
   motion physics), `asset()`, `ENQUIRE_HREF`, `EMAIL`, Formspree config.
+- `src/lib/watercolour.js` — the pigment/paper physics shared by the live
+  washes: the palette as Kubelka-Munk pigments, and GLSL chunks for the paper
+  height field, edge darkening, granulation and optical compositing. See the
+  Watercolour Model section in the design guide before touching a wash.
 - `src/components/` — one component per file. Homepage section order is set
   in `App.jsx`; the section comments there explain the narrative pacing.
 - `src/hooks/useMediaQuery.js` — exports `useHeavyFx()`, the performance gate
@@ -135,6 +139,60 @@ aurora orb (`Hero.jsx`) dissolves yellow-green through to blush inside one
 composed orb, and two `CornerBloom` pairs skip a step on the arc
 (`Packages.jsx` ochre→apricot, `CorporatePage.jsx` apricot→lime). All three
 were art-directed against the built page.
+
+## Watercolour Model
+
+The washes are not stylised gradients. They follow Curtis, Anderson, Seims,
+Fleischer and Salesin, *Computer-Generated Watercolor* (SIGGRAPH '97), which is
+implemented in `src/lib/watercolour.js` and consumed by `BloomCanvas` and
+`GrainCanvas`. Section numbers below are that paper's; the code carries the
+same references, so read them before retuning a wash.
+
+**The palette is a set of paints, not a set of colours.** Each pigment in
+`PIGMENTS` is specified the way §5.1 lets an artist specify one: `rw`, how a
+unit-thickness glaze looks over white paper — which is exactly what the Pastel
+Bloom hexes already were, so the art direction is preserved at that anchor —
+plus `body` (how far its appearance over black sits off black; low = a
+transparent staining paint) and `gran`, the granulation exponent γ borrowed
+from the nearest paint in the paper's Figure 5. Add a pigment by naming those
+three, never by hand-writing K/S — `kmCoefficients()` inverts them for you.
+
+γ is load-bearing art direction, not trivia. Periwinkle carries French
+Ultramarine's 0.91 and the roses carry quinacridone's 0.81, so those passages
+break into paper tooth, while the yellow-green glow keeps Phthalo's 0.12 and
+stays smooth and luminous. That is how real paint behaves and it protects the
+chartreuse voice; don't flatten the spread.
+
+**Four effects the model gives us, and what would break them:**
+
+1. *Edge darkening* (§4.3.3) — pigment dragged to the rim as a wash dries.
+   The paper credits this for watercolour's luminosity, and it is the single
+   thing that stops a wash reading as an airbrush. Both tiers have it: the
+   shader via `edgeDeposit()`, the static CSS via each bloom's rim stop.
+2. *Granulation* (§4.5) — deposition favours the sheet's hollows, at a rate
+   set by the pigment's γ. It samples `paperHollows()`, deliberately coarser
+   than the fibre-scale `paperHeight()` the grain overlay resolves: pigment
+   pools between fibres, and sampling per-pixel gives digital speckle instead.
+3. *Optical compositing* (§5.2) — glazes are composited with Kubelka-Munk, not
+   alpha-blended. Thickening pigment then walks along its characteristic curve
+   (the paper's Figure 6) rather than averaging toward grey, which is the same
+   failure the anti-mud rules above guard against by hand.
+4. *Flow striations* (§4.3, condition 4) — the paper's slope deflects the
+   water. Resolve the slope onto the flow direction (`flowStreak()`); adding
+   the raw gradient only jitters the wash isotropically and reads as noise.
+
+**One sheet.** `paperHeight()` is sampled in CSS pixels by every layer that
+uses it, so the tooth holds a fixed physical size and the wash granulates into
+the same hollows the grain overlay darkens. Sample it in device pixels and the
+texture gets finer on retina, which is sensor noise, not paper.
+
+**Weight is set by thickness alone.** In `BloomCanvas` the wash's visual load
+comes from `X_BASE`/`X_EDGE`; `ALPHA_GAIN` only buys gamut headroom for the
+colour/coverage split and cancels out of the composite. When retuning, measure
+— the wash sits around 1.3x the mean deviation-from-paper of the pre-model
+gradient, and it should stay light. Likewise the static CSS rims were solved to
+preserve each bloom's area-weighted alpha exactly: a wash redistributes its
+pigment, it never adds any.
 
 ## Shadow Palette: No Grey Shadows
 

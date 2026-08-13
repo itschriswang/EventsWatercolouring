@@ -2,6 +2,15 @@ import { useEffect, useRef } from 'react'
 import { useReducedMotion } from 'framer-motion'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { webglSupported, getContext, createQuadProgram, resizeCanvas } from '../lib/webgl.js'
+import {
+  GLSL_PRECISION,
+  GLSL_NOISE,
+  GLSL_PAPER,
+  GLSL_KM,
+  GLSL_WASH,
+  GLSL_PAPER_REFLECTANCE,
+  glslPigmentRamp,
+} from '../lib/watercolour.js'
 
 /**
  * BloomCanvas — the live watercolour wash behind the page.
@@ -20,61 +29,48 @@ import { webglSupported, getContext, createQuadProgram, resizeCanvas } from '../
  * per-band `warm` flag. When it's live it hides the CSS washes (via the
  * `data-live-blooms` root flag) so the two never double-paint.
  *
+ * The pigment model is Curtis et al.'s (see `lib/watercolour.js`): the wash is
+ * a glaze of real K/S pigments composited onto the paper with Kubelka-Munk
+ * rather than alpha-blended, it deposits a darker rim where the water stopped
+ * (§4.3.3 — the effect that paper credits for watercolour's luminosity), it
+ * granulates into the hollows of the sheet at a rate set by each pigment's
+ * granularity (§4.5), and its flow is deflected by the paper's slope into
+ * striations (§4.3). What used to be one smooth noise field is now a wash with
+ * edges, tooth and grain that vary by hue.
+ *
  * Cost control: half-resolution buffer, DPR capped at 1, ~30fps throttle,
  * paused when the tab is hidden or the page hasn't been revealed. It only
  * mounts on capable, motion-friendly devices (`useHeavyFx`); everywhere else
  * — mobile, reduced-motion, no WebGL — the static CSS washes remain.
  */
 
+// Wash constants. Thickness is in the KM sense: x = 1 is the unit glaze that
+// reproduces a palette colour exactly over white paper, so these thin values
+// are what keep the wash a pale, luminous glaze rather than flat paint.
+const X_BASE = '0.055' // interior thickness of the wash at full coverage
+const X_EDGE = '0.22' //  extra pigment carried to the dried rim (§4.3.3)
+const EDGE_BLUR = '0.13' //  width of the blurred wet-area mask M', as density
+const FLOW_SLOPE = '0.22' //  how hard the paper's slope streaks the flow (§4.3)
+const GRAN_AMOUNT = '0.55' //  how far to take granulation at full wetness (§4.5)
+const DRY_AMOUNT = '0.55' //  drybrush gating at the dry fringe (§4.7)
+const ALPHA_GAIN = '1.65' //  gamut headroom for the colour/coverage split below
+
 const FRAG = `
-  precision mediump float;
+${GLSL_PRECISION}
   uniform vec2 u_res;
   uniform float u_time;
   uniform float u_scroll;
   uniform float u_alpha;
+  uniform float u_px;        // device pixels per CSS pixel, so the paper tooth
+                             // is the same physical size as GrainCanvas's
   uniform int u_bandCount;
   uniform vec4 u_bands[4];   // (top, bottom, warm, reveal), normalised screen space (0 = top)
 
-  float hash(vec2 p){
-    p = fract(p * vec2(123.34, 456.21));
-    p += dot(p, p + 45.32);
-    return fract(p.x * p.y);
-  }
-  float vnoise(vec2 p){
-    vec2 i = floor(p), f = fract(p);
-    float a = hash(i), b = hash(i + vec2(1.0, 0.0));
-    float c = hash(i + vec2(0.0, 1.0)), d = hash(i + vec2(1.0, 1.0));
-    vec2 u = f * f * (3.0 - 2.0 * f);
-    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
-  }
-  float fbm(vec2 p){
-    float v = 0.0, a = 0.5;
-    for (int i = 0; i < 3; i++){ v += a * vnoise(p); p *= 2.03; a *= 0.5; }
-    return v;
-  }
-
-  // Ordered pigment ramp following the reference image's hue arc — apricot,
-  // butter yellow, the yellow-green glow, periwinkle, lilac, blush, candy
-  // rose — so every interpolation segment blends neighbouring hues and never
-  // crosses a complement into grey. Warm (1.0) swaps the two coolest slots
-  // (periwinkle, lilac) for butter and blush, matching WatercolourBloom's
-  // .wcb-warm sunlit recipe.
-  vec3 pigment(float t, float warm){
-    vec3 apricot    = vec3(0.969, 0.765, 0.580);
-    vec3 butter     = vec3(0.906, 0.910, 0.565);
-    vec3 yellowgrn  = vec3(0.843, 0.886, 0.533);
-    vec3 peri       = mix(vec3(0.847, 0.855, 0.925), butter, warm);
-    vec3 lilac      = mix(vec3(0.824, 0.769, 0.910), vec3(0.957, 0.769, 0.824), warm);
-    vec3 blush      = vec3(0.957, 0.769, 0.824);
-    vec3 rose       = vec3(0.933, 0.620, 0.745);
-    t = fract(t) * 6.0;
-    if (t < 1.0) return mix(apricot, butter, t);
-    if (t < 2.0) return mix(butter, yellowgrn, t - 1.0);
-    if (t < 3.0) return mix(yellowgrn, peri, t - 2.0);
-    if (t < 4.0) return mix(peri, lilac, t - 3.0);
-    if (t < 5.0) return mix(lilac, blush, t - 4.0);
-    return mix(blush, rose, t - 5.0);
-  }
+${GLSL_NOISE}
+${GLSL_PAPER}
+${GLSL_KM}
+${GLSL_WASH}
+${glslPigmentRamp()}
 
   void main(){
     vec2 uv = gl_FragCoord.xy / u_res;
@@ -85,14 +81,28 @@ const FRAG = `
     float t = u_time * 0.03;
     float drift = u_scroll / u_res.y * 0.15;   // gentle parallax as the page scrolls
 
+    // The sheet (§4.1). Sampled in CSS pixels so the tooth stays put and stays
+    // the same size whatever the buffer is scaled to.
+    vec2 sheet = gl_FragCoord.xy / u_px;
+    float mottle = paperMottle(sheet);
+    float fibre = paperFieldAt(sheet, mottle, 0.35);   // what a brush skims
+    float hollow = paperFieldAt(sheet, mottle, 0.78);  // where pigment pools
+
     // Wet-on-wet: warp the sampling domain with slowly evolving noise so the
-    // pigment bleeds and breathes at its edges rather than sitting still.
+    // pigment bleeds and breathes at its edges rather than sitting still. The
+    // paper's slope then streaks that flow (§4.3, condition 4) — the term that
+    // pulls a wash into delicate striations running with the water instead of
+    // leaving it perfectly isotropic.
     vec2 fp = p * 2.4 + vec2(0.0, drift);
     vec2 warp = vec2(fbm(fp + t), fbm(fp.yx + 5.2 - t));
-    vec2 q = fp + 0.85 * warp;
+    vec2 q = fp + 0.85 * warp
+           + flowStreak(paperSlope(sheet, mottle), warp - 0.5) * ${FLOW_SLOPE};
 
     float density = fbm(q * 1.15 + 1.7);
-    float bloom = smoothstep(0.42, 0.86, density);
+
+    // Wet-area mask, and the pigment the drying wash drags out to its rim.
+    float wet = smoothstep(0.42, 0.86, density);
+    float rim = edgeDeposit(density, 0.42, 0.86, ${EDGE_BLUR});
 
     // Accumulate the on-screen wash bands, feathering their edges and letting
     // each flood in along a noise front (the scroll reveal).
@@ -111,22 +121,38 @@ const FRAG = `
     }
     mask = clamp(mask, 0.0, 1.0);
     warm = mask > 0.001 ? warm / mask : 0.0;
+    wet *= mask;
+    rim *= mask;
 
-    vec3 col = pigment(density * 0.9 + warp.x * 0.35, warm);
-    float alpha = bloom * mask * 0.24 * u_alpha;
+    vec3 K, S;
+    float gamma;
+    pigmentKS(density * 0.9 + warp.x * 0.35, warm, K, S, gamma);
 
-    // Sprayed grain-dither: break the smooth wash into a printed, airbrushed
-    // stipple so the bloom reads as pigment sprayed onto paper rather than a
-    // clean CSS gradient (matching the reference's grainy gradient field). The
-    // grain is a steady screen-space hash (no u_time term, so it never
-    // shimmers) sampled at the half-res buffer, which the CSS upscale turns
-    // into a coarse ~2px speckle. Two moves make it read as *spray* rather than
-    // flat noise: the modulation is deepened toward the bloom's soft edges
-    // (1-bloom), the way an airbrush thins to grain at the fringe, while the
-    // dense core stays smooth so colour still reads.
-    float grain = hash(floor(gl_FragCoord.xy));
-    float spray = mix(0.5, 0.9, bloom);           // grainier at the fringes, a little even in the core
-    alpha *= mix(spray, 1.0, grain);
+    // Deposited pigment: the pale interior plus the dark ring at the edge.
+    float x = wet * ${X_BASE} + rim * ${X_EDGE};
+    // Granulation settles it into the hollows of the sheet, hardest where the
+    // paper is wettest and hardest for the coarse pigments (periwinkle, rose)
+    // — the yellow-green glow stays glassy. This replaces the old uniform
+    // spray-dither: the tooth is now the paper's, and differs by hue.
+    x *= granulation(hollow, gamma, wet * ${GRAN_AMOUNT});
+    // ...and the dry fringe breaks up on the sheet's peaks instead of fading
+    // out cleanly, which is what stops the edge reading as an airbrush.
+    x *= drybrush(fibre, 0.42, ${DRY_AMOUNT} * (1.0 - wet));
+
+    // §5.2 — render the glaze optically over the paper rather than blending a
+    // colour onto it. Coverage then follows from how much the glaze actually
+    // darkens the sheet, which keeps thickness, hue and opacity in step: thin
+    // pigment is automatically both paler and more transparent.
+    vec3 R, T;
+    kmLayer(K, S, x, R, T);
+    vec3 paper = ${GLSL_PAPER_REFLECTANCE};
+    vec3 drop = paper - kmOver(R, T, paper);
+
+    float alpha = clamp(max(drop.r, max(drop.g, drop.b)) * ${ALPHA_GAIN}, 0.0, 1.0) * u_alpha;
+    // Recover the source colour that lands on that reflectance once the
+    // compositor has blended it over the page at this alpha. ALPHA_GAIN > 1
+    // keeps the result inside gamut, so the clamp never actually bites.
+    vec3 col = clamp(paper - drop / max(alpha, 1e-3), 0.0, 1.0);
 
     // Premultiplied output (context is premultipliedAlpha, blend ONE / 1-SRC_A).
     gl_FragColor = vec4(col * alpha, alpha);
@@ -204,6 +230,7 @@ export default function BloomCanvas({ revealed }) {
 
       gl.useProgram(prog.program)
       gl.uniform2f(prog.uniforms('u_res'), canvas.width, canvas.height)
+      gl.uniform1f(prog.uniforms('u_px'), canvas.width / Math.max(1, canvas.clientWidth))
       gl.uniform1f(prog.uniforms('u_time'), (now - start) / 1000)
       gl.uniform1f(prog.uniforms('u_scroll'), window.scrollY || 0)
       // Ease the whole layer in so it doesn't pop on first paint.
