@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useReducedMotion } from 'framer-motion'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { webglSupported, getContext, createQuadProgram, resizeCanvas } from '../lib/webgl.js'
+import { GLSL_PRECISION, GLSL_NOISE, GLSL_PAPER } from '../lib/watercolour.js'
 import GrainOverlay from './GrainOverlay.jsx'
 
 /**
@@ -14,36 +15,33 @@ import GrainOverlay from './GrainOverlay.jsx'
  * entirely. The grain is static — painted once and on resize — so there's no
  * per-frame work; on desktop it settles subtly as you scroll.
  *
+ * The height field is `paperHeight()` from `lib/watercolour.js`, the same one
+ * BloomCanvas granulates its wash into (Curtis et al. §4.1/§4.5). That's the
+ * point of sharing it: this layer darkens the hollows of the sheet and the
+ * wash deposits its pigment in those same hollows, so the page reads as one
+ * piece of paper rather than a wash with an unrelated noise laid over it.
+ *
  * Falls back to the SVG GrainOverlay when WebGL is unavailable.
  */
 
 const FRAG = `
-  precision mediump float;
+${GLSL_PRECISION}
   uniform vec2 u_res;
   uniform float u_seed;
+  uniform float u_px;   // device pixels per CSS pixel
 
-  float hash(vec2 p){
-    p = fract(p * vec2(123.34, 456.21));
-    p += dot(p, p + 45.32);
-    return fract(p.x * p.y);
-  }
-  float vnoise(vec2 p){
-    vec2 i = floor(p), f = fract(p);
-    float a = hash(i), b = hash(i + vec2(1.0, 0.0));
-    float c = hash(i + vec2(0.0, 1.0)), d = hash(i + vec2(1.0, 1.0));
-    vec2 u = f * f * (3.0 - 2.0 * f);
-    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
-  }
+${GLSL_NOISE}
+${GLSL_PAPER}
 
   void main(){
-    vec2 p = gl_FragCoord.xy + u_seed;
-    // Fine speckle plus a coarser mottle, matching feTurbulence's fractal feel.
-    float fine = hash(p);
-    float mott = vnoise(p * 0.18);
-    float g = mix(fine, mott, 0.35);
+    // In CSS pixels: paper tooth is a physical size, so it should look the
+    // same on a retina screen and merely be rasterised more finely — and it
+    // has to match the scale BloomCanvas samples the sheet at, which renders
+    // into a half-resolution buffer.
+    vec2 p = gl_FragCoord.xy / u_px + u_seed;
     // Keep it a gentle darkening grain for the multiply blend: values sit high,
-    // dipping toward mid-grey in the speckles.
-    g = mix(0.62, 1.0, g);
+    // dipping toward mid-grey where the paper's hollows are.
+    float g = mix(0.62, 1.0, paperHeight(p));
     gl_FragColor = vec4(vec3(g), 1.0);
   }
 `
@@ -71,6 +69,7 @@ export default function GrainCanvas() {
       resizeCanvas(gl, canvas, 1, maxDpr)
       gl.useProgram(prog.program)
       gl.uniform2f(prog.uniforms('u_res'), canvas.width, canvas.height)
+      gl.uniform1f(prog.uniforms('u_px'), canvas.width / Math.max(1, canvas.clientWidth))
       gl.uniform1f(prog.uniforms('u_seed'), seed)
       prog.draw()
     }

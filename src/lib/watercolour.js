@@ -1,0 +1,325 @@
+// The watercolour model, after Curtis, Anderson, Seims, Fleischer and Salesin,
+// "Computer-Generated Watercolor" (SIGGRAPH '97). Section numbers in the
+// comments below refer to that paper.
+//
+// The site already *looked* like watercolour; this is the physics underneath
+// it. Three things came out of the paper that a smooth gradient can't fake:
+//
+//   1. Edge darkening (§4.3.3). The paper calls this "the key effect" that
+//      artists rely on, and — crucially for us — argues that the luminous,
+//      "glowing from within" quality of watercolour comes from it. A wash that
+//      feathers smoothly to nothing is an airbrush; a wash with a darker rim
+//      where the water stopped is paint.
+//   2. Granulation (§4.5). Pigment settles into the paper's valleys, so grain
+//      is a property of the *sheet*, not a noise layer floating on top. That
+//      makes the wash and the grain overlay literally the same paper.
+//   3. Kubelka-Munk optical compositing (§5). Overlapping glazes multiply
+//      light rather than average colour, which is exactly the failure mode
+//      CLAUDE.md's anti-mud rules exist to work around: alpha-averaging two
+//      washes tends to grey, KM keeps them luminous and moves hue along a
+//      physical curve as pigment thickens (the paper's Figure 6).
+//
+// The GLSL here is exported as source chunks rather than duplicated in each
+// canvas, so BloomCanvas and GrainCanvas share one paper and one pigment set.
+
+/* ------------------------------------------------------------------ *
+ * §5.1 — specifying pigments by appearance
+ * ------------------------------------------------------------------ */
+
+/** Inverse hyperbolic cotangent; the KM inversion in §5.1 is written with it. */
+const acoth = (z) => 0.5 * Math.log((z + 1) / (z - 1))
+
+/**
+ * Derive Kubelka-Munk absorption (K) and scattering (S) coefficients from the
+ * two colours an artist can actually judge by eye (§5.1): how a unit-thickness
+ * glaze of the pigment looks over white paper (Rw) and over black (Rb).
+ *
+ * That parameterisation is why the palette survives the switch to KM intact.
+ * The site's existing pastels are already "a thin wash on white paper", so
+ * they go in as Rw unchanged, and Rb encodes body: near-black Rb is a
+ * transparent staining pigment, a lighter Rb an opaque one.
+ *
+ * Inputs are 0..1 RGB triples and must satisfy 0 < Rb < Rw < 1 per channel,
+ * which the paper requires to avoid dividing by zero; we clamp into that range
+ * rather than trusting hand-typed swatches.
+ */
+export function kmCoefficients(Rw, Rb) {
+  const K = [0, 0, 0]
+  const S = [0, 0, 0]
+  for (let i = 0; i < 3; i++) {
+    const w = Math.min(0.9995, Math.max(0.002, Rw[i]))
+    const k = Math.min(w - 0.001, Math.max(0.001, Rb[i]))
+    const a = 0.5 * (w + (k - w + 1) / k)
+    const b = Math.sqrt(Math.max(a * a - 1, 1e-9))
+    const z = (b * b - (a - w) * (a - 1)) / (b * (1 - w))
+    const s = acoth(Math.max(z, 1 + 1e-9)) / b
+    S[i] = s
+    K[i] = s * (a - 1)
+  }
+  return { K, S }
+}
+
+const hex = (h) => [
+  parseInt(h.slice(1, 3), 16) / 255,
+  parseInt(h.slice(3, 5), 16) / 255,
+  parseInt(h.slice(5, 7), 16) / 255,
+]
+
+/** `paper` (#F7F4EF) as a reflectance — the backing every glaze composites over. */
+export const PAPER_REFLECTANCE = hex('#F7F4EF')
+
+/* ------------------------------------------------------------------ *
+ * The palette as pigments
+ * ------------------------------------------------------------------ */
+
+/**
+ * The Pastel Bloom arc (CLAUDE.md), respecified as watercolour paints.
+ *
+ *   rw   the existing palette colour — a unit glaze over white paper, so the
+ *        art direction is preserved exactly at that anchor thickness
+ *   body how far Rb sits off black. Low = transparent and staining (the paper's
+ *        Quinacridone Rose), higher = a little more opaque body.
+ *   gran the granulation exponent γ of §4.5, taken from the nearest pigment in
+ *        the paper's Figure 5 table. This is the authentic part: French
+ *        Ultramarine (0.91) and the quinacridones (0.81) granulate heavily,
+ *        while Hansa Yellow (0.08) and Phthalo Green (0.12) stay glassy. So
+ *        our periwinkle and rose passages break up into paper tooth while the
+ *        yellow-green glow stays smooth and luminous — which is also how
+ *        CLAUDE.md wants that protected chartreuse voice to read.
+ */
+export const PIGMENTS = {
+  apricot: { rw: [0.969, 0.765, 0.58], body: 0.1, gran: 0.14 }, // ≈ Brilliant Orange
+  butter: { rw: [0.906, 0.91, 0.565], body: 0.09, gran: 0.08 }, // ≈ Hansa Yellow
+  yellowgreen: { rw: [0.843, 0.886, 0.533], body: 0.08, gran: 0.12 }, // ≈ Phthalo Green
+  periwinkle: { rw: [0.847, 0.855, 0.925], body: 0.12, gran: 0.91 }, // ≈ French Ultramarine
+  lilac: { rw: [0.824, 0.769, 0.91], body: 0.12, gran: 0.31 }, // ≈ Cerulean Blue
+  blush: { rw: [0.957, 0.769, 0.824], body: 0.09, gran: 0.81 }, // ≈ Quinacridone Rose
+  rose: { rw: [0.933, 0.62, 0.745], body: 0.07, gran: 0.81 }, // ≈ Quinacridone Rose
+}
+
+/** K/S plus γ for one named pigment. */
+export function pigment(name) {
+  const p = PIGMENTS[name]
+  const { K, S } = kmCoefficients(
+    p.rw,
+    p.rw.map((c) => c * p.body),
+  )
+  return { K, S, gran: p.gran }
+}
+
+/* ------------------------------------------------------------------ *
+ * GLSL chunks
+ * ------------------------------------------------------------------ */
+
+/** GLSL float literal that always carries a decimal point. */
+const f = (n) => Number(n).toFixed(6)
+const v3 = (a) => `vec3(${f(a[0])}, ${f(a[1])}, ${f(a[2])})`
+
+/**
+ * highp where the driver has it. The KM equations run exp() on products of
+ * coefficients that reach ~10 in saturated channels, which is more dynamic
+ * range than fp16 mediump wants to carry. The guard macro is mandatory in
+ * WebGL1 — highp is optional in fragment shaders.
+ */
+export const GLSL_PRECISION = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+  precision highp float;
+#else
+  precision mediump float;
+#endif
+`
+
+/** Value noise + fBm. Shared so every layer's texture derives from one basis. */
+export const GLSL_NOISE = `
+  float hash(vec2 p){
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p.x * p.y);
+  }
+  float vnoise(vec2 p){
+    vec2 i = floor(p), f = fract(p);
+    float a = hash(i), b = hash(i + vec2(1.0, 0.0));
+    float c = hash(i + vec2(0.0, 1.0)), d = hash(i + vec2(1.0, 1.0));
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+  }
+  float fbm(vec2 p){
+    float v = 0.0, a = 0.5;
+    for (int i = 0; i < 3; i++){ v += a * vnoise(p); p *= 2.03; a *= 0.5; }
+    return v;
+  }
+`
+
+/**
+ * §4.1 — the paper as a height field h in 0..1.
+ *
+ * One sheet for the whole site: GrainCanvas darkens the valleys of this field
+ * and the wash granulates into those same valleys, so the tooth agrees instead
+ * of reading as two unrelated noises stacked up. `p` is in CSS pixels, which
+ * is what keeps the tooth the same physical size across the two canvases even
+ * though they rasterise at different resolutions.
+ *
+ * The fine term is a per-pixel hash (cotton fibre) and the mottle a smooth
+ * octave (the cockle of a pressed sheet) — the mix the grain layer has always
+ * used, now named for what it is.
+ */
+export const GLSL_PAPER = `
+  float paperMottle(vec2 p){ return vnoise(p * 0.18); }
+
+  // Two readings of one sheet, differing only in how much of the fibre-scale
+  // detail they carry. The ...At form is for callers that already hold the
+  // mottle, so a shader needing both readings samples the noise once.
+  //
+  // hash() is floored to a cell. Sampled on the raw coordinate it is chaotic
+  // rather than periodic, so it hands back fresh white noise at whatever
+  // resolution the buffer happens to be — and a texture that gets finer on a
+  // retina screen is sensor noise, not paper. Flooring pins one fibre per unit
+  // of p; since callers pass CSS pixels, the tooth then holds a fixed physical
+  // size and matches between layers.
+  float paperFieldAt(vec2 p, float m, float coarse){ return mix(hash(floor(p)), m, coarse); }
+  float paperField(vec2 p, float coarse){ return paperFieldAt(p, paperMottle(p), coarse); }
+
+  // What a grain overlay resolves: individual fibres, one value per pixel.
+  float paperHeight(vec2 p){ return paperField(p, 0.35); }
+
+  // Where pigment can actually pool. Watercolour grains are sub-micron and
+  // settle into the hollows *between* fibres, which are the sheet's cockle —
+  // several pixels across — so granulation reads at that scale. Sampling the
+  // per-pixel fibre instead gives digital speckle, not paper.
+  float paperHollows(vec2 p){ return paperField(p, 0.78); }
+
+  // Slope of the sheet, from the smooth component only — a per-pixel fibre
+  // hash has no meaningful gradient. Forward differences; the wash only needs
+  // the direction.
+  vec2 paperSlope(vec2 p, float m0){
+    float e = 2.0;
+    return vec2(paperMottle(p + vec2(e, 0.0)) - m0,
+                paperMottle(p + vec2(0.0, e)) - m0);
+  }
+
+  // §4.3, condition 4: "the flow must be perturbed by the texture of the paper
+  // to cause streaks parallel to flow direction". UpdateVelocities() opens with
+  // (u,v) <- (u,v) - grad h, and pigment is then advected along that velocity
+  // for many steps; what survives is streaking *along* the flow. A single pass
+  // can't advect, but resolving the slope onto the flow direction and
+  // displacing along it reproduces the result — the wash bands parallel to the
+  // water's path. Adding the raw slope vector instead only jitters it
+  // isotropically, which reads as noise rather than striation.
+  vec2 flowStreak(vec2 slope, vec2 flow){
+    vec2 dir = normalize(flow + 1e-5);
+    return dir * dot(slope, dir);
+  }
+`
+
+/**
+ * §5.2 — Kubelka-Munk rendering of the pigmented layers.
+ *
+ * kmLayer() gives a layer's own reflectance and transmittance at thickness x;
+ * kmOver() is Kubelka's compositing equation for that layer over a backing.
+ * Together they replace alpha-blending the wash onto the paper, which is what
+ * keeps overlaps luminous: doubling thickness walks the colour along the
+ * pigment's characteristic curve (Figure 6) instead of averaging toward grey.
+ */
+export const GLSL_KM = `
+  void kmLayer(vec3 K, vec3 S, float x, out vec3 R, out vec3 T){
+    vec3 Sc = max(S, 1e-4);
+    vec3 a = (Sc + K) / Sc;                    // K = S(a - 1)
+    vec3 b = sqrt(max(a * a - 1.0, 1e-6));
+    // GLSL ES 1.00 has no sinh/cosh. Clamped because the ratios below saturate
+    // long before exp() would overflow a half-float.
+    vec3 bSx = min(b * Sc * x, 6.0);
+    vec3 e = exp(bSx), ei = 1.0 / e;
+    vec3 sh = 0.5 * (e - ei);
+    vec3 ch = 0.5 * (e + ei);
+    vec3 c = a * sh + b * ch;
+    R = sh / c;
+    T = b / c;
+  }
+
+  vec3 kmOver(vec3 R1, vec3 T1, vec3 R2){
+    return R1 + (T1 * T1 * R2) / max(1.0 - R1 * R2, 1e-3);
+  }
+`
+
+/**
+ * §4.3.3 edge darkening, §4.5 granulation and §4.7 drybrush, as the shaping
+ * functions a single-pass shader can use. We render the converged state of the
+ * simulation rather than stepping it, so each of these collapses to a closed
+ * form over the wet-area mask instead of an accumulation over time.
+ */
+export const GLSL_WASH = `
+  // §4.3.3. FlowOutward() removes water in proportion to (1 - M')M, where M is
+  // the wet-area mask and M' a Gaussian blur of it; the resulting outward flow
+  // carries pigment to the rim as the wash dries. Our mask comes from an
+  // analytic density field, so the blur is just a wider smoothstep over the
+  // same field — no kernel needed — and the product peaks in a band hugging
+  // the inside of the wet edge, which is the deposit we want.
+  float edgeDeposit(float density, float lo, float hi, float blur){
+    float M  = smoothstep(lo, hi, density);
+    float Mb = smoothstep(lo - blur, hi + blur, density);
+    return (1.0 - Mb) * M;
+  }
+
+  // §4.5. TransferPigment() adsorbs pigment at a rate scaled by (1 - h^gamma),
+  // so deposition favours the hollows of the sheet, with gamma the pigment's
+  // granularity. Normalised by the same expression at mean height so changing
+  // gamma changes the *texture* without changing how heavy the wash reads.
+  // The amount parameter is how far to take it: §2.2 has granulation "strongest when the
+  // paper is very wet", so callers pass wetness, scaled down to taste — at
+  // full strength a coarse pigment like ultramarine swings deposition nearly
+  // tenfold between peak and hollow, which is true of a puddle of real paint
+  // and far too much for a wash this pale.
+  float granulation(float h, float gamma, float amount){
+    float g = (1.0 - pow(h, gamma)) / max(1.0 - pow(0.5, gamma), 1e-3);
+    return mix(1.0, g, amount);
+  }
+
+  // §4.7. Drybrush excludes from the wet-area mask any pixel whose height is
+  // below a threshold, so paint catches only the peaks. Applied as a soft gate
+  // rather than a hard step: at full strength it would shred a soft wash, but
+  // eased in where the wash is thinnest it gives the fringe the broken, ragged
+  // edge of paint on rough paper instead of a clean airbrush fade.
+  float drybrush(float h, float threshold, float amount){
+    return mix(1.0, smoothstep(threshold - 0.28, threshold + 0.28, h), amount);
+  }
+`
+
+/**
+ * Build the pigment ramp as GLSL. Returns K, S and the granulation exponent
+ * for a position `t` on the palette's hue arc, so every interpolation blends
+ * neighbouring hues (CLAUDE.md's anti-mud rule 4) — but now interpolating the
+ * pigments' K/S coefficients, which is how §5.2 mixes paints within a layer,
+ * rather than interpolating the colours they happen to produce.
+ *
+ * `warm` swaps the two coolest slots for butter and blush, matching
+ * WatercolourBloom's `.wcb-warm` sunlit recipe.
+ */
+export function glslPigmentRamp() {
+  const p = Object.fromEntries(Object.keys(PIGMENTS).map((k) => [k, pigment(k)]))
+  const decl = (name) =>
+    `    vec3 K_${name} = ${v3(p[name].K)}; vec3 S_${name} = ${v3(p[name].S)}; float g_${name} = ${f(p[name].gran)};`
+  return `
+  void pigmentKS(float t, float warm, out vec3 K, out vec3 S, out float gran){
+${Object.keys(PIGMENTS).map(decl).join('\n')}
+
+    // Warm recipe: periwinkle -> butter, lilac -> blush.
+    vec3 K_peri = mix(K_periwinkle, K_butter, warm);
+    vec3 S_peri = mix(S_periwinkle, S_butter, warm);
+    float g_peri = mix(g_periwinkle, g_butter, warm);
+    vec3 K_lil = mix(K_lilac, K_blush, warm);
+    vec3 S_lil = mix(S_lilac, S_blush, warm);
+    float g_lil = mix(g_lilac, g_blush, warm);
+
+    t = fract(t) * 6.0;
+    if (t < 1.0)      { float u = t;       K = mix(K_apricot, K_butter, u);     S = mix(S_apricot, S_butter, u);     gran = mix(g_apricot, g_butter, u); }
+    else if (t < 2.0) { float u = t - 1.0; K = mix(K_butter, K_yellowgreen, u); S = mix(S_butter, S_yellowgreen, u); gran = mix(g_butter, g_yellowgreen, u); }
+    else if (t < 3.0) { float u = t - 2.0; K = mix(K_yellowgreen, K_peri, u);   S = mix(S_yellowgreen, S_peri, u);   gran = mix(g_yellowgreen, g_peri, u); }
+    else if (t < 4.0) { float u = t - 3.0; K = mix(K_peri, K_lil, u);           S = mix(S_peri, S_lil, u);           gran = mix(g_peri, g_lil, u); }
+    else if (t < 5.0) { float u = t - 4.0; K = mix(K_lil, K_blush, u);          S = mix(S_lil, S_blush, u);          gran = mix(g_lil, g_blush, u); }
+    else              { float u = t - 5.0; K = mix(K_blush, K_rose, u);         S = mix(S_blush, S_rose, u);         gran = mix(g_blush, g_rose, u); }
+  }
+`
+}
+
+/** `vec3` literal for the paper backing, for shaders that composite onto it. */
+export const GLSL_PAPER_REFLECTANCE = v3(PAPER_REFLECTANCE)
