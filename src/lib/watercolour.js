@@ -77,8 +77,14 @@ export const PAPER_REFLECTANCE = hex('#F7F4EF')
  *
  *   rw   the existing palette colour — a unit glaze over white paper, so the
  *        art direction is preserved exactly at that anchor thickness
- *   body how far Rb sits off black. Low = transparent and staining (the paper's
- *        Quinacridone Rose), higher = a little more opaque body.
+ *   body how far Rb sits off black, as a fraction of rw. Low = transparent and
+ *        staining (the paper's Quinacridone Rose), higher = a little more body.
+ *   rb   Rb outright, for the paints `body` can't describe. §5.1 sorts paints
+ *        into three kinds by how they read over black: opaque ones look much
+ *        the same as on white, transparent ones go nearly black, and
+ *        *interference* paints inverse both — near-invisible on white paper and
+ *        vividly coloured on black. Only an explicit rb can say that, since it
+ *        has to sit brighter than rw in the pigment's own wavelengths.
  *   gran the granulation exponent γ of §4.5, taken from the nearest pigment in
  *        the paper's Figure 5 table. This is the authentic part: French
  *        Ultramarine (0.91) and the quinacridones (0.81) granulate heavily,
@@ -95,16 +101,213 @@ export const PIGMENTS = {
   lilac: { rw: [0.824, 0.769, 0.91], body: 0.12, gran: 0.31 }, // ≈ Cerulean Blue
   blush: { rw: [0.957, 0.769, 0.824], body: 0.09, gran: 0.81 }, // ≈ Quinacridone Rose
   rose: { rw: [0.933, 0.62, 0.745], body: 0.07, gran: 0.81 }, // ≈ Quinacridone Rose
+
+  // The client's reference swatch sheet (see index.css) as paints in their own
+  // right. These are the aurora accents — off the pastel arc on purpose — and
+  // the palette above can't mix them: separating the hero orb against the arc
+  // alone left seafoam and lavender 12-19/255 adrift. As pigments they land
+  // exactly, and gain the thinning curve every other wash now has.
+  seafoam: { rw: hex('#BFDCD1'), body: 0.11, gran: 0.31 }, // ≈ Cerulean Blue
+  lavender: { rw: hex('#D4B6E6'), body: 0.12, gran: 0.55 }, // ultramarine + quinacridone, so between their γ
+  lemonlime: { rw: hex('#CCD06A'), body: 0.08, gran: 0.1 }, // ≈ Hansa Yellow — the protected glow, kept smooth
+  blossom: { rw: hex('#F2A6C1'), body: 0.08, gran: 0.81 }, // ≈ Quinacridone Rose
+  aurora_rose: { rw: hex('#E88FA4'), body: 0.07, gran: 0.81 }, // ≈ Quinacridone Rose
 }
+
+/**
+ * The ordered hue arc the live wash interpolates along (CLAUDE.md's anti-mud
+ * rule 4). Only these reach the shader; the accents above are for the CSS
+ * blooms, which place each pigment deliberately rather than sweeping a ramp.
+ */
+export const ARC = ['apricot', 'butter', 'yellowgreen', 'periwinkle', 'lilac', 'blush', 'rose']
 
 /** K/S plus γ for one named pigment. */
 export function pigment(name) {
   const p = PIGMENTS[name]
-  const { K, S } = kmCoefficients(
-    p.rw,
-    p.rw.map((c) => c * p.body),
-  )
+  const { K, S } = kmCoefficients(p.rw, p.rb || p.rw.map((c) => c * p.body))
   return { K, S, gran: p.gran }
+}
+
+/* ------------------------------------------------------------------ *
+ * §5.2 on the CPU — so a gradient can be authored as paint
+ * ------------------------------------------------------------------ */
+
+// CSS can't run Kubelka-Munk; it alpha-blends. But it doesn't have to — we can
+// run the model here and hand CSS the colours the model produces. A bloom then
+// stops being "one colour fading out in alpha" and becomes a real pigment
+// thinning to nothing, tracing the hue-and-saturation curve of Figure 6 on the
+// way. Same cost at runtime as any other gradient: it's a string.
+
+/** Reflectance and transmittance of a glaze of thickness x. Mirrors GLSL_KM. */
+export function kmLayer(K, S, x) {
+  const R = [0, 0, 0]
+  const T = [0, 0, 0]
+  for (let i = 0; i < 3; i++) {
+    const s = Math.max(S[i], 1e-4)
+    const a = (s + K[i]) / s
+    const b = Math.sqrt(Math.max(a * a - 1, 1e-6))
+    const bSx = Math.min(b * s * x, 12)
+    const sh = Math.sinh(bSx)
+    const ch = Math.cosh(bSx)
+    const c = a * sh + b * ch
+    R[i] = sh / c
+    T[i] = b / c
+  }
+  return { R, T }
+}
+
+/** Kubelka's compositing equation: a layer (R1,T1) over a backing R2. */
+export function kmOver(R1, T1, R2) {
+  return R1.map((r1, i) => r1 + (T1[i] * T1[i] * R2[i]) / Math.max(1 - r1 * R2[i], 1e-3))
+}
+
+/**
+ * Composite an ordered stack of glazes over a backing, nearest-paper first —
+ * the repeated application §5.2 describes. Each entry is `[pigmentName, x]`.
+ */
+export function glaze(stack, over = PAPER_REFLECTANCE) {
+  let R = over
+  for (let i = stack.length - 1; i >= 0; i--) {
+    const [name, x] = stack[i]
+    if (x <= 0) continue
+    const { K, S } = pigment(name)
+    const l = kmLayer(K, S, x)
+    R = kmOver(l.R, l.T, R)
+  }
+  return R
+}
+
+/**
+ * §6.2 colour separation — the answer to "what paint makes *that* colour?".
+ *
+ * The paper builds a watercolourisation by searching a discrete set of
+ * thicknesses for an ordered pigment list and keeping the combination whose
+ * KM composite lands closest to the target. Same idea here, at a much smaller
+ * scale: we only ever separate a handful of hand-picked bloom colours, so a
+ * direct search beats the paper's 3d-tree and stays exact.
+ *
+ * `depth` is how many glazes may be stacked. One is usually enough — the
+ * palette's own hexes were specified as unit glazes on paper, so a single
+ * pigment reproduces them almost exactly — but the site's accent colours
+ * (seafoam, lemon lime) sit off the pigment arc and want two.
+ */
+export function separate(target, { palette = Object.keys(PIGMENTS), depth = 1, steps = 24, max = 1.6, over = PAPER_REFLECTANCE } = {}) {
+  const thicknesses = Array.from({ length: steps + 1 }, (_, i) => (i * max) / steps)
+  let best = { stack: [], error: Infinity, rgb: over }
+
+  const search = (stack, remaining) => {
+    if (stack.length) {
+      const rgb = glaze(stack, over)
+      // Plain RGB distance. The paper stores separations in a 3d-tree keyed the
+      // same way; our targets are all pale tints where sRGB is near enough
+      // perceptually uniform for the differences that survive an 8-bit stop.
+      const error = Math.hypot(...rgb.map((c, i) => c - target[i]))
+      if (error < best.error) best = { stack: stack.slice(), error, rgb }
+    }
+    if (!remaining) return
+    for (const name of palette) {
+      for (const x of thicknesses) {
+        if (x === 0) continue
+        search([...stack, [name, x]], remaining - 1)
+      }
+    }
+  }
+  search([], depth)
+  return best
+}
+
+/* ------------------------------------------------------------------ *
+ * Authoring a bloom as paint
+ * ------------------------------------------------------------------ */
+
+/**
+ * Thickness across a bloom, as (radius fraction, thickness multiple).
+ *
+ * These are *thickness* profiles, not alpha ramps — which is the whole point.
+ * KM turns each thickness into a colour, so a bloom shifts hue and saturation
+ * as it thins, the way real paint does, instead of fading one fixed colour.
+ *
+ * §2.2 gives us two, and which one a bloom wants is a real decision:
+ *
+ *   dry  wet-on-dry. Sizing and surface tension pin the stroke, so pigment
+ *        migrates outward as it dries and leaves a rim at ~0.65R (§4.3.3).
+ *        This is a wash laid on paper — the section fields, card corners.
+ *   wet  wet-in-wet. The paper is already saturated, so the brushstroke
+ *        spreads freely into "soft, feathery shapes" with no pinned contact
+ *        line and therefore no rim. This is the hero's aurora orb, which its
+ *        own comment describes as pigment bleeding — and it is blurred and
+ *        masked afterwards, so a rim would be destroyed anyway.
+ *
+ * Reaching for `dry` on a wet-in-wet passage doesn't just look wrong, it moves
+ * pigment out of the centre, which visibly shifts an art-directed accent.
+ */
+const BLOOM_PROFILES = {
+  dry: [
+    [0.0, 0.75],
+    [0.34, 0.5],
+    [0.54, 0.3],
+    [0.65, 0.34],
+    [0.72, 0.12],
+    [0.8, 0.0],
+  ],
+  wet: [
+    [0.0, 1.0],
+    [0.3, 0.72],
+    [0.55, 0.4],
+    [0.75, 0.15],
+    [0.9, 0.04],
+    [1.0, 0.0],
+  ],
+}
+
+// Coverage headroom for the colour/alpha split, as in BloomCanvas: alpha tracks
+// how much the glaze darkens the paper, and the colour is back-solved so the
+// pair reproduces the KM result once the compositor has blended it. Anything
+// above ~1.1 keeps the result in gamut.
+const COVER_GAIN = 1.6
+
+const rgba255 = (rgb, a) =>
+  `rgba(${rgb.map((c) => Math.round(Math.min(1, Math.max(0, c)) * 255)).join(',')}, ${a.toFixed(3)})`
+
+/**
+ * The colour stops a pigment produces as a wash of peak thickness `x` thins out.
+ *
+ * `extent` is where the wash reaches, as a fraction of the gradient's radius —
+ * the `transparent NN%` of a hand-written bloom. Profile positions are
+ * normalised and rescaled onto it, so converting a bloom keeps its geometry
+ * exactly and only the colours change.
+ */
+export function bloomStops(name, x, { over = PAPER_REFLECTANCE, wetness = 'dry', extent = 0.75 } = {}) {
+  const { K, S } = pigment(name)
+  const profile = BLOOM_PROFILES[wetness]
+  const span = profile[profile.length - 1][0]
+  return profile
+    .map(([pos, rel]) => {
+      const at = ((pos / span) * extent * 100).toFixed(0)
+      if (rel === 0) return `transparent ${at}%`
+      const l = kmLayer(K, S, x * rel)
+      const lit = kmOver(l.R, l.T, over)
+      const drop = over.map((c, i) => c - lit[i])
+      const a = Math.min(1, Math.max(...drop) * COVER_GAIN)
+      if (a <= 0.0005) return `transparent ${at}%`
+      return `${rgba255(
+        over.map((c, i) => c - drop[i] / a),
+        a,
+      )} ${at}%`
+    })
+    .join(', ')
+}
+
+/**
+ * A watercolour bloom as a CSS radial-gradient.
+ *
+ * Say which paint and how thickly it is laid on, not which rgba to fade out;
+ * the model supplies the rest. `size`/`at` are passed through to CSS verbatim,
+ * so converting a hand-written bloom means keeping its geometry and replacing
+ * only the colour stops.
+ */
+export function bloom(name, { x = 0.4, size = 'circle 30vw', at = '50% 50%', ...rest } = {}) {
+  return `radial-gradient(${size} at ${at}, ${bloomStops(name, x, rest)})`
 }
 
 /* ------------------------------------------------------------------ *
@@ -295,12 +498,12 @@ export const GLSL_WASH = `
  * WatercolourBloom's `.wcb-warm` sunlit recipe.
  */
 export function glslPigmentRamp() {
-  const p = Object.fromEntries(Object.keys(PIGMENTS).map((k) => [k, pigment(k)]))
+  const p = Object.fromEntries(ARC.map((k) => [k, pigment(k)]))
   const decl = (name) =>
     `    vec3 K_${name} = ${v3(p[name].K)}; vec3 S_${name} = ${v3(p[name].S)}; float g_${name} = ${f(p[name].gran)};`
   return `
   void pigmentKS(float t, float warm, out vec3 K, out vec3 S, out float gran){
-${Object.keys(PIGMENTS).map(decl).join('\n')}
+${ARC.map(decl).join('\n')}
 
     // Warm recipe: periwinkle -> butter, lilac -> blush.
     vec3 K_peri = mix(K_periwinkle, K_butter, warm);

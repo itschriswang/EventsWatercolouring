@@ -186,6 +186,35 @@ uses it, so the tooth holds a fixed physical size and the wash granulates into
 the same hollows the grain overlay darkens. Sample it in device pixels and the
 texture gets finer on retina, which is sensor noise, not paper.
 
+### Authoring a bloom as paint
+
+Don't hand-write `radial-gradient(… rgba(r,g,b,a), transparent NN%)` for a new
+bloom. Call `bloom()` from `lib/watercolour.js`: name the pigment and how thick
+the wash is, and it returns the stops the KM model says that paint produces as
+it thins — hue and saturation drifting along Figure 6's curve rather than one
+fixed colour fading in alpha. `size`/`at`/`extent` pass the geometry straight
+through, so converting an existing bloom changes only its colour.
+
+Two things to get right:
+
+- **`wetness`.** `dry` (default) is wet-on-dry — a wash on paper, so it carries
+  the edge-darkened rim. `wet` is wet-in-wet, which §2.2 describes as spreading
+  freely into soft feathery shapes: no pinned contact line, so no rim. The hero
+  orb is `wet`; forcing the rim there pulled pigment out of the centre and
+  visibly shifted an art-directed accent (and the 26px blur would have eaten
+  the rim anyway).
+- **Solve `x`, don't guess it.** Pick the thickness that reproduces the
+  area-weighted load of whatever it replaces, so a conversion is a change of
+  model and not a change of weight.
+
+`PIGMENTS` is the paint box; `ARC` is the ordered subset the live wash
+interpolates along. Accents that sit off the arc — the client's swatch sheet
+(seafoam, lavender, lemonlime, blossom) — belong in the box but not the arc.
+Add a pigment when separation can't reach a colour: `separate()` implements
+§6.2's colour search and will tell you how far off the palette a target is.
+It left the orb's seafoam and lavender 12-19/255 adrift, which is what said
+they were paints in their own right rather than mixtures.
+
 **Weight is set by thickness alone.** In `BloomCanvas` the wash's visual load
 comes from `X_BASE`/`X_EDGE`; `ALPHA_GAIN` only buys gamut headroom for the
 colour/coverage split and cancels out of the composite. When retuning, measure

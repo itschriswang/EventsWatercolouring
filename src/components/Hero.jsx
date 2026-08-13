@@ -9,6 +9,7 @@ import CornerBloom from './CornerBloom.jsx'
 import Sparkles from './Sparkles.jsx'
 import { withUnderline } from './Underline.jsx'
 import BloomFilter from './WetBloom.jsx'
+import { bloom } from '../lib/watercolour.js'
 
 export default function Hero({ revealed }) {
   const reduce = useReducedMotion()
@@ -57,19 +58,28 @@ export default function Hero({ revealed }) {
       {/* Static bloom field — soft pigment halos in the site's own warm
           pigments, settled into the margins. One cheap paint on every device;
           the WebGL aurora it replaces cost 50KB and continuous GPU time to
-          read as a whisper nobody could name the colour of. */}
+          read as a whisper nobody could name the colour of.
+
+          Each halo is named as paint, not as a colour: `bloom()` runs the
+          Kubelka-Munk model (lib/watercolour.js) and hands CSS the stops that
+          pigment actually produces as it thins, so the hue drifts along its
+          characteristic curve instead of one rgba fading out. These are
+          wet-on-dry — laid on the paper — so they carry the edge-darkened rim.
+          Geometry is unchanged, and each x was solved to reproduce the
+          area-weighted load of the hand-written bloom it replaces. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0"
         style={{
-          backgroundImage:
-            'radial-gradient(42% 36% at 14% 22%, rgba(247,195,148, 0.38), transparent 72%), ' +
-            'radial-gradient(34% 30% at 88% 12%, rgba(242,194,207, 0.34), transparent 72%), ' +
-            'radial-gradient(36% 32% at 86% 82%, rgba(212,226,130, 0.30), transparent 72%), ' +
-            'radial-gradient(32% 30% at 6% 86%, rgba(210,196,232, 0.20), transparent 72%), ' +
-            'radial-gradient(30% 26% at 60% 6%, rgba(226,232,138, 0.28), transparent 72%), ' +
-            'radial-gradient(32% 28% at 100% 48%, rgba(247,195,148, 0.26), transparent 72%), ' +
-            'radial-gradient(26% 24% at 34% 54%, rgba(216,218,236, 0.14), transparent 74%)',
+          backgroundImage: [
+            bloom('apricot', { x: 0.281, size: '42% 36%', at: '14% 22%', extent: 0.72 }),
+            bloom('blush', { x: 0.263, size: '34% 30%', at: '88% 12%', extent: 0.72 }),
+            bloom('yellowgreen', { x: 0.229, size: '36% 32%', at: '86% 82%', extent: 0.72 }),
+            bloom('lilac', { x: 0.151, size: '32% 30%', at: '6% 86%', extent: 0.72 }),
+            bloom('butter', { x: 0.215, size: '30% 26%', at: '60% 6%', extent: 0.72 }),
+            bloom('apricot', { x: 0.191, size: '32% 28%', at: '100% 48%', extent: 0.72 }),
+            bloom('periwinkle', { x: 0.099, size: '26% 24%', at: '34% 54%', extent: 0.74 }),
+          ].join(', '),
         }}
       />
 
@@ -96,12 +106,19 @@ export default function Hero({ revealed }) {
               bottom: '-4vmin',
               width: '74vmin',
               height: '74vmin',
-              background:
-                'radial-gradient(48% 48% at 28% 20%, rgba(191,220,209,0.9), transparent 72%), ' +
-                'radial-gradient(44% 44% at 14% 50%, rgba(212,182,230,0.82), transparent 72%), ' +
-                'radial-gradient(54% 54% at 48% 52%, rgba(204,208,106,0.9), transparent 74%), ' +
-                'radial-gradient(46% 46% at 72% 64%, rgba(242,166,193,0.92), transparent 74%), ' +
-                'radial-gradient(40% 40% at 86% 84%, rgba(232,143,164,0.86), transparent 72%)',
+              // The five swatches as actual paints. Unlike the field above
+              // these are wet-in-wet (§2.2): the orb is pigment bleeding into
+              // an already-wet ground, so it feathers with no pinned contact
+              // line and takes no rim — which is also why reaching for the
+              // wet-on-dry profile here shifted the accent, pulling pigment
+              // out of the centre of a blurred, masked glow.
+              background: [
+                bloom('seafoam', { x: 0.803, size: '48% 48%', at: '28% 20%', extent: 0.72, wetness: 'wet' }),
+                bloom('lavender', { x: 0.741, size: '44% 44%', at: '14% 50%', extent: 0.72, wetness: 'wet' }),
+                bloom('lemonlime', { x: 0.787, size: '54% 54%', at: '48% 52%', extent: 0.74, wetness: 'wet' }),
+                bloom('blossom', { x: 0.842, size: '46% 46%', at: '72% 64%', extent: 0.74, wetness: 'wet' }),
+                bloom('aurora_rose', { x: 0.788, size: '40% 40%', at: '86% 84%', extent: 0.72, wetness: 'wet' }),
+              ].join(', '),
               filter: 'blur(26px)',
               opacity: 0.62,
               WebkitMaskImage:
