@@ -102,6 +102,22 @@ export const PIGMENTS = {
   blush: { rw: [0.957, 0.769, 0.824], body: 0.09, gran: 0.81 }, // ≈ Quinacridone Rose
   rose: { rw: [0.933, 0.62, 0.745], body: 0.07, gran: 0.81 }, // ≈ Quinacridone Rose
 
+  // Darks. A watercolourist doesn't own a black; a convincing dark is mixed
+  // from transparent pigments, and INK_WASH below is that mix. Two isn't
+  // enough — burgundy and ultramarine alone leave blue unabsorbed and land on
+  // #341a39, a violet the design system explicitly rules out. The third
+  // pigment is what absorbs the blue and pulls the mix back to neutral, which
+  // is why a real palette reaches for a warm earth or an olive at this point.
+  //
+  // Mixed they also *separate*, which is the point of mixing rather than
+  // buying a black: §2.2's "splitting of colors that occurs when denser
+  // pigments settle earlier than lighter ones". Ultramarine is the heavy one
+  // (γ 0.91), so a mixed dark goes cool and granular where it pooled and keeps
+  // the quinacridone's warmth where it ran thin.
+  burgundy: { rw: hex('#7E2848'), body: 0.07, gran: 0.81 }, // ≈ Quinacridone Rose — warm, staining
+  ultramarine: { rw: hex('#2E3A6B'), body: 0.06, gran: 0.91 }, // ≈ French Ultramarine — cool, heavy
+  olive: { rw: hex('#5F662B'), body: 0.08, gran: 0.41 }, // ≈ Hookers Green — the site's own sage-deep
+
   // The client's reference swatch sheet (see index.css) as paints in their own
   // right. These are the aurora accents — off the pastel arc on purpose — and
   // the palette above can't mix them: separating the hero orb against the arc
@@ -120,6 +136,87 @@ export const PIGMENTS = {
  * blooms, which place each pigment deliberately rather than sweeping a ramp.
  */
 export const ARC = ['apricot', 'butter', 'yellowgreen', 'periwinkle', 'lilac', 'blush', 'rose']
+
+/**
+ * The mixed dark, as an ordered glaze stack. Solved by `separate()` against
+ * `ink` (#352E30): at full thickness it lands within 1/255 of that colour, and
+ * as it thins it drifts from ink's faint burgundy lean (r > b > g) toward the
+ * warmth of the quinacridone (r > g > b) — the separation happening on its own
+ * rather than being drawn in. Used to paint the hero's brush stroke.
+ */
+export const INK_WASH = [
+  ['burgundy', 0.231],
+  ['olive', 0.462],
+  ['ultramarine', 0.577],
+]
+
+/** `ink` (#352E30) — the tone the mixed dark is solved against. */
+export const INK_TONE = hex('#352E30')
+
+// How far the mix is allowed to separate, warm end and cool end. Tuned against
+// the *composited* stroke rather than the pigment: paper dilutes the thin
+// passages, where the swing is largest, so a separation that looks ample in the
+// paint rounds away to a pixel or two on the page. At these values the stroke's
+// body still lands on ink and its bristles read burgundy. Push the cool term
+// much past this and the dense core crosses into violet, which the palette
+// rules out.
+const SEPARATION_WARM = 3.5
+const SEPARATION_COOL = 0.15
+
+/**
+ * The ink wash as an SVG `<feComponentTransfer>` lookup, for painting a scanned
+ * brush stroke whose alpha channel is its thickness map.
+ *
+ * The scan carries every bristle, feathered edge and splatter tendril in alpha,
+ * but its RGB was flattened to one ink colour — which makes it a silhouette of
+ * a stroke rather than paint, since real pigment shifts hue as it thins rather
+ * than only turning transparent. Pair this with an `feColorMatrix` that copies
+ * alpha into RGB and the filter becomes exactly that: colour looked up by
+ * thickness, straight off the model's curve.
+ *
+ * Done as a filter rather than by repainting the asset because the colour is a
+ * pure function of the alpha already in the file. Baking it in cost 21-58KB of
+ * extra weight on a hero image (varying RGB compresses far worse than flat) to
+ * store something we can derive; this way the recipe stays code, and the stroke
+ * stays one asset.
+ *
+ * `feComponentTransfer` interpolates between table entries, so a couple of
+ * dozen stops describe the ramp smoothly.
+ */
+export function inkWashTable(stops = 24, over = PAPER_REFLECTANCE) {
+  const lum = (c) => 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+  const target = lum(INK_TONE)
+
+  const cols = Array.from({ length: stops }, (_, i) => {
+    const a = i / (stops - 1)
+    // §2.2's separation. Alpha stands in for how much paint sat here, and the
+    // heavy pigment settles out of a wash first, so ultramarine dominates where
+    // the stroke pooled while the light staining quinacridone stays in
+    // suspension and is what's left out in the dry bristles. Varying the *mix*
+    // this way swings hue about six times as far as varying total thickness
+    // does, which is the difference between an effect you can see and one that
+    // rounds away in 8 bits.
+    const settled = a * a
+    const c = glaze(
+      [
+        ['burgundy', INK_WASH[0][1] * (1 + SEPARATION_WARM * (1 - settled))],
+        ['olive', INK_WASH[1][1]],
+        ['ultramarine', INK_WASH[2][1] * (1 + SEPARATION_COOL * settled)],
+      ],
+      over,
+    )
+    // Hold the value the flat ink already had and let only chroma move. The
+    // stroke's density is art direction — it was tuned so the pastel emphasis
+    // word reads on top of it — and alpha compositing supplies the fade, so
+    // letting the model set lightness too would thin the mid-tones twice and
+    // wash the stroke out.
+    const k = target / Math.max(lum(c), 1e-4)
+    return c.map((v) => Math.min(1, Math.max(0, v * k)))
+  })
+
+  const channel = (k) => cols.map((c) => c[k].toFixed(4)).join(' ')
+  return { r: channel(0), g: channel(1), b: channel(2) }
+}
 
 /** K/S plus γ for one named pigment. */
 export function pigment(name) {

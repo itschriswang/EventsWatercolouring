@@ -207,6 +207,29 @@ Two things to get right:
   area-weighted load of whatever it replaces, so a conversion is a change of
   model and not a change of weight.
 
+### Darks are mixed, not bought
+
+There is no black pigment. `INK_WASH` is a dark mixed from three transparent
+paints — burgundy, olive, ultramarine — solved by `separate()` to land on `ink`
+(#352E30) at full thickness. Two pigments aren't enough: burgundy and
+ultramarine alone leave blue unabsorbed and land on a violet the palette rules
+out, so the third is what pulls the mix back to neutral.
+
+Mixing also buys the thing a bought black can't do — **separation** (§2.2): the
+heavy ultramarine settles out where the wash pooled while the light staining
+quinacridone stays in suspension and ends up in the thin passages. That's what
+paints the hero's brush stroke (`EmphasisBrush` in `SplitText.jsx`): the scan
+carries its bristles and bleeding edges in the alpha channel, and an SVG filter
+copies alpha into RGB and looks colour up by it, so the stroke reads neutral
+where it pooled and burgundy through the dry-brush bristles.
+
+Two constraints if you retune it. Hold luminance constant — the stroke's density
+is art direction, and alpha compositing already supplies the fade, so letting
+the model set lightness too thins the mid-tones twice and washes the stroke out.
+And tune against the *composited* result, not the pigment: paper dilutes exactly
+the thin passages where the swing is largest, so a separation that looks ample
+in the paint can round away to a pixel or two on the page.
+
 `PIGMENTS` is the paint box; `ARC` is the ordered subset the live wash
 interpolates along. Accents that sit off the arc — the client's swatch sheet
 (seafoam, lavender, lemonlime, blossom) — belong in the box but not the arc.
