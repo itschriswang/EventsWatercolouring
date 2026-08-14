@@ -156,10 +156,24 @@ const applyEmphasisFlow = (root, colors, positions) => {
 // top. Sits at zIndex -1 inside the (relative, isolated) emphasis span, so it
 // paints behind the glyphs but never escapes to the page. `scaleY` squashes it
 // about its centre without touching its length.
+// Thickness is set by legibility, and it was measured, not judged by eye. The
+// word is pastel type on this wash, so the wash IS its contrast: at the
+// thicknesses this started with it rendered rgb(112,104,107) under the glyphs —
+// a mid grey, less than half the density INK_WASH is solved for — and the word
+// measured 3.4:1 with 41% of its area under 3:1, which is AA's floor for display
+// type. These land it near `ink` at 6.7:1 with 0.7% under 3:1.
+//
+// The tail carries most of the rest. It was thin and short enough that the final
+// letter overhung the wash onto bare paper, which is where the worst pixels
+// were: the 1st percentile alone ran at 2.1:1 however dark the body got, because
+// those glyphs had no wash beneath them at all. Widening and thickening it lifts
+// that to 3.2:1. It stays lighter than the body — the lighter tail is the point
+// of a three-bloom wash rather than one ellipse — just not lighter than the type
+// needs.
 const EMPHASIS_WASH = [
-  { x: 1.5, at: [0.34, 0.5], size: [0.5, 0.54], extent: 0.88 },
-  { x: 1.4, at: [0.66, 0.52], size: [0.48, 0.52], extent: 0.86 },
-  { x: 0.8, at: [0.93, 0.47], size: [0.24, 0.38], extent: 0.74 },
+  { x: 3.3, at: [0.34, 0.5], size: [0.5, 0.56], extent: 0.88 },
+  { x: 3.08, at: [0.66, 0.52], size: [0.48, 0.54], extent: 0.86 },
+  { x: 2.75, at: [0.9, 0.48], size: [0.3, 0.5], extent: 0.82 },
 ]
 
 function EmphasisBrush({ inset, opacity = 1, scaleY = 1 }) {
