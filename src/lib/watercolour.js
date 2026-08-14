@@ -176,70 +176,7 @@ export const INK_WASH = [
 /** `ink` (#352E30) — the tone the mixed dark is solved against. */
 export const INK_TONE = hex('#352E30')
 
-// How far the mix is allowed to separate, warm end and cool end. Tuned against
-// the *composited* stroke rather than the pigment: paper dilutes the thin
-// passages, where the swing is largest, so a separation that looks ample in the
-// paint rounds away to a pixel or two on the page. At these values the stroke's
-// body still lands on ink and its bristles read burgundy. Push the cool term
-// much past this and the dense core crosses into violet, which the palette
-// rules out.
-const SEPARATION_WARM = 3.5
-const SEPARATION_COOL = 0.15
 
-/**
- * The ink wash as an SVG `<feComponentTransfer>` lookup, for painting a scanned
- * brush stroke whose alpha channel is its thickness map.
- *
- * The scan carries every bristle, feathered edge and splatter tendril in alpha,
- * but its RGB was flattened to one ink colour — which makes it a silhouette of
- * a stroke rather than paint, since real pigment shifts hue as it thins rather
- * than only turning transparent. Pair this with an `feColorMatrix` that copies
- * alpha into RGB and the filter becomes exactly that: colour looked up by
- * thickness, straight off the model's curve.
- *
- * Done as a filter rather than by repainting the asset because the colour is a
- * pure function of the alpha already in the file. Baking it in cost 21-58KB of
- * extra weight on a hero image (varying RGB compresses far worse than flat) to
- * store something we can derive; this way the recipe stays code, and the stroke
- * stays one asset.
- *
- * `feComponentTransfer` interpolates between table entries, so a couple of
- * dozen stops describe the ramp smoothly.
- */
-export function inkWashTable(stops = 24, over = PAPER_REFLECTANCE) {
-  const lum = (c) => 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
-  const target = lum(INK_TONE)
-
-  const cols = Array.from({ length: stops }, (_, i) => {
-    const a = i / (stops - 1)
-    // §2.2's separation. Alpha stands in for how much paint sat here, and the
-    // heavy pigment settles out of a wash first, so ultramarine dominates where
-    // the stroke pooled while the light staining quinacridone stays in
-    // suspension and is what's left out in the dry bristles. Varying the *mix*
-    // this way swings hue about six times as far as varying total thickness
-    // does, which is the difference between an effect you can see and one that
-    // rounds away in 8 bits.
-    const settled = a * a
-    const c = glaze(
-      [
-        ['burgundy', INK_WASH[0][1] * (1 + SEPARATION_WARM * (1 - settled))],
-        ['olive', INK_WASH[1][1]],
-        ['ultramarine', INK_WASH[2][1] * (1 + SEPARATION_COOL * settled)],
-      ],
-      over,
-    )
-    // Hold the value the flat ink already had and let only chroma move. The
-    // stroke's density is art direction — it was tuned so the pastel emphasis
-    // word reads on top of it — and alpha compositing supplies the fade, so
-    // letting the model set lightness too would thin the mid-tones twice and
-    // wash the stroke out.
-    const k = target / Math.max(lum(c), 1e-4)
-    return c.map((v) => Math.min(1, Math.max(0, v * k)))
-  })
-
-  const channel = (k) => cols.map((c) => c[k].toFixed(4)).join(' ')
-  return { r: channel(0), g: channel(1), b: channel(2) }
-}
 
 /** K/S plus γ for one named pigment. */
 export function pigment(name) {
@@ -350,8 +287,21 @@ export function separate(target, { palette = Object.keys(PIGMENTS), depth = 1, s
  * §2.2 gives us two, and which one a bloom wants is a real decision:
  *
  *   dry  wet-on-dry. Sizing and surface tension pin the stroke, so pigment
- *        migrates outward as it dries and leaves a rim at ~0.65R (§4.3.3).
- *        This is a wash laid on paper — the section fields, card corners.
+ *        migrates outward as it dries and piles up at ~0.66R (§4.3.3). This is
+ *        a wash laid on paper — the section fields, card corners.
+ *
+ *        The rim has to be worth seeing. An earlier version lifted thickness
+ *        from 0.30 to 0.34 there, which emitted alphas of 0.068 and 0.077 —
+ *        two levels out of 255, i.e. the paper's headline effect rendered as
+ *        nothing, and every wash on the site reading as a plain alpha fade.
+ *        The rim now sits well ABOVE the interior, which is what edge
+ *        darkening looks like on real paper.
+ *
+ *        These numbers are normalised so the profile's area-weighted mean is
+ *        unchanged: edge darkening REDISTRIBUTES pigment, it never adds any,
+ *        so every thickness already tuned across the site keeps its weight
+ *        (measured drift under 0.2% across the palette). Preserve that if you
+ *        retune the shape.
  *   wet  wet-in-wet. The paper is already saturated, so the brushstroke
  *        spreads freely into "soft, feathery shapes" with no pinned contact
  *        line and therefore no rim. This is the hero's aurora orb, which its
@@ -363,11 +313,11 @@ export function separate(target, { palette = Object.keys(PIGMENTS), depth = 1, s
  */
 const BLOOM_PROFILES = {
   dry: [
-    [0.0, 0.75],
-    [0.34, 0.5],
-    [0.54, 0.3],
-    [0.65, 0.34],
-    [0.72, 0.12],
+    [0.0, 0.4544],
+    [0.3, 0.3225],
+    [0.52, 0.2492],
+    [0.66, 0.6303],
+    [0.74, 0.1466],
     [0.8, 0.0],
   ],
   wet: [
@@ -422,6 +372,59 @@ export function bloomStops(name, x, { over = PAPER_REFLECTANCE, wetness = 'dry',
 }
 
 /**
+ * The same, for a wash of MIXED paint rather than one pigment.
+ *
+ * The mixed dark can't go through `bloomStops`: that takes a single pigment,
+ * and laying its three constituents down as three overlapping CSS blooms would
+ * alpha-blend them, which is precisely the averaging the model exists to avoid
+ * — burgundy and ultramarine average to the violet §5.1 warned us off. Here the
+ * stack is composited with Kubelka-Munk at every step of the profile, so the
+ * ramp is the mix thinning rather than three washes fighting.
+ *
+ * `stack` is [pigment, thickness] pairs; the profile scales all of them
+ * together, so the mix holds its proportions as the wash thins.
+ */
+export function stackStops(stack, { over = PAPER_REFLECTANCE, wetness = 'dry', extent = 0.75 } = {}) {
+  const profile = BLOOM_PROFILES[wetness]
+  const span = profile[profile.length - 1][0]
+  return profile
+    .map(([pos, rel]) => {
+      const at = ((pos / span) * extent * 100).toFixed(0)
+      if (rel === 0) return `transparent ${at}%`
+      const lit = glaze(
+        stack.map(([name, t]) => [name, t * rel]),
+        over,
+      )
+      const drop = over.map((c, i) => c - lit[i])
+      const a = Math.min(1, Math.max(...drop.map(Math.abs)) * COVER_GAIN)
+      if (a <= 0.0005) return `transparent ${at}%`
+      return `${rgba255(
+        over.map((c, i) => c - drop[i] / a),
+        a,
+      )} ${at}%`
+    })
+    .join(', ')
+}
+
+/**
+ * A field of mixed-paint blooms as one `background-image`. Same spec shape as
+ * `fieldCss`, but every bloom is the given glaze stack at its own thickness.
+ */
+export function stackFieldCss(stack, blooms, over = PAPER_REFLECTANCE) {
+  return blooms
+    .map(
+      (b) =>
+        `radial-gradient(${(b.size[0] * 100).toFixed(2)}% ${(b.size[1] * 100).toFixed(2)}% at ` +
+        `${(b.at[0] * 100).toFixed(2)}% ${(b.at[1] * 100).toFixed(2)}%, ` +
+        `${stackStops(
+          stack.map(([name, t]) => [name, t * b.x]),
+          { over, wetness: b.wetness ?? 'dry', extent: b.extent ?? 0.72 },
+        )})`,
+    )
+    .join(', ')
+}
+
+/**
  * A watercolour bloom as a CSS radial-gradient.
  *
  * Say which paint and how thickly it is laid on, not which rgba to fade out;
@@ -434,41 +437,131 @@ export function bloom(name, { x = 0.4, size = 'circle 30vw', at = '50% 50%', ...
 }
 
 /**
+ * Two lobes, because a wash is not an ellipse.
+ *
+ * §4.3's wet-area mask is wherever the water actually reached, which is never
+ * the clean ellipse a radial-gradient draws — and CSS has no way to say
+ * otherwise. BloomCanvas warps its whole lookup on the paper's own noise, but
+ * that is a per-pixel operation with no CSS equivalent; the nearest thing
+ * available here is to lay the bloom down as a body plus an offset satellite,
+ * whose union reads as a pear or a kidney rather than an ellipse.
+ *
+ * Both lobes are the same pigment, so stacking them deepens the overlap along
+ * one paint's own curve instead of averaging two hues — the mud the anti-mud
+ * rules police is a hazard for *neighbouring* pigments, not for a wash with
+ * itself.
+ *
+ * Two satellites, not one. A body plus a single satellite is a pear, and a pear
+ * is still convex — it strays from the ellipse without ever biting inward,
+ * which is the same thing that makes an under-driven canvas warp read as a
+ * pebble. The notch between two satellites set at different angles is what
+ * makes the outline concave, and concavity is what reads as loose.
+ *
+ * Each entry is [radius, thickness, offset], radii and offsets as fractions of
+ * the bloom's own. The satellites are kept broad and close: a small one set far
+ * out crosses the body's rim at a steep angle and the two dried edges cut a
+ * hard lens, where a broad one just clear of the body runs nearly parallel to
+ * it, so the group reads as one wash that flowed unevenly rather than as three
+ * pours.
+ *
+ * The body's thickness is solved, not chosen: pigment goes as thickness times
+ * area, so Σ x·r² = 1 keeps the wash's load exactly what the single ellipse
+ * carried. Spreading paint over more paper has to thin it; the body gives up
+ * about a tenth, which is the honest price of the shape.
+ *
+ * The cost is two extra gradients per bloom, and `body::before` paints on every
+ * device including the no-JS fallback. That is why the satellites are small
+ * enough to keep total fill near 1.5x rather than 3x, and why this stops at
+ * three lobes rather than the handful a really ragged outline would want.
+ */
+const LOBE = {
+  MAIN: 0.9,
+  SATS: [
+    { R: 0.64, X: 0.44, OFF: 0.42, TURN: 0 },
+    { R: 0.52, X: 0.34, OFF: 0.5, TURN: 2.4 },
+  ],
+}
+LOBE.MAIN_X =
+  (1 - LOBE.SATS.reduce((a, s) => a + s.X * s.R ** 2, 0)) / LOBE.MAIN ** 2
+
+// Browsers do accept `calc(50% + -8vw)`, but writing the sign into the operator
+// keeps the emitted CSS readable in devtools and off a permissive parse.
+const vwTerm = (v) => `${v < 0 ? '-' : '+'} ${Math.abs(v).toFixed(2)}vw`
+
+// Which way a bloom bulges. Derived from its own placement so it is stable
+// across renders and differs bloom to bloom — a field whose washes all lean the
+// same way just looks sheared.
+function lobeAngle(at) {
+  const s = Math.sin((at[0] + 1) * 12.9898 + (at[1] + 1) * 78.233) * 43758.5453
+  return (s - Math.floor(s)) * Math.PI * 2
+}
+
+/**
  * A field of blooms, as one `background-image`.
  *
  * Blooms are specified numerically — `at`/`size` as fractions of the element,
  * matching what CSS resolves percentages against — so the same spec can drive
  * both this CSS and BloomCanvas's shader. That matters: the canvas is the real
  * rendering (it composites the blooms optically, §5.2) and this is the fallback
- * beneath it, so they have to agree about where the paint is.
+ * beneath it, so they have to agree about where the paint is. They agree on
+ * placement and on load; the loose outline is the one thing they reach by
+ * different means, since a domain warp has no CSS spelling.
  */
 export function fieldCss(blooms, over = PAPER_REFLECTANCE) {
   return blooms
-    .map((b) =>
+    .flatMap((b) => {
+      // A circle sized in vw, not a percentage ellipse: the sections these sit
+      // behind can run many viewport-heights tall, and a two-axis percentage
+      // resolves against width and height independently, which stretches every
+      // wash into a sliver. One radius keyed to viewport width keeps a bloom
+      // round however tall its section is.
+      const geom = (k, off) => ({
+        size: b.sizeVw
+          ? `circle ${(b.sizeVw * k).toFixed(2)}vw`
+          : `${(b.size[0] * 100 * k).toFixed(2)}% ${(b.size[1] * 100 * k).toFixed(2)}%`,
+        // A vw-sized bloom has no percentage radius to offset against, so its
+        // satellite is displaced in vw and added to the position with calc().
+        at:
+          off[0] === 0 && off[1] === 0
+            ? `${(b.at[0] * 100).toFixed(2)}% ${(b.at[1] * 100).toFixed(2)}%`
+            : b.sizeVw
+              ? `calc(${(b.at[0] * 100).toFixed(2)}% ${vwTerm(b.sizeVw * off[0])}) ` +
+                `calc(${(b.at[1] * 100).toFixed(2)}% ${vwTerm(b.sizeVw * off[1])})`
+              : `${((b.at[0] + b.size[0] * off[0]) * 100).toFixed(2)}% ` +
+                `${((b.at[1] + b.size[1] * off[1]) * 100).toFixed(2)}%`,
+      })
+
       // A lift is unpainted paper held open, not paint — the near-white cores
       // that keep the busiest overlaps luminous. On the canvas it subtracts
       // thickness (§4.5's desorption); in CSS the nearest thing is the cream
-      // radial it always was.
-      b.lift
-        ? `radial-gradient(${b.sizeVw ? `circle ${b.sizeVw}vw` : `${(b.size[0] * 100).toFixed(2)}% ${(b.size[1] * 100).toFixed(2)}%`} at ` +
-          `${(b.at[0] * 100).toFixed(2)}% ${(b.at[1] * 100).toFixed(2)}%, ` +
-          `rgba(255,252,242,${b.lift.toFixed(3)}), transparent ${((b.extent ?? 0.72) * 100).toFixed(0)}%)`
-        : bloom(b.pigment, {
-        x: b.x,
-        // A circle sized in vw, not a percentage ellipse: the sections these
-        // sit behind can run many viewport-heights tall, and a two-axis
-        // percentage resolves against width and height independently, which
-        // stretches every wash into a sliver. One radius keyed to viewport
-        // width keeps a bloom round however tall its section is.
-        size: b.sizeVw
-          ? `circle ${b.sizeVw}vw`
-          : `${(b.size[0] * 100).toFixed(2)}% ${(b.size[1] * 100).toFixed(2)}%`,
-        at: `${(b.at[0] * 100).toFixed(2)}% ${(b.at[1] * 100).toFixed(2)}%`,
-        extent: b.extent ?? 0.72,
-        wetness: b.wetness ?? 'dry',
-        over,
-      }),
-    )
+      // radial it always was, and being paper rather than a wash it keeps the
+      // one clean shape.
+      if (b.lift) {
+        const g = geom(1, [0, 0])
+        return [
+          `radial-gradient(${g.size} at ${g.at}, rgba(255,252,242,${b.lift.toFixed(3)}), ` +
+            `transparent ${((b.extent ?? 0.72) * 100).toFixed(0)}%)`,
+        ]
+      }
+
+      const th = lobeAngle(b.at)
+      return [
+        [LOBE.MAIN, LOBE.MAIN_X, [0, 0]],
+        ...LOBE.SATS.map((s) => [
+          s.R,
+          s.X,
+          [Math.cos(th + s.TURN) * s.OFF, Math.sin(th + s.TURN) * s.OFF],
+        ]),
+      ].map(([k, mx, off]) =>
+        bloom(b.pigment, {
+          x: b.x * mx,
+          ...geom(k, off),
+          extent: b.extent ?? 0.72,
+          wetness: b.wetness ?? 'dry',
+          over,
+        }),
+      )
+    })
     .join(', ')
 }
 

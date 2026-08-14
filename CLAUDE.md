@@ -46,7 +46,12 @@ off across it via sessionStorage).
   they were moved out of the old `docs/` directory. (They remain in git
   history before 2026-08.)
 - `reference/` — design references and adapted third-party studies. Not part
-  of the build.
+  of the build. **`curtis-1997-computer-generated-watercolor.pdf` is the paper
+  the whole wash system implements** — Curtis, Anderson, Seims, Fleischer and
+  Salesin, *Computer-Generated Watercolor* (SIGGRAPH '97). Every § reference in
+  this file and in `src/lib/watercolour.js` points into it. Read the relevant
+  section before changing a wash; the effects are easy to implement in a way
+  that is technically correct and visually invisible.
 
 ## Performance conventions
 
@@ -143,10 +148,22 @@ were art-directed against the built page.
 ## Watercolour Model
 
 The washes are not stylised gradients. They follow Curtis, Anderson, Seims,
-Fleischer and Salesin, *Computer-Generated Watercolor* (SIGGRAPH '97), which is
+Fleischer and Salesin, *Computer-Generated Watercolor* (SIGGRAPH '97) — the
+paper is in `reference/curtis-1997-computer-generated-watercolor.pdf` — which is
 implemented in `src/lib/watercolour.js` and consumed by `BloomCanvas` and
 `GrainCanvas`. Section numbers below are that paper's; the code carries the
 same references, so read them before retuning a wash.
+
+**Implementing an effect is not the same as making it visible.** The model can
+be perfectly correct and still render as a plain gradient, and that failure is
+silent — the maths runs, nothing looks wrong, and the wash is just a fade. It
+has happened twice here. The edge-darkening rim once lifted thickness from 0.30
+to 0.34, which emitted alphas of 0.068 and 0.077: two levels out of 255, i.e.
+the paper's headline effect rendered as nothing across the entire site. And
+γ was folded into granulation the wrong way round, making the smoothest paints
+the grainiest. **So: after changing anything here, print the emitted stops and
+look at the numbers, then screenshot the page at 6-10x amplified deviation from
+paper.** If you cannot see the effect in either, it is not there.
 
 **The palette is a set of paints, not a set of colours.** Each pigment in
 `PIGMENTS` is specified the way §5.1 lets an artist specify one: `rw`, how a
@@ -173,6 +190,11 @@ chartreuse voice; don't flatten the spread.
    set by the pigment's γ. It samples `paperHollows()`, deliberately coarser
    than the fibre-scale `paperHeight()` the grain overlay resolves: pigment
    pools between fibres, and sampling per-pixel gives digital speckle instead.
+   γ has to scale the texture's *contrast*, not just its shape — normalising
+   `(1 − h^γ)` alone inverts the ordering and makes the smoothest paints the
+   grainiest. A one-off element rarely wants its own tooth at all: GrainCanvas
+   already lays the shared sheet over the page, so what a lone wash is usually
+   missing is coarse tonal *pooling*, not fine grain.
 3. *Optical compositing* (§5.2) — glazes are composited with Kubelka-Munk, not
    alpha-blended. Thickening pigment then walks along its characteristic curve
    (the paper's Figure 6) rather than averaging toward grey, which is the same
@@ -227,6 +249,52 @@ width and height independently and stretches every wash into a sliver.
 keep the busiest overlaps luminous. It subtracts thickness on the canvas
 (§4.5's desorption) and stays a cream radial in CSS. It never enters the K/S mix.
 
+**Neither tier draws the ellipse it is specified as.** §4.3's wet-area mask is
+wherever the water actually reached, and a clean ellipse is the one outline that
+never is, so both renderings break it — by different means, because a per-pixel
+warp has no CSS spelling:
+
+- *Canvas.* One domain warp, sampled on the sheet in CSS pixels like everything
+  else and applied to the whole lookup, so every isoline meanders and the dried
+  rim runs along the edge it belongs to. Sampling it in each bloom's own frame
+  instead is the tempting mistake: it gives every wash the same *number* of
+  wobbles, so a viewport-wide field shows a few degrees of a smooth arc and
+  still reads as an ellipse. A wash's edge roughness is a physical distance the
+  paper sets, not a fraction of the wash.
+- *CSS.* Each bloom is laid down as a body plus two broad, close-in satellites
+  at different angles. `MAIN_X` is solved, not chosen, so thickness × area is
+  conserved and the wash keeps its load. Keep the satellites large and near: a
+  small one set far out crosses the body's rim at a steep angle and the two
+  dried edges cut a visible lens. It stops at three lobes because `body::before`
+  paints on every device including the no-JS fallback.
+
+**What makes an outline read as loose is concavity, not travel.** Both tiers
+were tuned twice before this landed, because a wash that only undulates is a
+pebble however far its edge strays — the eye reads the convex hull. On the
+canvas that means the lever is the warp's *wavelength*: at 1400px the boundary
+measured 5% concave, and shortening it to 760 took that to 25% on less travel.
+In CSS it means a body plus one satellite is not enough, since a pear is still
+convex; the notch between two satellites is the whole point. Measure concavity
+when retuning either — deviation from the ellipse is the wrong number to watch.
+
+**The canvas warp has to shear, not just wobble.** Its two components are drawn
+from the same noise on swapped coordinates (`p` and `p.yx`), which correlates
+them, and a correlated warp is locally a shear — the thing that actually
+stretches a disc into a loose form. Drawing them from two far-apart offsets
+instead gives an isotropic warp, and an isotropic warp mostly rounds a disc off
+into a slightly wobbly disc; that was tried at the same gain and at a higher one,
+and both came back visibly rounder. The coherent lean it produces across the page
+is the behaviour, not an artefact: §4.3's velocity field has a direction, because
+the sheet is tilted and the water runs.
+
+The warp's other bound is fold-over — where its gradient reaches 1 the lookup
+doubles back and the wash pinches rather than meandering.
+
+That CSS tier is not only the low-end fallback — `EveningLight`'s scroll-driven
+crossfade is `fieldCss` too and renders over the canvas everywhere, so it is the
+most prominent wash on the page. Loosening only the canvas leaves the one a
+visitor actually looks at an ellipse.
+
 ### Authoring a bloom as paint
 
 Don't hand-write `radial-gradient(… rgba(r,g,b,a), transparent NN%)` for a new
@@ -256,20 +324,18 @@ paints — burgundy, olive, ultramarine — solved by `separate()` to land on `i
 ultramarine alone leave blue unabsorbed and land on a violet the palette rules
 out, so the third is what pulls the mix back to neutral.
 
-Mixing also buys the thing a bought black can't do — **separation** (§2.2): the
-heavy ultramarine settles out where the wash pooled while the light staining
-quinacridone stays in suspension and ends up in the thin passages. That's what
-paints the hero's brush stroke (`EmphasisBrush` in `SplitText.jsx`): the scan
-carries its bristles and bleeding edges in the alpha channel, and an SVG filter
-copies alpha into RGB and looks colour up by it, so the stroke reads neutral
-where it pooled and burgundy through the dry-brush bristles.
+It paints the wash behind the hero's emphasis word (`EmphasisBrush` in
+`SplitText.jsx`), through `stackStops()` — which composites the whole stack with
+KM at every step of the profile. Don't lay the three constituents down as three
+overlapping CSS blooms instead: those alpha-blend, and burgundy over ultramarine
+averages to exactly the violet the mix exists to avoid.
 
-Two constraints if you retune it. Hold luminance constant — the stroke's density
-is art direction, and alpha compositing already supplies the fade, so letting
-the model set lightness too thins the mid-tones twice and washes the stroke out.
-And tune against the *composited* result, not the pigment: paper dilutes exactly
-the thin passages where the swing is largest, so a separation that looks ample
-in the paint can round away to a pixel or two on the page.
+That wash replaced a scanned brush stroke, and the reason is worth keeping. A
+scan of real watercolour already contains the physics — its own edge darkening,
+granulation and dry-brush — so running the model's synthetic versions over the
+top doesn't add watercolour, it flattens the real thing into a slab. Simulate
+the effects when you're generating a wash; leave them alone when you've
+photographed one.
 
 `PIGMENTS` is the paint box; `ARC` is the ordered subset the live wash
 interpolates along. Accents that sit off the arc — the client's swatch sheet
