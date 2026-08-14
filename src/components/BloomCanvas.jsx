@@ -55,18 +55,28 @@ const GRAN_AMOUNT = '1.1' //  granulation at full wetness; γ scales it per pigm
 // are viewport-wide washes, and lobes much smaller than the wash only ruffle a
 // rim that still reads as a circle underneath.
 //
-// The ceiling on the amplitude is fold-over — where the warp's gradient reaches
-// 1 the lookup doubles back and the wash pinches instead of meandering. This
-// pair measures 0.50 at the worst point, so there is room to go further if a
-// wash ever needs to be looser still.
+// What separates a loose wash from a lumpy one is whether the outline goes
+// CONCAVE — a wash that only undulates is a pebble however far it strays. Bays
+// come from wavelength, not amplitude: at a 1400px wave the boundary measured
+// 5% concave, and shortening it to 760 takes that to 25% on *less* travel. So
+// retune the wave before reaching for the gain.
+//
+// The wave has a floor as well as a ceiling. Much longer than the viewport and
+// the field holds barely one cell across it, so the warp degenerates into a
+// near-uniform shear and every wash leans the same way.
+//
+// The ceiling is fold-over — where the warp's gradient reaches 1 the lookup
+// doubles back and the wash pinches. This trio measures 0.97 at the worst point
+// by Frobenius norm, which overstates the operator norm by up to √2, so it
+// stays injective; treat it as at the limit and re-measure if you raise it.
 //
 // FBM_MEAN is measured from fbm() in lib/watercolour.js — it is not centred on
 // 0.5 — so the gain below is a real displacement rather than an arbitrary
 // number. Re-measure it if that noise changes; centring on the wrong value
 // slides every wash sideways instead of deforming it.
-const CONTOUR_WAVE = 1400 //    CSS px, the coarsest lobe
-const CONTOUR_MAX = '190.0' //  CSS px, the furthest the front strays
-const CONTOUR_GAIN = '700.0' // CSS px per unit fbm, so ~70px typical
+const CONTOUR_WAVE = 760 //     CSS px, the coarsest lobe
+const CONTOUR_MAX = '170.0' //  CSS px, the furthest the front strays
+const CONTOUR_GAIN = '590.0' // CSS px per unit fbm, so ~56px typical
 const FBM_MEAN = '0.2179'
 const CONTOUR_FREQ = (1 / CONTOUR_WAVE).toFixed(6)
 
@@ -160,8 +170,12 @@ ${GLSL_WASH}
     // homogeneous field — so unlike the profile's rim it needs no compensating
     // factor. Measured at -0.45% across a spread of bloom placements, which is
     // the sampling noise of that measurement rather than a bias.
+    // Two far-apart offsets into the field, NOT the usual `p` and `p.yx` pair:
+    // transposing the coordinate makes the warp symmetric about y = x, which
+    // shears every wash on the page along the same diagonal and reads as a
+    // field of slugs all leaning one way.
     vec2 cp = sheet * ${CONTOUR_FREQ};
-    vec2 contour = clamp((vec2(fbm(cp), fbm(cp.yx + 19.3)) - ${FBM_MEAN}) * ${CONTOUR_GAIN},
+    vec2 contour = clamp((vec2(fbm(cp), fbm(cp + vec2(19.3, 7.1))) - ${FBM_MEAN}) * ${CONTOUR_GAIN},
                          -${CONTOUR_MAX}, ${CONTOUR_MAX}) * u_px / u_res;
 
     // §5.2 — one layer, several pigments. Accumulate K and S weighted by each

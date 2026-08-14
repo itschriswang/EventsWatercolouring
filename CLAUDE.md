@@ -260,15 +260,30 @@ warp has no CSS spelling:
   instead is the tempting mistake: it gives every wash the same *number* of
   wobbles, so a viewport-wide field shows a few degrees of a smooth arc and
   still reads as an ellipse. A wash's edge roughness is a physical distance the
-  paper sets, not a fraction of the wash. The ceiling is fold-over — where the
-  warp's gradient reaches 1 the lookup doubles back and the wash pinches.
-- *CSS.* Each bloom is laid down as a body plus one broad, close-in satellite,
-  whose union reads as a pear rather than an ellipse. `MAIN_X` is solved, not
-  chosen, so thickness × area is conserved and the wash keeps its load. Keep the
-  satellite large and near: a small one set far out crosses the body's rim at a
-  steep angle and the two dried edges cut a visible lens. It stays at two lobes
-  rather than the three or four a really ragged outline would need, because
-  `body::before` paints on every device including the no-JS fallback.
+  paper sets, not a fraction of the wash.
+- *CSS.* Each bloom is laid down as a body plus two broad, close-in satellites
+  at different angles. `MAIN_X` is solved, not chosen, so thickness × area is
+  conserved and the wash keeps its load. Keep the satellites large and near: a
+  small one set far out crosses the body's rim at a steep angle and the two
+  dried edges cut a visible lens. It stops at three lobes because `body::before`
+  paints on every device including the no-JS fallback.
+
+**What makes an outline read as loose is concavity, not travel.** Both tiers
+were tuned twice before this landed, because a wash that only undulates is a
+pebble however far its edge strays — the eye reads the convex hull. On the
+canvas that means the lever is the warp's *wavelength*: at 1400px the boundary
+measured 5% concave, and shortening it to 760 took that to 25% on less travel.
+In CSS it means a body plus one satellite is not enough, since a pear is still
+convex; the notch between two satellites is the whole point. Measure concavity
+when retuning either — deviation from the ellipse is the wrong number to watch.
+
+Both tiers have a floor and a ceiling. The canvas warp folds over where its
+gradient reaches 1, doubling the lookup back so the wash pinches; and if the
+wavelength runs much longer than the viewport the field holds barely one cell
+across it, degenerating into a near-uniform shear that leans every wash the same
+way. Sample the two warp components at far-apart offsets rather than the usual
+`p` and `p.yx` — transposing the coordinate makes the warp symmetric about
+y = x, which is that same diagonal lean built in by construction.
 
 That CSS tier is not only the low-end fallback — `EveningLight`'s scroll-driven
 crossfade is `fieldCss` too and renders over the canvas everywhere, so it is the

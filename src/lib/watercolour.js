@@ -451,24 +451,38 @@ export function bloom(name, { x = 0.4, size = 'circle 30vw', at = '50% 50%', ...
  * rules police is a hazard for *neighbouring* pigments, not for a wash with
  * itself.
  *
- * `MAIN`/`SAT` are radii as fractions of the bloom's, `OFF` the satellite's
- * offset in the same units, and `SAT_X` how thickly it is laid relative to the
- * bloom. `MAIN_X` is then solved, not chosen: pigment goes as thickness times
- * area, so MAIN_X·MAIN² + SAT_X·SAT² = 1 keeps the wash's load exactly what the
- * single ellipse carried. Spreading paint over more paper has to thin it; the
- * body loses about 8%, which is the honest price of the shape.
+ * Two satellites, not one. A body plus a single satellite is a pear, and a pear
+ * is still convex — it strays from the ellipse without ever biting inward,
+ * which is the same thing that makes an under-driven canvas warp read as a
+ * pebble. The notch between two satellites set at different angles is what
+ * makes the outline concave, and concavity is what reads as loose.
  *
- * The cost is one extra gradient per bloom, and `body::before` paints on every
- * device including the no-JS fallback — which is why this is two lobes and not
- * the three or four it would take to get a really ragged outline.
+ * Each entry is [radius, thickness, offset], radii and offsets as fractions of
+ * the bloom's own. The satellites are kept broad and close: a small one set far
+ * out crosses the body's rim at a steep angle and the two dried edges cut a
+ * hard lens, where a broad one just clear of the body runs nearly parallel to
+ * it, so the group reads as one wash that flowed unevenly rather than as three
+ * pours.
+ *
+ * The body's thickness is solved, not chosen: pigment goes as thickness times
+ * area, so Σ x·r² = 1 keeps the wash's load exactly what the single ellipse
+ * carried. Spreading paint over more paper has to thin it; the body gives up
+ * about a tenth, which is the honest price of the shape.
+ *
+ * The cost is two extra gradients per bloom, and `body::before` paints on every
+ * device including the no-JS fallback. That is why the satellites are small
+ * enough to keep total fill near 1.5x rather than 3x, and why this stops at
+ * three lobes rather than the handful a really ragged outline would want.
  */
-// The satellite is kept large and pulled in close on purpose. A small one set
-// far out crosses the body's rim at a steep angle and the two dried edges cut a
-// hard lens where they meet; a broad one just clear of the body runs nearly
-// parallel to it, so the pair reads as one wash that flowed further on one side
-// rather than as two pours.
-const LOBE = { MAIN: 0.92, SAT: 0.78, OFF: 0.34, SAT_X: 0.42 }
-LOBE.MAIN_X = (1 - LOBE.SAT_X * LOBE.SAT ** 2) / LOBE.MAIN ** 2
+const LOBE = {
+  MAIN: 0.9,
+  SATS: [
+    { R: 0.64, X: 0.44, OFF: 0.42, TURN: 0 },
+    { R: 0.52, X: 0.34, OFF: 0.5, TURN: 2.4 },
+  ],
+}
+LOBE.MAIN_X =
+  (1 - LOBE.SATS.reduce((a, s) => a + s.X * s.R ** 2, 0)) / LOBE.MAIN ** 2
 
 // Browsers do accept `calc(50% + -8vw)`, but writing the sign into the operator
 // keeps the emitted CSS readable in devtools and off a permissive parse.
@@ -477,10 +491,9 @@ const vwTerm = (v) => `${v < 0 ? '-' : '+'} ${Math.abs(v).toFixed(2)}vw`
 // Which way a bloom bulges. Derived from its own placement so it is stable
 // across renders and differs bloom to bloom — a field whose washes all lean the
 // same way just looks sheared.
-function lobeDir(at) {
+function lobeAngle(at) {
   const s = Math.sin((at[0] + 1) * 12.9898 + (at[1] + 1) * 78.233) * 43758.5453
-  const th = (s - Math.floor(s)) * Math.PI * 2
-  return [Math.cos(th), Math.sin(th)]
+  return (s - Math.floor(s)) * Math.PI * 2
 }
 
 /**
@@ -531,10 +544,14 @@ export function fieldCss(blooms, over = PAPER_REFLECTANCE) {
         ]
       }
 
-      const dir = lobeDir(b.at)
+      const th = lobeAngle(b.at)
       return [
         [LOBE.MAIN, LOBE.MAIN_X, [0, 0]],
-        [LOBE.SAT, LOBE.SAT_X, [dir[0] * LOBE.OFF, dir[1] * LOBE.OFF]],
+        ...LOBE.SATS.map((s) => [
+          s.R,
+          s.X,
+          [Math.cos(th + s.TURN) * s.OFF, Math.sin(th + s.TURN) * s.OFF],
+        ]),
       ].map(([k, mx, off]) =>
         bloom(b.pigment, {
           x: b.x * mx,
