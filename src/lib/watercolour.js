@@ -287,8 +287,21 @@ export function separate(target, { palette = Object.keys(PIGMENTS), depth = 1, s
  * §2.2 gives us two, and which one a bloom wants is a real decision:
  *
  *   dry  wet-on-dry. Sizing and surface tension pin the stroke, so pigment
- *        migrates outward as it dries and leaves a rim at ~0.65R (§4.3.3).
- *        This is a wash laid on paper — the section fields, card corners.
+ *        migrates outward as it dries and piles up at ~0.66R (§4.3.3). This is
+ *        a wash laid on paper — the section fields, card corners.
+ *
+ *        The rim has to be worth seeing. An earlier version lifted thickness
+ *        from 0.30 to 0.34 there, which emitted alphas of 0.068 and 0.077 —
+ *        two levels out of 255, i.e. the paper's headline effect rendered as
+ *        nothing, and every wash on the site reading as a plain alpha fade.
+ *        The rim now sits well ABOVE the interior, which is what edge
+ *        darkening looks like on real paper.
+ *
+ *        These numbers are normalised so the profile's area-weighted mean is
+ *        unchanged: edge darkening REDISTRIBUTES pigment, it never adds any,
+ *        so every thickness already tuned across the site keeps its weight
+ *        (measured drift under 0.2% across the palette). Preserve that if you
+ *        retune the shape.
  *   wet  wet-in-wet. The paper is already saturated, so the brushstroke
  *        spreads freely into "soft, feathery shapes" with no pinned contact
  *        line and therefore no rim. This is the hero's aurora orb, which its
@@ -300,11 +313,11 @@ export function separate(target, { palette = Object.keys(PIGMENTS), depth = 1, s
  */
 const BLOOM_PROFILES = {
   dry: [
-    [0.0, 0.75],
-    [0.34, 0.5],
-    [0.54, 0.3],
-    [0.65, 0.34],
-    [0.72, 0.12],
+    [0.0, 0.4544],
+    [0.3, 0.3225],
+    [0.52, 0.2492],
+    [0.66, 0.6303],
+    [0.74, 0.1466],
     [0.8, 0.0],
   ],
   wet: [

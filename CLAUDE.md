@@ -46,7 +46,12 @@ off across it via sessionStorage).
   they were moved out of the old `docs/` directory. (They remain in git
   history before 2026-08.)
 - `reference/` — design references and adapted third-party studies. Not part
-  of the build.
+  of the build. **`curtis-1997-computer-generated-watercolor.pdf` is the paper
+  the whole wash system implements** — Curtis, Anderson, Seims, Fleischer and
+  Salesin, *Computer-Generated Watercolor* (SIGGRAPH '97). Every § reference in
+  this file and in `src/lib/watercolour.js` points into it. Read the relevant
+  section before changing a wash; the effects are easy to implement in a way
+  that is technically correct and visually invisible.
 
 ## Performance conventions
 
@@ -143,10 +148,22 @@ were art-directed against the built page.
 ## Watercolour Model
 
 The washes are not stylised gradients. They follow Curtis, Anderson, Seims,
-Fleischer and Salesin, *Computer-Generated Watercolor* (SIGGRAPH '97), which is
+Fleischer and Salesin, *Computer-Generated Watercolor* (SIGGRAPH '97) — the
+paper is in `reference/curtis-1997-computer-generated-watercolor.pdf` — which is
 implemented in `src/lib/watercolour.js` and consumed by `BloomCanvas` and
 `GrainCanvas`. Section numbers below are that paper's; the code carries the
 same references, so read them before retuning a wash.
+
+**Implementing an effect is not the same as making it visible.** The model can
+be perfectly correct and still render as a plain gradient, and that failure is
+silent — the maths runs, nothing looks wrong, and the wash is just a fade. It
+has happened twice here. The edge-darkening rim once lifted thickness from 0.30
+to 0.34, which emitted alphas of 0.068 and 0.077: two levels out of 255, i.e.
+the paper's headline effect rendered as nothing across the entire site. And
+γ was folded into granulation the wrong way round, making the smoothest paints
+the grainiest. **So: after changing anything here, print the emitted stops and
+look at the numbers, then screenshot the page at 6-10x amplified deviation from
+paper.** If you cannot see the effect in either, it is not there.
 
 **The palette is a set of paints, not a set of colours.** Each pigment in
 `PIGMENTS` is specified the way §5.1 lets an artist specify one: `rw`, how a

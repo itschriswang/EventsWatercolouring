@@ -81,11 +81,11 @@ ${GLSL_WASH}
   // wet feathers out with none (§2.2).
   float profileDry(float p){
     if (p >= 0.80) return 0.0;
-    if (p < 0.34) return mix(0.75, 0.50, p / 0.34);
-    if (p < 0.54) return mix(0.50, 0.30, (p - 0.34) / 0.20);
-    if (p < 0.65) return mix(0.30, 0.34, (p - 0.54) / 0.11);   // the dried rim
-    if (p < 0.72) return mix(0.34, 0.12, (p - 0.65) / 0.07);
-    return mix(0.12, 0.0, (p - 0.72) / 0.08);
+    if (p < 0.30) return mix(0.4544, 0.3225, p / 0.30);
+    if (p < 0.52) return mix(0.3225, 0.2492, (p - 0.30) / 0.22);
+    if (p < 0.66) return mix(0.2492, 0.6303, (p - 0.52) / 0.14);  // the dried rim
+    if (p < 0.74) return mix(0.6303, 0.1466, (p - 0.66) / 0.08);
+    return mix(0.1466, 0.0, (p - 0.74) / 0.06);
   }
   float profileWet(float p){
     if (p >= 1.0) return 0.0;
