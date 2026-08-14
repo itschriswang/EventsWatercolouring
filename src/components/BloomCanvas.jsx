@@ -74,9 +74,9 @@ const GRAN_AMOUNT = '1.1' //  granulation at full wetness; γ scales it per pigm
 // 0.5 — so the gain below is a real displacement rather than an arbitrary
 // number. Re-measure it if that noise changes; centring on the wrong value
 // slides every wash sideways instead of deforming it.
-const CONTOUR_WAVE = 760 //     CSS px, the coarsest lobe
-const CONTOUR_MAX = '170.0' //  CSS px, the furthest the front strays
-const CONTOUR_GAIN = '590.0' // CSS px per unit fbm, so ~56px typical
+const CONTOUR_WAVE = 900 //     CSS px, the coarsest lobe
+const CONTOUR_MAX = '200.0' //  CSS px, the furthest the front strays
+const CONTOUR_GAIN = '700.0' // CSS px per unit fbm, so ~70px typical
 const FBM_MEAN = '0.2179'
 const CONTOUR_FREQ = (1 / CONTOUR_WAVE).toFixed(6)
 
@@ -170,12 +170,20 @@ ${GLSL_WASH}
     // homogeneous field — so unlike the profile's rim it needs no compensating
     // factor. Measured at -0.45% across a spread of bloom placements, which is
     // the sampling noise of that measurement rather than a bias.
-    // Two far-apart offsets into the field, NOT the usual `p` and `p.yx` pair:
-    // transposing the coordinate makes the warp symmetric about y = x, which
-    // shears every wash on the page along the same diagonal and reads as a
-    // field of slugs all leaning one way.
+    // The transposed sample is deliberate, and it is what makes this work.
+    // Drawing the two components from far-apart offsets gives an isotropic
+    // warp, and an isotropic warp mostly just rounds a disc off into a slightly
+    // wobbly disc: it was tried, and at the same gain the washes came back
+    // visibly rounder. Sampling the second component on the swapped coordinate
+    // correlates the pair, which makes the field locally a SHEAR — and a shear
+    // is what stretches a disc into something loose. That is also the honest
+    // physics: §4.3's velocity field has a direction (the sheet is tilted, the
+    // water runs), so a coherent lean across the page is the behaviour, not an
+    // artefact of the noise.
+    // (No backticks in this comment: it lives inside a template literal, and
+    // ending it here is a build error that reads as a syntax error 40 lines up.)
     vec2 cp = sheet * ${CONTOUR_FREQ};
-    vec2 contour = clamp((vec2(fbm(cp), fbm(cp + vec2(19.3, 7.1))) - ${FBM_MEAN}) * ${CONTOUR_GAIN},
+    vec2 contour = clamp((vec2(fbm(cp), fbm(cp.yx + 19.3)) - ${FBM_MEAN}) * ${CONTOUR_GAIN},
                          -${CONTOUR_MAX}, ${CONTOUR_MAX}) * u_px / u_res;
 
     // §5.2 — one layer, several pigments. Accumulate K and S weighted by each

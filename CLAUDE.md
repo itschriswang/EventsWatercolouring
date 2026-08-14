@@ -277,13 +277,18 @@ In CSS it means a body plus one satellite is not enough, since a pear is still
 convex; the notch between two satellites is the whole point. Measure concavity
 when retuning either — deviation from the ellipse is the wrong number to watch.
 
-Both tiers have a floor and a ceiling. The canvas warp folds over where its
-gradient reaches 1, doubling the lookup back so the wash pinches; and if the
-wavelength runs much longer than the viewport the field holds barely one cell
-across it, degenerating into a near-uniform shear that leans every wash the same
-way. Sample the two warp components at far-apart offsets rather than the usual
-`p` and `p.yx` — transposing the coordinate makes the warp symmetric about
-y = x, which is that same diagonal lean built in by construction.
+**The canvas warp has to shear, not just wobble.** Its two components are drawn
+from the same noise on swapped coordinates (`p` and `p.yx`), which correlates
+them, and a correlated warp is locally a shear — the thing that actually
+stretches a disc into a loose form. Drawing them from two far-apart offsets
+instead gives an isotropic warp, and an isotropic warp mostly rounds a disc off
+into a slightly wobbly disc; that was tried at the same gain and at a higher one,
+and both came back visibly rounder. The coherent lean it produces across the page
+is the behaviour, not an artefact: §4.3's velocity field has a direction, because
+the sheet is tilted and the water runs.
+
+The warp's other bound is fold-over — where its gradient reaches 1 the lookup
+doubles back and the wash pinches rather than meandering.
 
 That CSS tier is not only the low-end fallback — `EveningLight`'s scroll-driven
 crossfade is `fieldCss` too and renders over the canvas everywhere, so it is the
