@@ -10,6 +10,7 @@ import {
   GLSL_KM,
   GLSL_WASH,
   pigment,
+  vwAxis,
 } from '../lib/watercolour.js'
 
 /**
@@ -346,8 +347,8 @@ export default function BloomCanvas({ revealed }) {
           if (nb >= MAX_BLOOMS) break
           // vw-sized circles are resolved against the viewport here, then
           // expressed in the field's own fractions for the shader.
-          const rx = b.sizeVw ? (b.sizeVw * vw) / 100 / r.width : b.size[0]
-          const ry = b.sizeVw ? (b.sizeVw * vw) / 100 / r.height : b.size[1]
+          const rx = b.sizeVw ? (vwAxis(b.sizeVw, 0) * vw) / 100 / r.width : b.size[0]
+          const ry = b.sizeVw ? (vwAxis(b.sizeVw, 1) * vw) / 100 / r.height : b.size[1]
           bloomGeom.set([b.at[0], b.at[1], rx, ry], nb * 4)
           // Lifts ride the same array with a negative thickness — they occupy a
           // bloom slot but carry no paint, so K/S stay zero.

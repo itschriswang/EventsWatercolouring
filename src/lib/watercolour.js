@@ -474,19 +474,73 @@ export function bloom(name, { x = 0.4, size = 'circle 30vw', at = '50% 50%', ...
  * enough to keep total fill near 1.5x rather than 3x, and why this stops at
  * three lobes rather than the handful a really ragged outline would want.
  */
+// Only the body carries the dried rim. Giving every lobe one is what made a
+// three-lobe wash read as three overlapping discs rather than a single loose
+// shape — the rim is precisely what states an edge, so three rims state three
+// circles, and at small sizes (a phone's washes are a third the diameter) the
+// rings are unmissable. The satellites are wet-in-wet instead: §2.2's brushstroke
+// spreading into "soft, feathery shapes" with no pinned contact line and so no
+// rim. Which is also the truer reading — one wash whose water ran further on one
+// side, not three pours.
+//
+// PROFILE_AREA is each profile's 2D integral, so the pigment sum below stays
+// honest across the two shapes: the wet profile carries 88% of the dry one's
+// load at equal thickness and radius.
+const PROFILE_AREA = { dry: 0.16213, wet: 0.14277 }
+// The satellites have to reach well past the body to be worth having. Rimless,
+// they state no edge of their own — they only shift where the wash's soft outer
+// boundary falls — so a satellite tucked inside the body is invisible. These
+// carry roughly half the body's thickness and reach about a quarter past it.
 const LOBE = {
   MAIN: 0.9,
   SATS: [
-    { R: 0.64, X: 0.44, OFF: 0.42, TURN: 0 },
-    { R: 0.52, X: 0.34, OFF: 0.5, TURN: 2.4 },
+    { R: 0.72, X: 0.55, OFF: 0.52, TURN: 0 },
+    { R: 0.58, X: 0.45, OFF: 0.6, TURN: 2.4 },
   ],
 }
-LOBE.MAIN_X =
-  (1 - LOBE.SATS.reduce((a, s) => a + s.X * s.R ** 2, 0)) / LOBE.MAIN ** 2
+// Solved per body profile, since the load being conserved is the single ellipse
+// the wash was specified as — dry for most, wet for the hero orb and its like.
+const satPigment = LOBE.SATS.reduce((a, s) => a + s.X * s.R ** 2 * PROFILE_AREA.wet, 0)
+LOBE.MAIN_X = Object.fromEntries(
+  ['dry', 'wet'].map((w) => [
+    w,
+    (PROFILE_AREA[w] - satPigment) / (LOBE.MAIN ** 2 * PROFILE_AREA[w]),
+  ]),
+)
 
 // Browsers do accept `calc(50% + -8vw)`, but writing the sign into the operator
 // keeps the emitted CSS readable in devtools and off a permissive parse.
 const vwTerm = (v) => `${v < 0 ? '-' : '+'} ${Math.abs(v).toFixed(2)}vw`
+
+/** One axis of a `sizeVw`, which is either a circle's radius or [x, y]. */
+export const vwAxis = (sizeVw, i) => (Array.isArray(sizeVw) ? sizeVw[i] : sizeVw)
+
+/**
+ * A wash's aspect must not depend on how tall its section happens to be.
+ *
+ * `size: [a, b]` is a percentage ellipse, and CSS resolves the two axes against
+ * width and height independently, so a shape tuned against a desktop section
+ * degenerates as that section grows. The same sections run three to five times
+ * taller relative to their width on a phone: the offerings and dusk washes were
+ * rendering at 7:1 and 8:1 there, vertical slivers rather than blooms.
+ *
+ * `sizeVw: [x, y]` is the fix — both radii keyed to viewport width, so the
+ * bloom holds one shape at every size. A scalar `sizeVw` stays a circle.
+ *
+ * A clamp would have been more surgical, since the spec is only wrong at one
+ * end: `min(b%, cap·a·vw)` keeps the authored shape wherever it is already sane
+ * and only rescues the degenerate case. It is not available. A percentage in
+ * that slot resolves against height — the very thing being escaped — and
+ * Chromium rejects `min()` outright when it mixes a percentage with a length,
+ * dropping the whole background-image and deleting every wash on the field.
+ * `min(length, length)` parses, so container-query units would work, but only
+ * with a size container and a wrapper element around every field.
+ *
+ * Note the goal is a stable aspect, NOT a circle: washes stretched the other way
+ * are art direction here (EveningLight's sky glow is 3.2:1 wide). Convert by
+ * reproducing the desktop shape — y = b · (H/W at desktop) · 100 — so the
+ * rendering that was tuned stays put and only the degenerate one moves.
+ */
 
 // Which way a bloom bulges. Derived from its own placement so it is stable
 // across renders and differs bloom to bloom — a field whose washes all lean the
@@ -516,17 +570,19 @@ export function fieldCss(blooms, over = PAPER_REFLECTANCE) {
       // wash into a sliver. One radius keyed to viewport width keeps a bloom
       // round however tall its section is.
       const geom = (k, off) => ({
-        size: b.sizeVw
-          ? `circle ${(b.sizeVw * k).toFixed(2)}vw`
-          : `${(b.size[0] * 100 * k).toFixed(2)}% ${(b.size[1] * 100 * k).toFixed(2)}%`,
+        size: Array.isArray(b.sizeVw)
+          ? `${(b.sizeVw[0] * k).toFixed(2)}vw ${(b.sizeVw[1] * k).toFixed(2)}vw`
+          : b.sizeVw
+            ? `circle ${(b.sizeVw * k).toFixed(2)}vw`
+            : `${(b.size[0] * 100 * k).toFixed(2)}% ${(b.size[1] * 100 * k).toFixed(2)}%`,
         // A vw-sized bloom has no percentage radius to offset against, so its
         // satellite is displaced in vw and added to the position with calc().
         at:
           off[0] === 0 && off[1] === 0
             ? `${(b.at[0] * 100).toFixed(2)}% ${(b.at[1] * 100).toFixed(2)}%`
             : b.sizeVw
-              ? `calc(${(b.at[0] * 100).toFixed(2)}% ${vwTerm(b.sizeVw * off[0])}) ` +
-                `calc(${(b.at[1] * 100).toFixed(2)}% ${vwTerm(b.sizeVw * off[1])})`
+              ? `calc(${(b.at[0] * 100).toFixed(2)}% ${vwTerm(vwAxis(b.sizeVw, 0) * off[0])}) ` +
+                `calc(${(b.at[1] * 100).toFixed(2)}% ${vwTerm(vwAxis(b.sizeVw, 1) * off[1])})`
               : `${((b.at[0] + b.size[0] * off[0]) * 100).toFixed(2)}% ` +
                 `${((b.at[1] + b.size[1] * off[1]) * 100).toFixed(2)}%`,
       })
@@ -545,19 +601,25 @@ export function fieldCss(blooms, over = PAPER_REFLECTANCE) {
       }
 
       const th = lobeAngle(b.at)
+      // The satellites are always rimless; the body keeps whatever the wash was
+      // specified as. A wash already wet-in-wet therefore has no rim anywhere,
+      // which is what it asked for, and its body thickness is solved against the
+      // wet profile instead.
+      const body = b.wetness ?? 'dry'
       return [
-        [LOBE.MAIN, LOBE.MAIN_X, [0, 0]],
+        [LOBE.MAIN, LOBE.MAIN_X[body], [0, 0], body],
         ...LOBE.SATS.map((s) => [
           s.R,
           s.X,
           [Math.cos(th + s.TURN) * s.OFF, Math.sin(th + s.TURN) * s.OFF],
+          'wet',
         ]),
-      ].map(([k, mx, off]) =>
+      ].map(([k, mx, off, wetness]) =>
         bloom(b.pigment, {
           x: b.x * mx,
           ...geom(k, off),
           extent: b.extent ?? 0.72,
-          wetness: b.wetness ?? 'dry',
+          wetness,
           over,
         }),
       )
