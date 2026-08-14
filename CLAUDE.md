@@ -173,6 +173,11 @@ chartreuse voice; don't flatten the spread.
    set by the pigment's γ. It samples `paperHollows()`, deliberately coarser
    than the fibre-scale `paperHeight()` the grain overlay resolves: pigment
    pools between fibres, and sampling per-pixel gives digital speckle instead.
+   γ has to scale the texture's *contrast*, not just its shape — normalising
+   `(1 − h^γ)` alone inverts the ordering and makes the smoothest paints the
+   grainiest. A one-off element rarely wants its own tooth at all: GrainCanvas
+   already lays the shared sheet over the page, so what a lone wash is usually
+   missing is coarse tonal *pooling*, not fine grain.
 3. *Optical compositing* (§5.2) — glazes are composited with Kubelka-Munk, not
    alpha-blended. Thickening pigment then walks along its characteristic curve
    (the paper's Figure 6) rather than averaging toward grey, which is the same
@@ -256,20 +261,18 @@ paints — burgundy, olive, ultramarine — solved by `separate()` to land on `i
 ultramarine alone leave blue unabsorbed and land on a violet the palette rules
 out, so the third is what pulls the mix back to neutral.
 
-Mixing also buys the thing a bought black can't do — **separation** (§2.2): the
-heavy ultramarine settles out where the wash pooled while the light staining
-quinacridone stays in suspension and ends up in the thin passages. That's what
-paints the hero's brush stroke (`EmphasisBrush` in `SplitText.jsx`): the scan
-carries its bristles and bleeding edges in the alpha channel, and an SVG filter
-copies alpha into RGB and looks colour up by it, so the stroke reads neutral
-where it pooled and burgundy through the dry-brush bristles.
+It paints the wash behind the hero's emphasis word (`EmphasisBrush` in
+`SplitText.jsx`), through `stackStops()` — which composites the whole stack with
+KM at every step of the profile. Don't lay the three constituents down as three
+overlapping CSS blooms instead: those alpha-blend, and burgundy over ultramarine
+averages to exactly the violet the mix exists to avoid.
 
-Two constraints if you retune it. Hold luminance constant — the stroke's density
-is art direction, and alpha compositing already supplies the fade, so letting
-the model set lightness too thins the mid-tones twice and washes the stroke out.
-And tune against the *composited* result, not the pigment: paper dilutes exactly
-the thin passages where the swing is largest, so a separation that looks ample
-in the paint can round away to a pixel or two on the page.
+That wash replaced a scanned brush stroke, and the reason is worth keeping. A
+scan of real watercolour already contains the physics — its own edge darkening,
+granulation and dry-brush — so running the model's synthetic versions over the
+top doesn't add watercolour, it flattens the real thing into a slab. Simulate
+the effects when you're generating a wash; leave them alone when you've
+photographed one.
 
 `PIGMENTS` is the paint box; `ARC` is the ordered subset the live wash
 interpolates along. Accents that sit off the arc — the client's swatch sheet

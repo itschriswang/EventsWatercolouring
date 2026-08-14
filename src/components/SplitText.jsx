@@ -4,7 +4,7 @@ import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
 import Underline from './Underline.jsx'
 import { SPRING, asset } from '../lib/site.js'
-import { inkWashTable } from '../lib/watercolour.js'
+import { INK_WASH, stackFieldCss } from '../lib/watercolour.js'
 
 /**
  * Splits a headline into masked lines and reveals each unit (word or character)
@@ -127,30 +127,44 @@ const applyEmphasisFlow = (root, colors, positions) => {
   return () => observer.disconnect()
 }
 
-// A real, hand-painted watercolour brush stroke laid BEHIND an emphasis word
-// (see SplitText's `emphasisStroke`) — a scanned stroke with all of its
-// dry-brush bristles, feathered bleeding edges, splatter tendrils and
-// granulation preserved as transparency. `opacity` softens it to a tonal wash
-// so the pastel emphasis word still reads on top. Sits at zIndex -1 inside the
-// (relative, isolated) emphasis span, so it paints behind the glyphs but never
-// escapes to the page. `object-fit: fill` stretches the one stroke to sit
-// around whatever word it backs; `src` is the asset base (without extension)
-// so it can ship webp with a png fallback.
-// `scaleY` squashes the stroke vertically about its centre without touching
-// its horizontal length — the box is sized by `inset` (object-fit: fill), so a
-// transform is the clean way to make the stroke shorter but not shorter-worded.
+// The watercolour wash laid BEHIND an emphasis word (see SplitText's
+// `emphasisStroke`). Not a brush stroke: a wash of the mixed dark from
+// lib/watercolour.js — burgundy, olive and ultramarine, composited with
+// Kubelka-Munk at every step so the ramp is the mix thinning rather than three
+// pigments alpha-blending into violet.
 //
-// The scan's own RGB is flat ink and gets discarded: the filter copies ALPHA
-// into the colour channels and then looks colour up by it, so the stroke is
-// painted from its own thickness map with the mixed dark of INK_WASH. That is
-// what makes it read as watercolour rather than as an ink silhouette — pigment
-// deepens toward ink's faint burgundy lean where it pooled and drifts warm
-// through the dry-brush bristles, because thickness moves it along the
-// characteristic curve (Curtis et al. Figure 6) instead of merely fading out.
-// sRGB interpolation because the table was solved in sRGB.
-function EmphasisBrush({ src, inset, opacity = 1, scaleY = 1 }) {
+// Three overlapping blooms rather than one, so the patch has an uneven waist
+// and a lighter tail instead of reading as a symmetrical ellipse. They're
+// wet-on-dry (§2.2), so each carries the edge-darkened rim (§4.3.3) that stops
+// a wash looking airbrushed.
+//
+// The filter supplies the two things a synthetic wash otherwise can't have. A
+// radial-gradient draws a perfect ellipse; a wet edge wanders, so turbulence
+// displaces it into something with a contact line — the same idiom WetBloom
+// uses for the artwork wick.
+//
+// The second is POOLING, not granulation, and the difference matters. Fine
+// per-pixel noise on the alpha reads as digital speckle rather than paper, and
+// this element doesn't need paper tooth anyway: GrainCanvas already lays the
+// shared sheet over the whole page, and one sheet is the point (see CLAUDE.md).
+// What a flat gradient is actually missing is the coarse tonal variation of
+// pigment settling unevenly as the wash dries, so the turbulence here runs at
+// one octave and a low frequency — mean-preserving, so it redistributes the
+// wash rather than quietly darkening it.
+//
+// `opacity` softens the whole thing so the pastel emphasis word still reads on
+// top. Sits at zIndex -1 inside the (relative, isolated) emphasis span, so it
+// paints behind the glyphs but never escapes to the page. `scaleY` squashes it
+// about its centre without touching its length.
+const EMPHASIS_WASH = [
+  { x: 1.5, at: [0.34, 0.5], size: [0.5, 0.54], extent: 0.88 },
+  { x: 1.4, at: [0.66, 0.52], size: [0.48, 0.52], extent: 0.86 },
+  { x: 0.8, at: [0.93, 0.47], size: [0.24, 0.38], extent: 0.74 },
+]
+
+function EmphasisBrush({ inset, opacity = 1, scaleY = 1 }) {
   const id = useId().replace(/:/g, '')
-  const table = useMemo(() => inkWashTable(), [])
+  const background = useMemo(() => stackFieldCss(INK_WASH, EMPHASIS_WASH), [])
   return (
     <span
       aria-hidden="true"
@@ -164,37 +178,46 @@ function EmphasisBrush({ src, inset, opacity = 1, scaleY = 1 }) {
       }}
     >
       <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
-        <filter id={id} colorInterpolationFilters="sRGB">
-          {/* RGB <- A, so the transfer table below is indexed by thickness. */}
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 1 0  0 0 0 1 0  0 0 0 1 0  0 0 0 1 0"
+        {/* Room for the displaced edge to wander outside the box. */}
+        <filter id={id} x="-25%" y="-40%" width="150%" height="180%" colorInterpolationFilters="sRGB">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.013 0.019"
+            numOctaves="3"
+            seed="9"
+            result="bleed"
           />
-          <feComponentTransfer>
-            <feFuncR type="table" tableValues={table.r} />
-            <feFuncG type="table" tableValues={table.g} />
-            <feFuncB type="table" tableValues={table.b} />
-          </feComponentTransfer>
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="bleed"
+            scale="34"
+            xChannelSelector="R"
+            yChannelSelector="G"
+            result="wet"
+          />
+          {/* Where the pigment pooled. RGB carries the same value as alpha so
+              the modulation below stays consistent under premultiplied
+              compositing — scaling alpha without scaling colour to match would
+              brighten the wash as it thins. */}
+          <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="1" seed="3" result="pooling" />
+          <feColorMatrix
+            in="pooling"
+            type="matrix"
+            values="1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  1 0 0 0 0"
+            result="uneven"
+          />
+          <feComposite in="wet" in2="uneven" operator="arithmetic" k1="-0.55" k2="1.275" k3="0" k4="0" />
         </filter>
       </svg>
-      <picture>
-        <source srcSet={asset(`${src}.webp`)} type="image/webp" />
-        <img
-          src={asset(`${src}.png`)}
-          alt=""
-          draggable={false}
-          decoding="async"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'fill',
-            display: 'block',
-            filter: `url(#${id})`,
-          }}
-        />
-      </picture>
+      <span
+        style={{
+          position: 'absolute',
+          inset: 0,
+          display: 'block',
+          background,
+          filter: `url(#${id})`,
+        }}
+      />
     </span>
   )
 }
@@ -206,8 +229,7 @@ export default function SplitText({
   emphasisColors = null,
   emphasisColorStops = null,
   emphasisShadow = null,
-  // Asset base path (no extension, e.g. 'assets/brush-ink') for a real
-  // watercolour brush stroke laid BEHIND the emphasis group (see EmphasisBrush
+  // Lay a watercolour wash BEHIND the emphasis group (see EmphasisBrush
   // above), plus the opacity to render it at. Only shown when emphasisColors
   // is set.
   emphasisStroke = null,
@@ -451,7 +473,6 @@ export default function SplitText({
                             style={{ position: 'relative', zIndex: 0, ...EMPH_GLYPH_BLEED }}
                           >
                             <EmphasisBrush
-                              src={emphasisStroke}
                               opacity={emphasisStrokeOpacity}
                               inset="0.13em 0em -0.09em 0.02em"
                               scaleY={0.85}
@@ -507,7 +528,6 @@ export default function SplitText({
                         {emphasisStroke && emphasisColors ? (
                           <EmphasisBrush
                             key="eb"
-                            src={emphasisStroke}
                             opacity={emphasisStrokeOpacity}
                             inset="-0.05em -0.22em -0.39em -0.2em"
                             scaleY={0.85}
