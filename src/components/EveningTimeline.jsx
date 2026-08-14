@@ -23,11 +23,11 @@ import { fieldCss, WINE } from '../lib/watercolour.js'
  */
 // The folder's ambience, as interference paint on the wine ground.
 const DUSK_GLOW = [
-  { pigment: 'nightAmber', x: 0.178, at: [0.08, 0.05], size: [0.7, 0.55], extent: 0.6 },
-  { pigment: 'nightBlossom', x: 0.181, at: [0.9, 0.1], size: [0.55, 0.45], extent: 0.55 },
-  { pigment: 'nightLavender', x: 0.159, at: [0.92, 0.92], size: [0.6, 0.5], extent: 0.55 },
-  { pigment: 'nightLime', x: 0.119, at: [0.3, 1], size: [0.45, 0.4], extent: 0.6 },
-  { pigment: 'nightLime', x: 0.126, at: [0.55, 0.48], size: [0.48, 0.4], extent: 0.55 },
+  { pigment: 'nightAmber', x: 0.178, at: [0.08, 0.05], sizeVw: [70, 109.9], extent: 0.6 },
+  { pigment: 'nightBlossom', x: 0.181, at: [0.9, 0.1], sizeVw: [55, 89.9], extent: 0.55 },
+  { pigment: 'nightLavender', x: 0.159, at: [0.92, 0.92], sizeVw: [60, 99.9], extent: 0.55 },
+  { pigment: 'nightLime', x: 0.119, at: [0.3, 1], sizeVw: [45, 79.9], extent: 0.6 },
+  { pigment: 'nightLime', x: 0.126, at: [0.55, 0.48], sizeVw: [48, 79.9], extent: 0.55 },
 ]
 
 export default function EveningTimeline() {
