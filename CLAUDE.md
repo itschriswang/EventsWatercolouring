@@ -249,6 +249,32 @@ width and height independently and stretches every wash into a sliver.
 keep the busiest overlaps luminous. It subtracts thickness on the canvas
 (§4.5's desorption) and stays a cream radial in CSS. It never enters the K/S mix.
 
+**Neither tier draws the ellipse it is specified as.** §4.3's wet-area mask is
+wherever the water actually reached, and a clean ellipse is the one outline that
+never is, so both renderings break it — by different means, because a per-pixel
+warp has no CSS spelling:
+
+- *Canvas.* One domain warp, sampled on the sheet in CSS pixels like everything
+  else and applied to the whole lookup, so every isoline meanders and the dried
+  rim runs along the edge it belongs to. Sampling it in each bloom's own frame
+  instead is the tempting mistake: it gives every wash the same *number* of
+  wobbles, so a viewport-wide field shows a few degrees of a smooth arc and
+  still reads as an ellipse. A wash's edge roughness is a physical distance the
+  paper sets, not a fraction of the wash. The ceiling is fold-over — where the
+  warp's gradient reaches 1 the lookup doubles back and the wash pinches.
+- *CSS.* Each bloom is laid down as a body plus one broad, close-in satellite,
+  whose union reads as a pear rather than an ellipse. `MAIN_X` is solved, not
+  chosen, so thickness × area is conserved and the wash keeps its load. Keep the
+  satellite large and near: a small one set far out crosses the body's rim at a
+  steep angle and the two dried edges cut a visible lens. It stays at two lobes
+  rather than the three or four a really ragged outline would need, because
+  `body::before` paints on every device including the no-JS fallback.
+
+That CSS tier is not only the low-end fallback — `EveningLight`'s scroll-driven
+crossfade is `fieldCss` too and renders over the canvas everywhere, so it is the
+most prominent wash on the page. Loosening only the canvas leaves the one a
+visitor actually looks at an ellipse.
+
 ### Authoring a bloom as paint
 
 Don't hand-write `radial-gradient(… rgba(r,g,b,a), transparent NN%)` for a new

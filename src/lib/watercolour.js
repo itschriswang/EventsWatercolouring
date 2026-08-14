@@ -437,41 +437,114 @@ export function bloom(name, { x = 0.4, size = 'circle 30vw', at = '50% 50%', ...
 }
 
 /**
+ * Two lobes, because a wash is not an ellipse.
+ *
+ * §4.3's wet-area mask is wherever the water actually reached, which is never
+ * the clean ellipse a radial-gradient draws — and CSS has no way to say
+ * otherwise. BloomCanvas warps its whole lookup on the paper's own noise, but
+ * that is a per-pixel operation with no CSS equivalent; the nearest thing
+ * available here is to lay the bloom down as a body plus an offset satellite,
+ * whose union reads as a pear or a kidney rather than an ellipse.
+ *
+ * Both lobes are the same pigment, so stacking them deepens the overlap along
+ * one paint's own curve instead of averaging two hues — the mud the anti-mud
+ * rules police is a hazard for *neighbouring* pigments, not for a wash with
+ * itself.
+ *
+ * `MAIN`/`SAT` are radii as fractions of the bloom's, `OFF` the satellite's
+ * offset in the same units, and `SAT_X` how thickly it is laid relative to the
+ * bloom. `MAIN_X` is then solved, not chosen: pigment goes as thickness times
+ * area, so MAIN_X·MAIN² + SAT_X·SAT² = 1 keeps the wash's load exactly what the
+ * single ellipse carried. Spreading paint over more paper has to thin it; the
+ * body loses about 8%, which is the honest price of the shape.
+ *
+ * The cost is one extra gradient per bloom, and `body::before` paints on every
+ * device including the no-JS fallback — which is why this is two lobes and not
+ * the three or four it would take to get a really ragged outline.
+ */
+// The satellite is kept large and pulled in close on purpose. A small one set
+// far out crosses the body's rim at a steep angle and the two dried edges cut a
+// hard lens where they meet; a broad one just clear of the body runs nearly
+// parallel to it, so the pair reads as one wash that flowed further on one side
+// rather than as two pours.
+const LOBE = { MAIN: 0.92, SAT: 0.78, OFF: 0.34, SAT_X: 0.42 }
+LOBE.MAIN_X = (1 - LOBE.SAT_X * LOBE.SAT ** 2) / LOBE.MAIN ** 2
+
+// Browsers do accept `calc(50% + -8vw)`, but writing the sign into the operator
+// keeps the emitted CSS readable in devtools and off a permissive parse.
+const vwTerm = (v) => `${v < 0 ? '-' : '+'} ${Math.abs(v).toFixed(2)}vw`
+
+// Which way a bloom bulges. Derived from its own placement so it is stable
+// across renders and differs bloom to bloom — a field whose washes all lean the
+// same way just looks sheared.
+function lobeDir(at) {
+  const s = Math.sin((at[0] + 1) * 12.9898 + (at[1] + 1) * 78.233) * 43758.5453
+  const th = (s - Math.floor(s)) * Math.PI * 2
+  return [Math.cos(th), Math.sin(th)]
+}
+
+/**
  * A field of blooms, as one `background-image`.
  *
  * Blooms are specified numerically — `at`/`size` as fractions of the element,
  * matching what CSS resolves percentages against — so the same spec can drive
  * both this CSS and BloomCanvas's shader. That matters: the canvas is the real
  * rendering (it composites the blooms optically, §5.2) and this is the fallback
- * beneath it, so they have to agree about where the paint is.
+ * beneath it, so they have to agree about where the paint is. They agree on
+ * placement and on load; the loose outline is the one thing they reach by
+ * different means, since a domain warp has no CSS spelling.
  */
 export function fieldCss(blooms, over = PAPER_REFLECTANCE) {
   return blooms
-    .map((b) =>
+    .flatMap((b) => {
+      // A circle sized in vw, not a percentage ellipse: the sections these sit
+      // behind can run many viewport-heights tall, and a two-axis percentage
+      // resolves against width and height independently, which stretches every
+      // wash into a sliver. One radius keyed to viewport width keeps a bloom
+      // round however tall its section is.
+      const geom = (k, off) => ({
+        size: b.sizeVw
+          ? `circle ${(b.sizeVw * k).toFixed(2)}vw`
+          : `${(b.size[0] * 100 * k).toFixed(2)}% ${(b.size[1] * 100 * k).toFixed(2)}%`,
+        // A vw-sized bloom has no percentage radius to offset against, so its
+        // satellite is displaced in vw and added to the position with calc().
+        at:
+          off[0] === 0 && off[1] === 0
+            ? `${(b.at[0] * 100).toFixed(2)}% ${(b.at[1] * 100).toFixed(2)}%`
+            : b.sizeVw
+              ? `calc(${(b.at[0] * 100).toFixed(2)}% ${vwTerm(b.sizeVw * off[0])}) ` +
+                `calc(${(b.at[1] * 100).toFixed(2)}% ${vwTerm(b.sizeVw * off[1])})`
+              : `${((b.at[0] + b.size[0] * off[0]) * 100).toFixed(2)}% ` +
+                `${((b.at[1] + b.size[1] * off[1]) * 100).toFixed(2)}%`,
+      })
+
       // A lift is unpainted paper held open, not paint — the near-white cores
       // that keep the busiest overlaps luminous. On the canvas it subtracts
       // thickness (§4.5's desorption); in CSS the nearest thing is the cream
-      // radial it always was.
-      b.lift
-        ? `radial-gradient(${b.sizeVw ? `circle ${b.sizeVw}vw` : `${(b.size[0] * 100).toFixed(2)}% ${(b.size[1] * 100).toFixed(2)}%`} at ` +
-          `${(b.at[0] * 100).toFixed(2)}% ${(b.at[1] * 100).toFixed(2)}%, ` +
-          `rgba(255,252,242,${b.lift.toFixed(3)}), transparent ${((b.extent ?? 0.72) * 100).toFixed(0)}%)`
-        : bloom(b.pigment, {
-        x: b.x,
-        // A circle sized in vw, not a percentage ellipse: the sections these
-        // sit behind can run many viewport-heights tall, and a two-axis
-        // percentage resolves against width and height independently, which
-        // stretches every wash into a sliver. One radius keyed to viewport
-        // width keeps a bloom round however tall its section is.
-        size: b.sizeVw
-          ? `circle ${b.sizeVw}vw`
-          : `${(b.size[0] * 100).toFixed(2)}% ${(b.size[1] * 100).toFixed(2)}%`,
-        at: `${(b.at[0] * 100).toFixed(2)}% ${(b.at[1] * 100).toFixed(2)}%`,
-        extent: b.extent ?? 0.72,
-        wetness: b.wetness ?? 'dry',
-        over,
-      }),
-    )
+      // radial it always was, and being paper rather than a wash it keeps the
+      // one clean shape.
+      if (b.lift) {
+        const g = geom(1, [0, 0])
+        return [
+          `radial-gradient(${g.size} at ${g.at}, rgba(255,252,242,${b.lift.toFixed(3)}), ` +
+            `transparent ${((b.extent ?? 0.72) * 100).toFixed(0)}%)`,
+        ]
+      }
+
+      const dir = lobeDir(b.at)
+      return [
+        [LOBE.MAIN, LOBE.MAIN_X, [0, 0]],
+        [LOBE.SAT, LOBE.SAT_X, [dir[0] * LOBE.OFF, dir[1] * LOBE.OFF]],
+      ].map(([k, mx, off]) =>
+        bloom(b.pigment, {
+          x: b.x * mx,
+          ...geom(k, off),
+          extent: b.extent ?? 0.72,
+          wetness: b.wetness ?? 'dry',
+          over,
+        }),
+      )
+    })
     .join(', ')
 }
 

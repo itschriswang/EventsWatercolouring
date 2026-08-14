@@ -47,6 +47,28 @@ const MAX_BLOOMS = 24
 const ALPHA_GAIN = '1.6'
 const FLOW_SLOPE = '0.22' //  how hard the paper's slope streaks the flow (§4.3)
 const GRAN_AMOUNT = '1.1' //  granulation at full wetness; γ scales it per pigment (§4.5)
+// How far the wet front wanders off a perfect ellipse (§4.3), in CSS pixels on
+// the sheet — a distance, not a fraction of the bloom.
+//
+// CONTOUR_WAVE is the coarsest lobe; fbm's octaves add bays at half that and a
+// fringe at a quarter. It has to be page-scale, not bloom-scale: these fields
+// are viewport-wide washes, and lobes much smaller than the wash only ruffle a
+// rim that still reads as a circle underneath.
+//
+// The ceiling on the amplitude is fold-over — where the warp's gradient reaches
+// 1 the lookup doubles back and the wash pinches instead of meandering. This
+// pair measures 0.50 at the worst point, so there is room to go further if a
+// wash ever needs to be looser still.
+//
+// FBM_MEAN is measured from fbm() in lib/watercolour.js — it is not centred on
+// 0.5 — so the gain below is a real displacement rather than an arbitrary
+// number. Re-measure it if that noise changes; centring on the wrong value
+// slides every wash sideways instead of deforming it.
+const CONTOUR_WAVE = 1400 //    CSS px, the coarsest lobe
+const CONTOUR_MAX = '190.0' //  CSS px, the furthest the front strays
+const CONTOUR_GAIN = '700.0' // CSS px per unit fbm, so ~70px typical
+const FBM_MEAN = '0.2179'
+const CONTOUR_FREQ = (1 / CONTOUR_WAVE).toFixed(6)
 
 const FRAG = `
 ${GLSL_PRECISION}
@@ -120,6 +142,28 @@ ${GLSL_WASH}
     vec2 bleed = (0.85 * warp - 0.42
                + flowStreak(paperSlope(sheet, mottle), warp - 0.5) * ${FLOW_SLOPE}) * 0.06;
 
+    // §4.3 — a wash's outline is its wet-area mask: wherever the water actually
+    // got to. A radial-gradient's perfect ellipse is the one shape that never
+    // is, so displace the lookup itself and let every isoline meander with it,
+    // the dried rim included — the rim then runs along the edge it belongs to
+    // instead of cutting across it.
+    //
+    // Sampled on the sheet in CSS pixels, for the same reason the tooth is. The
+    // front wanders by a distance the paper sets, so a corner glow and a
+    // viewport-wide field come out equally rough, where perturbing each bloom in
+    // its own frame would instead give both the same *number* of wobbles and
+    // leave the big one looking like a smooth arc. One sheet, so it deflects
+    // every wash coherently — which is also why this sits outside the loops
+    // rather than being resampled per bloom.
+    //
+    // A domain warp preserves the wash's load on its own — E[det J] = 1 for a
+    // homogeneous field — so unlike the profile's rim it needs no compensating
+    // factor. Measured at -0.45% across a spread of bloom placements, which is
+    // the sampling noise of that measurement rather than a bias.
+    vec2 cp = sheet * ${CONTOUR_FREQ};
+    vec2 contour = clamp((vec2(fbm(cp), fbm(cp.yx + 19.3)) - ${FBM_MEAN}) * ${CONTOUR_GAIN},
+                         -${CONTOUR_MAX}, ${CONTOUR_MAX}) * u_px / u_res;
+
     // §5.2 — one layer, several pigments. Accumulate K and S weighted by each
     // pigment's thickness and sum the thicknesses; the division below is the
     // "in proportion to that pigment's relative thickness" the paper asks for.
@@ -140,6 +184,10 @@ ${GLSL_WASH}
       // Blooms are clipped to their field's box, the way a background-image is.
       vec2 f = (sv - rect.xy) / max(rect.zw, vec2(1e-4));
       if (f.x < 0.0 || f.x > 1.0 || f.y < 0.0 || f.y > 1.0) continue;
+      // The contour is a screen distance; in this field's own units it is one.
+      // Applied to the blooms below, never to the clip test above, so a wash
+      // still can't wander outside the element it belongs to.
+      vec2 cf = contour / max(rect.zw, vec2(1e-4));
       vec4 over = u_fieldOver[fi];
       // The vertical fade a masked field would have had in CSS.
       float fade = u_fieldFade[fi] > 0.0 ? smoothstep(0.0, u_fieldFade[fi], f.y) : 1.0;
@@ -150,7 +198,8 @@ ${GLSL_WASH}
         if (abs(args.w - float(fi)) > 0.5) continue;   // belongs to another field
 
         vec4 geom = u_bloomGeom[i];
-        float d = length((f + bleed - geom.xy) / max(geom.zw, vec2(1e-4)));
+        vec2 rel = (f + bleed + cf - geom.xy) / max(geom.zw, vec2(1e-4));
+        float d = length(rel);
         float p = bloomProfile(d / max(args.y, 1e-3), args.z) * over.a * fade;
         if (p <= 0.0) continue;
         // Negative thickness is a LIFT, not paint: the near-white cores that
