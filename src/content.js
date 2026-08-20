@@ -401,8 +401,8 @@ export const ENQUIRY = {
 // stays wedding-first; reached via search, the footer, and direct links.
 export const CORPORATE = {
   eyebrow: 'Live event watercolour · corporate & brands',
-  lines: ['The activation', 'guests queue for'],
-  emphasis: 'queue',
+  lines: ['Your guests, painted', 'while they mingle'],
+  emphasis: 'painted',
   lede: 'I paint your guests live in watercolour, right in the room. People stop to watch, and everyone I paint leaves with a portrait to keep.',
   note: 'Based in Melbourne, regularly in Sydney, travelling Australia-wide.',
   cta: 'Enquire about your event',
