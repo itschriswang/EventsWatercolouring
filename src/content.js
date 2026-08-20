@@ -317,7 +317,7 @@ export const FAQ = {
         },
         {
           q: 'What do you need from us on the day?',
-          a: 'Not much. A table around 100 by 60cm at seated height with room for a front-facing chair underneath, a chair, and a bit of space to stand for a short break each hour. I bring everything else. A drink or a bite is always welcome but never expected.',
+          a: 'Not much. A table around 100 by 60cm at seated height, and a chair I can sit in facing out from it. Somewhere to stand up and stretch for a few minutes each hour helps too. I bring everything else. A drink or a bite is always welcome but never expected.',
         },
       ],
     },
@@ -434,7 +434,7 @@ export const CORPORATE = {
       },
       {
         h: 'I bring the rest',
-        p: 'All I need is a table, a chair and a corner of the room. I arrive before doors with everything else and keep a steady pace across the booking. Public liability insurance included.',
+        p: 'All I need is a table and a chair. I turn up before doors and set up in about fifteen minutes. Public liability insurance included.',
       },
     ],
   },
