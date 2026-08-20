@@ -301,20 +301,34 @@ export default function SplitText({
   const emphasisList = emphasis
     ? (Array.isArray(emphasis) ? emphasis : [emphasis])
     : []
-  const isPhrase = emphasisList.some(e => e.includes(' '))
-
-  const isWordEmphasisized = (word) => {
-    if (emphasisList.length === 0) return false
-    return emphasisList.some(e => normalise(word) === normalise(e))
-  }
+  // Which word slots of each line the emphasis covers. Matching runs per line
+  // over word RUNS, not single words: a multi-word `emphasis` ("cotton paper.")
+  // is never equal to any one word, so comparing word by word matched nothing
+  // and the accent silently rendered as plain type on every heading that used
+  // one. `normalise` drops spaces along with the punctuation, so a run joins
+  // back to the same key as the phrase.
+  const emphasisSlots = lines.map((line) => {
+    const words = line.split(' ')
+    const slots = new Set()
+    emphasisList.forEach((e) => {
+      const key = normalise(e)
+      if (!key) return
+      const span = e.trim().split(/\s+/).length
+      for (let i = 0; i + span <= words.length; i++) {
+        if (normalise(words.slice(i, i + span).join(' ')) !== key) continue
+        for (let k = i; k < i + span; k++) slots.add(k)
+      }
+    })
+    return slots
+  })
 
   // Build a map of which words are emphasized.
   const emphasisMap = new Map()
   let globalWordIndex = 0
 
-  lines.forEach((line) => {
-    line.split(' ').forEach((word) => {
-      if (isWordEmphasisized(word)) emphasisMap.set(globalWordIndex, true)
+  lines.forEach((line, li) => {
+    line.split(' ').forEach((_word, wi) => {
+      if (emphasisSlots[li].has(wi)) emphasisMap.set(globalWordIndex, true)
       globalWordIndex++
     })
   })
@@ -327,12 +341,12 @@ export default function SplitText({
     emphasisMap.has(wordIndex) ? { color: 'var(--c-terracotta)' } : {}
 
   // Group consecutive emphasized words on same line
-  const groupEmphasisWords = (words) => {
+  const groupEmphasisWords = (words, li) => {
     const groups = []
     let currentGroup = []
 
-    words.forEach((word) => {
-      if (isWordEmphasisized(word)) {
+    words.forEach((word, wi) => {
+      if (emphasisSlots[li].has(wi)) {
         currentGroup.push({ word, isEmph: true })
       } else {
         if (currentGroup.length > 0) {
@@ -390,9 +404,8 @@ export default function SplitText({
       aria-label={lines.join(' ')}
     >
       {lines.map((line, li) => {
-        const lineHasPhrase = isPhrase && emphasisList.some(e => line.toLowerCase().includes(e.toLowerCase()))
         const lineWords = line.split(' ')
-        const groupedWords = groupEmphasisWords(lineWords)
+        const groupedWords = groupEmphasisWords(lineWords, li)
 
         // Track word index for gradient positioning
         let wordIndexInHeading = 0

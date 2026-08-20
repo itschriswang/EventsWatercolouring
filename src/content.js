@@ -7,7 +7,7 @@ export const HERO = {
   linesMobile: ['Memories', 'painted as they', 'happen'],
   emphasis: 'painted',
   emphasisMobile: 'painted',
-  lede: 'Your guests, painted live in watercolour while the night carries on. They take home something real, and they talk about it long after.',
+  lede: 'Your guests, painted live in watercolour while the night carries on. Everyone I paint takes their portrait home with them the same night.',
   note: 'Every enquiry answered personally, usually within a few days.',
 }
 
@@ -50,7 +50,7 @@ export const EVENING = {
     },
     {
       no: '05',
-      title: 'A number you can count on',
+      title: 'About eight an hour',
       body: 'I aim for around 8 pieces an hour. The number you book is the number I plan for. Want more covered? Extra live hours or the after-event service add more pieces.',
     },
   ],
@@ -88,7 +88,7 @@ export const WORK = {
   groups: [
     {
       key: 'live',
-      label: 'Painted live, from real nights',
+      label: 'Painted live, at weddings',
       items: [
         { img: 'art-couple-vows',  ttl: 'The vows',          meta: 'Watercolour · A5', landscape: true, venue: '', alt: 'Landscape watercolour of a bride in a white gown and a groom in a navy tuxedo holding hands among scattered confetti' },
         { img: 'art-couple-sage',  ttl: 'The pair, in sage', meta: 'Watercolour · A5', venue: '', alt: 'Watercolour portrait of a couple, the bride in a sage-green off-shoulder gown beside a groom in a soft brown jacket' },
@@ -144,7 +144,7 @@ export const PAINTER = {
   emphasis: 'about me.',
   body: [
     'I am Chris. I grew up in Sydney and I am based in Melbourne now, and I have been painting in watercolour for more than ten years.',
-    'Painting live at a wedding is the part I love most. Special moments with each guest, a small portrait made by hand while the night carries on, and something real to take home at the end.',
+    'Painting live at a wedding is the part I love most. I get a minute or two with each guest, and they get a small portrait made by hand to take home at the end of it.',
     'I travel across Melbourne and Australia-wide for weddings, corporate events, brand activations, and private celebrations.',
   ],
   signature: 'Chris',
@@ -162,7 +162,7 @@ export const KIT = {
     { id: 'pencil', name: 'The pencil', note: 'A light sketch first, five lines at most, then straight to paint.' },
     { id: 'tubes', name: 'The paint', note: 'Professional lightfast pigment, so the colour holds for decades.' },
     { id: 'eraser', name: 'The eraser', note: 'Barely used, honestly. The pencil lines vanish under the wash.' },
-    { id: 'palette', name: 'Travel palette', note: 'The whole colour arc in one tin that fits in a coat pocket.' },
+    { id: 'palette', name: 'Travel palette', note: 'Every colour I use, in one tin that fits in a coat pocket.' },
   ],
 }
 
@@ -347,7 +347,7 @@ export const ENQUIRY = {
   title: ['Tell me about', 'your day.'],
   emphasis: 'your day.',
   intro:
-    'Just a few details to start. I read and answer every enquiry myself, usually within a few days.',
+    'Just a few details to start. It comes straight to my inbox and I answer every one myself.',
   packageOptions: [
     'Live on the day',
     'Corporate event or brand activation',
@@ -378,7 +378,7 @@ export const ENQUIRY = {
     // `title` is composed with the sender's first name in EnquireForm, e.g.
     // "Thank you, Sarah." — so it carries no trailing full stop here.
     title: 'Thank you',
-    body: 'Your message is with me. I will read it properly and write back soon, usually within a few days.',
+    body: 'Your message is with me. I will read it properly and write back soon.',
     sign: 'Chris',
     // The confirmation arrives as a mailed postcard (see Postcard.jsx):
     // stamped with one of the keepsakes, postmarked with today's date.
@@ -403,7 +403,7 @@ export const CORPORATE = {
   eyebrow: 'Live event watercolour · corporate & brands',
   lines: ['The activation', 'guests queue for'],
   emphasis: 'queue',
-  lede: 'I paint your guests live in watercolour, right in the room. It draws a crowd, gives people a reason to stay, and every guest leaves holding something made by hand.',
+  lede: 'I paint your guests live in watercolour, right in the room. People stop to watch, and everyone I paint leaves with a portrait to keep.',
   note: 'Based in Melbourne, regularly in Sydney, travelling Australia-wide.',
   cta: 'Enquire about your event',
 
@@ -421,20 +421,20 @@ export const CORPORATE = {
 
   why: {
     label: 'Why it works',
-    title: ['A drawcard, not', 'a decoration.'],
-    emphasis: 'drawcard,',
+    title: ['What it does', 'in the room.'],
+    emphasis: 'in the room.',
     cards: [
       {
         h: 'It gathers a crowd',
-        p: 'A painter working live pulls people in the way a screen never does. Guests stop, watch a piece happen, and stay to see the next one. It gives your event a centre of gravity.',
+        p: 'Guests wander over to see what is happening, then stay to watch a piece finish. By the third or fourth one there is usually a small group around the table waiting for a turn.',
       },
       {
         h: 'The keepsake stays',
-        p: 'Most event merch is in a drawer by Monday. A hand-painted portrait gets kept, framed and shown around the office, and your event is the story behind it.',
+        p: 'Most event merch is in a drawer by Monday. A hand-painted portrait tends to end up on a desk or a fridge instead, still there months later.',
       },
       {
-        h: 'Effortless to run',
-        p: 'I need a table, a chair, and a corner of the room. I bring everything else, arrive before doors, and pace myself across the booking. Public liability insurance included.',
+        h: 'I bring the rest',
+        p: 'All I need is a table, a chair and a corner of the room. I arrive before doors with everything else and keep a steady pace across the booking. Public liability insurance included.',
       },
     ],
   },
@@ -451,7 +451,7 @@ export const CORPORATE = {
       'Store openings and pop-ups',
       'Private functions',
     ],
-    note: 'Something else in mind? It bends to fit the room, so tell me what you are planning.',
+    note: 'Something else in mind? Tell me what you are planning and I will let you know if it fits.',
   },
 
   how: {
@@ -462,7 +462,7 @@ export const CORPORATE = {
       {
         no: '01',
         h: 'I set up before doors',
-        p: 'I arrive early and set up at my table. No AV, no power, no fuss for your venue or your run sheet.',
+        p: 'I arrive early and set up at my table. No AV and no power needed, so there is nothing extra for your venue or your run sheet.',
       },
       {
         no: '02',
@@ -477,15 +477,15 @@ export const CORPORATE = {
       {
         no: '04',
         h: 'Sleeved and taken home',
-        p: 'Every painting goes into a clear sleeve on the spot, so it survives the trip home and turns up on desks the next week.',
+        p: 'Every painting goes into a clear sleeve on the spot, so it gets home flat and dry rather than folded into a bag.',
       },
     ],
   },
 
   offer: {
     label: 'The engagement',
-    title: ['Simple to book,', 'easy to scale.'],
-    emphasis: 'easy to scale.',
+    title: ['One base package,', 'built out from there.'],
+    emphasis: 'built out from there.',
     base: {
       title: 'Live at your event',
       priceSmall: 'From',

@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Premium interactive landing page for a wedding watercolour painting service.",
+  "description": "Marketing site for Chris Wang Studio, live event watercolour painting.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

@@ -223,7 +223,7 @@ export default function EnquireForm({
       return
     }
     if (!data.email?.trim() || !isValidEmail(data.email)) {
-      setError('That email looks off, please check it, like name@example.com.')
+      setError('That email address looks off. It should look like name@example.com.')
       setInvalidField('email')
       focusField(form, 'email')
       return
@@ -236,7 +236,7 @@ export default function EnquireForm({
     // state — we guide them, with the mailto as a visible link they choose.
     if (!FORMSPREE_READY) {
       setNotice(
-        `The reply card isn't wired up just yet — use the pre-filled email below, or write to ${EMAIL} directly.`,
+        `The reply card is not wired up just yet. Use the pre-filled email below, or write to ${EMAIL} directly.`,
       )
       setMailtoVisible(true)
       return
@@ -275,8 +275,8 @@ export default function EnquireForm({
       // pre-filled email link as the second route out.
       setError(
         navigator.onLine === false
-          ? 'You look offline. Your answers are safe on this page — reconnect and press the seal again, or use the email link below.'
-          : 'Something went wrong sending that. Your answers are still here — press the seal to try again, or use the email link below.',
+          ? 'You look offline. Your answers are safe on this page, so reconnect and press the seal again, or use the email link below.'
+          : 'Something went wrong sending that. Your answers are still here, so press the seal to try again, or use the email link below.',
       )
       setMailtoVisible(true)
     } finally {
