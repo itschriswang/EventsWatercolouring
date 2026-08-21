@@ -7,7 +7,7 @@ export const HERO = {
   linesMobile: ['Memories', 'painted as they', 'happen'],
   emphasis: 'painted',
   emphasisMobile: 'painted',
-  lede: 'Your guests, painted live in watercolour while the night carries on. Everyone I paint takes their portrait home with them the same night.',
+  lede: 'Your guests, painted live in watercolour while the night carries on. Each portrait is finished on the spot and goes home with the guest in it.',
   note: 'Every enquiry answered personally, usually within a few days.',
 }
 
@@ -51,7 +51,7 @@ export const EVENING = {
     {
       no: '05',
       title: 'About eight an hour',
-      body: 'I aim for around 8 pieces an hour. The number you book is the number I plan for. Want more covered? Extra live hours or the after-event service add more pieces.',
+      body: 'I aim for around 8 pieces an hour. The number you book is the number I plan for, and you will know that count when you book.',
     },
   ],
 }
@@ -160,7 +160,7 @@ export const KIT = {
     { id: 'brushes', name: 'The brushes', note: 'A round for faces, a flat for washes. Ten years old and going strong.' },
     { id: 'spritzer', name: 'Water spritzer', note: 'Keeps the pans wet so the colour lifts fast between guests.' },
     { id: 'pencil', name: 'The pencil', note: 'A light sketch first, five lines at most, then straight to paint.' },
-    { id: 'tubes', name: 'The paint', note: 'Professional lightfast pigment, so the colour holds for decades.' },
+    { id: 'tubes', name: 'The paint', note: 'Professional lightfast pigment, the kind that holds its colour for decades.' },
     { id: 'eraser', name: 'The eraser', note: 'Barely used, honestly. The pencil lines vanish under the wash.' },
     { id: 'palette', name: 'Travel palette', note: 'Every colour I use, in one tin that fits in a coat pocket.' },
   ],
@@ -171,7 +171,7 @@ export const PACKAGES = {
   title: ['One base package,', 'built around your day.'],
   emphasis: 'built around your day.',
   intro:
-    'Everything is painted live on 300gsm cotton paper. Whether it is your wedding, a corporate event, or a private celebration, the base package starts the same and builds from there.',
+    'Weddings, corporate events and private celebrations all start from the same base package. What changes is the hours you book and what you add to it.',
   base: {
     title: 'Live on the day',
     note: 'The base package, painted across your event.',
@@ -273,7 +273,7 @@ export const FAQ = {
         },
         {
           q: 'Do you paint events other than weddings?',
-          a: 'Yes. As well as weddings I do brand activations, corporate events, and private parties across Melbourne and Australia-wide. It bends to fit the room, so tell me what you have in mind.',
+          a: 'Yes. As well as weddings I do brand activations, corporate events, and private parties across Melbourne and Australia-wide. It bends to fit the room. If yours is something else again, ask.',
         },
         {
           q: 'How should we send photos for a commission?',
@@ -287,7 +287,7 @@ export const FAQ = {
       items: [
         {
           q: 'How far ahead should we book?',
-          a: 'Right now I am booking up to about two months out, so send me your date and I will tell you what is open. Earlier is always welcome, since I only take a limited number of weddings.',
+          a: 'Right now I am booking up to about two months out. Send me your date and I will tell you what is open. Earlier is always welcome, since I only take a limited number of weddings.',
         },
         {
           q: 'How do we secure our date?',
@@ -403,7 +403,7 @@ export const CORPORATE = {
   eyebrow: 'Live event watercolour · corporate & brands',
   lines: ['Your guests, painted', 'while they mingle'],
   emphasis: 'painted',
-  lede: 'I paint your guests live in watercolour, right in the room. People stop to watch, and everyone I paint leaves with a portrait to keep.',
+  lede: 'I paint your guests live in watercolour, right in the room. People stop to watch, and the finished pieces are handed over before anyone leaves.',
   note: 'Based in Melbourne, regularly in Sydney, travelling Australia-wide.',
   cta: 'Enquire about your event',
 
@@ -421,8 +421,8 @@ export const CORPORATE = {
 
   why: {
     label: 'Why it works',
-    title: ['What it does', 'in the room.'],
-    emphasis: 'in the room.',
+    title: ['What it adds', 'to your event.'],
+    emphasis: 'to your event.',
     cards: [
       {
         h: 'It gathers a crowd',
@@ -451,7 +451,7 @@ export const CORPORATE = {
       'Store openings and pop-ups',
       'Private functions',
     ],
-    note: 'Something else in mind? Tell me what you are planning and I will let you know if it fits.',
+    note: 'Something else in mind? It probably fits: the setup is the same wherever it goes.',
   },
 
   how: {
@@ -516,7 +516,7 @@ export const CORPORATE = {
         },
         {
           h: 'Travel further afield',
-          p: 'Regional and interstate events are welcome. Tell me the venue and I will quote travel with the booking.',
+          p: 'Regional and interstate events are welcome. Travel is quoted with the booking.',
         },
       ],
     },
