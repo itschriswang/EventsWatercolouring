@@ -81,7 +81,7 @@ export default function Packages() {
         {...reveal(1)}
         className="mt-8 max-w-2xl text-[clamp(1rem,1.1vw,1.15rem)] leading-relaxed text-ink-soft"
       >
-        {withUnderline(PACKAGES.intro, 'painted live', { className: 'text-rust' })}
+        {withUnderline(PACKAGES.intro, 'the same base package', { className: 'text-rust' })}
       </motion.p>
 
       {/* ── Mobile: base package pull-quote + detail card ─────────────────── */}

@@ -38,7 +38,7 @@ export default function AboutMe() {
               {PAINTER.body.map((p, i) => (
                 <p key={i}>
                   {i === 1
-                    ? withUnderline(p, 'something real to take home', { className: 'text-rust' })
+                    ? withUnderline(p, 'made by hand', { className: 'text-rust' })
                     : p}
                 </p>
               ))}
