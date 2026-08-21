@@ -360,13 +360,23 @@ export const ENQUIRY = {
   steps: {
     back: 'Back',
     next: 'Continue',
+    // Each sheet that asks for an answer carries the line it says when you
+    // try to move on without one. Both are gentle and both point at the way
+    // out: every question here has a "Not sure yet", so nobody is ever stuck,
+    // they just have to say so on purpose rather than by walking past it.
     what: {
       q: 'What are you after?',
       hint: 'Pick whatever is closest. You can say more in a moment.',
+      error: 'Pick whichever is closest before you go on. "Not sure yet" is a real answer.',
     },
     when: {
       q: 'When, and where?',
-      hint: 'A rough idea is plenty. Skip what you do not know yet.',
+      // Was "Skip what you do not know yet", which now undersells what the
+      // sheet asks: the date wants an answer, even if that answer is "not
+      // sure". The venue is still genuinely optional, so the reassurance
+      // moves onto the thing it is still true of.
+      hint: 'A rough idea is plenty. Leave the venue blank if you do not know it yet.',
+      error: 'Add a date, or tap "Not sure yet" if the day is not locked in.',
     },
     who: {
       q: 'Where do I send my reply?',
