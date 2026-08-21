@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import Label, { Drop } from './Label.jsx'
+import Label from './Label.jsx'
 import CopyEmail from './CopyEmail.jsx'
 import Postcard from './Postcard.jsx'
 import { CalendarDateIcon } from './icons/FreehandIcons.jsx'
@@ -294,7 +294,14 @@ export default function EnquireForm({
       id="enquiry"
       className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(3.5rem,7vw,6rem)] !scroll-mt-20 md:!scroll-mt-28"
     >
-      <div className="grid grid-cols-12 gap-x-8 gap-y-12">
+      {/* `lg:gap-x-8`, not `gap-x-8`: below lg both columns are col-span-12
+          and the horizontal gap buys nothing, but a 12-track grid still
+          reserves all 11 of them — 352px of gap inside a 288px content box on
+          a 320px phone. The tracks clamp to zero and the whole column
+          overflows by 32px, taking the address and its copy button off the
+          right edge (body is `overflow-x: clip`, so it silently truncates
+          rather than scrolling). Gap only once there are columns to separate. */}
+      <div className="grid grid-cols-12 gap-y-12 lg:gap-x-8">
         <div className="relative col-span-12 lg:col-span-4">
           <Label gradient={['#F2A6C1', '#DB6E97']}>{ENQUIRY.label}</Label>
           <h2 className="display-lg mt-5 text-ink">
@@ -309,11 +316,15 @@ export default function EnquireForm({
           {/* The address, with a copy action beside it — a visitor who would
               rather write from their own mail account shouldn't have to hand
               select it off the page (see CopyEmail). */}
-          <div className="mt-6">
+          <div className="mt-7">
+            {/* "Or email" named the medium, which the address underneath was
+                already doing. This names the choice instead — the card, or
+                Chris's inbox from wherever you normally write — which is the
+                only thing a visitor is actually deciding here. */}
             <span className="font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
-              Or email
+              Rather write it yourself?
             </span>
-            <CopyEmail className="mt-1.5 text-sm" />
+            <CopyEmail className="mt-2.5" />
           </div>
           {/* Bouquet — flipped, beneath the heading, widescreen only */}
           <img
@@ -380,17 +391,46 @@ export default function EnquireForm({
 
               {/* Content sits above paper + wash, textured with the site grain. */}
               <div className="paper-grain relative z-10 px-[clamp(1.75rem,4vw,3rem)] py-[clamp(1.75rem,4vw,2.75rem)]">
-                {/* Card header — reads the sheet as a reply card, and counts
-                    the sheets so the visitor always knows how little is left.
-                    Persists across both states so the confirmation stays on
-                    the same stationery. */}
-                <div className="mb-7 flex items-baseline justify-between border-b border-line/80 pb-4">
-                  <span className="eyebrow inline-flex items-center gap-2">
-                    <Drop className="h-5 w-auto" gradient={['#F2A6C1', '#DB6E97']} />
-                    Reply card
-                  </span>
-                  <span className="font-mono text-xs lowercase tracking-wide text-ink-soft">
-                    {sent ? 'sealed' : `${step + 1} of ${STEP_COUNT}`}
+                {/* Card header — a progress tracker, and nothing else.
+                    It used to read "Reply card" beside an orchid drop, in the
+                    same costume as the "ENQUIRE" section marker a few hundred
+                    pixels to its left: two labels of equal weight in one
+                    viewport, one of them naming a form the visitor is already
+                    looking at. It told nobody anything they could not see, and
+                    it blunted the section marker beside it.
+
+                    What the visitor actually wants at this moment is how much
+                    of this is left, which was the smallest, faintest thing on
+                    the card. So the count moves to the front and gets a track
+                    to fill — the same delivery-tracker read as the evening
+                    timeline's spine, which is where this site already says
+                    "here is where you are in something". Both states keep it:
+                    on a confirmed send every segment is full and the count
+                    becomes "Sealed", so the sheet closes its own loop. */}
+                <div className="mb-7 flex items-center justify-between gap-4 border-b border-line/80 pb-4">
+                  <div aria-hidden="true" className="flex items-center gap-1.5">
+                    {Array.from({ length: STEP_COUNT }, (_, i) => (
+                      <span
+                        key={i}
+                        className="h-[3px] w-9 overflow-hidden rounded-full bg-line"
+                      >
+                        {/* scaleX from a left origin, so a segment fills the
+                            way the wash runs rather than fading on the spot.
+                            Reduced motion snaps it — the state still reads. */}
+                        <motion.span
+                          className="block h-full w-full origin-left rounded-full"
+                          style={{
+                            background: 'linear-gradient(to right, #F2A6C1, #DB6E97)',
+                          }}
+                          initial={false}
+                          animate={{ scaleX: sent || i <= step ? 1 : 0 }}
+                          transition={reduce ? { duration: 0 } : STEP_TWEEN}
+                        />
+                      </span>
+                    ))}
+                  </div>
+                  <span className="font-mono text-xs tracking-wide text-ink-soft">
+                    {sent ? 'Sealed' : `Step ${step + 1} of ${STEP_COUNT}`}
                   </span>
                 </div>
 

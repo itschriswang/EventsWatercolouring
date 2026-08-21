@@ -372,6 +372,84 @@
     color: #4A4E63;
   }
 
+  /* ── Label tiers ──────────────────────────────────────────────────────────
+     The site had ONE label costume — orchid drop + 0.66rem mono uppercase —
+     and wore it at three different depths at once: the section eyebrow
+     ("ENQUIRE"), the tab on a card inside that section ("ADD-ONS"), and a
+     header inside that card ("REPLY CARD"). Three rungs of the ladder set in
+     the same type, so nothing on the page announced "a new section starts
+     here" — which is exactly the report that the current section is unclear.
+     The nav's own links are 0.66rem mono uppercase too, making four.
+
+     So the costume now comes in two sizes, and the difference has to be
+     legible at a glance rather than on inspection: tier 1 is a third larger,
+     tracked wider, and set in full `ink` against tier 2's soft slate, with an
+     accent hairline running off the end of the words. Tier 2 (`.eyebrow`,
+     above) is unchanged — every card tab and in-card label keeps exactly the
+     voice it had, and simply stops competing with the section marker.
+
+     Rule of thumb when adding one: does it name a `<section>`? Tier 1. Does
+     it name something *inside* a section? Tier 2. */
+  .section-eyebrow {
+    font-family: theme('fontFamily.mono');
+    font-size: 0.88rem;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    /* Full ink, not the eyebrow's slate: at this size the contrast headroom
+       is no longer the constraint, and the extra weight is what separates a
+       chapter marker from the card labels beneath it. */
+    color: rgb(var(--rgb-ink));
+  }
+
+  .section-eyebrow.on-dark {
+    color: rgb(var(--rgb-paper) / 0.92);
+  }
+
+  /* The hairline that runs off the end of a section marker — a ruled line in
+     the accent, sized in em so it tracks the label's own type. Kept OUT of
+     `.section-eyebrow` itself and opted into, because the timeline's marker is
+     seated in a folder tab whose width is measured from the label's own box
+     (see FolderCell's auto-hug): a rule there would be measured as part of the
+     word and stretch the tab past it. Rule on flush labels, type alone in a
+     tab. It is a flex child, so it centres in the line box — which for
+     uppercase lands it at about mid-cap. */
+  .section-eyebrow-rule::after {
+    content: '';
+    display: block;
+    width: 2.5em;
+    height: 1px;
+    margin-left: 0.15em;
+    background: linear-gradient(
+      to right,
+      rgb(var(--rgb-terracotta) / 0.75),
+      rgb(var(--rgb-terracotta) / 0)
+    );
+  }
+
+  /* ochre-light (#EFEFA0) spelled out: the deepened accent tokens are tuned
+     for contrast against ivory paper and go muddy on the wine grounds. */
+  .section-eyebrow-rule.on-dark::after {
+    background: linear-gradient(to right, rgba(239, 239, 160, 0.8), rgba(239, 239, 160, 0));
+  }
+
+  /* ── Subhead ──────────────────────────────────────────────────────────────
+     The rung between a section's display title and its body copy: the room
+     divisions on the gallery wall, and any other grouping heading that wants
+     to read as a heading rather than a caption.
+
+     It exists because the h3 level had drifted apart across the page — the
+     gallery's room labels were set at 0.62rem, *smaller* than the eyebrow two
+     lines above them and identical to the body note beside them, so a heading
+     was rendering as the quietest text in its own block. One class, so the
+     visitor learns the rhythm once: display title → subhead → copy. */
+  .subhead {
+    font-family: theme('fontFamily.mono');
+    font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    color: rgb(var(--rgb-ink));
+  }
+
   /* ── Folder cell ──────────────────────────────────────────────────────────
      Clips a card into a manila-folder silhouette: a flush-left index tab on
      top, its right shoulder easing into the body with a cute concave fillet,

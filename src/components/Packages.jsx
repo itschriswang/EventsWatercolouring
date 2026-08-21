@@ -133,7 +133,7 @@ export default function Packages() {
             actually open one up. */}
         <motion.div {...reveal(2)} className="mt-8">
           <div className="flex items-baseline justify-between border-b border-ink pb-3">
-            <h3 className="font-sentient text-xl tracking-[-0.02em] text-ink">
+            <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
               {PACKAGES.addonsHead.title}
             </h3>
             <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
@@ -249,7 +249,12 @@ export default function Packages() {
         </FolderCell>
 
         {/* Add-ons — right column. The folder tab carries the "Add-ons" name
-            (as the card's heading), so the row below only needs the pricing note. */}
+            (as the card's heading), so the row below only needs the pricing
+            note. It stays the heading even though it renders at tab size:
+            this folder holds a LIST rather than one named offering, so the
+            group's own name is the only thing that can sit on that rung — and
+            printing "Add-ons" a second time inside the card, larger, to even
+            it up with the package folder beside it just says the word twice. */}
         <FolderCell
           peek
           label={PACKAGES.addonsHead.title}

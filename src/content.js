@@ -549,6 +549,25 @@ export const FOOTER = {
 // Kept in step with MobileNav's DOCK_ITEMS so desktop and mobile agree on
 // which sections are worth a direct link (Enquire is a CTA, not a nav item,
 // on both).
+// The homepage's top-level sections in document order, each with the name it
+// actually prints on the page and the accent its own eyebrow carries.
+//
+// SiteHeader observes these to name the section you are currently reading (see
+// the "you are here" marker there). It is deliberately NOT derived from NAV:
+// NAV is an edited shortlist of destinations — it has no entry for the evening
+// timeline or the enquiry form, so a visitor sitting in either had no lit nav
+// item at all — and its labels are chosen for a nav bar ("Gallery", "About")
+// rather than matching the words printed at the top of the section. Reusing
+// the sections' own labels means the header always says back exactly what the
+// page says, which is what makes the two read as the same place.
+export const SECTIONS = [
+  { id: 'night', label: EVENING.label, gradient: ['#EFEFA0', '#B0AC42'] },
+  { id: 'work', label: WORK.label, gradient: ['#E3B7C8', '#96385A'] },
+  { id: 'painter', label: PAINTER.label, gradient: ['#FFCDA1', '#E89B63'] },
+  { id: 'offerings', label: PACKAGES.label, gradient: ['#D8DB7A', '#9BA03E'] },
+  { id: 'enquiry', label: ENQUIRY.label, gradient: ['#F2A6C1', '#DB6E97'] },
+]
+
 export const NAV = [
   { href: '/#work', label: 'Gallery' },
   { href: '/#painter', label: 'About' },

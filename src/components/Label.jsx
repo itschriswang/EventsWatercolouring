@@ -79,12 +79,28 @@ export function Drop({ className = '', fill = '#8E9A3C', gradient }) {
 }
 
 /** Section eyebrow: an orchid glyph + a Mynerve, wide-tracked uppercase
- *  label. The pigment passed via `fill` (or a `gradient` pair) tints the
- *  orchid so each section keeps its accent colour. */
-export default function Label({ children, className = '', fill, gradient }) {
+ *  label, closed by a hairline rule in the accent. The pigment passed via
+ *  `fill` (or a `gradient` pair) tints the orchid so each section keeps its
+ *  accent colour.
+ *
+ *  This is TIER 1 of the two label tiers (see `.section-eyebrow` in
+ *  index.css): the marker that says a new section of the page starts here.
+ *  Everything nested inside a section — folder tabs, card headers — stays on
+ *  the smaller `.eyebrow`. Don't reach for this component for those; the
+ *  whole point is that the two read apart at a glance.
+ *
+ *  `tone="dark"` swaps ink for paper on the wine grounds (the dusk timeline's
+ *  folder tab), where the ink text and the deepened accent both vanish. */
+export default function Label({ children, className = '', fill, gradient, tone = 'light' }) {
   return (
-    <span className={'eyebrow inline-flex items-center gap-2 ' + className}>
-      <Drop className="h-6 w-auto" fill={fill} gradient={gradient} />
+    <span
+      className={
+        'section-eyebrow section-eyebrow-rule inline-flex items-center gap-2.5 ' +
+        (tone === 'dark' ? 'on-dark ' : '') +
+        className
+      }
+    >
+      <Drop className="h-7 w-auto shrink-0" fill={fill} gradient={gradient} />
       {children}
     </span>
   )

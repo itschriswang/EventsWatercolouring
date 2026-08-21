@@ -81,7 +81,7 @@ export default function CorporatePage() {
         {/* ── Hero ─────────────────────────────────────────────────────── */}
         <section className="relative w-full overflow-x-clip px-[5vw] pt-[clamp(6rem,14vw,9rem)] pb-[clamp(2.5rem,5vw,4.5rem)]">
           <BloomField blooms={CORPORATE_HERO} className="pointer-events-none absolute inset-0 z-0" />
-          <div className="relative z-10 grid grid-cols-12 items-end gap-x-8 gap-y-12">
+          <div className="relative z-10 grid grid-cols-12 items-end gap-y-12 lg:gap-x-8">
             <div className="col-span-12 lg:col-span-7">
               <span className="eyebrow">{CORPORATE.eyebrow}</span>
               <div className="relative mt-5">
@@ -204,7 +204,7 @@ export default function CorporatePage() {
 
           {/* ── Occasions ──────────────────────────────────────────────── */}
           <section className="relative w-full px-[5vw] py-[clamp(2.5rem,6vw,5rem)]">
-            <div className="grid grid-cols-12 gap-x-8 gap-y-10">
+            <div className="grid grid-cols-12 gap-y-10 lg:gap-x-8">
               <div className="col-span-12 lg:col-span-5">
                 <Label gradient={['#F2E982', '#BCB438']}>{CORPORATE.occasions.label}</Label>
                 <SplitText
