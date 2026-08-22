@@ -570,12 +570,18 @@ export const FOOTER = {
 // rather than matching the words printed at the top of the section. Reusing
 // the sections' own labels means the header always says back exactly what the
 // page says, which is what makes the two read as the same place.
+// `pigment` names the paint each chapter is mixed from, out of the box in
+// lib/watercolour.js — not a second copy of the hexes beside it. ChapterBar's
+// palette paints its pans by running the Kubelka-Munk model on these, so a
+// chapter's swatch is that paint at a thickness rather than a colour someone
+// picked to look like it. Each one is the nearest paint to the accent its
+// section already wears, so the palette and the page agree.
 export const SECTIONS = [
-  { id: 'night', label: EVENING.label, gradient: ['#EFEFA0', '#B0AC42'] },
-  { id: 'work', label: WORK.label, gradient: ['#E3B7C8', '#96385A'] },
-  { id: 'painter', label: PAINTER.label, gradient: ['#FFCDA1', '#E89B63'] },
-  { id: 'offerings', label: PACKAGES.label, gradient: ['#D8DB7A', '#9BA03E'] },
-  { id: 'enquiry', label: ENQUIRY.label, gradient: ['#F2A6C1', '#DB6E97'] },
+  { id: 'night', label: EVENING.label, gradient: ['#EFEFA0', '#B0AC42'], pigment: 'butter' },
+  { id: 'work', label: WORK.label, gradient: ['#E3B7C8', '#96385A'], pigment: 'rose' },
+  { id: 'painter', label: PAINTER.label, gradient: ['#FFCDA1', '#E89B63'], pigment: 'apricot' },
+  { id: 'offerings', label: PACKAGES.label, gradient: ['#D8DB7A', '#9BA03E'], pigment: 'lemonlime' },
+  { id: 'enquiry', label: ENQUIRY.label, gradient: ['#F2A6C1', '#DB6E97'], pigment: 'blossom' },
 ]
 
 export const NAV = [

@@ -1,7 +1,9 @@
 import { motion, AnimatePresence, useMotionValue, useSpring, useReducedMotion } from 'framer-motion'
 import { useEffect } from 'react'
 import { Drop } from './Label.jsx'
+import ChapterPalette from './ChapterPalette.jsx'
 import useCurrentSection from '../hooks/useCurrentSection.js'
+import { SECTIONS } from '../content.js'
 
 const EASE = [0.25, 1, 0.5, 1]
 
@@ -36,13 +38,13 @@ const EASE = [0.25, 1, 0.5, 1]
  * exactly once, in a title that is gone within a swipe or two. Between those
  * announcements there was nothing.
  *
- * THE PROGRESS METER IS THE BAR'S OWN BOTTOM RULE. A bar like this needs a
- * hairline to separate chrome from content, and a long page wants a "how much
- * more of this" signal; making one element do both jobs is what keeps this to
- * 34px of a phone's viewport instead of a bar plus a widget. It fills left to
- * right across the chapter, painted in that chapter's own accent — the same
- * pigment its orchid and its section marker wear further down the page — so
- * the chapters also feel different rather than merely being named differently.
+ * WHAT SITS ON THE RIGHT IS A PAINT PALETTE, not a progress bar. An earlier
+ * version filled this bar's own bottom rule as a meter — economical, but it
+ * reported a single number and could have belonged to any site. ChapterPalette
+ * reports the page's whole structure, which chapter you are in, how far
+ * through it you are and how much is left, with each pan as wide as its
+ * chapter is long and painted in real pigment run through the Kubelka-Munk
+ * model. See that file. The bottom rule went back to being a rule.
  *
  * It is `aria-hidden`: a visual echo of headings that are already in the
  * document, next to a dock that already carries the navigation semantics.
@@ -70,16 +72,27 @@ export default function ChapterBar() {
     if (!el) return
 
     let raf = 0
+    // The first reading after a chapter change is a teleport, not a movement:
+    // you leave one chapter near 1 and arrive in the next near 0, and letting
+    // the spring travel that would drain the new pan from full every time you
+    // cross a boundary. Jump the spring onto the first value, then let it ease
+    // for the rest of the chapter.
+    let arriving = true
     const measure = () => {
       raf = 0
       const r = el.getBoundingClientRect()
       // How far the top of the viewport has travelled into this section,
       // over the distance it can travel before the section's end is on
       // screen. Sections shorter than the viewport have nowhere to travel,
-      // so the span floors at 1 and the meter simply sits full.
+      // so the span floors at 1 and the pan simply sits full.
       const travelled = -r.top
       const span = Math.max(1, r.height - window.innerHeight)
-      progress.set(Math.min(1, Math.max(0, travelled / span)))
+      const v = Math.min(1, Math.max(0, travelled / span))
+      progress.set(v)
+      if (arriving) {
+        springed.jump?.(v)
+        arriving = false
+      }
     }
 
     // Coalesce to one measurement per frame — scroll fires far more often
@@ -96,7 +109,7 @@ export default function ChapterBar() {
       window.removeEventListener('resize', onScroll)
       if (raf) cancelAnimationFrame(raf)
     }
-  }, [current, progress])
+  }, [current, progress, springed])
 
   return (
     <AnimatePresence>
@@ -121,7 +134,7 @@ export default function ChapterBar() {
             WebkitBackdropFilter: 'blur(14px) saturate(1.1)',
           }}
         >
-          <div className="relative flex h-[34px] items-center overflow-hidden px-[5vw]">
+          <div className="relative flex h-[34px] items-center gap-3 overflow-hidden px-[5vw]">
             {/* Keyed on the section, so crossing a chapter boundary swaps the
                 name. `mode="wait"` here, unlike the copy button's swap: these
                 are different words of different lengths sharing one slot, and
@@ -142,19 +155,14 @@ export default function ChapterBar() {
                 </span>
               </motion.span>
             </AnimatePresence>
+
+            <ChapterPalette
+              index={SECTIONS.findIndex((s) => s.id === current.id)}
+              scaleX={scaleX}
+            />
           </div>
 
-          {/* The rule that separates the bar from the page, and the chapter's
-              progress meter, are the same 2px of pigment: a spent track in
-              `line`, with the chapter's own accent running across it. */}
-          <span className="absolute inset-x-0 bottom-0 h-[2px] bg-line/70" />
-          <motion.span
-            className="absolute inset-x-0 bottom-0 h-[2px] origin-left"
-            style={{
-              scaleX,
-              background: `linear-gradient(to right, ${current.gradient[0]}, ${current.gradient[1]})`,
-            }}
-          />
+          <span className="absolute inset-x-0 bottom-0 h-px bg-line/70" />
         </motion.div>
       )}
     </AnimatePresence>
