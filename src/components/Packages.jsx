@@ -87,9 +87,17 @@ export default function Packages() {
       {/* ── Mobile: base package pull-quote + detail card ─────────────────── */}
       <div className="relative mt-[clamp(3.5rem,12vw,5rem)] lg:hidden">
         <motion.div {...reveal()} className="relative z-10 max-w-[20rem] pl-1">
-          <p className="font-sentient text-2xl leading-tight tracking-[-0.02em] text-ink">
+          {/* An h3, matching the desktop card's heading for the same package.
+              It was a <p> set to look like one, which meant the site's one
+              product had no heading at all on a phone: swiping by headings
+              went straight from "One base package, built around your day."
+              to "Add-ons" without ever naming the thing being sold. It only
+              LOOKS unheaded here because the mobile layout floats the title
+              and price above the sheet as a pull-quote rather than printing
+              them inside it. */}
+          <h3 className="card-title leading-tight">
             {PACKAGES.base.title}
-          </p>
+          </h3>
           <p className="mt-3 flex items-baseline gap-2">
             <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
               {PACKAGES.base.priceSmall}
@@ -133,7 +141,7 @@ export default function Packages() {
             actually open one up. */}
         <motion.div {...reveal(2)} className="mt-8">
           <div className="flex items-baseline justify-between border-b border-ink pb-3">
-            <h3 className="font-sentient text-xl tracking-[-0.02em] text-ink">
+            <h3 className="card-title">
               {PACKAGES.addonsHead.title}
             </h3>
             <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
@@ -145,25 +153,34 @@ export default function Packages() {
               const isOpen = openAddons.has(i)
               return (
                 <motion.li key={a.h} {...reveal(i % 3)} className="border-b border-line">
-                  <button
-                    type="button"
-                    onClick={() => toggleAddon(i)}
-                    aria-expanded={isOpen}
-                    aria-controls={`mobile-addon-${i}`}
-                    className="flex w-full items-center justify-between gap-4 py-4 text-left"
-                  >
-                    <span className="font-sentient text-base tracking-[-0.01em] text-ink">
-                      {a.h}
-                    </span>
-                    <motion.span
-                      animate={{ rotate: isOpen ? 45 : 0 }}
-                      transition={ACCORDION}
-                      className="shrink-0 rounded-full bg-paper-deep/70 p-2"
-                      aria-hidden="true"
+                  {/* h4 wrapping the button, the standard accordion shape: the
+                      eight add-on names are h4s on the desktop grid, and were
+                      bare spans here, so the whole add-on list dropped out of
+                      the outline on a phone. Wrapping (rather than putting the
+                      heading inside the button) keeps one accessible name on
+                      the control and still lets heading navigation reach every
+                      row while it is collapsed. */}
+                  <h4 className="font-sentient text-base tracking-[-0.01em] text-ink">
+                    <button
+                      type="button"
+                      onClick={() => toggleAddon(i)}
+                      aria-expanded={isOpen}
+                      aria-controls={`mobile-addon-${i}`}
+                      className="flex w-full items-center justify-between gap-4 py-4 text-left"
                     >
-                      <Drop className="h-3.5 w-auto" gradient={['#D8DB7A', '#9BA03E']} />
-                    </motion.span>
-                  </button>
+                      <span>
+                        {a.h}
+                      </span>
+                      <motion.span
+                        animate={{ rotate: isOpen ? 45 : 0 }}
+                        transition={ACCORDION}
+                        className="shrink-0 rounded-full bg-paper-deep/70 p-2"
+                        aria-hidden="true"
+                      >
+                        <Drop className="h-3.5 w-auto" gradient={['#D8DB7A', '#9BA03E']} />
+                      </motion.span>
+                    </button>
+                  </h4>
                   <AnimatePresence initial={false}>
                     {isOpen && (
                       <motion.div
@@ -218,7 +235,7 @@ export default function Packages() {
           contentClassName="flex h-full flex-col px-7 pb-7"
         >
           <div className="flex items-baseline justify-between gap-4">
-            <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
+            <h3 className="card-title">
               {PACKAGES.base.title}
             </h3>
             <p className="shrink-0 text-right">
@@ -249,7 +266,12 @@ export default function Packages() {
         </FolderCell>
 
         {/* Add-ons — right column. The folder tab carries the "Add-ons" name
-            (as the card's heading), so the row below only needs the pricing note. */}
+            (as the card's heading), so the row below only needs the pricing
+            note. It stays the heading even though it renders at tab size:
+            this folder holds a LIST rather than one named offering, so the
+            group's own name is the only thing that can sit on that rung — and
+            printing "Add-ons" a second time inside the card, larger, to even
+            it up with the package folder beside it just says the word twice. */}
         <FolderCell
           peek
           label={PACKAGES.addonsHead.title}
@@ -278,78 +300,78 @@ export default function Packages() {
                   }
                 >
                   <h4 className="font-sentient text-base tracking-[-0.01em] text-ink [overflow-wrap:anywhere]">{a.h}</h4>
-                  <p className="mt-2 flex-1 text-xs leading-relaxed text-ink-soft">{a.p}</p>
-                  {a.tag && (
-                    <p className="mt-4 text-xs text-rust">
-                      {a.small && (
-                        <span className="mr-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
-                          {a.small}
-                        </span>
-                      )}
-                      <span className="font-mono">{a.tag}</span>
-                      {a.extra && (
-                        <span className="ml-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
-                          {a.extra}
-                        </span>
-                      )}
-                    </p>
-                  )}
-                </motion.div>
-              ))}
-            </div>
-        </FolderCell>
-      </div>
+                    <p className="mt-2 flex-1 text-xs leading-relaxed text-ink-soft">{a.p}</p>
+                    {a.tag && (
+                      <p className="mt-4 text-xs text-rust">
+                        {a.small && (
+                          <span className="mr-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
+                            {a.small}
+                          </span>
+                        )}
+                        <span className="font-mono">{a.tag}</span>
+                        {a.extra && (
+                          <span className="ml-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
+                            {a.extra}
+                          </span>
+                        )}
+                      </p>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+          </FolderCell>
+        </div>
 
-      <NightPlanner />
+        <NightPlanner />
 
-      {/* FAQ pointer — a banner-scale card rather than a small pill, so it
-          reads as the obvious next stop after the packages instead of a
-          footnote. Same paper-card treatment as the package cards above so
-          it sits in their family, with a readable sentient headline in
-          place of the eyebrow-sized mono text. */}
-      <FolderCell
-        as="a"
-        href="/faq/"
-        peek
-        label="FAQ"
-        gradient={['#D8DB7A', '#9BA03E']}
-        bg={CARD_BG}
-        reveal={reveal()}
-        hover={!reduce}
-        wrapperClassName="group mt-12 w-full"
-        bloom={<CornerBloom from={['yellowgreen', 0.128]} to={['apricot', 0.103]} />}
-        contentClassName="flex items-center justify-between gap-4 px-6 pb-6 sm:px-7 sm:pb-7"
-      >
-        <span className="relative z-10 flex items-center gap-4 sm:gap-5">
-          <span
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-paper shadow-[0_2px_10px_rgba(126,40,72,0.30)]"
-            aria-hidden="true"
-          >
-            <Drop className="h-5 w-auto" gradient={['#D8DB7A', '#9BA03E']} />
-          </span>
-          <span>
-            <span className="block font-sentient text-xl tracking-[-0.02em] text-ink sm:text-2xl">
-              {withUnderline('Got a question? Read the FAQ', 'FAQ', {
-                className: 'text-hero-flow',
-              })}
-            </span>
-            <span className="mt-1 block text-sm text-ink-soft">
-              Booking, travel, timing and materials, all answered plainly.
-            </span>
-          </span>
-        </span>
-        <span
-          aria-hidden="true"
-          className="relative z-10 shrink-0 text-2xl text-terracotta transition-transform duration-300 group-hover:translate-x-1.5 group-focus-visible:translate-x-1.5"
+        {/* FAQ pointer — a banner-scale card rather than a small pill, so it
+            reads as the obvious next stop after the packages instead of a
+            footnote. Same paper-card treatment as the package cards above so
+            it sits in their family, with a readable sentient headline in
+            place of the eyebrow-sized mono text. */}
+        <FolderCell
+          as="a"
+          href="/faq/"
+          peek
+          label="FAQ"
+          gradient={['#D8DB7A', '#9BA03E']}
+          bg={CARD_BG}
+          reveal={reveal()}
+          hover={!reduce}
+          wrapperClassName="group mt-12 w-full"
+          bloom={<CornerBloom from={['yellowgreen', 0.128]} to={['apricot', 0.103]} />}
+          contentClassName="flex items-center justify-between gap-4 px-6 pb-6 sm:px-7 sm:pb-7"
         >
-          →
-        </span>
-      </FolderCell>
+          <span className="relative z-10 flex items-center gap-4 sm:gap-5">
+            <span
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-paper shadow-[0_2px_10px_rgba(126,40,72,0.30)]"
+              aria-hidden="true"
+            >
+              <Drop className="h-5 w-auto" gradient={['#D8DB7A', '#9BA03E']} />
+            </span>
+            <span>
+              <span className="block font-sentient text-xl tracking-[-0.02em] text-ink sm:text-2xl">
+                {withUnderline('Got a question? Read the FAQ', 'FAQ', {
+                  className: 'text-hero-flow',
+                })}
+              </span>
+              <span className="mt-1 block text-sm text-ink-soft">
+                Booking, travel, timing and materials, all answered plainly.
+              </span>
+            </span>
+          </span>
+          <span
+            aria-hidden="true"
+            className="relative z-10 shrink-0 text-2xl text-terracotta transition-transform duration-300 group-hover:translate-x-1.5 group-focus-visible:translate-x-1.5"
+          >
+            →
+          </span>
+        </FolderCell>
 
-      <motion.p {...reveal()} className="mt-10 max-w-2xl text-sm leading-relaxed text-ink-soft">
-        <b className="text-ink">{PACKAGES.licenceLabel}</b>{' '}
-        {PACKAGES.licenceBody}
-      </motion.p>
-    </section>
-  )
-}
+        <motion.p {...reveal()} className="mt-10 max-w-2xl text-sm leading-relaxed text-ink-soft">
+          <b className="text-ink">{PACKAGES.licenceLabel}</b>{' '}
+          {PACKAGES.licenceBody}
+        </motion.p>
+      </section>
+    )
+  }

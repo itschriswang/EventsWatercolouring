@@ -21,7 +21,7 @@ export default function AboutMe() {
         {/* The bio block is capped and left-aligned (no mx-auto) so it sits
             toward the left with breathing room on the right — which is also
             where the kit fans out into, so the tools have room to spread. */}
-        <div className="grid grid-cols-12 items-center gap-x-8 gap-y-6 lg:max-w-[64rem]">
+        <div className="grid grid-cols-12 items-center gap-y-6 sm:gap-x-8 lg:max-w-[64rem]">
           {/* Title + bio + signature — first in the reading order everywhere */}
           <div className="relative col-span-12 sm:col-span-6 sm:col-start-1 lg:col-span-5 lg:col-start-1 order-1">
             <Sparkles variant="burst" className="absolute -top-4 right-0 h-14 w-14 lg:hidden" />

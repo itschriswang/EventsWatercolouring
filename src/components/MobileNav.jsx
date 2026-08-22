@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { useEffect, useRef } from 'react'
 import { ENQUIRE_HREF } from '../lib/site.js'
+import useCurrentSection from '../hooks/useCurrentSection.js'
 import {
   ColorBrush2Icon,
   DesignProcessDrawingBoardIcon,
@@ -26,24 +27,50 @@ const EASE = [0.25, 1, 0.5, 1]
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function DockButton({ item }) {
+function DockButton({ item, isActive }) {
   const { href, label, Icon, highlight } = item
   const reduce = useReducedMotion()
   return (
     <motion.a
       href={href}
+      // The dock is the ONLY chrome a phone gets — SiteHeader, and with it the
+      // running head that names the current section, is `hidden md:block`. So
+      // until this had an active state a phone had no "you are here" anywhere
+      // on the page, which is the half of the original report that a
+      // desktop-shaped fix quietly left unanswered.
+      aria-current={isActive ? 'true' : undefined}
       className={[
         'relative flex flex-col items-center justify-center gap-[3px] rounded-full select-none',
-        'px-3 py-2.5',
+        'px-3 py-2.5 transition-colors duration-300',
         'outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-transparent',
         highlight
           ? 'btn-hero-flow text-ink px-3.5'
+          : isActive
+          ? 'text-ink'
           : 'text-ink-soft',
       ].join(' ')}
       whileTap={reduce ? undefined : { scale: 0.86 }}
       transition={{ duration: 0.16, ease: EASE }}
       aria-label={label}
     >
+      {/* The current tab takes a soft ink ground, so the dock says where you
+          are the same way the desktop nav's underline does. Skipped on the
+          highlighted Enquire tab, which already wears the flow wash — stacking
+          a second ground under it would only muddy it, and it reads as the
+          loudest thing in the dock either way.
+
+          Sits BEHIND the label (the content below is `z-10`) and is drawn as
+          its own layer rather than a background on the anchor, so the tap
+          scale-down squashes ground and label together as one object. */}
+      {isActive && !highlight && (
+        <motion.span
+          aria-hidden="true"
+          layoutId="dock-active"
+          initial={false}
+          transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 34 }}
+          className="absolute inset-0 rounded-full bg-ink/[0.07]"
+        />
+      )}
       {/* The highlighted Enquire tab reads as a watercolour bubble: the hero
           title's emphasis wash filling the pill with an ink icon + label and
           the soft glass rim (see `.btn-hero-flow`). */}
@@ -62,6 +89,21 @@ function DockButton({ item }) {
 // `enquireHref` mirrors SiteHeader: pages with their own reply card pass a
 // local anchor so the dock's Enquire stays on-page.
 export default function MobileNav({ revealed, enquireHref = ENQUIRE_HREF }) {
+  // Which tab the section under the reading zone belongs to. Shared with
+  // SiteHeader's running head via useCurrentSection, so the two chromes never
+  // disagree about where the reader is on a tablet-width screen where the
+  // breakpoint is close.
+  //
+  // The dock is an edited shortlist, so the mapping is not one-to-one: it is
+  // keyed off each tab's own href rather than a second hand-kept table that
+  // could drift out of step with DOCK_ITEMS. `#night` has no tab, so the
+  // timeline lights nothing — better than lighting a neighbour and pointing
+  // somewhere the reader is not.
+  const current = useCurrentSection()
+  const activeId = current
+    ? DOCK_ITEMS.find((d) => d.href.split('#')[1] === current.id)?.id ?? null
+    : null
+
   // Keep the dock riding the *visible* bottom edge while the page is
   // pinch-zoomed. iOS Safari anchors `position: fixed` to the layout viewport,
   // not the visual one, so under a pinch-zoom this bar is left stranded over
@@ -146,6 +188,7 @@ export default function MobileNav({ revealed, enquireHref = ENQUIRE_HREF }) {
           <DockButton
             key={item.id}
             item={item.id === 'enquiry' ? { ...item, href: enquireHref } : item}
+            isActive={item.id === activeId}
           />
         ))}
       </nav>

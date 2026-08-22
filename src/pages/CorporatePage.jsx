@@ -81,7 +81,7 @@ export default function CorporatePage() {
         {/* ── Hero ─────────────────────────────────────────────────────── */}
         <section className="relative w-full overflow-x-clip px-[5vw] pt-[clamp(6rem,14vw,9rem)] pb-[clamp(2.5rem,5vw,4.5rem)]">
           <BloomField blooms={CORPORATE_HERO} className="pointer-events-none absolute inset-0 z-0" />
-          <div className="relative z-10 grid grid-cols-12 items-end gap-x-8 gap-y-12">
+          <div className="relative z-10 grid grid-cols-12 items-end gap-y-12 lg:gap-x-8">
             <div className="col-span-12 lg:col-span-7">
               <span className="eyebrow">{CORPORATE.eyebrow}</span>
               <div className="relative mt-5">
@@ -194,7 +194,7 @@ export default function CorporatePage() {
                   <CornerBloom from={['apricot', 0.128]} to={['butter', 0.117]} />
                   <div className="relative z-10">
                     <Drop className="h-5 w-auto" gradient={['#F2E982', '#BCB438']} />
-                    <h3 className="mt-4 font-sentient text-2xl tracking-[-0.02em] text-ink">{c.h}</h3>
+                    <h3 className="card-title mt-4">{c.h}</h3>
                     <p className="mt-3 text-sm leading-relaxed text-ink-soft">{c.p}</p>
                   </div>
                 </motion.article>
@@ -204,7 +204,7 @@ export default function CorporatePage() {
 
           {/* ── Occasions ──────────────────────────────────────────────── */}
           <section className="relative w-full px-[5vw] py-[clamp(2.5rem,6vw,5rem)]">
-            <div className="grid grid-cols-12 gap-x-8 gap-y-10">
+            <div className="grid grid-cols-12 gap-y-10 lg:gap-x-8">
               <div className="col-span-12 lg:col-span-5">
                 <Label gradient={['#F2E982', '#BCB438']}>{CORPORATE.occasions.label}</Label>
                 <SplitText
@@ -286,7 +286,7 @@ export default function CorporatePage() {
                   <CornerBloom from={['blush', 0.517]} to={['aurora_rose', 0.186]} />
                   <div className="relative z-10 flex flex-1 flex-col">
                     <div className="flex items-baseline justify-between gap-4">
-                      <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
+                      <h3 className="card-title">
                         {CORPORATE.offer.base.title}
                       </h3>
                       <p className="shrink-0 text-right">
@@ -327,7 +327,7 @@ export default function CorporatePage() {
                   <CornerBloom from={['yellowgreen', 0.207]} to={['lemonlime', 0.124]} />
                   <div className="relative z-10 flex h-full flex-col">
                     <div className="border-b border-line/50 px-7 pb-5 pt-7">
-                      <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
+                      <h3 className="card-title">
                         {CORPORATE.offer.scale.h}
                       </h3>
                     </div>

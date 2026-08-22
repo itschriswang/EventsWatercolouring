@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import Label, { Drop } from './Label.jsx'
+import Label from './Label.jsx'
 import CopyEmail from './CopyEmail.jsx'
 import Postcard from './Postcard.jsx'
 import { CalendarDateIcon } from './icons/FreehandIcons.jsx'
@@ -157,6 +157,9 @@ export default function EnquireForm({
     setF((p) => ({ ...p, [key]: v }))
   }
 
+  // Hoisted above `stepError` below, which reads the sheets' error copy.
+  const S = ENQUIRY.steps
+
   const [step, setStep] = useState(0)
   const [dir, setDir] = useState(1)
   // Focus follows the step change so keyboard and screen-reader users land on
@@ -177,6 +180,44 @@ export default function EnquireForm({
     if (!navigated.current) return
     stepRef.current?.focus({ preventScroll: true })
   }, [step])
+
+  // What each sheet needs before it will let you past.
+  //
+  // Nothing used to: Continue called `goto` straight out, so all three
+  // questions could be walked through untouched and the enquiry arrived
+  // saying nothing at all. Both gated sheets have a "Not sure yet" among
+  // their answers, so this asks a visitor to say they don't know rather than
+  // to know — the friction is one tap, and only for someone who would
+  // otherwise have sent an empty card. The last sheet is validated on submit
+  // instead (name and email, below), where its own errors already live.
+  const stepError = (n) => {
+    if (n === 0 && !f.package) return S.what.error
+    if (n === 1 && !f.date && !f.dateUnknown) return S.when.error
+    return ''
+  }
+
+  // The group to send focus to when a sheet fails, so keyboard and
+  // screen-reader users land on the question rather than hunting for it. Same
+  // job `focusField` does for the named inputs on the last sheet.
+  const choiceRef = useRef(null)
+
+  // Every forward move goes through here — the Continue button AND the
+  // implicit submit an Enter keypress fires (see onSubmit). Routing only the
+  // button through the guard would leave Enter as a way straight past it.
+  const advance = () => {
+    const message = stepError(step)
+    if (message) {
+      setError(message)
+      setInvalidField(step === 0 ? 'package' : 'date')
+      setNotice('')
+      // Focus whatever the sheet is missing: the radios on the first, the
+      // date field on the second (its "Not sure yet" is the next stop after).
+      const group = choiceRef.current
+      ;(group?.querySelector('input, button') ?? group)?.focus?.()
+      return
+    }
+    goto(step + 1)
+  }
 
   // The planner (NightPlanner.jsx) dispatches this just before the anchor
   // navigation lands here — prefill, but never overwrite words the visitor
@@ -208,8 +249,10 @@ export default function EnquireForm({
     if (step === LAST_STEP && Date.now() - startedAt.current < 4000) return
     // Enter partway through the quiz means "continue", not "send" — the seal
     // only exists on the last sheet, but implicit submission doesn't care.
+    // Through `advance`, not `goto`, so Enter meets the same gate the button
+    // does rather than being the way around it.
     if (step < LAST_STEP) {
-      goto(step + 1)
+      advance()
       return
     }
 
@@ -284,7 +327,6 @@ export default function EnquireForm({
     }
   }
 
-  const S = ENQUIRY.steps
 
   return (
     // !scroll-mt: the global `section[id]` rule (56px) sits under the 64px
@@ -294,7 +336,14 @@ export default function EnquireForm({
       id="enquiry"
       className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(3.5rem,7vw,6rem)] !scroll-mt-20 md:!scroll-mt-28"
     >
-      <div className="grid grid-cols-12 gap-x-8 gap-y-12">
+      {/* `lg:gap-x-8`, not `gap-x-8`: below lg both columns are col-span-12
+          and the horizontal gap buys nothing, but a 12-track grid still
+          reserves all 11 of them — 352px of gap inside a 288px content box on
+          a 320px phone. The tracks clamp to zero and the whole column
+          overflows by 32px, taking the address and its copy button off the
+          right edge (body is `overflow-x: clip`, so it silently truncates
+          rather than scrolling). Gap only once there are columns to separate. */}
+      <div className="grid grid-cols-12 gap-y-12 lg:gap-x-8">
         <div className="relative col-span-12 lg:col-span-4">
           <Label gradient={['#F2A6C1', '#DB6E97']}>{ENQUIRY.label}</Label>
           <h2 className="display-lg mt-5 text-ink">
@@ -309,11 +358,15 @@ export default function EnquireForm({
           {/* The address, with a copy action beside it — a visitor who would
               rather write from their own mail account shouldn't have to hand
               select it off the page (see CopyEmail). */}
-          <div className="mt-6">
+          <div className="mt-7">
+            {/* "Or email" named the medium, which the address underneath was
+                already doing. This names the choice instead — the card, or
+                Chris's inbox from wherever you normally write — which is the
+                only thing a visitor is actually deciding here. */}
             <span className="font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
-              Or email
+              Rather write it yourself?
             </span>
-            <CopyEmail className="mt-1.5 text-sm" />
+            <CopyEmail className="mt-2.5" />
           </div>
           {/* Bouquet — flipped, beneath the heading, widescreen only */}
           <img
@@ -380,17 +433,46 @@ export default function EnquireForm({
 
               {/* Content sits above paper + wash, textured with the site grain. */}
               <div className="paper-grain relative z-10 px-[clamp(1.75rem,4vw,3rem)] py-[clamp(1.75rem,4vw,2.75rem)]">
-                {/* Card header — reads the sheet as a reply card, and counts
-                    the sheets so the visitor always knows how little is left.
-                    Persists across both states so the confirmation stays on
-                    the same stationery. */}
-                <div className="mb-7 flex items-baseline justify-between border-b border-line/80 pb-4">
-                  <span className="eyebrow inline-flex items-center gap-2">
-                    <Drop className="h-5 w-auto" gradient={['#F2A6C1', '#DB6E97']} />
-                    Reply card
-                  </span>
-                  <span className="font-mono text-xs lowercase tracking-wide text-ink-soft">
-                    {sent ? 'sealed' : `${step + 1} of ${STEP_COUNT}`}
+                {/* Card header — a progress tracker, and nothing else.
+                    It used to read "Reply card" beside an orchid drop, in the
+                    same costume as the "ENQUIRE" section marker a few hundred
+                    pixels to its left: two labels of equal weight in one
+                    viewport, one of them naming a form the visitor is already
+                    looking at. It told nobody anything they could not see, and
+                    it blunted the section marker beside it.
+
+                    What the visitor actually wants at this moment is how much
+                    of this is left, which was the smallest, faintest thing on
+                    the card. So the count moves to the front and gets a track
+                    to fill — the same delivery-tracker read as the evening
+                    timeline's spine, which is where this site already says
+                    "here is where you are in something". Both states keep it:
+                    on a confirmed send every segment is full and the count
+                    becomes "Sealed", so the sheet closes its own loop. */}
+                <div className="mb-7 flex items-center justify-between gap-4 border-b border-line/80 pb-4">
+                  <div aria-hidden="true" className="flex items-center gap-1.5">
+                    {Array.from({ length: STEP_COUNT }, (_, i) => (
+                      <span
+                        key={i}
+                        className="h-[3px] w-9 overflow-hidden rounded-full bg-line"
+                      >
+                        {/* scaleX from a left origin, so a segment fills the
+                            way the wash runs rather than fading on the spot.
+                            Reduced motion snaps it — the state still reads. */}
+                        <motion.span
+                          className="block h-full w-full origin-left rounded-full"
+                          style={{
+                            background: 'linear-gradient(to right, #F2A6C1, #DB6E97)',
+                          }}
+                          initial={false}
+                          animate={{ scaleX: sent || i <= step ? 1 : 0 }}
+                          transition={reduce ? { duration: 0 } : STEP_TWEEN}
+                        />
+                      </span>
+                    ))}
+                  </div>
+                  <span className="font-mono text-xs tracking-wide text-ink-soft">
+                    {sent ? 'Sealed' : `Step ${step + 1} of ${STEP_COUNT}`}
                   </span>
                 </div>
 
@@ -463,9 +545,15 @@ export default function EnquireForm({
                                   context the instant it's touched is exactly
                                   the WCAG 3.2.2 surprise — the Next button
                                   below is always there to move on. */}
-                              <fieldset className="mt-6 border-0 p-0">
+                              <fieldset
+                                className="mt-6 border-0 p-0"
+                                aria-invalid={invalidField === 'package' || undefined}
+                                aria-describedby={
+                                  invalidField === 'package' ? 'enquire-error' : undefined
+                                }
+                              >
                                 <legend className="sr-only">{S.what.q}</legend>
-                                <div className="flex flex-wrap gap-2">
+                                <div ref={choiceRef} className="flex flex-wrap gap-2">
                                   {ENQUIRY.packageOptions.map((o) => (
                                     <label
                                       key={o}
@@ -479,7 +567,13 @@ export default function EnquireForm({
                                         name="package-choice"
                                         value={o}
                                         checked={f.package === o}
-                                        onChange={() => setF((p) => ({ ...p, package: o }))}
+                                        onChange={() => {
+                                          setF((p) => ({ ...p, package: o }))
+                                          // Answering IS the fix, so the
+                                          // complaint goes the moment it lands.
+                                          setError('')
+                                          setInvalidField('')
+                                        }}
                                         className="sr-only"
                                       />
                                       {o}
@@ -487,9 +581,7 @@ export default function EnquireForm({
                                   ))}
                                 </div>
                               </fieldset>
-                              <div className="mt-8">
-                                <NextButton onClick={() => goto(1)} label={S.next} />
-                              </div>
+                              <StepFooter error={error} onNext={advance} label={S.next} />
                             </>
                           )}
 
@@ -497,7 +589,7 @@ export default function EnquireForm({
                             <>
                               <StepHeading q={S.when.q} hint={S.when.hint} />
                               <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-7 sm:grid-cols-2">
-                                <div className="flex flex-col">
+                                <div ref={choiceRef} className="flex flex-col">
                                   <label
                                     htmlFor="f-date"
                                     className="mb-2 flex items-center gap-1.5 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink"
@@ -511,19 +603,27 @@ export default function EnquireForm({
                                     name="date"
                                     min={todayISO()}
                                     value={f.date}
-                                    onChange={(e) =>
+                                    aria-invalid={invalidField === 'date' || undefined}
+                                    aria-describedby={
+                                      invalidField === 'date' ? 'enquire-error' : undefined
+                                    }
+                                    onChange={(e) => {
                                       // A real date and "not sure yet" can't
                                       // both be true — picking one clears the other.
                                       setF((p) => ({ ...p, date: e.target.value, dateUnknown: false }))
-                                    }
+                                      setError('')
+                                      setInvalidField('')
+                                    }}
                                     className="border-b border-ink/30 bg-transparent py-2 text-ink outline-none transition-colors focus:border-terracotta focus-visible:shadow-[0_1.5px_0_0_theme(colors.terracotta)]"
                                   />
                                   <button
                                     type="button"
                                     aria-pressed={f.dateUnknown}
-                                    onClick={() =>
+                                    onClick={() => {
                                       setF((p) => ({ ...p, dateUnknown: !p.dateUnknown, date: '' }))
-                                    }
+                                      setError('')
+                                      setInvalidField('')
+                                    }}
                                     className={'mt-4 w-fit ' + chipClass(f.dateUnknown)}
                                   >
                                     {S.notSure}
@@ -537,9 +637,7 @@ export default function EnquireForm({
                                   onChange={set('venue')}
                                 />
                               </div>
-                              <div className="mt-8">
-                                <NextButton onClick={() => goto(2)} label={S.next} />
-                              </div>
+                              <StepFooter error={error} onNext={advance} label={S.next} />
                             </>
                           )}
 
@@ -666,25 +764,67 @@ export default function EnquireForm({
 function StepHeading({ q, hint }) {
   return (
     <>
-      <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">{q}</h3>
+      <h3 className="card-title">{q}</h3>
       <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-soft">{hint}</p>
     </>
   )
 }
 
-/** Forward control between sheets — same pill as the planner's CTA. */
+/**
+ * Forward control between sheets — same pill as the planner's CTA, run the
+ * full width of the sheet.
+ *
+ * It used to hug its label, which left the one thing you have to press on
+ * each of the first two sheets as a small pill adrift under a row of answer
+ * chips built from the same rounded-full shape. Spanning the sheet separates
+ * the move-on control from the things you are choosing between, and gives it
+ * the target a thumb wants on a phone.
+ *
+ * `py-3.5`, not the old `py-2.5`: a full-bleed bar at the old height reads as
+ * a rule across the card rather than as something to press.
+ */
 function NextButton({ onClick, label }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="group inline-flex items-center gap-2.5 rounded-full bg-terracotta px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-paper transition-colors duration-300 hover:bg-rust"
+      className="group flex w-full items-center justify-center gap-2.5 rounded-full bg-terracotta px-5 py-3.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-paper transition-colors duration-300 hover:bg-rust"
     >
       {label}
       <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1 group-focus-visible:translate-x-1">
         →
       </span>
     </button>
+  )
+}
+
+/**
+ * The foot of a question sheet: what is missing, then the way on.
+ *
+ * The error sits ABOVE the button rather than below it, because the button is
+ * now full width and pinned to the bottom of the sheet — a line under it would
+ * fall outside the card on the sheets where the content already reaches the
+ * edge, and would put the explanation somewhere the eye has already left.
+ *
+ * `role="alert"` so it is spoken the moment it appears; `advance()` has
+ * already moved focus to the question it is about, and the shared
+ * `enquire-error` id is what the offending control points its
+ * `aria-describedby` at.
+ */
+function StepFooter({ error, onNext, label }) {
+  return (
+    <div className="mt-8 flex flex-col gap-3">
+      {error && (
+        <p
+          id="enquire-error"
+          role="alert"
+          className="font-mono text-xs leading-relaxed text-rust"
+        >
+          {error}
+        </p>
+      )}
+      <NextButton onClick={onNext} label={label} />
+    </div>
   )
 }
 

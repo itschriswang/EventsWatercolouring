@@ -161,9 +161,14 @@
   }
 
   /* Anchor jumps (nav links, /#section arrivals) land with breathing room
-     under the sticky desktop header instead of flush against it — one rule
-     for every anchored section, present and future. Mobile has no top bar,
-     so the margin only applies from the header's own breakpoint up. */
+     under whichever top bar is on screen instead of flush against it — one
+     rule for every anchored section, present and future. Mobile used to have
+     no top bar at all; it now has ChapterBar's 34px, so the margin applies at
+     every width, just at two heights. */
+  section[id] {
+    scroll-margin-top: 3rem;
+  }
+
   @media (min-width: 768px) {
     section[id] {
       scroll-margin-top: 3.5rem;
@@ -370,6 +375,124 @@
        sits over the watercolour bloom washes, so it needs headroom above
        the 4.5:1 AA minimum rather than just clearing it. ~7.45:1 on paper. */
     color: #4A4E63;
+  }
+
+  /* ── Label tiers ──────────────────────────────────────────────────────────
+     The site had ONE label costume — orchid drop + 0.66rem mono uppercase —
+     and wore it at three different depths at once: the section eyebrow
+     ("ENQUIRE"), the tab on a card inside that section ("ADD-ONS"), and a
+     header inside that card ("REPLY CARD"). Three rungs of the ladder set in
+     the same type, so nothing on the page announced "a new section starts
+     here" — which is exactly the report that the current section is unclear.
+     The nav's own links are 0.66rem mono uppercase too, making four.
+
+     So the costume now comes in two sizes, and the difference has to be
+     legible at a glance rather than on inspection: tier 1 is a third larger,
+     tracked wider, and set in full `ink` against tier 2's soft slate, with an
+     accent hairline running off the end of the words. Tier 2 (`.eyebrow`,
+     above) is unchanged — every card tab and in-card label keeps exactly the
+     voice it had, and simply stops competing with the section marker.
+
+     Rule of thumb when adding one: does it name a `<section>`? Tier 1. Does
+     it name something *inside* a section? Tier 2. */
+  .section-eyebrow {
+    font-family: theme('fontFamily.mono');
+    font-size: 0.88rem;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    /* Full ink, not the eyebrow's slate: at this size the contrast headroom
+       is no longer the constraint, and the extra weight is what separates a
+       chapter marker from the card labels beneath it. */
+    color: rgb(var(--rgb-ink));
+  }
+
+  .section-eyebrow.on-dark {
+    color: rgb(var(--rgb-paper) / 0.92);
+  }
+
+  /* The hairline that runs off the end of a section marker — a ruled line in
+     the accent, sized in em so it tracks the label's own type. Kept OUT of
+     `.section-eyebrow` itself and opted into, because the timeline's marker is
+     seated in a folder tab whose width is measured from the label's own box
+     (see FolderCell's auto-hug): a rule there would be measured as part of the
+     word and stretch the tab past it. Rule on flush labels, type alone in a
+     tab. It is a flex child, so it centres in the line box — which for
+     uppercase lands it at about mid-cap. */
+  .section-eyebrow-rule::after {
+    content: '';
+    display: block;
+    width: 2.5em;
+    height: 1px;
+    margin-left: 0.15em;
+    background: linear-gradient(
+      to right,
+      rgb(var(--rgb-terracotta) / 0.75),
+      rgb(var(--rgb-terracotta) / 0)
+    );
+  }
+
+  /* ochre-light (#EFEFA0) spelled out: the deepened accent tokens are tuned
+     for contrast against ivory paper and go muddy on the wine grounds. */
+  .section-eyebrow-rule.on-dark::after {
+    background: linear-gradient(to right, rgba(239, 239, 160, 0.8), rgba(239, 239, 160, 0));
+  }
+
+  /* ── Subhead ──────────────────────────────────────────────────────────────
+     The rung between a section's display title and its body copy: the room
+     divisions on the gallery wall, and any other grouping heading that wants
+     to read as a heading rather than a caption.
+
+     It exists because the h3 level had drifted apart across the page — the
+     gallery's room labels were set at 0.62rem, *smaller* than the eyebrow two
+     lines above them and identical to the body note beside them, so a heading
+     was rendering as the quietest text in its own block. One class, so the
+     visitor learns the rhythm once: display title → subhead → copy. */
+  .subhead {
+    font-family: theme('fontFamily.mono');
+    /* The floor is the load-bearing number, not the ceiling. At 0.95rem it
+       resolved to 15.2px on every phone — BELOW the 16px body copy it sits
+       above, which is the same heading-quieter-than-its-own-paragraph
+       inversion this class was added to fix, just moved to the breakpoint
+       nobody measured. 1.08rem keeps it clear of body text at every width
+       (1.3vw only starts to bind past ~1330px). Check the floor whenever you
+       retune this: at phone widths a vw term contributes almost nothing, so
+       the clamp is effectively its minimum. */
+    font-size: clamp(1.08rem, 1.3vw, 1.15rem);
+    letter-spacing: 0.02em;
+    line-height: 1.25;
+    color: rgb(var(--rgb-ink));
+  }
+
+  /* ── Card title ───────────────────────────────────────────────────────────
+     The rung below a section title: the name on a package, an FAQ question, a
+     step's question on the reply card, a beat in the planner.
+
+     It exists to hold the h2:h3 ratio open on a phone. Measured on the built
+     page, the section title is 2.4x the largest card title at 1440px and was
+     only 1.33x at 390px — because the display face scales down with the
+     viewport (57.6 → 32px) while these headings did not move at all (24px at
+     both widths), so the gap closed from both ends at once. Desktop keeps 24px
+     and the phone drops to 20px, which restores the ratio to 1.6x while
+     staying a comfortable 1.25x above the 16px body copy and in a different
+     face from it.
+
+     Do not chase the ratio any further with size alone: 32px of this display
+     face already wraps a section title to three lines at 390px, and these
+     headings cannot shrink much before they collide with body text. The rest
+     of the distinction is carried by ChapterBar, which names the section you
+     are inside for as long as you are inside it — hierarchy by context rather
+     than by type size, on the breakpoint where size has run out of room. */
+  .card-title {
+    font-family: theme('fontFamily.sentient');
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+    color: rgb(var(--rgb-ink));
+  }
+
+  @media (min-width: 640px) {
+    .card-title {
+      font-size: 1.5rem;
+    }
   }
 
   /* ── Folder cell ──────────────────────────────────────────────────────────
