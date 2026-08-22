@@ -39,6 +39,10 @@ import { useHeavyFx } from '../hooks/useMediaQuery.js'
 // the effect below).
 const HEIGHT_TOLERANCE = 0.2
 const RESETTLE_MS = 180
+// How far ahead of the viewport a field bakes its wash. Two viewports of lead
+// on every side: far enough that a fast flick never outruns it, near enough
+// that a page-load only pays for the fields the visitor can actually reach.
+const NEAR = '200% 0px'
 
 // Live fields, in mount order. BloomCanvas reads this every frame — a plain Set
 // rather than context or state because the canvas is outside React's tree and
@@ -105,9 +109,17 @@ export default function BloomField({
     let live = true
     let current = null
     let painted = null
+    // Only fields the visitor is anywhere near are worth resolving. All seven
+    // used to bake during load — seven canvases painted and seven PNGs encoded
+    // at once, ~700KB of them, in the window where the page is least able to
+    // spare it, for five fields sitting thousands of pixels below the fold.
+    // Until a field's turn comes its CSS gradients are up, which is a complete
+    // wash; NEAR is wide enough that its turn comes well before it is looked at.
+    let near = false
 
     const draw = () => {
       timer = 0
+      if (!near) return
       const r = host.getBoundingClientRect()
       const vw = window.innerWidth || r.width
       if (r.width <= 0 || r.height <= 0) return
@@ -150,7 +162,27 @@ export default function BloomField({
       timer = setTimeout(draw, RESETTLE_MS)
     }
 
-    draw()
+    // A field whose turn has come stays baked — this only ever gates the FIRST
+    // paint, so scrolling back and forth past one never re-encodes it.
+    const io =
+      typeof IntersectionObserver === 'undefined'
+        ? null
+        : new IntersectionObserver(
+            (entries) => {
+              if (!entries.some((e) => e.isIntersecting)) return
+              near = true
+              io.disconnect()
+              draw()
+            },
+            { rootMargin: NEAR },
+          )
+    if (io) io.observe(host)
+    else {
+      // No IntersectionObserver: bake immediately rather than lose the cache.
+      near = true
+      draw()
+    }
+
     const ro = new ResizeObserver(schedule)
     ro.observe(host)
     // The box can hold still while `vw` changes (orientation, zoom), and the
@@ -159,6 +191,7 @@ export default function BloomField({
     return () => {
       live = false
       clearTimeout(timer)
+      io?.disconnect()
       ro.disconnect()
       window.removeEventListener('resize', schedule)
       releaseWash(current)
