@@ -764,7 +764,7 @@ export default function EnquireForm({
 function StepHeading({ q, hint }) {
   return (
     <>
-      <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">{q}</h3>
+      <h3 className="card-title">{q}</h3>
       <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-soft">{hint}</p>
     </>
   )

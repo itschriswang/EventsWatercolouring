@@ -95,7 +95,7 @@ export default function Packages() {
               LOOKS unheaded here because the mobile layout floats the title
               and price above the sheet as a pull-quote rather than printing
               them inside it. */}
-          <h3 className="font-sentient text-2xl leading-tight tracking-[-0.02em] text-ink">
+          <h3 className="card-title leading-tight">
             {PACKAGES.base.title}
           </h3>
           <p className="mt-3 flex items-baseline gap-2">
@@ -141,7 +141,7 @@ export default function Packages() {
             actually open one up. */}
         <motion.div {...reveal(2)} className="mt-8">
           <div className="flex items-baseline justify-between border-b border-ink pb-3">
-            <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
+            <h3 className="card-title">
               {PACKAGES.addonsHead.title}
             </h3>
             <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
@@ -235,7 +235,7 @@ export default function Packages() {
           contentClassName="flex h-full flex-col px-7 pb-7"
         >
           <div className="flex items-baseline justify-between gap-4">
-            <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
+            <h3 className="card-title">
               {PACKAGES.base.title}
             </h3>
             <p className="shrink-0 text-right">

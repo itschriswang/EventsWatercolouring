@@ -194,7 +194,7 @@ export default function CorporatePage() {
                   <CornerBloom from={['apricot', 0.128]} to={['butter', 0.117]} />
                   <div className="relative z-10">
                     <Drop className="h-5 w-auto" gradient={['#F2E982', '#BCB438']} />
-                    <h3 className="mt-4 font-sentient text-2xl tracking-[-0.02em] text-ink">{c.h}</h3>
+                    <h3 className="card-title mt-4">{c.h}</h3>
                     <p className="mt-3 text-sm leading-relaxed text-ink-soft">{c.p}</p>
                   </div>
                 </motion.article>
@@ -286,7 +286,7 @@ export default function CorporatePage() {
                   <CornerBloom from={['blush', 0.517]} to={['aurora_rose', 0.186]} />
                   <div className="relative z-10 flex flex-1 flex-col">
                     <div className="flex items-baseline justify-between gap-4">
-                      <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
+                      <h3 className="card-title">
                         {CORPORATE.offer.base.title}
                       </h3>
                       <p className="shrink-0 text-right">
@@ -327,7 +327,7 @@ export default function CorporatePage() {
                   <CornerBloom from={['yellowgreen', 0.207]} to={['lemonlime', 0.124]} />
                   <div className="relative z-10 flex h-full flex-col">
                     <div className="border-b border-line/50 px-7 pb-5 pt-7">
-                      <h3 className="font-sentient text-2xl tracking-[-0.02em] text-ink">
+                      <h3 className="card-title">
                         {CORPORATE.offer.scale.h}
                       </h3>
                     </div>
