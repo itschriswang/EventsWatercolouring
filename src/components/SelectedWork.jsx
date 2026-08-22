@@ -52,6 +52,12 @@ export default function SelectedWork() {
   // twin sharing its layoutId, which breaks the lightbox morph.
   const isDesktop = useMediaQuery('(min-width: 1024px)')
 
+  // Which gesture the zoom hint names. Deliberately pointer, not the width
+  // breakpoint above: those answer different questions, and a 1024px desktop
+  // window taps no better than a 1024px tablet clicks.
+  const isTouch = useMediaQuery('(pointer: coarse)')
+  const zoomHint = isTouch ? WORK.zoomHintTouch : WORK.zoomHint
+
   // Index of the painting currently enlarged in the lightbox (null when closed).
   const [activeIndex, setActiveIndex] = useState(null)
   const open = activeIndex != null
@@ -98,9 +104,9 @@ export default function SelectedWork() {
             <p className="font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
               {WORK.note}
             </p>
-            {WORK.zoomHint && (
+            {zoomHint && (
               <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-rust">
-                {WORK.zoomHint}
+                {zoomHint}
               </p>
             )}
           </div>

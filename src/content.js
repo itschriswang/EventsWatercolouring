@@ -59,7 +59,12 @@ export const EVENING = {
 
 export const WORK = {
   label: 'The keepsakes',
-  zoomHint: 'Tap any piece to enlarge.',
+  // Two spellings of one hint: the wall opens on click or tap, and naming the
+  // gesture the visitor has not got is a small wrongness they notice. Chosen in
+  // SelectedWork.jsx off `(pointer: coarse)` rather than a width breakpoint —
+  // a narrow desktop window still has a mouse, and a large tablet still does not.
+  zoomHint: 'Click any piece to enlarge.',
+  zoomHintTouch: 'Tap any piece to enlarge.',
   title: ['Real watercolour, on', 'cotton paper.'],
   emphasis: 'cotton paper.',
   note: 'Painted by hand on 300gsm A5 cotton paper.',
@@ -287,7 +292,7 @@ export const FAQ = {
       items: [
         {
           q: 'How far ahead should we book?',
-          a: 'Right now I am booking up to about two months out. Send me your date and I will tell you what is open. Earlier is always welcome, since I only take a limited number of weddings.',
+          a: 'As early as you can. I only take a limited number of weddings, so dates fill up. Send me yours and I will tell you what is open.',
         },
         {
           q: 'How do we secure our date?',
