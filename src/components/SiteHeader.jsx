@@ -1,8 +1,9 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { SPRING, ENQUIRE_HREF } from '../lib/site.js'
-import { NAV, SECTIONS } from '../content.js'
+import { NAV } from '../content.js'
 import { Drop } from './Label.jsx'
+import useCurrentSection from '../hooks/useCurrentSection.js'
 
 const EASE = [0.25, 1, 0.5, 1]
 
@@ -103,7 +104,8 @@ export default function SiteHeader({ revealed, className = '', enquireHref = ENQ
   }, [])
 
   // "You are here": the section currently under the reading zone, named with
-  // the words that section prints at its own top (see SECTIONS in content.js).
+  // the words that section prints at its own top (see useCurrentSection, and
+  // SECTIONS in content.js).
   //
   // This is the fix for the page not saying which section you are in. A
   // section announces itself once, in a display title that scrolls away within
@@ -112,36 +114,9 @@ export default function SiteHeader({ revealed, className = '', enquireHref = ENQ
   // in the enquiry form. The header now carries the name for as long as you are
   // in it, in the section's own words and its own accent.
   //
-  // Unlike the nav observer above, this one keeps a live map of what is
-  // intersecting rather than latching the last entry it saw: scrolling back up
-  // to the hero leaves NOTHING intersecting, and a latched value would sit
-  // there naming a section that is no longer on screen. Where the reading zone
-  // spans a boundary, the later section in document order wins — that is the
-  // one being scrolled into.
-  const [current, setCurrent] = useState(null)
-  const seen = useRef(new Map())
-
-  useEffect(() => {
-    const found = SECTIONS
-      .map((s) => ({ ...s, el: document.getElementById(s.id) }))
-      .filter((s) => s.el)
-    if (!found.length) return
-
-    const map = seen.current
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => map.set(e.target.id, e.isIntersecting))
-        const active = [...found].reverse().find((s) => map.get(s.id))
-        setCurrent(active || null)
-      },
-      { rootMargin: '-18% 0px -72% 0px', threshold: 0 }
-    )
-    found.forEach((s) => observer.observe(s.el))
-    return () => {
-      observer.disconnect()
-      map.clear()
-    }
-  }, [])
+  // MobileNav lights its dock from the same hook, because this header is
+  // `hidden md:block` and a phone would otherwise get no answer at all.
+  const current = useCurrentSection()
 
   // Page-link nav items (no '#', e.g. '/faq/') are active by pathname match
   // rather than scroll position, since there's nothing to observe for them.

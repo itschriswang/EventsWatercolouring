@@ -444,9 +444,17 @@
      visitor learns the rhythm once: display title → subhead → copy. */
   .subhead {
     font-family: theme('fontFamily.mono');
-    font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+    /* The floor is the load-bearing number, not the ceiling. At 0.95rem it
+       resolved to 15.2px on every phone — BELOW the 16px body copy it sits
+       above, which is the same heading-quieter-than-its-own-paragraph
+       inversion this class was added to fix, just moved to the breakpoint
+       nobody measured. 1.08rem keeps it clear of body text at every width
+       (1.3vw only starts to bind past ~1330px). Check the floor whenever you
+       retune this: at phone widths a vw term contributes almost nothing, so
+       the clamp is effectively its minimum. */
+    font-size: clamp(1.08rem, 1.3vw, 1.15rem);
     letter-spacing: 0.02em;
-    line-height: 1.2;
+    line-height: 1.25;
     color: rgb(var(--rgb-ink));
   }
 
