@@ -347,29 +347,50 @@ const rgba255 = (rgb, a) =>
  * normalised and rescaled onto it, so converting a bloom keeps its geometry
  * exactly and only the colours change.
  */
-export function bloomStops(name, x, { over = PAPER_REFLECTANCE, wetness = 'dry', extent = 0.75 } = {}) {
+export function bloomStops(name, x, opts) {
+  return stopsCss(bloomStopList(name, x, opts))
+}
+
+/**
+ * The same stops as data: `[cssColour, positionPercent]` pairs, where a null
+ * position means "wherever CSS would put it" (only the lifts' first stop).
+ *
+ * `bloomStops` joins this into CSS and `washRaster` feeds it to a canvas
+ * gradient, so the two renderings cannot drift apart in colour — they are
+ * reading the same list.
+ */
+export function bloomStopList(
+  name,
+  x,
+  { over = PAPER_REFLECTANCE, wetness = 'dry', extent = 0.75 } = {},
+) {
   const { K, S } = pigment(name)
   const profile = BLOOM_PROFILES[wetness]
   const span = profile[profile.length - 1][0]
-  return profile
-    .map(([pos, rel]) => {
-      const at = ((pos / span) * extent * 100).toFixed(0)
-      if (rel === 0) return `transparent ${at}%`
-      const l = kmLayer(K, S, x * rel)
-      const lit = kmOver(l.R, l.T, over)
-      const drop = over.map((c, i) => c - lit[i])
-      // Magnitude, not the signed maximum: an interference glaze LIGHTENS its
-      // ground (§5.1), so its drop is negative throughout and taking the max
-      // would hand back a negative alpha and paint nothing at all.
-      const a = Math.min(1, Math.max(...drop.map(Math.abs)) * COVER_GAIN)
-      if (a <= 0.0005) return `transparent ${at}%`
-      return `${rgba255(
+  return profile.map(([pos, rel]) => {
+    const at = Number(((pos / span) * extent * 100).toFixed(0))
+    if (rel === 0) return ['transparent', at]
+    const l = kmLayer(K, S, x * rel)
+    const lit = kmOver(l.R, l.T, over)
+    const drop = over.map((c, i) => c - lit[i])
+    // Magnitude, not the signed maximum: an interference glaze LIGHTENS its
+    // ground (§5.1), so its drop is negative throughout and taking the max
+    // would hand back a negative alpha and paint nothing at all.
+    const a = Math.min(1, Math.max(...drop.map(Math.abs)) * COVER_GAIN)
+    if (a <= 0.0005) return ['transparent', at]
+    return [
+      rgba255(
         over.map((c, i) => c - drop[i] / a),
         a,
-      )} ${at}%`
-    })
-    .join(', ')
+      ),
+      at,
+    ]
+  })
 }
+
+/** `[colour, position]` pairs as a CSS colour-stop list. */
+const stopsCss = (stops) =>
+  stops.map(([c, p]) => (p == null ? c : `${c} ${p}%`)).join(', ')
 
 /**
  * The same, for a wash of MIXED paint rather than one pigment.
@@ -562,69 +583,100 @@ function lobeAngle(at) {
  * different means, since a domain warp has no CSS spelling.
  */
 export function fieldCss(blooms, over = PAPER_REFLECTANCE) {
-  return blooms
-    .flatMap((b) => {
-      // A circle sized in vw, not a percentage ellipse: the sections these sit
-      // behind can run many viewport-heights tall, and a two-axis percentage
-      // resolves against width and height independently, which stretches every
-      // wash into a sliver. One radius keyed to viewport width keeps a bloom
-      // round however tall its section is.
-      const geom = (k, off) => ({
-        size: Array.isArray(b.sizeVw)
-          ? `${(b.sizeVw[0] * k).toFixed(2)}vw ${(b.sizeVw[1] * k).toFixed(2)}vw`
-          : b.sizeVw
-            ? `circle ${(b.sizeVw * k).toFixed(2)}vw`
-            : `${(b.size[0] * 100 * k).toFixed(2)}% ${(b.size[1] * 100 * k).toFixed(2)}%`,
-        // A vw-sized bloom has no percentage radius to offset against, so its
-        // satellite is displaced in vw and added to the position with calc().
-        at:
-          off[0] === 0 && off[1] === 0
-            ? `${(b.at[0] * 100).toFixed(2)}% ${(b.at[1] * 100).toFixed(2)}%`
-            : b.sizeVw
-              ? `calc(${(b.at[0] * 100).toFixed(2)}% ${vwTerm(vwAxis(b.sizeVw, 0) * off[0])}) ` +
-                `calc(${(b.at[1] * 100).toFixed(2)}% ${vwTerm(vwAxis(b.sizeVw, 1) * off[1])})`
-              : `${((b.at[0] + b.size[0] * off[0]) * 100).toFixed(2)}% ` +
-                `${((b.at[1] + b.size[1] * off[1]) * 100).toFixed(2)}%`,
-      })
-
-      // A lift is unpainted paper held open, not paint — the near-white cores
-      // that keep the busiest overlaps luminous. On the canvas it subtracts
-      // thickness (§4.5's desorption); in CSS the nearest thing is the cream
-      // radial it always was, and being paper rather than a wash it keeps the
-      // one clean shape.
-      if (b.lift) {
-        const g = geom(1, [0, 0])
-        return [
-          `radial-gradient(${g.size} at ${g.at}, rgba(255,252,242,${b.lift.toFixed(3)}), ` +
-            `transparent ${((b.extent ?? 0.72) * 100).toFixed(0)}%)`,
-        ]
-      }
-
-      const th = lobeAngle(b.at)
-      // The satellites are always rimless; the body keeps whatever the wash was
-      // specified as. A wash already wet-in-wet therefore has no rim anywhere,
-      // which is what it asked for, and its body thickness is solved against the
-      // wet profile instead.
-      const body = b.wetness ?? 'dry'
-      return [
-        [LOBE.MAIN, LOBE.MAIN_X[body], [0, 0], body],
-        ...LOBE.SATS.map((s) => [
-          s.R,
-          s.X,
-          [Math.cos(th + s.TURN) * s.OFF, Math.sin(th + s.TURN) * s.OFF],
-          'wet',
-        ]),
-      ].map(([k, mx, off, wetness]) =>
-        bloom(b.pigment, {
-          x: b.x * mx,
-          ...geom(k, off),
-          extent: b.extent ?? 0.72,
-          wetness,
-          over,
-        }),
-      )
-    })
+  return fieldLobes(blooms, over)
+    .map((l) => `radial-gradient(${lobeSize(l)} at ${lobeAt(l)}, ${stopsCss(l.stops)})`)
     .join(', ')
+}
+
+/** A lobe's `radial-gradient` size, in the units its bloom was authored in. */
+const lobeSize = (l) =>
+  l.sizeVw
+    ? l.circle
+      ? `circle ${l.sizeVw[0].toFixed(2)}vw`
+      : `${l.sizeVw[0].toFixed(2)}vw ${l.sizeVw[1].toFixed(2)}vw`
+    : `${l.sizePct[0].toFixed(2)}% ${l.sizePct[1].toFixed(2)}%`
+
+/** A lobe's centre. Only a vw-sized satellite needs calc() (see fieldLobes). */
+const lobeAt = (l) =>
+  l.offVw
+    ? `calc(${l.atPct[0].toFixed(2)}% ${vwTerm(l.offVw[0])}) ` +
+      `calc(${l.atPct[1].toFixed(2)}% ${vwTerm(l.offVw[1])})`
+    : `${l.atPct[0].toFixed(2)}% ${l.atPct[1].toFixed(2)}%`
+
+/**
+ * A field's blooms broken into their individual lobes, as numbers.
+ *
+ * This is the one description of where a field's paint sits; `fieldCss` formats
+ * it as a `background-image` and `lib/washRaster.js` paints it into a bitmap.
+ * Keeping both downstream of one list is the point — a wash and its cached
+ * raster are the same wash, not two drawings kept in step by hand.
+ *
+ * Geometry stays in the units each bloom was authored in rather than being
+ * resolved to pixels here, because that is what CSS itself resolves and the two
+ * consumers resolve it against different things: CSS against the element and
+ * the viewport, the raster against its own backing store.
+ */
+export function fieldLobes(blooms, over = PAPER_REFLECTANCE) {
+  return blooms.flatMap((b) => {
+    // A circle sized in vw, not a percentage ellipse: the sections these sit
+    // behind can run many viewport-heights tall, and a two-axis percentage
+    // resolves against width and height independently, which stretches every
+    // wash into a sliver. One radius keyed to viewport width keeps a bloom
+    // round however tall its section is.
+    const vw = b.sizeVw ? [vwAxis(b.sizeVw, 0), vwAxis(b.sizeVw, 1)] : null
+    const geom = (k, off) => ({
+      circle: !!b.sizeVw && !Array.isArray(b.sizeVw),
+      sizeVw: vw ? [vw[0] * k, vw[1] * k] : null,
+      sizePct: vw ? null : [b.size[0] * 100 * k, b.size[1] * 100 * k],
+      // A vw-sized bloom has no percentage radius to offset against, so its
+      // satellite is displaced in vw and added to the position with calc();
+      // a percentage one can fold the offset straight into its centre.
+      atPct: vw
+        ? [b.at[0] * 100, b.at[1] * 100]
+        : [(b.at[0] + b.size[0] * off[0]) * 100, (b.at[1] + b.size[1] * off[1]) * 100],
+      offVw: vw && (off[0] !== 0 || off[1] !== 0) ? [vw[0] * off[0], vw[1] * off[1]] : null,
+    })
+
+    // A lift is unpainted paper held open, not paint — the near-white cores
+    // that keep the busiest overlaps luminous. On the canvas it subtracts
+    // thickness (§4.5's desorption); in CSS the nearest thing is the cream
+    // radial it always was, and being paper rather than a wash it keeps the
+    // one clean shape.
+    if (b.lift) {
+      return [
+        {
+          ...geom(1, [0, 0]),
+          stops: [
+            [`rgba(255,252,242,${b.lift.toFixed(3)})`, null],
+            ['transparent', Number(((b.extent ?? 0.72) * 100).toFixed(0))],
+          ],
+        },
+      ]
+    }
+
+    const th = lobeAngle(b.at)
+    // The satellites are always rimless; the body keeps whatever the wash was
+    // specified as. A wash already wet-in-wet therefore has no rim anywhere,
+    // which is what it asked for, and its body thickness is solved against the
+    // wet profile instead.
+    const body = b.wetness ?? 'dry'
+    return [
+      [LOBE.MAIN, LOBE.MAIN_X[body], [0, 0], body],
+      ...LOBE.SATS.map((s) => [
+        s.R,
+        s.X,
+        [Math.cos(th + s.TURN) * s.OFF, Math.sin(th + s.TURN) * s.OFF],
+        'wet',
+      ]),
+    ].map(([k, mx, off, wetness]) => ({
+      ...geom(k, off),
+      stops: bloomStopList(b.pigment, b.x * mx, {
+        over,
+        wetness,
+        extent: b.extent ?? 0.72,
+      }),
+    }))
+  })
 }
 
 /* ------------------------------------------------------------------ *

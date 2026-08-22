@@ -55,6 +55,14 @@ off across it via sessionStorage).
 
 ## Performance conventions
 
+**Check that the fallback is actually the cheap one.** A tier is only a tier if
+the lighter path costs less, and that is easy to get backwards: the wash's did.
+Desktop drew it as one fixed half-resolution WebGL surface while phones drew the
+"static fallback" — around 175 live gradients spread across layers thousands of
+pixels tall, re-rastered tile by tile the whole way down the page — so the
+weakest devices were running the most expensive rendering on the site. Measure
+the fallback on the hardware it is for, not just the effect it replaces.
+
 Every expensive effect is tiered, and new effects must follow the same ladder:
 
 1. **`useHeavyFx()`** (roomy fine-pointer devices, no Data Saver, ≥4GiB
@@ -219,6 +227,27 @@ Every bloom field is declared once, as data, through `BloomField`:
 That one spec drives two renderings. `fieldCss()` writes CSS for it, and
 `BloomCanvas` — one fixed full-viewport WebGL layer — paints the same blooms
 optically where the device can afford it, handing over via `data-live-blooms`.
+Both read `fieldLobes()`, which is where a field's blooms actually become the
+lobes anything downstream draws; add a consumer there rather than re-deriving
+the geometry beside it.
+
+**Off the heavy tier the CSS wash is cached as a bitmap.** `fieldCss` emits
+around 44 gradients per field, and the browser re-evaluates that whole stack for
+every tile it rasters on the way down a section thousands of pixels tall — which
+made the phones the CSS tier exists to serve pay roughly eight times what the
+same wash costs once it is resolved a single time (`lib/washRaster.js` paints
+the lobes into a PNG and hands it back as the same `background-image`). It is
+the identical paint from the identical list, so this is a change of *when* the
+wash is resolved, not of what it looks like.
+
+Two things about it are load-bearing. It stays a **background image** rather than
+a `<canvas>` in the tree: a canvas element is composited, and seven of them
+behind the page promoted every ancestor and overlapping section with them, taking
+the layer tree from 18 layers/59MB to 45/173MB — trading raster for that much
+texture memory is the same stall arriving by another route. And it is **only** the
+tier that does not run `BloomCanvas`, because where the live wash is up these
+layers are already faded out and rasterising them would be work for something
+nobody sees.
 
 **The canvas is the point.** CSS alpha-blends overlapping washes, which averages
 colour toward grey; that is the mud the anti-mud rules above police by hand. On
