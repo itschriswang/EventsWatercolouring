@@ -634,6 +634,39 @@
       opacity: 0.7;
     }
   }
+
+  /* The hero's scroll-cue hairlines, pulsing on the compositor.
+
+     This is CSS rather than a framer loop for the reason Fireflies gives, and
+     it is worth stating in full because the cost was not visible from the
+     component. Driven from JS, an infinite `animate` writes inline style on
+     the main thread every frame, which dirties the paint artifact, which makes
+     Chromium re-run paint and re-layerize the WHOLE document — measured at
+     5.7ms per frame over the homepage's ~1,850 elements, or 2.2s of Layerize
+     across a four-fling scroll. Two 1px hairlines were setting the frame
+     budget for every section on the page.
+
+     They also never stopped: `repeat: Infinity` kept both ticks animating with
+     the hero 10,000px off screen, so the cost was paid for the whole session.
+     A composited transform costs the main thread nothing whether it is on
+     screen or not, so the fix and the off-screen problem close together.
+
+     Reduced motion is handled by the global safety net below, which is the
+     other half of why this belongs in CSS. */
+  @keyframes scroll-tick {
+    0%,
+    100% {
+      transform: scaleY(0.4);
+    }
+    50% {
+      transform: scaleY(1);
+    }
+  }
+
+  .scroll-tick {
+    transform-origin: 50% 0;
+    animation: scroll-tick 2s ease-in-out infinite;
+  }
 }
 
 /* The rotating gradient frame drives an animated custom property, so it

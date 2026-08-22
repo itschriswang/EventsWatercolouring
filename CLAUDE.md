@@ -63,6 +63,22 @@ pixels tall, re-rastered tile by tile the whole way down the page — so the
 weakest devices were running the most expensive rendering on the site. Measure
 the fallback on the hardware it is for, not just the effect it replaces.
 
+**An endless decorative loop belongs in CSS, never in a framer `animate`.** A
+JS-driven loop writes inline style on the main thread every frame, and that
+dirties the paint artifact — so Chromium re-runs paint and re-layerizes the
+*whole document*, whatever the element is. On the homepage that measured 5.7ms
+per frame over ~1,850 elements. The two 1px hero scroll-cue hairlines were
+therefore setting the frame budget for every section on the page, and
+`repeat: Infinity` meant they kept charging it with the hero 10,000px off
+screen. As `@keyframes` the same pulse runs on the compositor for nothing, and
+the reduced-motion safety net in `index.css` freezes it for free. Fireflies and
+`.scroll-tick` are the pattern; reach for framer only when an animation has to
+start, stop or interpolate on state.
+
+The tell is cheap to check: watch attribute writes during a scroll
+(`MutationObserver` on `style`, subtree) — on a healthy page nothing should
+mutate at all while the finger moves.
+
 Every expensive effect is tiered, and new effects must follow the same ladder:
 
 1. **`useHeavyFx()`** (roomy fine-pointer devices, no Data Saver, ≥4GiB

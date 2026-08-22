@@ -336,12 +336,10 @@ export default function Hero({ revealed }) {
         animate={state}
         className="mt-[clamp(2rem,5vw,4rem)] flex items-center gap-3 font-mono text-[0.62rem] uppercase tracking-[0.3em] text-ink-soft"
       >
-        <motion.span
-          className="block h-8 w-px bg-lime"
-          animate={reduce ? {} : { scaleY: [0.4, 1, 0.4] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          style={{ originY: 0 }}
-        />
+        {/* Plain span, CSS pulse: an infinite framer loop on this hairline was
+            re-layerizing the whole page every frame (see `.scroll-tick` in
+            index.css). Reduced motion is covered by the global CSS net. */}
+        <span className="scroll-tick block h-8 w-px bg-lime" />
         Scroll
       </motion.div>
 
@@ -353,12 +351,7 @@ export default function Hero({ revealed }) {
         aria-hidden="true"
         className="sm:hidden absolute right-1 top-1/2 -translate-y-1/4 z-20 flex flex-col items-center gap-2"
       >
-        <motion.span
-          className="block w-px bg-lime"
-          style={{ height: 28, originY: 0 }}
-          animate={reduce ? {} : { scaleY: [0.4, 1, 0.4] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-        />
+        <span className="scroll-tick block w-px bg-lime" style={{ height: 28 }} />
         <span
           className="font-mono text-[0.45rem] uppercase tracking-[0.28em] text-ink-soft opacity-60"
           style={{ writingMode: 'vertical-rl' }}
