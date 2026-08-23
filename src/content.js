@@ -70,7 +70,7 @@ export const WORK = {
   zoomHintTouch: 'Tap any piece to enlarge.',
   title: ['Real watercolour, on', 'cotton paper.'],
   emphasis: 'cotton paper.',
-  note: 'Painted by hand on 300gsm A5 cotton paper.',
+  note: 'Painted by hand on 300gsm A5 cotton paper.',
   // ── Gallery wall — simple to edit ─────────────────────────────────────────
   // The wall is curated into groups so the wedding pieces and the studio
   // studies read as two rooms of one show, not a mixed pile. Each group has
@@ -98,16 +98,16 @@ export const WORK = {
       key: 'live',
       label: 'Painted live, at weddings',
       items: [
-        { img: 'art-couple-vows',  ttl: 'The vows',          meta: 'Watercolour · A5', landscape: true, venue: '', alt: 'Landscape watercolour of a bride in a white gown and a groom in a navy tuxedo holding hands among scattered confetti' },
-        { img: 'art-couple-sage',  ttl: 'The pair, in sage', meta: 'Watercolour · A5', venue: '', alt: 'Watercolour portrait of a couple, the bride in a sage-green off-shoulder gown beside a groom in a soft brown jacket' },
-        { img: 'art-couple-blush', ttl: 'Blush & black tie', meta: 'Watercolour · A5', venue: '', alt: 'Watercolour portrait of a couple, the bride in a blush off-shoulder gown beside a groom in a black suit and glasses' },
-        { img: 'art-couple-hanbok', ttl: 'Hanbok traditions', meta: 'Watercolour · A5', venue: '', alt: 'Watercolour portrait of a couple in traditional Korean hanbok attire, the bride in a blue jeogori and skirt and the groom in traditional jacket and pants' },
-        { img: 'art-toast-friends', ttl: 'The toast', meta: 'Watercolour · A5', landscape: true, venue: '', alt: 'Landscape watercolour of five friends in formal wear laughing together and clinking wine glasses in a toast' },
+        { img: 'art-couple-vows',  ttl: 'The vows',          meta: 'Watercolour · A5', landscape: true, venue: '', alt: 'Landscape watercolour of a bride in a white gown and a groom in a navy tuxedo holding hands among scattered confetti' },
+        { img: 'art-couple-sage',  ttl: 'The pair, in sage', meta: 'Watercolour · A5', venue: '', alt: 'Watercolour portrait of a couple, the bride in a sage-green off-shoulder gown beside a groom in a soft brown jacket' },
+        { img: 'art-couple-blush', ttl: 'Blush & black tie', meta: 'Watercolour · A5', venue: '', alt: 'Watercolour portrait of a couple, the bride in a blush off-shoulder gown beside a groom in a black suit and glasses' },
+        { img: 'art-couple-hanbok', ttl: 'Hanbok traditions', meta: 'Watercolour · A5', venue: '', alt: 'Watercolour portrait of a couple in traditional Korean hanbok attire, the bride in a blue jeogori and skirt and the groom in traditional jacket and pants' },
+        { img: 'art-toast-friends', ttl: 'The toast', meta: 'Watercolour · A5', landscape: true, venue: '', alt: 'Landscape watercolour of five friends in formal wear laughing together and clinking wine glasses in a toast' },
         {
           img: 'art-toast-video-poster',
           video: 'art-toast-video',
           ttl: 'Brush in hand',
-          meta: 'Watercolour · A5 · video',
+          meta: 'Watercolour · A5 · video',
           venue: '',
           alt: 'Video of a watercolour portrait being painted live by hand, brush loaded with warm ochre pigment',
         },
@@ -126,7 +126,7 @@ export const WORK = {
       note: 'This stylised character style is also available as a studio commission, painted from your own photos.',
       items: [
         { img: 'art-character-girl', ttl: 'Little character, in green', meta: 'Studio study', alt: 'Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre' },
-        { img: 'art-character-boy',  ttl: 'At the palette',             meta: 'Studio study', alt: "Small watercolour character portrait with the artist's palette alongside, in warm rust and ochre" },
+        { img: 'art-character-boy',  ttl: 'At the palette',             meta: 'Studio study', alt: "Small watercolour character portrait with the artist’s palette alongside, in warm rust and ochre" },
         { img: 'art-character-boy2', ttl: 'Warm ochre',                 meta: 'Studio study', alt: 'Small watercolour character portrait of a seated figure in warm ochre tones, holding a jar' },
       ],
     },
@@ -187,7 +187,7 @@ export const PACKAGES = {
     price: '$1000',
     facts: ['3 hours live', '24 keepsakes'],
     bullets: [
-      'Guest portraits painted live, on 300gsm A5 archival watercolour paper',
+      'Guest portraits painted live, on 300gsm A5 archival watercolour paper',
       'Usually two guests to a keepsake, up to four if a group wants to share one',
       'You and any VIPs painted first, the rest as they pass by',
       'Every piece sleeved to take home on the night',
@@ -347,7 +347,7 @@ export const FAQ = {
         },
         {
           q: 'What materials do you use?',
-          a: 'Professional watercolours on archival 300gsm A5 cotton paper. The pigments are lightfast, so the colour holds for decades if you look after it.',
+          a: 'Professional watercolours on archival 300gsm A5 cotton paper. The pigments are lightfast, so the colour holds for decades if you look after it.',
         },
       ],
     },
@@ -514,7 +514,7 @@ export const CORPORATE = {
       price: '$1000',
       facts: ['3 hours live', '24 keepsakes'],
       bullets: [
-        'Guest portraits painted live on 300gsm A5 archival cotton paper',
+        'Guest portraits painted live on 300gsm A5 archival cotton paper',
         'Usually two guests to a keepsake, up to four for a group',
         'Every piece sleeved to take home on the night',
         'Public liability insurance',

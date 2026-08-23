@@ -327,12 +327,14 @@ export default function EnquireForm({
 
 
   return (
-    // !scroll-mt: the global `section[id]` rule (56px) sits under the 64px
-    // desktop header, so the header CTA / dock / footer jumps that target
-    // this card landed clipped — same override Faq.jsx documents.
+    // The header CTA / dock / footer jumps that target this card used to land
+    // it clipped behind the desktop header, and carried a `!scroll-mt-*`
+    // override to fix that one section. index.css now takes the chrome out of
+    // the scrollport itself (`html { scroll-padding-top }`), so every anchor
+    // clears the header without opting in.
     <section
       id="enquiry"
-      className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(3.5rem,7vw,6rem)] !scroll-mt-20 md:!scroll-mt-28"
+      className="relative w-full px-[5vw] pt-[clamp(3rem,6vw,5.5rem)] pb-[clamp(3.5rem,7vw,6rem)]"
     >
       {/* `lg:gap-x-8`, not `gap-x-8`: below lg both columns are col-span-12
           and the horizontal gap buys nothing, but a 12-track grid still
@@ -631,6 +633,9 @@ export default function EnquireForm({
                                   name="venue"
                                   label="Venue or city"
                                   placeholder="e.g. Melbourne"
+                                  // Most answers here are a city, which is the
+                                  // one part of an address autofill can offer.
+                                  autoComplete="address-level2"
                                   value={f.venue}
                                   onChange={set('venue')}
                                 />
@@ -658,6 +663,12 @@ export default function EnquireForm({
                                   type="email"
                                   required
                                   autoComplete="email"
+                                  // An address is not prose: left to the
+                                  // default, every desktop engine redlines it
+                                  // and offers corrections for the domain.
+                                  // `type="email"` already stops iOS
+                                  // autocapitalising the first letter.
+                                  spellCheck={false}
                                   invalid={invalidField === 'email'}
                                   value={f.email}
                                   onChange={set('email')}
