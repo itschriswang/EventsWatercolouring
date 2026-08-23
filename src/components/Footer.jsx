@@ -1,6 +1,6 @@
 import SplitText from './SplitText.jsx'
 import CopyEmail from './CopyEmail.jsx'
-import { ENQUIRE_HREF, asset } from '../lib/site.js'
+import { ENQUIRE_HREF, asset, artSrcset } from '../lib/site.js'
 import { FOOTER } from '../content.js'
 import { fieldCss } from '../lib/watercolour.js'
 
@@ -63,7 +63,14 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
           (or if) the photo is still arriving. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-wine">
         <picture>
-          <source srcSet={asset('assets/fireflies-night.webp')} type="image/webp" />
+          {/* Full-bleed, so `sizes` is simply the viewport — but it still has to
+              be said, or the browser assumes 100vw at the DESKTOP width and
+              hands a phone the 2006px master for a 412px band. */}
+          <source
+            srcSet={artSrcset('fireflies-night')}
+            sizes="100vw"
+            type="image/webp"
+          />
           <img
             src={asset('assets/fireflies-night.jpg')}
             alt=""

@@ -3,7 +3,7 @@ import { useRef } from 'react'
 import SplitText from './SplitText.jsx'
 import MagneticButton from './MagneticButton.jsx'
 import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
-import { SPRING, SPRING_SOFT, asset, ENQUIRE_HREF } from '../lib/site.js'
+import { SPRING, SPRING_SOFT, asset, artSrcset, ENQUIRE_HREF } from '../lib/site.js'
 import { HERO } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
 import Sparkles from './Sparkles.jsx'
@@ -36,6 +36,20 @@ const HERO_ORB = [
   { pigment: 'blossom', x: 0.842, at: [0.72, 0.64], size: [0.46, 0.46], extent: 0.74, wetness: 'wet' },
   { pigment: 'aurora_rose', x: 0.788, at: [0.86, 0.84], size: [0.4, 0.4], extent: 0.72, wetness: 'wet' },
 ]
+
+// What the two hero cards actually measure, so the browser can pick a variant
+// instead of always taking the full master. Read off the built page rather than
+// derived from the classes, which fight across four breakpoints: the character
+// card renders 201/213/306/223/303/396 CSS px at viewport widths of
+// 390/412/768/1024/1440/1920, and the bouquet 162/172/312/215/299/396. Neither
+// ever exceeds ~400px, on any screen — which is the whole reason the full
+// 1242px master was never the right file to hand a phone.
+//
+// These are duplicated in index.html's `imagesizes` preloads, and have to stay
+// identical to them: a preload that resolves to a different candidate than the
+// element fetches BOTH. See scripts/generate-image-variants.mjs.
+const CHARACTER_SIZES = '(max-width: 767px) 52vw, (max-width: 1023px) 40vw, 21vw'
+const BOUQUET_SIZES = '(max-width: 1023px) 42vw, 21vw'
 
 export default function Hero({ revealed }) {
   const reduce = useReducedMotion()
@@ -251,7 +265,11 @@ export default function Hero({ revealed }) {
                   )}
                   <div className="relative z-10">
                     <picture>
-                      <source srcSet={asset('assets/art-character-boy.webp')} type="image/webp" />
+                      <source
+                        srcSet={artSrcset('art-character-boy')}
+                        sizes={CHARACTER_SIZES}
+                        type="image/webp"
+                      />
                       <img
                         src={asset('assets/art-character-boy.jpg')}
                         alt="A small watercolour character study at the palette."
@@ -287,7 +305,11 @@ export default function Hero({ revealed }) {
                   )}
                   <div className="relative z-10">
                     <picture>
-                      <source srcSet={asset('assets/art-bouquet.webp')} type="image/webp" />
+                      <source
+                        srcSet={artSrcset('art-bouquet')}
+                        sizes={BOUQUET_SIZES}
+                        type="image/webp"
+                      />
                       <img
                         src={asset('assets/art-bouquet.jpg')}
                         alt="A watercolour bouquet study held to the light."
