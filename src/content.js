@@ -51,7 +51,10 @@ export const EVENING = {
     {
       no: '05',
       title: 'About eight an hour',
-      body: 'I aim for around 8 pieces an hour. The number you book is the number I plan for, and you will know that count when you book.',
+      // Every other beat's body opens on something its title has not said.
+      // This one opened with "I aim for around 8 pieces an hour", which is the
+      // title again, so the beat spent its first sentence standing still.
+      body: 'You will know the exact count when you book, and that is the number I plan the night around.',
     },
   ],
 }
@@ -240,7 +243,11 @@ export const PACKAGES = {
     hoursLabel: 'Hours booked',
     piecesUnit: 'keepsakes painted live',
     coversUnit: 'Room for around',
-    coversTail: 'guests on them at two to a piece, more when groups of up to four share one',
+    // Just names what the number counts. The pairing rule behind it (two to a
+    // piece, four when a group shares) belongs to the lede two lines up, and
+    // the readout rendered barely 110px below it: stating the rule in both put
+    // the same clause on screen twice in one glance.
+    coversTail: 'guests on them',
     more: 'Want more covered? Add live hours, or the after-event service adds studio-painted pieces at a per-portrait rate.',
     small: 'Numbers to plan around, not a stopwatch. Groups and pacing vary on the night.',
     // The planner's own next step — carries the chosen hours into the
