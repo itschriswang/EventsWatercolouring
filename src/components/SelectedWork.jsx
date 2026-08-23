@@ -44,6 +44,21 @@ const PAINTINGS = ALL_ITEMS.filter((g) => !g.testimonial)
  * row. Tapping a painting opens it in the lightbox; testimonials (when
  * added in content.js) slot into the rows as quote cards.
  */
+// Measured off the built page, not read off the classes — the old values were
+// wrong in both directions and each direction cost something different.
+//
+// A tile renders 168/177/338/140/197/210 CSS px at viewport widths of
+// 390/412/768/1024/1440/1920. The previous `(min-width: 768px) 25vw, 46vw`
+// therefore UNDER-declared at 768 (25vw = 192px for a tile that is really
+// 338px, so the browser fetched a variant too small and the wall rendered
+// soft), and OVER-declared everywhere else — 46vw on a phone asks for 190px
+// where the tile is 177, which is just enough to push the picker off the 480
+// variant and onto the 640 for all nine tiles.
+const TILE_SIZES = '(max-width: 767px) 43vw, (max-width: 1023px) 44vw, 14vw'
+
+// The reveal box: near full-bleed on a phone, a fixed column on a desktop.
+const REVEAL_SIZES = '(max-width: 767px) 90vw, (max-width: 1023px) 50vw, 256px'
+
 export default function SelectedWork() {
   const paintings = PAINTINGS
 
@@ -310,7 +325,7 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
                     enough to lack WebP predate srcset shopping anyway. */}
                 <source
                   srcSet={artSrcset(item.img)}
-                  sizes="(min-width: 768px) 25vw, 46vw"
+                  sizes={TILE_SIZES}
                   type="image/webp"
                 />
                 <motion.img
@@ -480,7 +495,14 @@ function RevealTile({ reveal, className = '' }) {
       >
         {/* Base layer — the piece still on the easel */}
         <picture>
-          <source srcSet={asset(`assets/${reveal.before.img}.webp`)} type="image/webp" />
+          {/* The base layer fills the whole reveal box, which is the largest
+              painting on the page after the hero — it was shipping its 1200px
+              master to a phone showing it 369 CSS px wide. */}
+          <source
+            srcSet={artSrcset(reveal.before.img)}
+            sizes={REVEAL_SIZES}
+            type="image/webp"
+          />
           <img
             src={asset(`assets/${reveal.before.img}.${reveal.before.ext || 'jpg'}`)}
             alt={reveal.before.alt}

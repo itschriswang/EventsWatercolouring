@@ -93,12 +93,31 @@ Every expensive effect is tiered, and new effects must follow the same ladder:
    `WEBGL_lose_context`.
 
 Images ship as `<picture>` webp + jpg/png pairs in `public/assets/`; anything
-below the fold is `loading="lazy"`. The two hero paintings are preloaded from
-`index.html` (LCP) — keep those hrefs in sync if the hero art changes. The
-gallery wall serves downscaled WebP variants via `srcset` — after adding or
-replacing gallery art, run `npm run variants` to
-regenerate the variants and the manifest (`src/lib/artVariants.json`) that
-`artSrcset()` in `lib/site.js` reads.
+below the fold is `loading="lazy"`. Every painting on the page serves downscaled
+WebP variants via `srcset` — after adding or replacing art, run
+`npm run variants` to regenerate the variants and the manifest
+(`src/lib/artVariants.json`) that `artSrcset()` in `lib/site.js` reads.
+
+**A `sizes` attribute is a measurement, not a guess.** It is the one number that
+decides which file a phone downloads and holds decoded, and it is wrong in both
+directions by default. The gallery's was `(min-width: 768px) 25vw, 46vw` against
+tiles that really render 43vw on a phone and 44vw at 768: over-declared on the
+phone, which pushed all nine tiles up a variant, and *under*-declared at 768,
+where the wall had been rendering visibly soft for want of 25vw vs 44vw. Read
+the widths off the built page across breakpoints and write those down.
+
+**The hero pair and the footer photo are preloaded, and the preload has to
+resolve to the same file the element picks.** They sat outside the variant
+system for a long time because a `<link rel="preload">` naming one exact URL
+next to a `<source srcset>` makes the browser fetch both. `index.html` now
+preloads with `imagesrcset`/`imagesizes` carrying the same candidates and the
+same `sizes` as `Hero.jsx`, so there is one fetch — verified by counting
+requests, not assumed. Three places have to agree: that preload, the component's
+`*_SIZES`, and the list in `scripts/generate-image-variants.mjs`.
+
+Watch decoded memory, not transfer size — it is the number that gets a Safari
+tab purged, and a purged tab reloads and drops the visitor where they were.
+A 1242px master costs ~9MB decoded however well it gzips.
 
 ## Working in this codebase
 

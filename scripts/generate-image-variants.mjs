@@ -6,11 +6,25 @@
 // Run after adding or replacing gallery art:
 //   node scripts/generate-image-variants.mjs
 //
-// Why only the gallery: those tiles render ~320 CSS px wide yet were shipping
-// their full ~1242px sources. The hero paintings are deliberately left alone —
-// they render near their natural size AND are <link rel="preload">ed by exact
-// URL from the HTML entries; a srcset there would make the browser fetch a
-// variant beside the preloaded original, doubling the cost instead of halving it.
+// Why the gallery: those tiles render ~320 CSS px wide yet were shipping their
+// full ~1242px sources.
+//
+// The hero pair and the footer photograph were excluded from that for a long
+// time on the grounds that they render near their natural size. That is true on
+// a desktop, where the hero cards top out around 400 CSS px — and wrong on a
+// phone, where the same cards render 162-213 px and were still handed the full
+// master. Measured on a Pixel 7: 8.5MB, 7.3MB and 6.0MB of decoded image memory
+// for three pictures, inside a page already holding ~91MB of layers. That is
+// the kind of total that gets a Safari tab purged, and a purged tab reloads and
+// loses the visitor's place.
+//
+// The old objection was real, and is answered rather than ignored: a <source
+// srcset> beside a <link rel="preload"> naming one exact URL makes the browser
+// fetch a variant next to the preloaded original, doubling the cost. index.html
+// now preloads with imagesrcset/imagesizes carrying the SAME candidate list and
+// the SAME sizes as the <picture>, so the preload and the element resolve to one
+// file. Those three attributes are hand-written there — keep them in step with
+// this list and with the `sizes` in Hero.jsx / Footer.jsx.
 import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -32,10 +46,18 @@ const GALLERY = [
   'art-character-boy2',
 ]
 
-const WIDTHS = [480, 960, 1440]
+// The hero pair and the footer photograph. `art-character-boy` is already in
+// GALLERY above (it is both the hero card and a wall tile), so it is not
+// repeated here.
+const HERO = ['art-bouquet', 'fireflies-night']
+
+// 640 earns its place on phones specifically: a hero card at 172-213 CSS px on
+// a 3x screen needs 516-639 real pixels, so without it the picker jumps to 960
+// and carries roughly twice the decoded bytes it needs.
+const WIDTHS = [480, 640, 960, 1440]
 
 const manifest = {}
-for (const name of GALLERY) {
+for (const name of [...GALLERY, ...HERO]) {
   // The .jpg is the least-recompressed master we keep in the repo; resizing
   // from the (already lossy) .webp would compound two generations of loss.
   const src = join(assets, `${name}.jpg`)

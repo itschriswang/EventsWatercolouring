@@ -9,8 +9,30 @@
 
     <!-- The two hero paintings are the LCP candidates but are only discovered
          once React renders; preload them so they arrive with the document. -->
-    <link rel="preload" as="image" href="/assets/art-character-boy.webp" type="image/webp" fetchpriority="high" />
-    <link rel="preload" as="image" href="/assets/art-bouquet.webp" type="image/webp" fetchpriority="high" />
+    <!-- Responsive preloads, NOT a bare href. A preload naming one exact URL
+         beside a <picture> that picks a variant makes the browser fetch both,
+         which is why the hero art sat outside the variant system for so long.
+         imagesrcset/imagesizes carry the same candidates and the same `sizes`
+         as Hero.jsx, so the preload and the element resolve to one file — and a
+         phone gets a ~640px painting instead of the 1242px master.
+         Keep these three in step: this list, Hero.jsx's *_SIZES, and
+         scripts/generate-image-variants.mjs. -->
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      fetchpriority="high"
+      imagesrcset="/assets/art-character-boy-480.webp 480w, /assets/art-character-boy-640.webp 640w, /assets/art-character-boy-960.webp 960w, /assets/art-character-boy.webp 1242w"
+      imagesizes="(max-width: 767px) 52vw, (max-width: 1023px) 40vw, 21vw"
+    />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      fetchpriority="high"
+      imagesrcset="/assets/art-bouquet-480.webp 480w, /assets/art-bouquet-640.webp 640w, /assets/art-bouquet-960.webp 960w, /assets/art-bouquet.webp 1200w"
+      imagesizes="(max-width: 1023px) 42vw, 21vw"
+    />
 
     <!-- Primary SEO -->
     <title>Live Event Watercolour Painting in Melbourne and Sydney | Chris Wang</title>
