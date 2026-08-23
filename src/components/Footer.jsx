@@ -161,7 +161,7 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
           <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-paper/75">
             Write to me
           </span>
-          <CopyEmail tone="dark" className="mt-1.5 text-sm lg:justify-end" />
+          <CopyEmail tone="dark" className="mt-2.5" />
         </div>
       </div>
 

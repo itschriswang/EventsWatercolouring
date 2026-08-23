@@ -65,6 +65,9 @@ export default function EveningTimeline() {
         tone="dusk"
         peek
         label={EVENING.label}
+        // This folder IS the section, so its tab carries the section marker
+        // rather than the card label every other folder on the page wears.
+        labelTier="section"
         gradient={['#EFEFA0', '#F7F4EF']}
         labelClassName="!text-paper/90"
         // tabWidth omitted: FolderCell auto-hugs the eyebrow, sitting an equal
@@ -214,7 +217,15 @@ export default function EveningTimeline() {
                       aria-hidden="true"
                       className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-terracotta/0 transition-colors duration-500 group-hover:ring-terracotta/30 group-focus-within:ring-terracotta/30"
                     />
-                    <h3 className="relative font-mono text-[clamp(1.25rem,2.4vw,1.9rem)] leading-tight tracking-[-0.01em] text-ink">
+                    {/* Sized to the level, not to the card. At its old
+                        2.4vw ceiling this ran to 30px while every other card
+                        heading on the page — a package, an FAQ, an enquiry
+                        step — sat at 24px, so the same rung of the outline
+                        was the loudest thing in one section and mid-weight in
+                        the next. Brought onto 24px with the rest: the beats
+                        still lead their cards, they just stop reading as a
+                        second tier of section title. */}
+                    <h3 className="relative font-mono text-[clamp(1.15rem,1.9vw,1.5rem)] leading-tight tracking-[-0.01em] text-ink">
                       {beat.title}
                     </h3>
                     <p className="relative mt-2 max-w-lg text-[0.95rem] leading-relaxed text-ink-soft">

@@ -90,6 +90,12 @@ export default function FolderCell({
   as = 'div',
   label,
   labelAs: LabelAs = 'span',
+  // Which of the two label tiers the tab wears (see `.section-eyebrow` in
+  // index.css). Nearly every folder here is a card *inside* a section, so
+  // 'card' is the default; the evening timeline is the one folder that IS a
+  // section, and passes 'section' so its tab reads as a chapter marker rather
+  // than as one more card in the stack.
+  labelTier = 'card',
   gradient = ['#D8DB7A', '#9BA03E'],
   tone = 'paper',
   bg,
@@ -195,8 +201,19 @@ export default function FolderCell({
           className="pointer-events-none absolute left-0 top-0 z-20 flex items-center gap-1.5 pl-[1.4rem] pr-4"
           style={{ height: 'var(--fc-tab-h)' }}
         >
-          <Drop className="h-3.5 w-auto shrink-0" gradient={gradient} />
-          <LabelAs className={'eyebrow leading-none ' + labelClassName}>{label}</LabelAs>
+          <Drop
+            className={(labelTier === 'section' ? 'h-5' : 'h-3.5') + ' w-auto shrink-0'}
+            gradient={gradient}
+          />
+          <LabelAs
+            className={
+              (labelTier === 'section' ? 'section-eyebrow' : 'eyebrow') +
+              ' leading-none ' +
+              labelClassName
+            }
+          >
+            {label}
+          </LabelAs>
         </span>
         <div
           className={'relative z-10 ' + contentClassName}

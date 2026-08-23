@@ -11,6 +11,7 @@ import SkipLink from './components/SkipLink.jsx'
 import PageTransition from './components/PageTransition.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
 import MobileNav from './components/MobileNav.jsx'
+import ChapterBar from './components/ChapterBar.jsx'
 import ScrollProgress from './components/ScrollProgress.jsx'
 import Hero from './components/Hero.jsx'
 import PullQuote from './components/PullQuote.jsx'
@@ -103,6 +104,12 @@ export default function App() {
       <SkipLink />
       <ScrollProgress />
       <SiteHeader revealed={revealed} />
+      {/* Phones get the chapter marker instead of the sticky header, which is
+          `hidden md:block`. See ChapterBar: on a phone every level of the page
+          collapses to the same full-bleed block, so hierarchy stops being
+          something type size can carry on its own and the chapter you are
+          inside has to stay named on screen. */}
+      <ChapterBar />
       <MobileNav revealed={revealed} />
 
       {/* The page is paced like the night itself: the promise (hero), the

@@ -365,13 +365,23 @@ export const ENQUIRY = {
   steps: {
     back: 'Back',
     next: 'Continue',
+    // Each sheet that asks for an answer carries the line it says when you
+    // try to move on without one. Both are gentle and both point at the way
+    // out: every question here has a "Not sure yet", so nobody is ever stuck,
+    // they just have to say so on purpose rather than by walking past it.
     what: {
       q: 'What are you after?',
       hint: 'Pick whatever is closest. You can say more in a moment.',
+      error: 'Pick whichever is closest before you go on. "Not sure yet" is a real answer.',
     },
     when: {
       q: 'When, and where?',
-      hint: 'A rough idea is plenty. Skip what you do not know yet.',
+      // Was "Skip what you do not know yet", which now undersells what the
+      // sheet asks: the date wants an answer, even if that answer is "not
+      // sure". The venue is still genuinely optional, so the reassurance
+      // moves onto the thing it is still true of.
+      hint: 'A rough idea is plenty. Leave the venue blank if you do not know it yet.',
+      error: 'Add a date, or tap "Not sure yet" if the day is not locked in.',
     },
     who: {
       q: 'Where do I send my reply?',
@@ -554,6 +564,31 @@ export const FOOTER = {
 // Kept in step with MobileNav's DOCK_ITEMS so desktop and mobile agree on
 // which sections are worth a direct link (Enquire is a CTA, not a nav item,
 // on both).
+// The homepage's top-level sections in document order, each with the name it
+// actually prints on the page and the accent its own eyebrow carries.
+//
+// SiteHeader observes these to name the section you are currently reading (see
+// the "you are here" marker there). It is deliberately NOT derived from NAV:
+// NAV is an edited shortlist of destinations — it has no entry for the evening
+// timeline or the enquiry form, so a visitor sitting in either had no lit nav
+// item at all — and its labels are chosen for a nav bar ("Gallery", "About")
+// rather than matching the words printed at the top of the section. Reusing
+// the sections' own labels means the header always says back exactly what the
+// page says, which is what makes the two read as the same place.
+// `pigment` names the paint each chapter is mixed from, out of the box in
+// lib/watercolour.js — not a second copy of the hexes beside it. ChapterBar's
+// palette paints its pans by running the Kubelka-Munk model on these, so a
+// chapter's swatch is that paint at a thickness rather than a colour someone
+// picked to look like it. Each one is the nearest paint to the accent its
+// section already wears, so the palette and the page agree.
+export const SECTIONS = [
+  { id: 'night', label: EVENING.label, gradient: ['#EFEFA0', '#B0AC42'], pigment: 'butter' },
+  { id: 'work', label: WORK.label, gradient: ['#E3B7C8', '#96385A'], pigment: 'rose' },
+  { id: 'painter', label: PAINTER.label, gradient: ['#FFCDA1', '#E89B63'], pigment: 'apricot' },
+  { id: 'offerings', label: PACKAGES.label, gradient: ['#D8DB7A', '#9BA03E'], pigment: 'lemonlime' },
+  { id: 'enquiry', label: ENQUIRY.label, gradient: ['#F2A6C1', '#DB6E97'], pigment: 'blossom' },
+]
+
 export const NAV = [
   { href: '/#work', label: 'Gallery' },
   { href: '/#painter', label: 'About' },

@@ -115,11 +115,14 @@ export default function SelectedWork() {
         {GROUPS.map((group) => (
           <div key={group.key} className="mt-[clamp(2.5rem,5vw,4rem)]">
             {/* Room label — a quiet rule with the group's name, so the wall
-                reads as curated rooms rather than one mixed pile. */}
+                reads as curated rooms rather than one mixed pile. Quiet, but
+                a heading: at its old 0.62rem uppercase it was set SMALLER than
+                the section eyebrow two lines above it and in the same voice as
+                the note beside it, so the one piece of structure on a very
+                long wall read as a caption. `.subhead` is the shared rung
+                between a display title and body copy (see index.css). */}
             <div className="flex items-baseline gap-4">
-              <h3 className="shrink-0 font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
-                {group.label}
-              </h3>
+              <h3 className="subhead shrink-0">{group.label}</h3>
               <span aria-hidden="true" className="h-px flex-1 self-center bg-line/80" />
             </div>
             {group.note && (

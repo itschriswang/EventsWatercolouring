@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { EMAIL } from '../lib/site.js'
+import { bloom } from '../lib/watercolour.js'
 import { Drop } from './Label.jsx'
 
 // The mark/label swap runs on a quick ease-out tween, NOT the shared SPRING —
@@ -25,10 +26,16 @@ const SWAP = { duration: 0.16, ease: [0.25, 1, 0.5, 1] }
  * (people who want their mail client should still get it) and copy sits
  * BESIDE it as a second, quieter action rather than hijacking the first.
  *
- * The confirmation is the site's own gesture, not a tech-product toast: the
- * orchid drop that marks every list item and eyebrow on the page swaps for a
- * tick, and the word underneath crossfades with it. Nothing turns green — the
- * accent stays the palette's chartreuse on paper, blush on the night ground.
+ * The two share one bordered surface, which is what makes them read as the
+ * other way to reach Chris rather than as small print under the form. Loose on
+ * the page they were an underlined address and a barely-there outlined chip,
+ * and the whole block sank into the enquiry section's pale ground.
+ *
+ * The confirmation is the site's own gesture, not a tech-product toast: pigment
+ * floods the card, the orchid drop that marks every list item and eyebrow on
+ * the page swaps for a tick, and the word underneath crossfades with it.
+ * Nothing turns green — the accent stays the palette's chartreuse on paper,
+ * blush on the night ground.
  *
  * `tone="dark"` restyles it for the wine-ground footer, where the paper-side
  * ink tokens would disappear.
@@ -64,14 +71,79 @@ export default function CopyEmail({ tone = 'light', className = '' }) {
   const dark = tone === 'dark'
 
   return (
-    <div className={'flex flex-wrap items-center gap-x-3 gap-y-1.5 ' + className}>
+    // One object, not two loose scraps of text.
+    //
+    // Before this, the address and its copy action were a bare underlined link
+    // beside a pill outlined in `line` (#E1D6E0) with `ink-soft` text — on the
+    // enquiry section's pale pink ground that pill was a rumour, and the pair
+    // read as a footnote under the form rather than as the other way to reach
+    // Chris. Both problems are containment: give the two a shared bordered
+    // surface and they become one affordance, and the copy button can then
+    // carry real ink instead of having to whisper so as not to outshout an
+    // address that was itself set in fine print.
+    //
+    // It wraps rather than fixing to a single row: the address is 26
+    // characters, and at a phone's width the button has nowhere to go but
+    // underneath. Hence a large radius rather than a true pill — a `rounded-
+    // full` surface with two rows in it reads as a mistake.
+    <div
+      className={
+        'relative isolate inline-flex max-w-full flex-wrap items-center gap-x-1 gap-y-2 overflow-hidden rounded-[1.35rem] border px-1.5 py-1.5 pl-4 transition-colors duration-300 ' +
+        (dark
+          ? 'border-paper/25 bg-paper/[0.07] hover:border-paper/40'
+          : 'border-ink/15 bg-paper/70 hover:border-terracotta/45') +
+        ' ' +
+        className
+      }
+    >
+      {/* The confirmation the visitor actually feels: pigment runs across the
+          card. The tick and the word tell you it worked; this is the bit that
+          makes a copied address feel like something happened on paper rather
+          than a toast firing.
+
+          Light tone only, and that is a physical limit rather than an
+          oversight — `bloom()` solves its stops against PAPER_REFLECTANCE, so
+          the wash it hands back is the one that pigment makes over ivory. Over
+          the footer's wine ground the same glaze can only darken (a
+          transparent paint cannot lighten what it sits on), so the dark tone
+          keeps the drop-to-tick swap and skips the flood rather than smearing
+          a mud-coloured rectangle across itself. */}
+      {!dark && (
+        <AnimatePresence>
+          {copied && (
+            <motion.span
+              key="flood"
+              aria-hidden="true"
+              initial={reduce ? { opacity: 0.3 } : { opacity: 0, scale: 0.55 }}
+              animate={reduce ? { opacity: 0.3 } : { opacity: [0, 0.85, 0.6], scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={reduce ? { duration: 0 } : { duration: 1.1, ease: [0.22, 0.61, 0.36, 1] }}
+              className="pointer-events-none absolute inset-0 -z-10 mix-blend-multiply"
+              style={{
+                // lemonlime is the protected chartreuse glow, and the same
+                // pigment the resting orchid in the button is drawn in — so
+                // the flood reads as that mark spreading, not a new colour
+                // arriving. Wet-in-wet: no pinned contact line to dry against
+                // inside a 40px-tall chip, so no edge-darkened rim (§2.2).
+                background: bloom('lemonlime', {
+                  x: 0.5,
+                  size: 'ellipse 62% 150%',
+                  at: '22% 50%',
+                  wetness: 'wet',
+                }),
+              }}
+            />
+          )}
+        </AnimatePresence>
+      )}
+
       <a
         href={`mailto:${EMAIL}`}
         className={
-          'rounded underline underline-offset-4 outline-none transition-colors duration-300 [overflow-wrap:anywhere] ' +
+          'min-w-0 rounded py-1 pr-2 text-[0.95rem] underline decoration-1 underline-offset-4 outline-none transition-colors duration-300 [overflow-wrap:anywhere] ' +
           (dark
-            ? 'text-paper/85 decoration-paper/30 hover:text-blush focus-visible:text-blush'
-            : 'text-ink decoration-ink/30 hover:text-terracotta focus-visible:text-terracotta')
+            ? 'text-paper decoration-paper/30 hover:decoration-blush focus-visible:text-blush'
+            : 'text-ink decoration-ink/25 hover:decoration-terracotta focus-visible:text-terracotta')
         }
       >
         {EMAIL}
@@ -81,11 +153,19 @@ export default function CopyEmail({ tone = 'light', className = '' }) {
         <button
           type="button"
           onClick={onCopy}
+          // Takes a ground on hover, not just a tinted outline: the old
+          // outline-only hover left the button reading as secondary chrome at
+          // the exact moment it was being pointed at. A *tinted* ground rather
+          // than a solid accent fill, for two reasons — `terracotta` is the
+          // deep olive #66681C, which would swallow the chartreuse orchid
+          // sitting inside the chip, and a solid fill would put this level
+          // with Continue, the sheet's actual primary action. Accent border,
+          // accent text, a wash behind: unmistakably a button, still second.
           className={
-            'group inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[0.58rem] uppercase tracking-[0.16em] outline-none transition-colors duration-300 ' +
+            'group inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 font-mono text-[0.62rem] uppercase tracking-[0.16em] outline-none transition-colors duration-300 ' +
             (dark
-              ? 'border-paper/25 text-paper/60 hover:border-blush hover:text-blush focus-visible:border-blush focus-visible:text-blush'
-              : 'border-line text-ink-soft hover:border-terracotta hover:text-terracotta focus-visible:border-terracotta focus-visible:text-terracotta')
+              ? 'border-paper/30 text-paper/85 hover:border-blush hover:bg-blush/15 hover:text-blush focus-visible:border-blush focus-visible:bg-blush/15 focus-visible:text-blush'
+              : 'border-ink/25 text-ink hover:border-terracotta hover:bg-terracotta/10 hover:text-terracotta focus-visible:border-terracotta focus-visible:bg-terracotta/10 focus-visible:text-terracotta')
           }
         >
           {/* The mark swaps in place: the orchid drop the site uses everywhere,
