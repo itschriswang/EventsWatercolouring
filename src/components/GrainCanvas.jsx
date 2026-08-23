@@ -39,10 +39,32 @@ ${GLSL_PAPER}
     // has to match the scale BloomCanvas samples the sheet at, which renders
     // into a half-resolution buffer.
     vec2 p = gl_FragCoord.xy / u_px + u_seed;
-    // Keep it a gentle darkening grain for the multiply blend: values sit high,
-    // dipping toward mid-grey where the paper's hollows are.
+    // A gentle darkening grain: values sit high, dipping toward mid-grey where
+    // the paper's hollows are.
     float g = mix(0.62, 1.0, paperHeight(p));
-    gl_FragColor = vec4(vec3(g), 1.0);
+
+    // Emitted as transparent BLACK rather than opaque grey, because the layer
+    // no longer carries mix-blend-mode: multiply — and this is the identity
+    // that makes dropping it free rather than a compromise.
+    // (No backticks anywhere in this comment: it lives inside a template
+    // literal, and one here ends the shader as a syntax error 40 lines up.)
+    //
+    // Multiplying a backdrop B by grey g at layer opacity a gives
+    //   B*(1-a) + B*g*a  =  B*(1 - a*(1-g)),
+    // and compositing black over B at alpha a*(1-g) gives B*(1 - a*(1-g)).
+    // The same number. So the sheet darkens exactly as it did, with the layer's
+    // 0.075 opacity still doing the scaling, and the browser no longer has to
+    // read the backdrop to draw it.
+    //
+    // Which is the whole point on iOS. A fixed, full-viewport blend layer has
+    // to re-composite against the page under it every frame it moves, and the
+    // pinch-zoom guard in index.css already records what happens when that
+    // re-raster is dropped or misdrawn: it "flashes white". That guard only
+    // covers pinching; ordinary scrolling asks for the same work.
+    //
+    // Premultiplied output (the context is premultipliedAlpha) — black
+    // premultiplied by any alpha is still black.
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0 - g);
   }
 `
 
@@ -108,10 +130,11 @@ export default function GrainCanvas() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      // zoom-mute: a fixed multiply layer re-composited over the whole page
-      // glitches white during pinch-zoom re-raster, and the noise is
-      // screen-space — magnified grain is wrong anyway (see index.css).
-      className="zoom-mute pointer-events-none fixed inset-0 z-[60] h-full w-full opacity-[0.075] mix-blend-multiply"
+      // No blend mode: the shader emits the multiply's own result as straight
+      // alpha instead (see FRAG), so this layer never reads the page beneath
+      // it. zoom-mute still applies — the noise is screen-space, and magnified
+      // grain is wrong whatever it is composited with (see index.css).
+      className="zoom-mute pointer-events-none fixed inset-0 z-[60] h-full w-full opacity-[0.075]"
     />
   )
 }

@@ -3,7 +3,7 @@ import { useId, useLayoutEffect, useMemo, useRef } from 'react'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
 import Underline from './Underline.jsx'
-import { SPRING, asset } from '../lib/site.js'
+import { SPRING, asset, REVEAL_VIEWPORT } from '../lib/site.js'
 import { INK_WASH, stackFieldCss } from '../lib/watercolour.js'
 
 /**
@@ -393,7 +393,7 @@ export default function SplitText({
   // scroll reveal, so a title can never strand invisible for that audience.
   const animateProps = playOnMount || zoomed || reduce
     ? { initial: 'hidden', animate: 'show' }
-    : { initial: 'hidden', whileInView: 'show', viewport: { once: true, margin: '-60px' } }
+    : { initial: 'hidden', whileInView: 'show', viewport: REVEAL_VIEWPORT }
 
   return (
     <MotionTag

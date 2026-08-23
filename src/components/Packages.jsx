@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label, { Drop } from './Label.jsx'
 import SplitText from './SplitText.jsx'
-import { SPRING, CARD_BG } from '../lib/site.js'
+import { SPRING, CARD_BG, REVEAL_VIEWPORT } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
 import Sparkles from './Sparkles.jsx'
@@ -49,7 +49,7 @@ export default function Packages() {
     // Post-pinch, IO-driven reveals can strand invisible (see usePinchZoom);
     // `animate` bypasses the observer so the content always arrives.
     animate: zoomed ? { opacity: 1, y: 0 } : undefined,
-    viewport: { once: true, margin: '-60px' },
+    viewport: REVEAL_VIEWPORT,
     transition: { ...SPRING, delay: reduce ? 0 : i * 0.06 },
   })
 

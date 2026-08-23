@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import CornerBloom from './CornerBloom.jsx'
 import GlassPill from './GlassPill.jsx'
 import FolderCell from './FolderCell.jsx'
-import { SPRING, ENQUIRE_HREF, CARD_BG } from '../lib/site.js'
+import { SPRING, ENQUIRE_HREF, CARD_BG, REVEAL_VIEWPORT } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import { withUnderline } from './Underline.jsx'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
@@ -54,7 +54,7 @@ export default function NightPlanner() {
     initial: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 36 },
     whileInView: { opacity: 1, y: 0 },
     animate: zoomed ? { opacity: 1, y: 0 } : undefined,
-    viewport: { once: true, margin: '-60px' },
+    viewport: REVEAL_VIEWPORT,
     transition: SPRING,
   }
 

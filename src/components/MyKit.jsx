@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
-import { asset } from '../lib/site.js'
+import { asset, REVEAL_VIEWPORT } from '../lib/site.js'
 import { KIT } from '../content.js'
 import {
   EaselArt,
@@ -225,7 +225,7 @@ export default function KitStage({ className = '' }) {
                   initial: { opacity: 0 },
                   whileInView: { opacity: 1 },
                   animate: zoomed ? { opacity: 1 } : undefined,
-                  viewport: { once: true, margin: '-60px' },
+                  viewport: REVEAL_VIEWPORT,
                   transition: { duration: 0.4 },
                 })}
           >
@@ -320,7 +320,7 @@ function KitPiece({ piece, item, order, fan, orbit, drift, halfW, scrollLinked, 
               initial: { opacity: 0 },
               whileInView: { opacity: 1 },
               animate: zoomed ? { opacity: 1 } : undefined,
-              viewport: { once: true, margin: '-40px' },
+              viewport: REVEAL_VIEWPORT,
               transition: { duration: 0.01 },
               style: { x: fx, y: piece.fy, rotate: piece.r, scale: 1 },
             })}

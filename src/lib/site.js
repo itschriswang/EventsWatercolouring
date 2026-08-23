@@ -36,6 +36,29 @@ export const artSrcset = (name) => {
   return [...v.widths.map((w) => `${asset(`assets/${name}-${w}.webp`)} ${w}w`), original].join(', ')
 }
 
+/**
+ * The framer `viewport` every scroll-triggered entrance shares.
+ *
+ * The lead is the point, and it used to run the other way: seventeen reveals
+ * across the site each carried their own margin between -40px and -90px, which
+ * asks the browser to hold the content invisible until it is already that far
+ * INSIDE the viewport. On a desktop the observer fires immediately and nobody
+ * notices. On iOS Safari, which is slow to deliver IntersectionObserver
+ * callbacks while a flick is still carrying the page, the element is on screen
+ * — blank — before its own trigger qualifies, and the whole run then arrives at
+ * once when the scroll settles. That is the "popping in".
+ *
+ * A positive BOTTOM margin extends the observation box below the fold instead,
+ * so a reveal is asked for while the element is still off screen and has
+ * finished, or nearly, by the time it is looked at. 20% of the viewport is
+ * enough lead to absorb that latency while still being short enough that a
+ * reading-speed scroll watches the entrance play, which is what it is for.
+ *
+ * Shared rather than repeated so the next reveal starts in the right place, and
+ * so this is one edit if the lead ever needs retuning.
+ */
+export const REVEAL_VIEWPORT = { once: true, margin: '0px 0px 20% 0px' }
+
 // Where the "Enquire" actions point. Root-relative (not a bare `#enquiry`
 // hash) so the link still works from other static pages, like /faq/ — same
 // document, same-page smooth scroll on the homepage; a normal navigation

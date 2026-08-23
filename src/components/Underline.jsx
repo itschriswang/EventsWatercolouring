@@ -1,6 +1,7 @@
 import { useId, useMemo, useRef, useState } from 'react'
 import { motion, useReducedMotion, useInView } from 'framer-motion'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
+import { REVEAL_VIEWPORT } from '../lib/site.js'
 
 // Six hand-drawn squiggle paths (viewBox 0 0 310 40), adapted from the
 // underline.js reference brush strokes so the site's key phrases get a
@@ -54,7 +55,7 @@ function pickFlowPair(text) {
 export default function Underline({ children, seed, className = '' }) {
   const reduce = useReducedMotion()
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-10% 0px' })
+  const inView = useInView(ref, REVEAL_VIEWPORT)
   // Post-pinch, iOS stops servicing the observer (see usePinchZoom) — draw.
   const zoomed = usePinchZoomed()
   const [hovered, setHovered] = useState(false)
