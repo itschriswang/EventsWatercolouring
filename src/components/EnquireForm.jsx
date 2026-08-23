@@ -4,14 +4,12 @@ import Label from './Label.jsx'
 import CopyEmail from './CopyEmail.jsx'
 import Postcard from './Postcard.jsx'
 import { CalendarDateIcon } from './icons/FreehandIcons.jsx'
-import {
-  SPRING,
+import { SPRING,
   EMAIL,
   FORMSPREE_ENDPOINT,
   FORMSPREE_READY,
   isValidEmail,
-  asset,
-} from '../lib/site.js'
+  asset, REVEAL_VIEWPORT } from '../lib/site.js'
 import { ENQUIRY } from '../content.js'
 import { track } from '../lib/analytics.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
@@ -387,7 +385,7 @@ export default function EnquireForm({
               initial={reduce ? false : { opacity: 0, y: 26 }}
               whileInView={{ opacity: 1, y: 0 }}
               animate={zoomed ? { opacity: 1, y: 0 } : undefined}
-              viewport={{ once: true, margin: '-80px' }}
+              viewport={REVEAL_VIEWPORT}
               transition={SPRING}
               className="relative"
             >

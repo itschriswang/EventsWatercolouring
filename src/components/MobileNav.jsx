@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { useEffect, useRef } from 'react'
 import { ENQUIRE_HREF } from '../lib/site.js'
+import useMediaQuery from '../hooks/useMediaQuery.js'
 import useCurrentSection from '../hooks/useCurrentSection.js'
 import {
   ColorBrush2Icon,
@@ -89,6 +90,11 @@ function DockButton({ item, isActive }) {
 // `enquireHref` mirrors SiteHeader: pages with their own reply card pass a
 // local anchor so the dock's Enquire stays on-page.
 export default function MobileNav({ revealed, enquireHref = ENQUIRE_HREF }) {
+  // Pointer, not width: a narrow desktop window shows this dock too and has no
+  // trouble with a backdrop filter. What the ground below keys off is the
+  // touch device, which is where the flashing lives.
+  const touch = useMediaQuery('(pointer: coarse)')
+
   // Which tab the section under the reading zone belongs to. Shared with
   // SiteHeader's running head via useCurrentSection, so the two chromes never
   // disagree about where the reader is on a tablet-width screen where the
@@ -172,9 +178,24 @@ export default function MobileNav({ revealed, enquireHref = ENQUIRE_HREF }) {
         // pinch-zoomed; its translucent ground stays (see index.css).
         className="zoom-flat flex items-center gap-0.5 px-2 py-1.5 pointer-events-auto"
         style={{
-          background: 'rgb(var(--rgb-paper) / 0.72)',
-          backdropFilter: 'blur(26px) saturate(1.15)',
-          WebkitBackdropFilter: 'blur(26px) saturate(1.15)',
+          // A fixed, rounded backdrop-filter over content that is moving is one
+          // of the two layers index.css's pinch-zoom guard names as flashing
+          // white when the GPU drops its re-raster — and on iOS an ordinary
+          // scroll asks for exactly the same re-raster the guard was written
+          // for. The guard's own remedy is `.zoom-flat`: keep the translucent
+          // ground, drop the blur. That fallback is already art-directed, so a
+          // touch device simply stays in it rather than visiting it mid-gesture.
+          //
+          // Without the blur behind it, 0.72 lets the page read through as hard
+          // edges rather than a wash, so the ground firms up to carry the label
+          // contrast the blur used to.
+          background: `rgb(var(--rgb-paper) / ${touch ? 0.93 : 0.72})`,
+          ...(touch
+            ? null
+            : {
+                backdropFilter: 'blur(26px) saturate(1.15)',
+                WebkitBackdropFilter: 'blur(26px) saturate(1.15)',
+              }),
           border: '1px solid rgb(var(--rgb-line) / 0.56)',
           borderRadius: 9999,
           // Ink shadow (approved palette) for the lift, paper-tone inset for

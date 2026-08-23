@@ -5,7 +5,7 @@ import SplitText from './SplitText.jsx'
 import useFocusTrap from '../hooks/useFocusTrap.js'
 import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
-import { SPRING, SPRING_SOFT, asset, artSrcset } from '../lib/site.js'
+import { SPRING, SPRING_SOFT, asset, artSrcset, REVEAL_VIEWPORT } from '../lib/site.js'
 import { hideOnError } from '../lib/imageRetry.js'
 import { lockScroll, unlockScroll } from '../lib/scrollLock.js'
 import { WORK } from '../content.js'
@@ -227,7 +227,7 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
   // to their initial opacity:0 and "glitch away". `useInView({ once })` keeps
   // `shown` true across those re-renders, so a revealed tile can never revert.
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-40px' })
+  const inView = useInView(ref, REVEAL_VIEWPORT)
   // `|| reduce`: reduced-motion users get the resting (shown) state without
   // depending on the scroll-triggered reveal firing.
   const shown = inView || zoomed || reduce
@@ -433,7 +433,7 @@ function RevealTile({ reveal, className = '' }) {
   // Same latched reveal as Tile (see there) — the seam `ref` measures the
   // strip's geometry, so give the entrance its own ref to observe.
   const figureRef = useRef(null)
-  const inView = useInView(figureRef, { once: true, margin: '-40px' })
+  const inView = useInView(figureRef, REVEAL_VIEWPORT)
   // `|| reduce`: reduced-motion users get the resting (shown) state without
   // depending on the scroll-triggered reveal firing.
   const shown = inView || zoomed || reduce

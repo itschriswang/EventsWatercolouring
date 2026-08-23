@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { SPRING } from '../lib/site.js'
+import { SPRING, REVEAL_VIEWPORT } from '../lib/site.js'
 import { FAQ } from '../content.js'
 import FolderCell from './FolderCell.jsx'
 import { Drop } from './Label.jsx'
@@ -64,7 +64,7 @@ function FaqCard({ item, i, number, reduce }) {
       initial={reduce ? { opacity: 1 } : { opacity: 0, y: 26 }}
       whileInView={{ opacity: 1, y: 0 }}
       animate={zoomed ? { opacity: 1, y: 0 } : undefined}
-      viewport={{ once: true, margin: '-70px' }}
+      viewport={REVEAL_VIEWPORT}
       transition={{ ...SPRING, delay: reduce ? 0 : Math.min(i, 5) * 0.04 }}
       // The stack: each card sticks a step lower than the one before and sits
       // a layer higher, so as they reach the header they pile onto one another
@@ -126,7 +126,7 @@ function JumpNav({ reduce }) {
       initial={reduce ? { opacity: 1 } : { opacity: 0, y: 14 }}
       whileInView={{ opacity: 1, y: 0 }}
       animate={zoomed ? { opacity: 1, y: 0 } : undefined}
-      viewport={{ once: true, margin: '-40px' }}
+      viewport={REVEAL_VIEWPORT}
       transition={SPRING}
       className="mx-auto mb-[clamp(2.5rem,6vw,4rem)] max-w-3xl"
     >
@@ -184,7 +184,7 @@ export default function Faq() {
               initial={reduce ? { opacity: 1 } : { opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               animate={zoomed ? { opacity: 1, y: 0 } : undefined}
-              viewport={{ once: true, margin: '-60px' }}
+              viewport={REVEAL_VIEWPORT}
               transition={SPRING}
               className="eyebrow mb-7 flex items-center gap-3 sm:mb-8"
             >

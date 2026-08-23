@@ -18,7 +18,7 @@ import CornerBloom from '../components/CornerBloom.jsx'
 import Sparkles from '../components/Sparkles.jsx'
 import EnquireForm from '../components/EnquireForm.jsx'
 import Footer from '../components/Footer.jsx'
-import { SPRING, asset, CARD_BG as SHARED_CARD_BG } from '../lib/site.js'
+import { SPRING, asset, CARD_BG as SHARED_CARD_BG, REVEAL_VIEWPORT } from '../lib/site.js'
 import { withUnderline } from '../components/Underline.jsx'
 import { CORPORATE } from '../content.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
@@ -60,7 +60,7 @@ export default function CorporatePage() {
     // Post-pinch, IO-driven reveals can strand invisible (see usePinchZoom);
     // `animate` bypasses the observer so the content always arrives.
     animate: zoomed ? { opacity: 1, y: 0 } : undefined,
-    viewport: { once: true, margin: '-60px' },
+    viewport: REVEAL_VIEWPORT,
     transition: { ...SPRING, delay: reduce ? 0 : i * 0.06 },
   })
 

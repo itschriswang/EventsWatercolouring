@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion'
 import { Drop } from './Label.jsx'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
-import { SPRING } from '../lib/site.js'
+import { SPRING, REVEAL_VIEWPORT } from '../lib/site.js'
 import { EVENING } from '../content.js'
 import WatercolourBloom from './WatercolourBloom.jsx'
 import Fireflies from './Fireflies.jsx'
@@ -160,7 +160,7 @@ export default function EveningTimeline() {
                   initial={{ opacity: reduce ? 1 : 0, y: lite ? 0 : 32 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   animate={zoomed ? { opacity: 1, y: 0 } : undefined}
-                  viewport={{ once: true, margin: '-80px' }}
+                  viewport={REVEAL_VIEWPORT}
                   transition={
                     lite ? { duration: 0.4 } : { ...SPRING, delay: 0.05 }
                   }
@@ -173,7 +173,7 @@ export default function EveningTimeline() {
                     initial={lite ? false : { scale: 0.4, opacity: 0 }}
                     whileInView={{ scale: 1, opacity: 1 }}
                     animate={zoomed ? { scale: 1, opacity: 1 } : undefined}
-                    viewport={{ once: true, margin: '-90px' }}
+                    viewport={REVEAL_VIEWPORT}
                     transition={lite ? { duration: 0.3 } : { ...SPRING, delay: 0.12 }}
                     className="relative z-10 shrink-0"
                     aria-hidden="true"

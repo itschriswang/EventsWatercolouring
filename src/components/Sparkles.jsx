@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { motion, useReducedMotion, useInView } from 'framer-motion'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
+import { REVEAL_VIEWPORT } from '../lib/site.js'
 
 // A hand-drawn sparkle cluster — one tall four-point twinkle, a smaller one
 // at its shoulder, and a stray tick — sharing the Underline squiggles'
@@ -36,7 +37,7 @@ const BURST_TICK = { d: 'M78 20Q80.4 25.4 82.9 31.6', delay: 0.3 }
 export default function Sparkles({ className = '', delay = 0, variant = 'twinkle' }) {
   const reduce = useReducedMotion()
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-10% 0px' })
+  const inView = useInView(ref, REVEAL_VIEWPORT)
   // Post-pinch, iOS stops servicing the observer (see usePinchZoom) — draw.
   const zoomed = usePinchZoomed()
   const drawn = reduce || inView || zoomed
