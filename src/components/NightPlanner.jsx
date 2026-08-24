@@ -204,11 +204,16 @@ export default function NightPlanner() {
           </p>
 
           {/* Carry the chosen hours straight into the enquiry form — the
-              visitor has already done their maths; don't make them retype it. */}
+              visitor has already done their maths; don't make them retype it.
+              The readout's own numbers ride along rather than being re-derived
+              at the other end, so the card reads back exactly what was on
+              screen when the button was pressed. */}
           <a
             href={ENQUIRE_HREF}
             onClick={() =>
-              window.dispatchEvent(new CustomEvent('ew:planner-enquire', { detail: { hours } }))
+              window.dispatchEvent(
+                new CustomEvent('ew:planner-enquire', { detail: { hours, pieces } }),
+              )
             }
             className="group btn-hero-flow mt-6 inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-ink"
           >
