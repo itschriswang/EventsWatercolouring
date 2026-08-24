@@ -396,6 +396,21 @@ export const ENQUIRY = {
     },
     notSure: 'Not sure yet',
   },
+  // The planner's hand-off (NightPlanner.jsx -> EnquireForm.jsx). "Enquire
+  // with these hours" used to spend its whole promise on a scroll: the number
+  // went into the message box two sheets away, where nobody saw it land. It
+  // now arrives as its own answer, read back on the sheet the visitor lands
+  // on. Composed from parts, the way the planner's own readout is, so both
+  // say the numbers in one voice.
+  fromPlanner: {
+    label: 'From the planner',
+    hoursTail: 'hours live',
+    piecesLead: 'about',
+    piecesTail: 'keepsakes painted on the night',
+    sent: 'Sent with your enquiry.',
+    clear: 'Clear',
+    clearLabel: 'Clear the hours carried over from the planner',
+  },
   confirm: {
     // `title` is composed with the sender's first name in EnquireForm, e.g.
     // "Thank you, Sarah." — so it carries no trailing full stop here.

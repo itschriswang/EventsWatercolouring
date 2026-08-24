@@ -39,6 +39,8 @@ const mailtoFor = (data, subject = 'Wedding watercolour enquiry') => {
       : null,
     data.venue && `Venue: ${data.venue}`,
     data.package && `Looking for: ${data.package}`,
+    data.hours &&
+      `Hours: ${data.hours}${data.pieces ? ` (about ${data.pieces} keepsakes)` : ''}`,
     '',
     data.message || '',
   ]
@@ -97,7 +99,9 @@ const chipClass = (on) =>
  * enquiry feels like three small answers rather than one long form. Because
  * earlier sheets are unmounted by the time the seal is pressed, every answer
  * lives in state and submit builds its own FormData, with the exact field
- * names the old one-sheet form posted — the Formspree payload is unchanged.
+ * names the old one-sheet form posted. The only additions are `hours` and
+ * `pieces`, carried in from the planner and appended only when it sent them,
+ * so an enquiry that never touched it posts the original field set exactly.
  *
  * Form and confirmation share the SAME card: on a confirmed send the sheet
  * floods with pigment and becomes the handwritten thank-you, so the note never
@@ -138,7 +142,8 @@ export default function EnquireForm({
 
   // Every answer, across all three sheets. `initialPackage` lets other pages
   // (e.g. /corporate/) open the card with their audience's option already
-  // chosen; the planner event below prefills package and message the same way.
+  // chosen; the planner event below fills `package` the same way, and brings
+  // its own hours with it.
   const [f, setF] = useState({
     name: '',
     phone: '',
@@ -149,6 +154,9 @@ export default function EnquireForm({
     date: '',
     dateUnknown: false,
     message: '',
+    // Carried in from the planner, never typed — see the listener below.
+    hours: '',
+    pieces: '',
   })
   const set = (key) => (e) => {
     const v = e.target.value
@@ -157,6 +165,8 @@ export default function EnquireForm({
 
   // Hoisted above `stepError` below, which reads the sheets' error copy.
   const S = ENQUIRY.steps
+  // Not a sheet of its own — the planner's numbers read back across all three.
+  const FP = ENQUIRY.fromPlanner
 
   const [step, setStep] = useState(0)
   const [dir, setDir] = useState(1)
@@ -220,13 +230,24 @@ export default function EnquireForm({
   // The planner (NightPlanner.jsx) dispatches this just before the anchor
   // navigation lands here — prefill, but never overwrite words the visitor
   // has already typed.
+  //
+  // The hours are the exception, and deliberately so: they are the one answer
+  // here nobody can type, so there is nothing of theirs to protect and the
+  // latest press always wins. Guarding them the way `package` is guarded is
+  // what made the button lie — pick 3 hours, think better of it, pick 5 and
+  // press again, and the enquiry still went out saying 3.
+  //
+  // They no longer land in `message` either. That box belongs to the visitor,
+  // and a sentence sitting in it on arrival both reads as something they wrote
+  // and can't be refreshed without eating what they might have written since.
   useEffect(() => {
     const onPlanner = (e) => {
-      const { hours } = e.detail || {}
+      const { hours, pieces } = e.detail || {}
       if (!hours) return
       setF((p) => ({
         ...p,
-        message: p.message || `Thinking around ${hours} hours live.`,
+        hours,
+        pieces: pieces || '',
         package: p.package || 'Live on the day',
       }))
     }
@@ -293,6 +314,13 @@ export default function EnquireForm({
         fd.append(k, f[k])
       }
       if (f.dateUnknown) fd.append('date_unknown', 'true')
+      // Appended only when the planner actually sent them, the way
+      // `date_unknown` is: an enquiry that never touched the planner posts the
+      // exact field set it always did, rather than an empty "hours" row.
+      if (f.hours) {
+        fd.append('hours', String(f.hours))
+        if (f.pieces) fd.append('pieces', String(f.pieces))
+      }
       // Abort after 15s: a stalled connection (venue wifi) otherwise never
       // rejects, leaving the seal spinning forever with the retry/mailto
       // fallback in the catch below never offered.
@@ -474,6 +502,58 @@ export default function EnquireForm({
                   <span className="font-mono text-xs tracking-wide text-ink-soft">
                     {sent ? 'Sealed' : `Step ${step + 1} of ${STEP_COUNT}`}
                   </span>
+                </div>
+
+                {/* What "Enquire with these hours" actually buys the visitor.
+                    Without it the button's entire effect was a scroll: the
+                    card that opened asked about package type and said nothing
+                    about the hours just chosen, so the press read as a dead
+                    link and the number only surfaced two sheets later.
+                    It sits above the sheets rather than inside one, so it
+                    survives the step swap and stays in view the whole way
+                    through — and it is a receipt, not a question: the answer
+                    is already made, so there is nothing to fill in.
+
+                    The live region is always mounted and only its contents are
+                    conditional; a region inserted together with its text is
+                    announced unreliably, and this appears as the result of a
+                    press the visitor has just made. */}
+                <div aria-live="polite">
+                  {!sent && f.hours && (
+                    // Body copy at the hint's own size, not fine print. Set
+                    // small and mono it read as a footnote on the card, which
+                    // is the same failure as not showing it: the number the
+                    // visitor pressed a button to bring here has to be the
+                    // thing they see, so it carries a ground and a rule of its
+                    // own rather than tucking under the progress row.
+                    <div className="mt-5 rounded-2xl border border-terracotta/25 bg-terracotta/[0.055] px-4 py-3">
+                      <div className="flex items-baseline justify-between gap-3">
+                        <span className="font-mono text-[0.6rem] uppercase tracking-[0.16em] text-terracotta">
+                          {FP.label}
+                        </span>
+                        <button
+                          type="button"
+                          aria-label={FP.clearLabel}
+                          onClick={() => setF((p) => ({ ...p, hours: '', pieces: '' }))}
+                          className="shrink-0 rounded font-mono text-[0.6rem] uppercase tracking-[0.16em] text-ink-soft underline decoration-terracotta/60 underline-offset-4 outline-none transition-colors hover:text-ink focus-visible:text-terracotta"
+                        >
+                          {FP.clear}
+                        </button>
+                      </div>
+                      <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">
+                        <b className="num-wide font-normal text-ink">{f.hours}</b>{' '}
+                        {FP.hoursTail}
+                        {f.pieces ? (
+                          <>
+                            , {FP.piecesLead}{' '}
+                            <b className="num-wide font-normal text-ink">{f.pieces}</b>{' '}
+                            {FP.piecesTail}
+                          </>
+                        ) : null}
+                        . {FP.sent}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 <AnimatePresence mode="wait">
