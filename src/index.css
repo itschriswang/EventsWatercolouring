@@ -136,6 +136,13 @@
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
+    /* The site has exactly one ground (`paper`) and no dark theme. Saying so
+       is not a formality: an undeclared page is a candidate for Chrome's
+       Auto Dark Theme on Android, which algorithmically inverts it — and an
+       inverted Pastel Bloom is not a darker version of this palette, it is a
+       different one. It also pins native UI (form controls, the date picker,
+       scrollbars) to the light rendering the rest of the page is tuned for. */
+    color-scheme: light;
     /* Kill the platform tap flash (iOS grey / Android blue) — every tappable
        element already carries its own feedback (whileTap scales, hover/focus
        colour shifts), so the default flash reads as a glitch against the
@@ -160,19 +167,57 @@
     overflow-x: clip;
   }
 
-  /* Anchor jumps (nav links, /#section arrivals) land with breathing room
-     under whichever top bar is on screen instead of flush against it — one
-     rule for every anchored section, present and future. Mobile used to have
-     no top bar at all; it now has ChapterBar's 34px, so the margin applies at
-     every width, just at two heights. */
-  section[id] {
-    scroll-margin-top: 3rem;
+  /* Fixed chrome is subtracted from the scrollport, not added to the targets.
+     This used to be `section[id] { scroll-margin-top }`, which was wrong in
+     both of the ways a per-target offset usually is.
+
+     Wrong by amount: measured on the built page the desktop header is 64px
+     and the margin was 56px, so every nav jump parked its section 8px behind
+     the header. Two sections had already been patched one at a time with
+     `!scroll-mt-*` overrides (the `!` because `section[id]` outranks a
+     utility class), which is what a per-target fix looks like once the real
+     quantity turns out to belong to the viewport — and they disagreed, so
+     #enquiry landed at 112px where its neighbours landed at 56.
+
+     Wrong by reach, which was the worse half: the selector only ever matched
+     `<section id>`. `<main id="main">` is not one, and that is the skip
+     link's target — so the first control a keyboard visitor touches on the
+     page dropped them at y=0, the whole landing spot behind the header.
+     Measured before/after: 0 → 64.
+
+     `scroll-padding` is the scrollport's own answer, so it applies to every
+     target and to every way of arriving — fragment navigation and
+     `scrollIntoView` alike. (It does NOT rescue an element that plain
+     sequential tabbing leaves under the chrome; Chromium scrolls the minimum
+     there and consults this only when it scrolls at all. That case did not
+     reproduce on this page.)
+
+     The two bands never coexist: the header is `hidden md:block`, the dock is
+     `md:hidden`. Numbers are the measured chrome plus air — 34px ChapterBar
+     and an 81px dock band on a phone, 64px header on a desktop. */
+  html {
+    scroll-padding-top: 3.5rem;
+    scroll-padding-bottom: 6rem;
   }
 
   @media (min-width: 768px) {
-    section[id] {
-      scroll-margin-top: 3.5rem;
+    html {
+      scroll-padding-top: 5rem;
+      scroll-padding-bottom: 0;
     }
+  }
+
+  /* Kill the 300ms double-tap-zoom wait on things that are pressed rather
+     than read. `manipulation` drops double-tap-zoom only — panning and
+     pinch-zoom survive, which this site depends on (usePinchZoom, the
+     coverflow's drag). Framer sets `touch-action` inline on anything it
+     drags, so a drag surface still overrides this. */
+  a,
+  button,
+  label,
+  summary,
+  [role='button'] {
+    touch-action: manipulation;
   }
 
   body {

@@ -163,19 +163,17 @@ export default function Faq() {
           // Its own <ul> per drawer is load-bearing for the stack — see the
           // component docblock.
           //
-          // The `!` on scroll-mt is doing real work, not decoration. index.css
-          // sets `section[id] { scroll-margin-top: 3.5rem }` for every anchored
-          // section, and that selector (0,1,1) outranks a plain utility class
-          // (0,1,0) whatever the source order — so an unprefixed `scroll-mt-*`
-          // here computes to 56px and silently loses. The desktop header is
-          // 64px, so a jump would have parked each drawer heading BEHIND it.
-          // These land it clear of the header, and clear of where the card pile
-          // parks (--faq-stick).
+          // The drawer headings used to carry a `!scroll-mt-*` override to
+          // clear the 64px desktop header, which the old 56px `section[id]`
+          // margin did not. index.css now subtracts the chrome from the
+          // scrollport instead (`html { scroll-padding-top }`), so a jump from
+          // the nav above lands clear of the header — and of where the card
+          // pile parks (--faq-stick) — with nothing to opt into here.
           <section
             key={cat.id}
             id={cat.id}
             aria-labelledby={`${cat.id}-head`}
-            className="mx-auto max-w-3xl !scroll-mt-20 md:!scroll-mt-28"
+            className="mx-auto max-w-3xl"
           >
             {/* The drawer divider: the site's orchid, the drawer's name in the
                 eyebrow voice, and a hairline running out to the margin. */}

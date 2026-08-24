@@ -77,59 +77,82 @@ export default function NightPlanner() {
             {withUnderline(p.lede, '8 pieces an hour', { className: 'text-terracotta' })}
           </p>
 
-          <div className="mt-7">
-            <span className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
+          {/* Three mutually exclusive answers, so: real radios under the pill
+              styling, the same conversion the reply card's package chips got.
+              A row of `aria-pressed` toggles says "three independent switches,
+              any number of them on" to a screen reader, and gives a keyboard
+              visitor three tab stops with no arrow keys; a radio group is one
+              stop with ← / → walking the options, which is also what someone
+              who has used any other set of options on the web expects. */}
+          <fieldset className="mt-7 border-0 p-0">
+            {/* `leading-6` is restoring, not choosing. This label was an inline
+                <span>, so it sat in a line box struck at the block's own 24px
+                leading; a <legend> is a block box and takes only its own 15px,
+                which pulled the label 9px down onto the pills. Spelling the old
+                strut back keeps the conversion invisible in the layout. */}
+            <legend className="font-mono text-[0.62rem] uppercase leading-6 tracking-[0.2em] text-ink-soft">
               {p.hoursLabel}
-            </span>
-            <div role="group" aria-label={p.hoursLabel} className="mt-3 flex gap-2.5">
-              {HOURS.map((h) =>
-                hours === h ? (
-                  <button
-                    key={h}
-                    type="button"
-                    onClick={() => setHours(h)}
-                    aria-pressed
-                    className="btn-aurora inline-flex min-h-[44px] items-center rounded-full px-4 py-1.5 font-mono text-sm"
-                  >
-                    <span className="btn-aurora-label">{h}</span>
-                  </button>
-                ) : (
-                  // Unselected hours read as a plain pill without a border, easy
-                  // to miss as clickable — a slowly rotating aurora ring (the
-                  // hero action-surface's own hues) gives every option a visible,
-                  // "press me" outline rather than only the selected one standing
-                  // out. `.gradient-frame`'s mask hides its own content box, so
-                  // the ring has to live on a separate, empty layer — putting
-                  // the mask on the button itself masked the number right along
-                  // with it. That layer is outset a hair beyond the pill (not
-                  // inset-0) so the pill's opaque fill, which is exactly the
-                  // button's own box, doesn't paint straight over the ring.
-                  <button
-                    key={h}
-                    type="button"
-                    onClick={() => setHours(h)}
-                    aria-pressed={false}
-                    className="relative rounded-full"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="gradient-frame absolute -inset-[1.5px] rounded-full p-[1.5px]"
-                    />
-                    <GlassPill
-                      opaque
-                      className="relative inline-flex min-h-[44px] items-center justify-center px-4 py-1.5 font-mono text-sm text-ink-soft transition-colors duration-300 hover:text-ink"
-                    >
-                      {h}
-                    </GlassPill>
-                  </button>
-                ),
-              )}
+            </legend>
+            <div className="mt-3 flex gap-2.5">
+              {HOURS.map((h) => (
+                <label
+                  key={h}
+                  className="relative cursor-pointer rounded-full has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-terracotta has-[:focus-visible]:ring-offset-2"
+                >
+                  <input
+                    type="radio"
+                    name="planner-hours"
+                    value={h}
+                    checked={hours === h}
+                    onChange={() => setHours(h)}
+                    className="sr-only"
+                  />
+                  {hours === h ? (
+                    <span className="btn-aurora inline-flex min-h-[44px] items-center rounded-full px-4 py-1.5 font-mono text-sm">
+                      <span className="btn-aurora-label">{h}</span>
+                    </span>
+                  ) : (
+                    // Unselected hours read as a plain pill without a border,
+                    // easy to miss as choosable — a slowly rotating aurora ring
+                    // (the hero action-surface's own hues) gives every option a
+                    // visible, "press me" outline rather than only the selected
+                    // one standing out. `.gradient-frame`'s mask hides its own
+                    // content box, so the ring has to live on a separate, empty
+                    // layer — putting the mask on the pill itself masked the
+                    // number right along with it. That layer is outset a hair
+                    // beyond the pill (not inset-0) so the pill's opaque fill,
+                    // which is exactly the label's own box, doesn't paint
+                    // straight over the ring.
+                    <>
+                      <span
+                        aria-hidden="true"
+                        className="gradient-frame absolute -inset-[1.5px] rounded-full p-[1.5px]"
+                      />
+                      <GlassPill
+                        opaque
+                        className="relative inline-flex min-h-[44px] items-center justify-center px-4 py-1.5 font-mono text-sm text-ink-soft transition-colors duration-300 hover:text-ink"
+                      >
+                        {h}
+                      </GlassPill>
+                    </>
+                  )}
+                </label>
+              ))}
             </div>
-          </div>
+          </fieldset>
         </div>
 
         {/* The arithmetic */}
         <div className="flex flex-col justify-center border-t border-line/60 pt-7 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0">
+          {/* Choosing an hour rewrites two numbers a column away — silently, for
+              anyone not watching that column. The whole point of the planner is
+              the answer, so it gets spoken as one sentence rather than left to
+              live regions on the fragments: the count and the coverage arrive
+              together, the way they read on screen. Visually hidden, because the
+              sighted cue is the figures themselves. */}
+          <p className="sr-only" role="status">
+            {`${hours} hours: ${pieces} ${p.piecesUnit}. ${p.coversUnit} ${covers} ${p.coversTail}.`}
+          </p>
           <p className="flex items-baseline gap-3">
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.span
