@@ -213,7 +213,7 @@ export default function Hero({ revealed }) {
                 emphasisColorStops={[0, 0.04, 0.48, 0.52, 0.96, 1]}
                 // A watercolour wash behind the word, painted from the model
                 // rather than stamped from a scan: the mixed dark of INK_WASH,
-                // laid as overlapping wet-on-dry blooms with a wandering wet
+                // laid as overlapping wet-in-wet blooms with a ragged displaced
                 // edge and uneven pooling. See EmphasisBrush.
                 emphasisStroke
                 emphasisStrokeOpacity={1}

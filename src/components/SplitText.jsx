@@ -134,13 +134,19 @@ const applyEmphasisFlow = (root, colors, positions) => {
 // pigments alpha-blending into violet.
 //
 // Three overlapping blooms rather than one, so the patch has an uneven waist
-// and a lighter tail instead of reading as a symmetrical ellipse. Only the two
-// end blooms are wet-on-dry (§2.2) with the edge-darkened rim (§4.3.3) that
-// stops a wash looking airbrushed — the middle one is wet-in-wet, rimless.
-// Giving all three a rim was tried and is what fieldLobes' satellites already
-// learned: a rim states an edge, so three rims read as three nested rings —
-// soot, not paint — where the middle bloom's own boundary is interior to the
-// patch and should just be mass.
+// and a lighter tail instead of reading as a symmetrical ellipse. All three
+// are wet-in-wet (§2.2) — rimless, spreading freely — and that is a decision
+// with a history, not a default. The §4.3.3 dried rim was tried here twice:
+// on all three blooms it drew three nested rings, and even confined to the
+// two end blooms each ring closed around a lighter interior, which reads as
+// a bead of gel, not paint — the client's words were "pieces of hot glue".
+// The rim's job is to state a wash's outer edge, and at this element's size
+// the blooms are so overlapped that most of each bloom's boundary is interior
+// to the patch, so the rims could only ever draw the blob structure the
+// overlap exists to hide. A dark laid wet-in-wet has no pinned contact line
+// and no rim — the hero orb's own mode — and what keeps it from reading
+// airbrushed is the pooling and the ragged displaced edge below, §2.2's
+// "soft, feathery shapes" rather than §4.3.3's hard dried line.
 //
 // The filter supplies the two things a synthetic wash otherwise can't have. A
 // radial-gradient draws a perfect ellipse; a wet edge wanders, so turbulence
@@ -171,35 +177,30 @@ const applyEmphasisFlow = (root, colors, positions) => {
 // near-black slab with a wobbly edge. Dead paint, and the pooling modulation
 // below was invisible because alpha sat clipped at 1.0 across the body.
 //
-// These thicknesses put the interior in the rgb(35..90) band — translucent
-// charcoal that visibly varies, drifting warm as the mix thins (the
-// separation INK_WASH exists for) — while the dry-profile rim still pools to
-// near-ink and states the edge. Legibility was solved for, not eyeballed:
-// a grid search over the three x values, compositing all three gradients as
-// CSS does and checking WCAG contrast against the glyph gradient's own local
-// colour across the glyph band (x 2..98%, y 0.30..0.70), gives a worst-case
-// point of 4.41:1 — marginally BETTER than the saturated slab's 4.35:1 on
-// the same probe, because past saturation extra pigment buys no contrast.
+// These thicknesses hold a dense core under the word's middle and thin toward
+// the ends, drifting warm as the mix thins (the separation INK_WASH exists
+// for). Legibility was solved for, not eyeballed: a grid search over the
+// three x values, compositing all three gradients as CSS does and checking
+// WCAG contrast against the glyph gradient's own local colour across the
+// glyph band (x 2..98%, y 0.30..0.70), gives a worst-case point of 4.57:1 —
+// better than the saturated slab's 4.35:1 on the same probe, because past
+// saturation extra pigment buys no contrast.
 //
-// The tail bloom is the thickest of the three now, not the thinnest, and that
-// is load-bearing: the glyph gradient pins rose (#E88FA4), its darkest stop,
-// against the word's right edge, so the last letters need the densest ground
-// — and the tail once ran so light the final letter overhung bare paper at
-// 2.1:1. Lighten it before the body and that failure comes straight back.
-// (The wet middle bloom runs a far lower x than its dry neighbours because the
-// wet profile peaks at 1.0 where dry's interior sits near 0.25-0.45 — at equal
-// x it would be the densest thing in the patch, not the softest.)
+// The tail bloom is by far the thickest, and that is load-bearing twice over:
+// the glyph gradient pins rose (#E88FA4), its darkest stop, against the
+// word's right edge, so the last letters need the densest ground (the tail
+// once ran so light the final letter overhung bare paper at 2.1:1); and being
+// rimless it has no dried edge to state, so only its density carries that end
+// of the word. Its geometry is equally solved: every attempt to pull it
+// further inside the box strands the last letter's corners on bare paper at
+// 2-3:1. The mid-alpha fringe it pushes past the box's right border — where
+// a radial-gradient background stops — is dispersed into the edge's raggedness
+// by the displacement filter, which is part of why the displacement runs as
+// hot as it does.
 const EMPHASIS_WASH = [
-  { x: 2.7, at: [0.3, 0.5], size: [0.56, 0.56], extent: 0.88 },
-  { x: 1.0, at: [0.66, 0.52], size: [0.48, 0.54], extent: 0.86, wetness: 'wet' },
-  // The tail hugs the box's right edge, and its dried rim used to land 10%
-  // past it — a radial-gradient background stops at the border box, so the rim
-  // arrived as a straight vertical cut (clearest on desktop, where the box is
-  // tall). It can't simply shrink until it fits: pulled fully inside the box,
-  // the last letter's bottom corner overhangs onto bare paper at 1.5:1, the
-  // same fault the tail's history already recorded. At 1.6% overshoot the
-  // displacement filter folds what little clips into the edge's waviness.
-  { x: 3.4, at: [0.84, 0.48], size: [0.26, 0.5], extent: 0.82 },
+  { x: 2.0, at: [0.3, 0.5], size: [0.62, 0.6], extent: 0.95, wetness: 'wet' },
+  { x: 1.7, at: [0.62, 0.52], size: [0.52, 0.55], extent: 0.95, wetness: 'wet' },
+  { x: 3.3, at: [0.86, 0.48], size: [0.32, 0.52], extent: 0.92, wetness: 'wet' },
 ]
 
 function EmphasisBrush({ inset, opacity = 1, scaleY = 1 }) {
@@ -227,10 +228,15 @@ function EmphasisBrush({ inset, opacity = 1, scaleY = 1 }) {
             seed="9"
             result="bleed"
           />
+          {/* Runs hotter than the artwork wick's displacement on purpose: with
+              the blooms wet-in-wet the wash has no dried rim, so the ragged
+              displaced boundary is the only thing standing between the smear
+              and an airbrush fade — and it also disperses the sliver of the
+              tail's fringe that the box's right border clips. */}
           <feDisplacementMap
             in="SourceGraphic"
             in2="bleed"
-            scale="34"
+            scale="46"
             xChannelSelector="R"
             yChannelSelector="G"
             result="wet"
