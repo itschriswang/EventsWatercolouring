@@ -134,9 +134,13 @@ const applyEmphasisFlow = (root, colors, positions) => {
 // pigments alpha-blending into violet.
 //
 // Three overlapping blooms rather than one, so the patch has an uneven waist
-// and a lighter tail instead of reading as a symmetrical ellipse. They're
-// wet-on-dry (§2.2), so each carries the edge-darkened rim (§4.3.3) that stops
-// a wash looking airbrushed.
+// and a lighter tail instead of reading as a symmetrical ellipse. Only the two
+// end blooms are wet-on-dry (§2.2) with the edge-darkened rim (§4.3.3) that
+// stops a wash looking airbrushed — the middle one is wet-in-wet, rimless.
+// Giving all three a rim was tried and is what fieldLobes' satellites already
+// learned: a rim states an edge, so three rims read as three nested rings —
+// soot, not paint — where the middle bloom's own boundary is interior to the
+// patch and should just be mass.
 //
 // The filter supplies the two things a synthetic wash otherwise can't have. A
 // radial-gradient draws a perfect ellipse; a wet edge wanders, so turbulence
@@ -156,31 +160,46 @@ const applyEmphasisFlow = (root, colors, positions) => {
 // top. Sits at zIndex -1 inside the (relative, isolated) emphasis span, so it
 // paints behind the glyphs but never escapes to the page. `scaleY` squashes it
 // about its centre without touching its length.
-// Thickness is set by legibility, and it was measured, not judged by eye. The
-// word is pastel type and this wash is the only ground under it, so the wash IS
-// its contrast: at the thicknesses this started with it rendered
-// rgb(112,104,107) under the glyphs — a mid grey, well under half the density
-// INK_WASH is solved for, and a grey the palette does not own — which put the
-// word at 3.4:1 with 41% of its area under 3:1, AA's floor for display type.
 //
-// These land the wash on `ink` itself: rgb(50,42,45) measured under the glyphs
-// against #352E30's rgb(53,46,48). That is the right target rather than a taste
-// call, because it is exactly where separate() solved the mix to land at unit
-// thickness, and because `ink` is the palette's deepest slot — going past it
-// buys contrast by leaving the scheme. The word measures 8.1:1 with 95% of its
-// area at 4.5:1 or better, and the wash still reads as paint: its pooling stays
-// legible instead of flattening into a slab.
+// Thickness is a trade between legibility and reading as watercolour at all,
+// and both ends of it have been measured, not judged by eye. Too thin and the
+// wash renders a mid grey the palette does not own (rgb(112,104,107) under the
+// glyphs put the word at 3.4:1, under AA's display floor). Too thick and the
+// KM curve saturates: an earlier tuning at x ≈ 4 landed the whole interior on
+// `ink` — every stop within rgb(14..49) — which is CLAUDE.md's silent failure
+// the other way round: the model ran, and the wash rendered as one flat
+// near-black slab with a wobbly edge. Dead paint, and the pooling modulation
+// below was invisible because alpha sat clipped at 1.0 across the body.
 //
-// The tail is a separate fault worth keeping in mind if this is ever retuned.
-// It was once thin and short enough that the final letter overhung onto bare
-// paper, and no amount of darkening the body could fix that — those glyphs had
-// no wash beneath them at all, so the 1st percentile sat at 2.1:1 regardless.
-// It stays lighter than the body, which is the point of a three-bloom wash over
-// one ellipse; it just can't be lighter than the type needs.
+// These thicknesses put the interior in the rgb(35..90) band — translucent
+// charcoal that visibly varies, drifting warm as the mix thins (the
+// separation INK_WASH exists for) — while the dry-profile rim still pools to
+// near-ink and states the edge. Legibility was solved for, not eyeballed:
+// a grid search over the three x values, compositing all three gradients as
+// CSS does and checking WCAG contrast against the glyph gradient's own local
+// colour across the glyph band (x 2..98%, y 0.30..0.70), gives a worst-case
+// point of 4.41:1 — marginally BETTER than the saturated slab's 4.35:1 on
+// the same probe, because past saturation extra pigment buys no contrast.
+//
+// The tail bloom is the thickest of the three now, not the thinnest, and that
+// is load-bearing: the glyph gradient pins rose (#E88FA4), its darkest stop,
+// against the word's right edge, so the last letters need the densest ground
+// — and the tail once ran so light the final letter overhung bare paper at
+// 2.1:1. Lighten it before the body and that failure comes straight back.
+// (The wet middle bloom runs a far lower x than its dry neighbours because the
+// wet profile peaks at 1.0 where dry's interior sits near 0.25-0.45 — at equal
+// x it would be the densest thing in the patch, not the softest.)
 const EMPHASIS_WASH = [
-  { x: 4.19, at: [0.34, 0.5], size: [0.5, 0.56], extent: 0.88 },
-  { x: 3.91, at: [0.66, 0.52], size: [0.48, 0.54], extent: 0.86 },
-  { x: 3.49, at: [0.9, 0.48], size: [0.3, 0.5], extent: 0.82 },
+  { x: 2.7, at: [0.3, 0.5], size: [0.56, 0.56], extent: 0.88 },
+  { x: 1.0, at: [0.66, 0.52], size: [0.48, 0.54], extent: 0.86, wetness: 'wet' },
+  // The tail hugs the box's right edge, and its dried rim used to land 10%
+  // past it — a radial-gradient background stops at the border box, so the rim
+  // arrived as a straight vertical cut (clearest on desktop, where the box is
+  // tall). It can't simply shrink until it fits: pulled fully inside the box,
+  // the last letter's bottom corner overhangs onto bare paper at 1.5:1, the
+  // same fault the tail's history already recorded. At 1.6% overshoot the
+  // displacement filter folds what little clips into the edge's waviness.
+  { x: 3.4, at: [0.84, 0.48], size: [0.26, 0.5], extent: 0.82 },
 ]
 
 function EmphasisBrush({ inset, opacity = 1, scaleY = 1 }) {
@@ -219,8 +238,13 @@ function EmphasisBrush({ inset, opacity = 1, scaleY = 1 }) {
           {/* Where the pigment pooled. RGB carries the same value as alpha so
               the modulation below stays consistent under premultiplied
               compositing — scaling alpha without scaling colour to match would
-              brighten the wash as it thins. */}
-          <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="1" seed="3" result="pooling" />
+              brighten the wash as it thins. The frequency sets the blotch
+              size: ~30px at this setting, the scale of pigment settling as a
+              wash dries. It only reads at all because the wash's body alpha
+              now sits below 1 — at the old saturated thicknesses the
+              modulation could only clip against alpha 1.0 and the pooling was
+              effectively invisible. */}
+          <feTurbulence type="fractalNoise" baseFrequency="0.032" numOctaves="1" seed="3" result="pooling" />
           <feColorMatrix
             in="pooling"
             type="matrix"
