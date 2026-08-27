@@ -46,15 +46,16 @@ function blendForRel(rel) {
 // image aspect ratio (measured off the loaded <img>, not guessed from the
 // `landscape` flag) so `object-fit: contain` never has to pad it with bars —
 // the box just *is* the image's shape, clamped inside the height/max-width
-// the tier allows. `ar` is null until the image reports its natural size, in
-// which case this falls back to the tier's own default portrait box.
+// the sizing allows. `ar` is null until the image reports its natural size,
+// in which case a 3:4 portrait (the wall's default shape) stands in so the
+// placeholder box already has a painting's proportions.
 // Peripheral slats stay a uniform crop (see `objectFit` below), so this only
 // matters once a piece is close enough to centre to be shown uncropped.
 function activeBoxFor(ar, sizing) {
-  if (!ar) return { width: sizing.activeWidth, height: sizing.activeHeight }
-  const byHeight = sizing.activeHeight * ar
+  const ratio = ar || 3 / 4
+  const byHeight = sizing.activeHeight * ratio
   if (byHeight <= sizing.maxActiveWidth) return { width: byHeight, height: sizing.activeHeight }
-  return { width: sizing.maxActiveWidth, height: sizing.maxActiveWidth / ar }
+  return { width: sizing.maxActiveWidth, height: sizing.maxActiveWidth / ratio }
 }
 
 // Image error recovery comes from lib/imageRetry.js — the naive permanent
@@ -188,12 +189,17 @@ function Card({ item, cardIndex, pos, count, R, sizing, radius, onSelect, dresse
       className="bg-paper-deep outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper"
     >
       <picture className="block h-full w-full">
-        {/* sizes = the widest box this card can occupy in its tier (the
-            centred active piece; slats are narrower and reuse whichever
-            variant the grid tile already cached). */}
+        {/* sizes tracks the card's role, not one shared number: the centred
+            piece declares the widest box the current viewport lets it grow
+            into, so the enlargement actually gets enlargement-grade pixels,
+            while the slats declare only their sliver — one shared active-size
+            `sizes` would make every off-centre slat fetch the near-master
+            variant the active piece needs. A slat promoted to active
+            re-renders with the bigger declaration and the browser swaps the
+            sharper file in over the cached small one; it never downgrades. */}
         <source
           srcSet={artSrcset(item.img)}
-          sizes="(min-width: 640px) 520px, 260px"
+          sizes={active ? `${sizing.maxActiveWidth}px` : `${sizing.restWidth}px`}
           type="image/webp"
         />
         <motion.img
@@ -337,15 +343,51 @@ export default function CoverflowCarousel({ items, index, onSelect, onNavigate, 
   )
 }
 
-// Two size tiers — coverflow math needs real pixel numbers (for the slat
-// offsets), so it steps rather than fluidly scaling like the rest of the
-// site's clamp()-driven type.
-// `maxActiveWidth` caps how wide a piece's box can grow for a very wide
-// aspect ratio — loose enough to read as landscape, tight enough that it
-// never crowds out every slat even at the narrow edge of its tier's viewport
-// range (the `wide` tier starts at a 640px viewport).
-export const COVERFLOW_SIZING = {
-  wide: { activeWidth: 326, activeHeight: 449, restWidth: 173, restHeight: 238, gap: 17, maxActiveWidth: 520 },
-  narrow: { activeWidth: 196, activeHeight: 270, restWidth: 104, restHeight: 143, gap: 10, maxActiveWidth: 260 },
+// Sizing is solved from the live viewport — coverflow math needs real pixel
+// numbers (for the slat offsets), so it can't ride clamp()-driven CSS like
+// the rest of the site's type; instead the caller measures the window and
+// this derives the numbers (Lightbox re-runs it on resize).
+//
+// It used to be two fixed tiers (326×449 / 196×270), and that is why the
+// lightbox felt pointless: measured against the wall it was meant to
+// enlarge, a grid tile renders ~338 CSS px wide at a 768px viewport and
+// ~177px on a 390px phone, so "enlarging" a painting produced an image the
+// same size as — at tablet widths, *smaller* than — the tile just tapped.
+// Solving from the viewport is what makes the carousel actually a viewer:
+// the centred piece now takes most of the height the dialog's chrome leaves
+// free, whatever the screen.
+export function coverflowSizing(vw, vh) {
+  // Same rhythm as the old tiers' 10/17px gaps, now scaled with the stage.
+  const gap = Math.round(Math.min(20, Math.max(10, vw * 0.02)))
+  // How much stage each side of the active piece stays visible: on a phone a
+  // slat only needs to peek past the edge to read as "more this way"; on a
+  // pointer viewport the reserve also keeps the piece clear of the absolute
+  // prev/next arrows (48px buttons at ~20px insets) with a sliver of slat
+  // beyond them.
+  const peek = vw < 640 ? 24 : 110
+  // The dialog's vertical chrome around the stage: the close button's row
+  // above, the caption + its gap below (~168px in total across both). 66% of
+  // the viewport keeps breathing room inside that on ordinary screens; the
+  // vh - 168 bound takes over on short landscape phones, and the 240px floor
+  // keeps the artwork legible even there.
+  const activeHeight = Math.round(Math.max(240, Math.min(vh * 0.66, vh - 168)))
+  // Widest box any aspect ratio may claim: wide enough for a 3:2 landscape
+  // piece to read as landscape (1.7 × height covers it with margin), but
+  // never past the peek reserve — the slats are the affordance that this is
+  // a carousel at all, and a centred piece must not push every one off-screen.
+  const maxActiveWidth = Math.round(Math.min(activeHeight * 1.7, vw - 2 * (gap + peek)))
+  // Base (pre-aspect) box keeps the wall's default 3:4 portrait shape; the
+  // slot pitch in xForRel is keyed to this, so it must stay uniform per
+  // viewport rather than per painting.
+  const activeWidth = Math.min(Math.round(activeHeight * (3 / 4)), maxActiveWidth)
+  // Slats keep the old tiers' measured ratio (rest ≈ 0.53 × active).
+  return {
+    activeWidth,
+    activeHeight,
+    restWidth: Math.round(activeWidth * 0.53),
+    restHeight: Math.round(activeHeight * 0.53),
+    gap,
+    maxActiveWidth,
+  }
 }
 export const COVERFLOW_RADIUS = 4
