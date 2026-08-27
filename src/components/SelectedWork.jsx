@@ -11,7 +11,7 @@ import { lockScroll, unlockScroll } from '../lib/scrollLock.js'
 import { WORK } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
 import GlassCardRim from './GlassCardRim.jsx'
-import CoverflowCarousel, { COVERFLOW_SIZING, COVERFLOW_RADIUS } from './CoverflowCarousel.jsx'
+import CoverflowCarousel, { coverflowSizing, COVERFLOW_RADIUS } from './CoverflowCarousel.jsx'
 import { PaperClip } from './Ephemera.jsx'
 
 // Flatten the curated groups once, giving every entry a stable index. The
@@ -630,13 +630,28 @@ function NavControl({ label, onClick, className, children }) {
 function Lightbox({ items, index, onClose, onNavigate, onSelect }) {
   const reduce = useReducedMotion()
   const heavy = useHeavyFx()
-  const wide = useMediaQuery('(min-width: 640px)')
   const open = index != null
   const item = open ? items[index] : null
   const trapRef = useFocusTrap(open, onClose)
   const many = items.length > 1
   const dressed = heavy && !reduce
-  const sizing = wide ? COVERFLOW_SIZING.wide : COVERFLOW_SIZING.narrow
+
+  // Coverflow sizing is solved from the live viewport (see coverflowSizing) —
+  // the enlargement has to actually be larger than the grid tile it opens
+  // from, which fixed breakpoint tiers weren't at every width. Measured only
+  // while the dialog is open: re-measured on each open (the viewport may have
+  // rotated or resized since last time) and tracked across resize so a
+  // rotation mid-view reflows the stage instead of clipping it.
+  const [sizing, setSizing] = useState(() =>
+    coverflowSizing(window.innerWidth, window.innerHeight),
+  )
+  useEffect(() => {
+    if (!open) return
+    const measure = () => setSizing(coverflowSizing(window.innerWidth, window.innerHeight))
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [open])
 
   // Left / right arrow keys walk the wall while the lightbox is open.
   useEffect(() => {
