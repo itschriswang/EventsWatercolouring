@@ -108,10 +108,20 @@ export default function ChapterPalette({ index, scaleX }) {
       className="ml-auto flex h-[9px] w-[92px] shrink-0 items-stretch gap-[3px]"
     >
       {SECTIONS.map((s, i) => (
+        // An unpainted pan is an empty WELL, not an outlined box. Every pan
+        // used to carry a hard 1px `line` ring, and a row of five hard-edged
+        // rectangles with the first two filled does not read as a palette at
+        // all — it reads as a segmented meter, or as a battery. Which is the
+        // one thing this component exists not to be. So the ring goes and the
+        // unpainted pan becomes a shallow dish waiting for paint. `line` at 60%
+        // rather than a neutral ink tint, so the empty half of the strip stays
+        // the palette's own soft lilac and never goes grey. The 3px gaps carry
+        // the separation the ring was really doing, and the paint is then the
+        // only thing on the strip with an edge, which is the point of it.
         <span
           key={s.id}
           style={{ flexGrow: spans[i], flexBasis: 0 }}
-          className="relative overflow-hidden rounded-[2px] ring-1 ring-inset ring-line"
+          className="relative overflow-hidden rounded-[3px] bg-line/60"
         >
           {i < index && (
             <span className="absolute inset-0" style={{ background: PAINT[s.id].dry }} />

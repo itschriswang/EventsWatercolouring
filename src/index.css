@@ -193,10 +193,14 @@
      reproduce on this page.)
 
      The two bands never coexist: the header is `hidden md:block`, the dock is
-     `md:hidden`. Numbers are the measured chrome plus air — 34px ChapterBar
-     and an 81px dock band on a phone, 64px header on a desktop. */
+     `md:hidden`. Numbers are the measured chrome plus air — a 44px ChapterBar
+     band (10px of air above a 34px pill) and an 81px dock band on a phone,
+     64px header on a desktop. The phone's top figure carries the safe-area
+     inset because the pill does: `viewport-fit=cover` puts the page under the
+     notch, so on a device that has one the band starts lower and a landing
+     spot solved against a bare 44px would arrive underneath it. */
   html {
-    scroll-padding-top: 3.5rem;
+    scroll-padding-top: calc(4.25rem + env(safe-area-inset-top, 0px));
     scroll-padding-bottom: 6rem;
   }
 
