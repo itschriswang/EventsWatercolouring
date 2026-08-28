@@ -10,10 +10,16 @@ deployed as a static multi-page build to GitHub Pages.
 npm run dev       # Vite dev server
 npm run build     # production build to dist/ (all three pages)
 npm run preview   # serve the production build locally
+npm run check:wash # every bloom field, against the paint it is made of (~10s)
 ```
 
 There are no tests or linters — verify changes with `npm run build` plus a
 visual pass (Playwright is available as a devDependency for screenshots).
+
+`check:wash` is the one automated check, and it covers the one thing here that
+fails silently: it renders every field through both CPU tiers and fails if they
+disagree or if a pixel escapes the gamut §5.2 allows. Run it after touching a
+wash, a pigment or a renderer. See the Watercolour Model section for why.
 
 ## Architecture
 
@@ -200,13 +206,28 @@ same references, so read them before retuning a wash.
 **Implementing an effect is not the same as making it visible.** The model can
 be perfectly correct and still render as a plain gradient, and that failure is
 silent — the maths runs, nothing looks wrong, and the wash is just a fade. It
-has happened twice here. The edge-darkening rim once lifted thickness from 0.30
-to 0.34, which emitted alphas of 0.068 and 0.077: two levels out of 255, i.e.
-the paper's headline effect rendered as nothing across the entire site. And
+has happened three times here. The edge-darkening rim once lifted thickness from
+0.30 to 0.34, which emitted alphas of 0.068 and 0.077: two levels out of 255,
+i.e. the paper's headline effect rendered as nothing across the entire site. And
 γ was folded into granulation the wrong way round, making the smoothest paints
-the grainiest. **So: after changing anything here, print the emitted stops and
-look at the numbers, then screenshot the page at 6-10x amplified deviation from
-paper.** If you cannot see the effect in either, it is not there.
+the grainiest. And the raster tier faded its stops to the `transparent` keyword,
+which on a canvas is rgba(0,0,0,**0**) interpolated in *un*-premultiplied alpha,
+so black leaked into every lobe on the way out and the four lifts — the one
+thing on a field whose job is to hold paper OPEN — baked as grey discs.
+**So: after changing anything here, print the emitted stops and look at the
+numbers, then screenshot the page at 6-10x amplified deviation from paper.** If
+you cannot see the effect in either, it is not there.
+
+The third one is also the tell worth generalising, because it needs no eye at
+all: **a wash that lands on a colour its own paint cannot mix is a compositing
+bug, not a tuning one.** There is no black in the box — reaching `ink` takes
+three transparent paints solved together — so a neutral grey darker than the
+paper was outside the model's gamut, and that localises the fault to the
+compositor before anything is measured. `npm run check:wash` is that argument
+as a script: it renders every field through both CPU tiers and fails if they
+disagree, or if any pixel escapes what §5.2 says the paint reaching it can
+make. It runs in ten seconds; run it after touching a wash, a pigment or a
+renderer.
 
 **The palette is a set of paints, not a set of colours.** Each pigment in
 `PIGMENTS` is specified the way §5.1 lets an artist specify one: `rw`, how a

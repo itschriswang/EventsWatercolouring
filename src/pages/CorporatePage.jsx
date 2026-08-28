@@ -39,7 +39,7 @@ const CARD_BG = { background: SHARED_CARD_BG }
  * corporate option preselected.
  */
 // The corporate hero's wash, as paint — same treatment as the homepage hero.
-const CORPORATE_HERO = [
+export const CORPORATE_HERO = [
   { pigment: 'apricot', x: 0.251, at: [0.14, 0.22], size: [0.42, 0.36], extent: 0.72 },
   { pigment: 'rose', x: 0.134, at: [0.88, 0.12], size: [0.32, 0.28], extent: 0.72 },
   { pigment: 'yellowgreen', x: 0.197, at: [0.86, 0.84], size: [0.34, 0.3], extent: 0.72 },

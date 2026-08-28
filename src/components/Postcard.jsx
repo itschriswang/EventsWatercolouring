@@ -18,7 +18,7 @@ import { fieldCss } from '../lib/watercolour.js'
  * doesn't bounce. Under reduced motion every stage becomes a plain fade.
  */
 // Blush into lilac across the card, as paint.
-const POSTCARD_WASH = [
+export const POSTCARD_WASH = [
   { pigment: 'blush', x: 0.077, at: [0.12, 0], size: [0.8, 0.6], extent: 0.6 },
   { pigment: 'lilac', x: 0.063, at: [1, 1], size: [0.7, 0.6], extent: 0.55 },
 ]

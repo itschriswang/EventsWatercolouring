@@ -17,22 +17,26 @@ import { fieldCss } from '../lib/watercolour.js'
  * Reduced-motion visitors keep the page's existing static washes and skip
  * the drift entirely (scroll-linked colour is still motion).
  */
+// Golden hour — apricot into butter, pouring from the top of the sky.
+export const GOLDEN_HOUR = [
+  { pigment: 'apricot', x: 0.146, at: [0.5, 0], size: [1.2, 0.6], extent: 0.72 },
+  { pigment: 'butter', x: 0.08, at: [0.5, 0], size: [1.2, 0.6], extent: 0.45 },
+]
+
+// Dusk — periwinkle and soft lilac drifting in from the margins.
+export const DUSK = [
+  { pigment: 'periwinkle', x: 0.185, at: [0.1, 0.42], size: [0.7, 0.55], extent: 0.7 },
+  { pigment: 'lilac', x: 0.105, at: [0.9, 0.58], size: [0.7, 0.55], extent: 0.7 },
+]
+
 const LAYERS = [
   {
-    // Golden hour — apricot into butter, pouring from the top of the sky.
-    background: fieldCss([
-      { pigment: 'apricot', x: 0.146, at: [0.5, 0], size: [1.2, 0.6], extent: 0.72 },
-      { pigment: 'butter', x: 0.08, at: [0.5, 0], size: [1.2, 0.6], extent: 0.45 },
-    ]),
+    background: fieldCss(GOLDEN_HOUR),
     stops: [0, 0.22, 0.45],
     opacities: [1, 0.45, 0],
   },
   {
-    // Dusk — periwinkle and soft lilac drifting in from the margins.
-    background: fieldCss([
-      { pigment: 'periwinkle', x: 0.185, at: [0.1, 0.42], size: [0.7, 0.55], extent: 0.7 },
-      { pigment: 'lilac', x: 0.105, at: [0.9, 0.58], size: [0.7, 0.55], extent: 0.7 },
-    ]),
+    background: fieldCss(DUSK),
     stops: [0.18, 0.45, 0.8],
     opacities: [0, 1, 0.35],
   },
