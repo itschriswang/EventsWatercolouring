@@ -27,6 +27,69 @@ const GROUPS = WORK.groups.map((group) => ({ ...group, items: [...group.items] }
 }
 const ALL_ITEMS = GROUPS.flatMap((g) => g.items)
 
+// ── The two-column wall, below the desktop grid ───────────────────────────
+// This used to be a CSS multi-column box (`columns-2`), and building the two
+// columns by hand instead is the fix for the top right painting that kept
+// going blank after a scroll. What the screenshot of it shows is the useful
+// part: the tile keeps its box to the pixel, and nothing inside it is drawn.
+// Not the artwork, not the card ground, not the 1px border. So this was never
+// the image failing to load or a blend layer dropping the painting, which is
+// what the last five passes were all treating. Both of those leave the card
+// sitting there empty, and the card is not there either.
+//
+// What singles that tile out is structural: it is the FIRST tile of column
+// two, so it is the one element whose position in the multi-column flow
+// (615px down, in column one) and its painted position (the top of column
+// two) disagree. Every tile carries self-painting layers — the clip-path
+// media wrapper, CornerBloom's multiply overlay, framer's opacity and
+// transform through the entrance — and a fragmented flow is the one layout
+// mode where an engine has to map each of those onto a column itself.
+// Column one never shows it, because there the two positions are the same.
+//
+// That is engine behaviour we cannot reproduce on this machine (Blink gets it
+// right, which is exactly why five passes in Chromium never saw it), so the
+// answer is not to tune around it but to stop asking for it. Two plain flex
+// columns have no fragmentation to get wrong. This was the only fragmented
+// flow on the site.
+//
+// The split has to land where column balancing landed or the wall reshuffles,
+// so it uses the same rule: pick the break that makes the taller column as
+// short as it can be, and fill the first column before starting the second.
+
+// A tile's height as a multiple of the column width, from the aspect Tile
+// gives it in `masonry` mode: landscape is 4/3, everything else 3/4.
+const tileHeight = (item) => (item.landscape ? 3 / 4 : 4 / 3)
+
+// The `gap-3` between stacked tiles, as a fraction of a column about 175px
+// wide. It only ever weighs one split against another, and the same split
+// wins from 320px up, so it does not need to track the real viewport.
+const GAP_RATIO = 12 / 175
+
+/**
+ * Deal a group's tiles into two columns the way CSS column balancing would:
+ * tiles stay in order, and the break goes wherever it leaves the taller
+ * column shortest.
+ */
+function masonryColumns(items) {
+  const stack = (column) =>
+    column.reduce((h, item) => h + tileHeight(item), 0) +
+    Math.max(0, column.length - 1) * GAP_RATIO
+  let best = null
+  for (let k = 1; k < items.length; k++) {
+    const columns = [items.slice(0, k), items.slice(k)]
+    const tallest = Math.max(stack(columns[0]), stack(columns[1]))
+    // `<=`, not `<`: a tie goes to the later break, because balancing fills
+    // the first column before it opens the second. That is what keeps the
+    // studio row as two tiles then one, rather than one then two.
+    if (!best || tallest <= best.tallest) best = { tallest, columns }
+  }
+  return best ? best.columns : [items, []]
+}
+
+for (const group of GROUPS) {
+  group.columns = masonryColumns(group.items)
+}
+
 // The openable paintings (testimonials are not enlargeable). The lightbox
 // walks this list, so navigation skips quote cards automatically. Content is
 // static, so this is computed once, not per render.
@@ -174,14 +237,21 @@ export default function SelectedWork() {
               </div>
             ) : (
               <>
-                <div className="mt-5 columns-2 gap-3">
-                  {group.items.map((item) => (
-                    <Tile
-                      key={item._idx}
-                      item={item}
-                      onOpen={item.testimonial ? undefined : () => openItem(item)}
-                      masonry
-                    />
+                {/* Two real columns, not a CSS multi-column box — see
+                    masonryColumns above for why that distinction is the whole
+                    fix for the tile that kept blanking out. */}
+                <div className="mt-5 flex items-start gap-3">
+                  {group.columns.map((column, ci) => (
+                    <div key={ci} className="flex min-w-0 flex-1 flex-col gap-3">
+                      {column.map((item) => (
+                        <Tile
+                          key={item._idx}
+                          item={item}
+                          onOpen={item.testimonial ? undefined : () => openItem(item)}
+                          masonry
+                        />
+                      ))}
+                    </div>
                   ))}
                 </div>
                 {group.key === 'studio' && WORK.reveal && (
@@ -248,12 +318,17 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
       ref={ref}
       initial={{ opacity: 0, y: reduce ? 0 : 24 }}
       animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: reduce ? 0 : 24 }}
-      transition={{ ...SPRING, delay: reduce ? 0 : (item._idx % 4) * 0.05 }}
-      className={
-        'group relative flex flex-col ' +
-        (masonry ? 'mb-3 break-inside-avoid ' : '') +
-        className
-      }
+      // The stagger counts in fours because that is what the desktop grid
+      // fits in a row. On the two-column wall the same sum splits the top row
+      // 0ms and 150ms, and framer holds the inline style at the entrance's
+      // opacity: 0 for the whole of a delay, so the longest wait on the page
+      // was landing on the tile at the head of column two — the one already
+      // reported blank. Count in twos where the row is two wide.
+      transition={{
+        ...SPRING,
+        delay: reduce ? 0 : (item._idx % (masonry ? 2 : 4)) * 0.05,
+      }}
+      className={'group relative flex flex-col ' + className}
     >
       {item.testimonial ? (
         <>
