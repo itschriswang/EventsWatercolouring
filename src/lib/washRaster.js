@@ -56,6 +56,43 @@ function lobeExtent(lobe) {
   return Math.max(e, last ?? 0) / 100
 }
 
+/** A stop colour at zero alpha, so fading to it changes only the alpha. */
+const zeroAlpha = (colour) => {
+  const c = colour?.match(/^rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/)
+  return c ? `rgba(${c[1]},${c[2]},${c[3]},0)` : 'rgba(0,0,0,0)'
+}
+
+/**
+ * The same stop list with every `transparent` given the hue of the paint it is
+ * fading out of.
+ *
+ * CSS interpolates gradient stops in PREMULTIPLIED alpha; canvas 2D does not.
+ * `transparent` is `rgba(0,0,0,0)`, so on a canvas its black is interpolated
+ * into the colour as the alpha falls and every wash is dragged toward black on
+ * its way out. That is invisible on the pigment lobes, whose peak alpha is
+ * around 0.04 — but a lift's core is 0.5, and it came out as a grey smudge:
+ * the midpoint of the lift's own ramp measured rgb(214,208,209) over paper
+ * where CSS paints rgb(246,240,239), so the one thing on the field that exists
+ * to hold paper OPEN was the one thing darkening it.
+ *
+ * Ending on the lobe's own colour at zero alpha leaves nothing but the alpha to
+ * interpolate, which is what premultiplied interpolation amounts to here, and
+ * the raster lands on CSS's number exactly. `lobeExtent` still reads the raw
+ * list, where `transparent` is how a stop says the wash has stopped.
+ */
+function fadeStops(stops) {
+  const hue = stops.map(([c]) => (c === 'transparent' ? null : c))
+  // Forwards, then backwards: a stop takes the colour of the paint it fades out
+  // of, or — where a lobe opens transparent, its centre too thin to register —
+  // the colour of the paint it fades into.
+  for (let i = 1; i < hue.length; i++) if (!hue[i]) hue[i] = hue[i - 1]
+  for (let i = hue.length - 2; i >= 0; i--) if (!hue[i]) hue[i] = hue[i + 1]
+  return stops.map(([colour, pos], i) => [
+    colour === 'transparent' ? zeroAlpha(hue[i]) : colour,
+    pos,
+  ])
+}
+
 /**
  * Resolve a lobe's geometry to CSS pixels within a field of `width` x `height`.
  * vw-sized blooms resolve against the viewport on both axes so they hold their
@@ -143,7 +180,7 @@ function paintWash(canvas, { blooms, over, width, height, vw }) {
     ctx.scale(rx, ry)
 
     const g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1)
-    for (const [colour, pos] of lobe.stops) {
+    for (const [colour, pos] of fadeStops(lobe.stops)) {
       // A null position is the lift's first stop, which CSS places at the centre.
       g.addColorStop(Math.max(0, Math.min(1, (pos ?? 0) / 100)), colour)
     }
