@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { Drop } from './Label.jsx'
 import ChapterPalette from './ChapterPalette.jsx'
 import useCurrentSection from '../hooks/useCurrentSection.js'
+import useMediaQuery from '../hooks/useMediaQuery.js'
 import { SECTIONS } from '../content.js'
 
 const EASE = [0.25, 1, 0.5, 1]
@@ -44,7 +45,8 @@ const EASE = [0.25, 1, 0.5, 1]
  * reports the page's whole structure, which chapter you are in, how far
  * through it you are and how much is left, with each pan as wide as its
  * chapter is long and painted in real pigment run through the Kubelka-Munk
- * model. See that file. The bottom rule went back to being a rule.
+ * model. See that file. (The rule itself is gone with the band it belonged to;
+ * the pill's rim is the edge now.)
  *
  * It is `aria-hidden`: a visual echo of headings that are already in the
  * document, next to a dock that already carries the navigation semantics.
@@ -54,6 +56,10 @@ const EASE = [0.25, 1, 0.5, 1]
 export default function ChapterBar() {
   const reduce = useReducedMotion()
   const current = useCurrentSection()
+  // Pointer, not width, exactly as MobileNav gates its own ground: a narrow
+  // desktop window gets this band too and blurs it happily. What the ground
+  // keys off is the touch device, which is where the flashing lives.
+  const touch = useMediaQuery('(pointer: coarse)')
 
   // A motion value, not state: this updates on every scroll frame, and a
   // setState here would re-render the bar (and re-run the label's exit/enter
@@ -116,25 +122,65 @@ export default function ChapterBar() {
       {current && (
         <motion.div
           aria-hidden="true"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: -34 }}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: -44 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={reduce ? { opacity: 0 } : { opacity: 0, y: -34 }}
+          exit={reduce ? { opacity: 0 } : { opacity: 0, y: -44 }}
           transition={{ duration: 0.34, ease: EASE }}
           // md:hidden — above this breakpoint SiteHeader is on screen and
           // already carries the section's name beside the wordmark. Two
           // running heads would just disagree with each other.
           //
-          // zoom-flat: backdrop blur on fixed chrome flickers white while
-          // pinch-zoomed; the translucent paper ground stays, only the blur
-          // drops (see index.css).
-          className="zoom-flat pointer-events-none fixed inset-x-0 top-0 z-50 md:hidden"
-          style={{
-            background: 'rgb(var(--rgb-paper) / 0.93)',
-            backdropFilter: 'blur(14px) saturate(1.1)',
-            WebkitBackdropFilter: 'blur(14px) saturate(1.1)',
-          }}
+          // IT IS A FLOATING PILL ON THE PAGE'S OWN GUTTER, not a full-bleed
+          // band pinned to y=0. The band was the wrong object here in three
+          // ways at once. It read as browser chrome, because a tinted strip
+          // with a hairline under it, hard against the status bar, is exactly
+          // what a phone browser's own toolbar looks like — so the page
+          // appeared to have two of them. It disagreed with the dock, the only
+          // other chrome a phone gets, which floats in its own air with a rim
+          // and a lift. And a band's whole contract is that its edge IS the top
+          // of the screen, which iOS breaks routinely: `position: fixed`
+          // anchors to the layout viewport, so as soon as the visual one slides
+          // under it a sliver of page shows above the band and reads as a bug.
+          // A pill that already floats has no such contract to break — page
+          // passing beside it is the same thing the dock has always done at the
+          // other end of the screen.
+          //
+          // `viewport-fit=cover` is set site-wide, so the top inset is ours to
+          // clear rather than the browser's.
+          className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-[5vw] md:hidden"
+          style={{ paddingTop: 'calc(10px + env(safe-area-inset-top, 0px))' }}
         >
-          <div className="relative flex h-[34px] items-center gap-3 overflow-hidden px-[5vw]">
+          {/* Full gutter width rather than hugging the name the way the dock
+              hugs its tabs: the palette is read against a fixed right edge (see
+              ChapterPalette), and a pill that resized itself on every chapter
+              change would take that away. The cap only bites between about 620
+              and 767px, the sliver of tablet width that is still below `md`,
+              where a full-gutter capsule would stretch to 690px of mostly air.
+              A phone never reaches it, so the gutter is the width there.
+
+              zoom-flat: backdrop blur on fixed chrome flickers white while
+              pinch-zoomed; the translucent paper ground stays, only the blur
+              drops (see index.css). On a touch device an ordinary scroll asks
+              the GPU for that same re-raster, so it stays in the flat ground
+              for good — the dock's trade, made here for the dock's reason, and
+              the ground firms up to carry the label contrast the blur had. */}
+          <div
+            className="zoom-flat relative flex h-[34px] w-full max-w-[560px] items-center gap-3 overflow-hidden rounded-full pl-3.5 pr-3"
+            style={{
+              background: `rgb(var(--rgb-paper) / ${touch ? 0.93 : 0.72})`,
+              ...(touch
+                ? null
+                : {
+                    backdropFilter: 'blur(20px) saturate(1.15)',
+                    WebkitBackdropFilter: 'blur(20px) saturate(1.15)',
+                  }),
+              border: '1px solid rgb(var(--rgb-line) / 0.56)',
+              // The dock's pair: ink lift, paper-tone inset glint. No neutral
+              // grey or white, per the site's shadow rule.
+              boxShadow:
+                '0 8px 32px rgba(78,38,57,0.21), 0 0 0 1px rgba(247,244,239,0.55) inset',
+            }}
+          >
             {/* Keyed on the section, so crossing a chapter boundary swaps the
                 name. `mode="wait"` here, unlike the copy button's swap: these
                 are different words of different lengths sharing one slot, and
@@ -161,8 +207,6 @@ export default function ChapterBar() {
               scaleX={scaleX}
             />
           </div>
-
-          <span className="absolute inset-x-0 bottom-0 h-px bg-line/70" />
         </motion.div>
       )}
     </AnimatePresence>
