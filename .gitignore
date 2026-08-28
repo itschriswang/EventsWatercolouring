@@ -5,3 +5,7 @@ dist-ssr/
 .vite/
 .DS_Store
 npm-debug.log*
+
+# Local Playwright probes and screenshots used to verify a change.
+# Throwaway, never part of the build.
+.scratch/

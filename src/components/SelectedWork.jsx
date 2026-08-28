@@ -27,6 +27,69 @@ const GROUPS = WORK.groups.map((group) => ({ ...group, items: [...group.items] }
 }
 const ALL_ITEMS = GROUPS.flatMap((g) => g.items)
 
+// ── The two-column wall, below the desktop grid ───────────────────────────
+// This used to be a CSS multi-column box (`columns-2`), and building the two
+// columns by hand instead is the fix for the top right painting that kept
+// going blank after a scroll. What the screenshot of it shows is the useful
+// part: the tile keeps its box to the pixel, and nothing inside it is drawn.
+// Not the artwork, not the card ground, not the 1px border. So this was never
+// the image failing to load or a blend layer dropping the painting, which is
+// what the last five passes were all treating. Both of those leave the card
+// sitting there empty, and the card is not there either.
+//
+// What singles that tile out is structural: it is the FIRST tile of column
+// two, so it is the one element whose position in the multi-column flow
+// (615px down, in column one) and its painted position (the top of column
+// two) disagree. Every tile carries self-painting layers — the clip-path
+// media wrapper, CornerBloom's multiply overlay, framer's opacity and
+// transform through the entrance — and a fragmented flow is the one layout
+// mode where an engine has to map each of those onto a column itself.
+// Column one never shows it, because there the two positions are the same.
+//
+// That is engine behaviour we cannot reproduce on this machine (Blink gets it
+// right, which is exactly why five passes in Chromium never saw it), so the
+// answer is not to tune around it but to stop asking for it. Two plain flex
+// columns have no fragmentation to get wrong. This was the only fragmented
+// flow on the site.
+//
+// The split has to land where column balancing landed or the wall reshuffles,
+// so it uses the same rule: pick the break that makes the taller column as
+// short as it can be, and fill the first column before starting the second.
+
+// A tile's height as a multiple of the column width, from the aspect Tile
+// gives it in `masonry` mode: landscape is 4/3, everything else 3/4.
+const tileHeight = (item) => (item.landscape ? 3 / 4 : 4 / 3)
+
+// The `gap-3` between stacked tiles, as a fraction of a column about 175px
+// wide. It only ever weighs one split against another, and the same split
+// wins from 320px up, so it does not need to track the real viewport.
+const GAP_RATIO = 12 / 175
+
+/**
+ * Deal a group's tiles into two columns the way CSS column balancing would:
+ * tiles stay in order, and the break goes wherever it leaves the taller
+ * column shortest.
+ */
+function masonryColumns(items) {
+  const stack = (column) =>
+    column.reduce((h, item) => h + tileHeight(item), 0) +
+    Math.max(0, column.length - 1) * GAP_RATIO
+  let best = null
+  for (let k = 1; k < items.length; k++) {
+    const columns = [items.slice(0, k), items.slice(k)]
+    const tallest = Math.max(stack(columns[0]), stack(columns[1]))
+    // `<=`, not `<`: a tie goes to the later break, because balancing fills
+    // the first column before it opens the second. That is what keeps the
+    // studio row as two tiles then one, rather than one then two.
+    if (!best || tallest <= best.tallest) best = { tallest, columns }
+  }
+  return best ? best.columns : [items, []]
+}
+
+for (const group of GROUPS) {
+  group.columns = masonryColumns(group.items)
+}
+
 // The openable paintings (testimonials are not enlargeable). The lightbox
 // walks this list, so navigation skips quote cards automatically. Content is
 // static, so this is computed once, not per render.
@@ -174,14 +237,24 @@ export default function SelectedWork() {
               </div>
             ) : (
               <>
-                <div className="mt-5 columns-2 gap-3">
-                  {group.items.map((item) => (
-                    <Tile
-                      key={item._idx}
-                      item={item}
-                      onOpen={item.testimonial ? undefined : () => openItem(item)}
-                      masonry
-                    />
+                {/* Two real columns, not a CSS multi-column box — see
+                    masonryColumns above for why. `pb-3` is the trailing gap
+                    column balancing used to count in the wall's height, kept
+                    so whatever follows the wall stays where it has always
+                    sat. */}
+                <div className="mt-5 flex items-start gap-3 pb-3">
+                  {group.columns.map((column, ci) => (
+                    <div key={ci} className="flex min-w-0 flex-1 flex-col gap-3">
+                      {column.map((item, ri) => (
+                        <Tile
+                          key={item._idx}
+                          item={item}
+                          row={ri}
+                          onOpen={item.testimonial ? undefined : () => openItem(item)}
+                          masonry
+                        />
+                      ))}
+                    </div>
                   ))}
                 </div>
                 {group.key === 'studio' && WORK.reveal && (
@@ -204,13 +277,23 @@ export default function SelectedWork() {
   )
 }
 
+// How long a tile waits before its entrance starts. On the desktop grid it
+// counts in fours, because that is what a row holds there and the sweep runs
+// along the row. The two-column wall counts down its own column instead:
+// `_idx` runs through the flat list, so on a wall built of columns it lands
+// out of order — 0, 50, 0 down column one, which reveals the bottom tile
+// before the middle one. A column's own row index is the number that makes
+// the cascade read top to bottom, which is what a visitor scrolling it sees.
+const revealDelay = (item, masonry, row, reduce) =>
+  reduce ? 0 : ((masonry ? row : item._idx) % 4) * 0.05
+
 /**
  * A single gallery tile, captionless. For paintings it is an image card and a
  * tap target that opens the lightbox; for a testimonial it is the same card
  * shape holding a quote. Landscape pieces take the wide slot in their row
  * (3:2); everything else is an upright 3:4.
  */
-function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
+function Tile({ item, className = '', masonry = false, row = 0, onOpen, fill = false }) {
   const reduce = useReducedMotion()
   const zoomed = usePinchZoomed()
   // Autoplaying video is the "heavy" tier of this tile: roomy fine-pointer
@@ -246,14 +329,25 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
   return (
     <motion.figure
       ref={ref}
-      initial={{ opacity: 0, y: reduce ? 0 : 24 }}
-      animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: reduce ? 0 : 24 }}
-      transition={{ ...SPRING, delay: reduce ? 0 : (item._idx % 4) * 0.05 }}
-      className={
-        'group relative flex flex-col ' +
-        (masonry ? 'mb-3 break-inside-avoid ' : '') +
-        className
-      }
+      // The fade is CSS (`.tile-reveal` in index.css), not part of the pair
+      // below, and that is what stops this tile going blank. framer runs
+      // opacity as a WAAPI animation and leaves the element's own style at
+      // the entrance's opacity: 0 the whole time it plays, so for the length
+      // of the entrance the painting is only visible for as long as that one
+      // animation is. Drop it — a compositor shedding the layer, or the
+      // main-thread frame that commits the resting value never arriving
+      // because a fling is holding the thread — and the figure falls back to
+      // opacity: 0 and takes the whole card with it: artwork, paper ground
+      // and the hairline border, box untouched. In CSS the resting value is
+      // the one in the stylesheet, so the same failure costs the fade and
+      // never the painting. `y` can stay with framer: losing that costs the
+      // 24px rise, which is nothing to look at.
+      data-shown={shown ? '' : undefined}
+      style={{ transitionDelay: `${revealDelay(item, masonry, row, reduce)}s` }}
+      initial={{ y: reduce ? 0 : 24 }}
+      animate={{ y: shown ? 0 : reduce ? 0 : 24 }}
+      transition={{ ...SPRING, delay: revealDelay(item, masonry, row, reduce) }}
+      className={'tile-reveal group relative flex flex-col ' + className}
     >
       {item.testimonial ? (
         <>
@@ -475,10 +569,13 @@ function RevealTile({ reveal, className = '' }) {
   return (
     <motion.figure
       ref={figureRef}
-      initial={{ opacity: 0, y: reduce ? 0 : 24 }}
-      animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: reduce ? 0 : 24 }}
+      // Same split as Tile — the fade is CSS so a dropped animation costs the
+      // fade, not the strip. See `.tile-reveal` in index.css.
+      data-shown={shown ? '' : undefined}
+      initial={{ y: reduce ? 0 : 24 }}
+      animate={{ y: shown ? 0 : reduce ? 0 : 24 }}
       transition={SPRING}
-      className={'group flex flex-col ' + className}
+      className={'tile-reveal group flex flex-col ' + className}
     >
       <div
         ref={ref}
