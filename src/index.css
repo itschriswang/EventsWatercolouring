@@ -869,6 +869,36 @@
   }
 }
 
+/* The gallery wall's entrance fade. It is CSS and not part of the framer
+   `animate` beside it, and that distinction is the fix for the top right
+   painting that kept going blank after a scroll.
+
+   framer runs opacity through WAAPI: it starts a real compositor animation
+   and leaves the element's own style sitting at the entrance's opacity: 0
+   for as long as that animation plays, committing the resting value on a
+   later main thread frame. So through the whole entrance the tile is visible
+   only for as long as that one animation is. Cancel it mid-flight and the
+   figure drops to opacity: 0 and takes the entire card with it — artwork,
+   paper ground, the hairline border — while the box stays exactly where it
+   was. That is the reported symptom precisely, and it is reproducible: drop
+   this one animation and nothing else, and the wall renders with a hole at
+   the top of column two. On a desktop the commit lands a frame later and
+   nobody sees it. On iOS the main thread is not serviced while a fling is
+   carrying the page, so the gap lasts as long as the flick does.
+
+   Written this way the resting value is the one in the stylesheet, so the
+   same failure costs the fade and never the painting. The delay comes in as
+   an inline `transition-delay` so the stagger still reads, and the
+   reduced-motion net below covers this for free. */
+.tile-reveal {
+  opacity: 1;
+  transition: opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.tile-reveal:not([data-shown]) {
+  opacity: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

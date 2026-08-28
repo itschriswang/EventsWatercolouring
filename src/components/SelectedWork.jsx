@@ -274,6 +274,14 @@ export default function SelectedWork() {
   )
 }
 
+// How long a tile waits before its entrance starts. The stagger counts in
+// fours because that is what the desktop grid fits in a row; on the
+// two-column wall the same sum splits the top row 0ms and 150ms, which put
+// the longest wait on the page on the tile at the head of column two — the
+// one that gets reported. Count in twos where the row is two wide.
+const revealDelay = (item, masonry, reduce) =>
+  reduce ? 0 : (item._idx % (masonry ? 2 : 4)) * 0.05
+
 /**
  * A single gallery tile, captionless. For paintings it is an image card and a
  * tap target that opens the lightbox; for a testimonial it is the same card
@@ -316,19 +324,25 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
   return (
     <motion.figure
       ref={ref}
-      initial={{ opacity: 0, y: reduce ? 0 : 24 }}
-      animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: reduce ? 0 : 24 }}
-      // The stagger counts in fours because that is what the desktop grid
-      // fits in a row. On the two-column wall the same sum splits the top row
-      // 0ms and 150ms, and framer holds the inline style at the entrance's
-      // opacity: 0 for the whole of a delay, so the longest wait on the page
-      // was landing on the tile at the head of column two — the one already
-      // reported blank. Count in twos where the row is two wide.
-      transition={{
-        ...SPRING,
-        delay: reduce ? 0 : (item._idx % (masonry ? 2 : 4)) * 0.05,
-      }}
-      className={'group relative flex flex-col ' + className}
+      // The fade is CSS (`.tile-reveal` in index.css), not part of the pair
+      // below, and that is what stops this tile going blank. framer runs
+      // opacity as a WAAPI animation and leaves the element's own style at
+      // the entrance's opacity: 0 the whole time it plays, so for the length
+      // of the entrance the painting is only visible for as long as that one
+      // animation is. Drop it — a compositor shedding the layer, or the
+      // main-thread frame that commits the resting value never arriving
+      // because a fling is holding the thread — and the figure falls back to
+      // opacity: 0 and takes the whole card with it: artwork, paper ground
+      // and the hairline border, box untouched. In CSS the resting value is
+      // the one in the stylesheet, so the same failure costs the fade and
+      // never the painting. `y` can stay with framer: losing that costs the
+      // 24px rise, which is nothing to look at.
+      data-shown={shown ? '' : undefined}
+      style={{ transitionDelay: `${revealDelay(item, masonry, reduce)}s` }}
+      initial={{ y: reduce ? 0 : 24 }}
+      animate={{ y: shown ? 0 : reduce ? 0 : 24 }}
+      transition={{ ...SPRING, delay: revealDelay(item, masonry, reduce) }}
+      className={'tile-reveal group relative flex flex-col ' + className}
     >
       {item.testimonial ? (
         <>
@@ -550,10 +564,13 @@ function RevealTile({ reveal, className = '' }) {
   return (
     <motion.figure
       ref={figureRef}
-      initial={{ opacity: 0, y: reduce ? 0 : 24 }}
-      animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: reduce ? 0 : 24 }}
+      // Same split as Tile — the fade is CSS so a dropped animation costs the
+      // fade, not the strip. See `.tile-reveal` in index.css.
+      data-shown={shown ? '' : undefined}
+      initial={{ y: reduce ? 0 : 24 }}
+      animate={{ y: shown ? 0 : reduce ? 0 : 24 }}
       transition={SPRING}
-      className={'group flex flex-col ' + className}
+      className={'tile-reveal group flex flex-col ' + className}
     >
       <div
         ref={ref}
