@@ -17,7 +17,7 @@ import { fieldCss } from '../lib/watercolour.js'
 // bloom's area-weighted load, so the conversion changed the model and not the
 // weight. Both are declared as data so BloomField can render them as CSS and
 // BloomCanvas can render the same paint optically.
-const HERO_FIELD = [
+export const HERO_FIELD = [
   { pigment: 'apricot', x: 0.281, at: [0.14, 0.22], size: [0.42, 0.36], extent: 0.72 },
   { pigment: 'blush', x: 0.263, at: [0.88, 0.12], size: [0.34, 0.3], extent: 0.72 },
   { pigment: 'yellowgreen', x: 0.229, at: [0.86, 0.82], size: [0.36, 0.32], extent: 0.72 },
@@ -29,7 +29,7 @@ const HERO_FIELD = [
 
 // The aurora orb — the client's swatch sheet, wet-in-wet (§2.2), so it feathers
 // with no pinned contact line and takes no rim.
-const HERO_ORB = [
+export const HERO_ORB = [
   { pigment: 'seafoam', x: 0.803, at: [0.28, 0.2], size: [0.48, 0.48], extent: 0.72, wetness: 'wet' },
   { pigment: 'lavender', x: 0.741, at: [0.14, 0.5], size: [0.44, 0.44], extent: 0.72, wetness: 'wet' },
   { pigment: 'lemonlime', x: 0.787, at: [0.48, 0.52], size: [0.54, 0.54], extent: 0.74, wetness: 'wet' },

@@ -22,7 +22,7 @@ import BloomField from './BloomField.jsx'
  * quiet fade instead.
  */
 // The lime-and-blush moment, as paint in the margins.
-const QUOTE_FIELD = [
+export const QUOTE_FIELD = [
   { pigment: 'lemonlime', x: 0.067, at: [0.06, 0.22], size: [0.34, 0.55], extent: 0.74 },
   { pigment: 'yellowgreen', x: 0.12, at: [0.94, 0.78], size: [0.36, 0.58], extent: 0.74 },
   { pigment: 'yellowgreen', x: 0.067, at: [0.88, 0.12], size: [0.24, 0.4], extent: 0.72 },

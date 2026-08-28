@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "variants": "node scripts/generate-image-variants.mjs"
+    "variants": "node scripts/generate-image-variants.mjs",
+    "check:wash": "node scripts/check-wash.mjs"
   },
   "dependencies": {
     "framer-motion": "^11.3.19",

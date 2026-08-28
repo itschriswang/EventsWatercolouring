@@ -22,7 +22,7 @@ const ACCORDION = { duration: 0.22, ease: [0.25, 1, 0.5, 1] }
 
 // The wash behind the packages, on the deeper paper ground. The cream core is
 // a LIFT rather than paint — unpainted sheet held open where the blooms meet.
-const PACKAGES_FIELD = [
+export const PACKAGES_FIELD = [
   { lift: 0.5, at: [0.5, 0.56], sizeVw: [20, 28.6], extent: 0.66 },
   { pigment: 'apricot', x: 0.142, at: [0.1, 0.46], sizeVw: [26, 37.2], extent: 0.7 },
   { pigment: 'butter', x: 0.136, at: [0.3, 0.66], sizeVw: [22, 31.5], extent: 0.7 },

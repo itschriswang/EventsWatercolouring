@@ -22,7 +22,7 @@ import { fieldCss, WINE } from '../lib/watercolour.js'
  * layout from phone to desktop so the two never drift apart.
  */
 // The folder's ambience, as interference paint on the wine ground.
-const DUSK_GLOW = [
+export const DUSK_GLOW = [
   { pigment: 'nightAmber', x: 0.178, at: [0.08, 0.05], sizeVw: [70, 109.9], extent: 0.6 },
   { pigment: 'nightBlossom', x: 0.181, at: [0.9, 0.1], sizeVw: [55, 89.9], extent: 0.55 },
   { pigment: 'nightLavender', x: 0.159, at: [0.92, 0.92], sizeVw: [60, 99.9], extent: 0.55 },

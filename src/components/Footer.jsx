@@ -42,8 +42,8 @@ function InstagramIcon() {
  */
 // The photograph sits behind a 160deg scrim, so the effective ground these
 // glazes light is close to wine; they were separated against it.
-const FOOTER_GROUND = [0x36 / 255, 0x1e / 255, 0x2b / 255]
-const FOOTER_GLOW = [
+export const FOOTER_GROUND = [0x36 / 255, 0x1e / 255, 0x2b / 255]
+export const FOOTER_GLOW = [
   { pigment: 'nightAmber', x: 0.133, at: [0.88, 0.02], size: [0.7, 0.6], extent: 0.55 },
   { pigment: 'nightLime', x: 0.102, at: [0.7, 0.18], size: [0.44, 0.38], extent: 0.55 },
   { pigment: 'nightLime', x: 0.111, at: [0.58, 0.42], size: [0.48, 0.42], extent: 0.55 },

@@ -21,7 +21,7 @@ import BloomField from './BloomField.jsx'
  * BloomField for why the shared canvas cannot follow those.
  */
 
-const WASH_STATIC = [
+export const WASH_STATIC = [
   { lift: 0.36, sizeVw: 20, at: [0.46, 0.4], extent: 0.72 },
   { lift: 0.28, sizeVw: 18, at: [0.7, 0.78], extent: 0.72 },
   { pigment: 'apricot', x: 0.266, sizeVw: 34, at: [0.16, 0.26], extent: 0.72 },
@@ -43,7 +43,7 @@ const WASH_STATIC = [
 // Warmer recipe for sections on the deeper `paper-deep` ground — the sunlit
 // arc (apricot, butter, the yellow-green glow) with blush/rose accents, so the
 // wash reads as warm light rather than compounding into a muddy grey.
-const WASH_WARM = [
+export const WASH_WARM = [
   { lift: 0.32, sizeVw: 18, at: [0.52, 0.34], extent: 0.72 },
   { pigment: 'apricot', x: 0.236, sizeVw: 32, at: [0.14, 0.2], extent: 0.72 },
   { pigment: 'butter', x: 0.231, sizeVw: 26, at: [0.32, 0.1], extent: 0.72 },
