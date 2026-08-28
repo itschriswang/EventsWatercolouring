@@ -238,15 +238,18 @@ export default function SelectedWork() {
             ) : (
               <>
                 {/* Two real columns, not a CSS multi-column box — see
-                    masonryColumns above for why that distinction is the whole
-                    fix for the tile that kept blanking out. */}
-                <div className="mt-5 flex items-start gap-3">
+                    masonryColumns above for why. `pb-3` is the trailing gap
+                    column balancing used to count in the wall's height, kept
+                    so whatever follows the wall stays where it has always
+                    sat. */}
+                <div className="mt-5 flex items-start gap-3 pb-3">
                   {group.columns.map((column, ci) => (
                     <div key={ci} className="flex min-w-0 flex-1 flex-col gap-3">
-                      {column.map((item) => (
+                      {column.map((item, ri) => (
                         <Tile
                           key={item._idx}
                           item={item}
+                          row={ri}
                           onOpen={item.testimonial ? undefined : () => openItem(item)}
                           masonry
                         />
@@ -274,13 +277,15 @@ export default function SelectedWork() {
   )
 }
 
-// How long a tile waits before its entrance starts. The stagger counts in
-// fours because that is what the desktop grid fits in a row; on the
-// two-column wall the same sum splits the top row 0ms and 150ms, which put
-// the longest wait on the page on the tile at the head of column two — the
-// one that gets reported. Count in twos where the row is two wide.
-const revealDelay = (item, masonry, reduce) =>
-  reduce ? 0 : (item._idx % (masonry ? 2 : 4)) * 0.05
+// How long a tile waits before its entrance starts. On the desktop grid it
+// counts in fours, because that is what a row holds there and the sweep runs
+// along the row. The two-column wall counts down its own column instead:
+// `_idx` runs through the flat list, so on a wall built of columns it lands
+// out of order — 0, 50, 0 down column one, which reveals the bottom tile
+// before the middle one. A column's own row index is the number that makes
+// the cascade read top to bottom, which is what a visitor scrolling it sees.
+const revealDelay = (item, masonry, row, reduce) =>
+  reduce ? 0 : ((masonry ? row : item._idx) % 4) * 0.05
 
 /**
  * A single gallery tile, captionless. For paintings it is an image card and a
@@ -288,7 +293,7 @@ const revealDelay = (item, masonry, reduce) =>
  * shape holding a quote. Landscape pieces take the wide slot in their row
  * (3:2); everything else is an upright 3:4.
  */
-function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
+function Tile({ item, className = '', masonry = false, row = 0, onOpen, fill = false }) {
   const reduce = useReducedMotion()
   const zoomed = usePinchZoomed()
   // Autoplaying video is the "heavy" tier of this tile: roomy fine-pointer
@@ -338,10 +343,10 @@ function Tile({ item, className = '', masonry = false, onOpen, fill = false }) {
       // never the painting. `y` can stay with framer: losing that costs the
       // 24px rise, which is nothing to look at.
       data-shown={shown ? '' : undefined}
-      style={{ transitionDelay: `${revealDelay(item, masonry, reduce)}s` }}
+      style={{ transitionDelay: `${revealDelay(item, masonry, row, reduce)}s` }}
       initial={{ y: reduce ? 0 : 24 }}
       animate={{ y: shown ? 0 : reduce ? 0 : 24 }}
-      transition={{ ...SPRING, delay: revealDelay(item, masonry, reduce) }}
+      transition={{ ...SPRING, delay: revealDelay(item, masonry, row, reduce) }}
       className={'tile-reveal group relative flex flex-col ' + className}
     >
       {item.testimonial ? (
