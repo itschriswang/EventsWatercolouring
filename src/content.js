@@ -238,7 +238,10 @@ export const PACKAGES = {
   licenceBody:
     'What I paint is my interpretation, not a photo-exact likeness, and my style evolves over time, so no two pieces are the same. Booking means you are comfortable with that approach and my style. A 50% retainer holds your date, with the balance due two weeks before your big day.',
   planner: {
-    title: 'What does a booking cover?',
+    // Declarative, like every other heading on the page. It was "What does a
+    // booking cover?", but a heading that poses a question it then answers is
+    // a hook, and the FAQ below is the one place questions belong.
+    title: 'What a booking covers.',
     lede: 'Pick your hours. I paint around 8 pieces an hour, usually two guests to a piece, up to four when a group shares one.',
     hoursLabel: 'Hours booked',
     piecesUnit: 'keepsakes painted live',
@@ -248,8 +251,11 @@ export const PACKAGES = {
     // the readout rendered barely 110px below it: stating the rule in both put
     // the same clause on screen twice in one glance.
     coversTail: 'guests on them',
-    more: 'Want more covered? Add live hours, or the after-event service adds studio-painted pieces at a per-portrait rate.',
-    small: 'Numbers to plan around, not a stopwatch. Groups and pacing vary on the night.',
+    // Both lines say what they said before, minus the copywriting moves: the
+    // "Want more covered?" self-question (the FAQ answer already phrases this
+    // as a plain "if", so the two now agree) and the "x, not a y" zinger.
+    more: 'If you want more covered, add live hours, or the after-event service adds studio-painted pieces at a per-portrait rate.',
+    small: 'Rough numbers to plan around. Groups and pacing vary on the night.',
     // The planner's own next step — carries the chosen hours into the
     // enquiry form so nobody has to retype their own maths.
     cta: 'Enquire with these hours',
@@ -426,7 +432,7 @@ export const ENQUIRY = {
       country: 'AUSTRALIA',
       ringTop: 'CHRIS WANG STUDIO',
       ringBottom: 'MELBOURNE',
-      delivered: 'Sealed, stamped, and with me.',
+      delivered: 'Stamped, and with me.',
     },
   },
 }
@@ -467,7 +473,7 @@ export const CORPORATE = {
       },
       {
         h: 'The keepsake stays',
-        p: 'Most event merch is in a drawer by Monday. A hand-painted portrait tends to end up on a desk or a fridge instead, still there months later.',
+        p: 'A hand-painted portrait tends to end up on a desk or a fridge, still there months after the branded merch has gone into a drawer.',
       },
       {
         h: 'I bring the rest',
@@ -488,7 +494,7 @@ export const CORPORATE = {
       'Store openings and pop-ups',
       'Private functions',
     ],
-    note: 'Something else in mind? It probably fits: the setup is the same wherever it goes.',
+    note: 'If yours is not on the list, it probably still fits. The setup is the same wherever it goes.',
   },
 
   how: {

@@ -33,7 +33,7 @@ const GUESTS_PER_PIECE = 2
 const HOURS = [3, 4, 5]
 
 /**
- * "What does a booking cover?" — a small planner that shows what the booked
+ * "What a booking covers." — a small planner that shows what the booked
  * hours buy. Pick the hours and the arithmetic (8 pieces an hour, usually two
  * guests a piece) shows how many keepsakes get painted live. Coverage beyond
  * that is the after-event add-on or extra hours — the planner points there
