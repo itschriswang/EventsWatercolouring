@@ -4,7 +4,7 @@ import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
 import Underline from './Underline.jsx'
 import { SPRING, asset, REVEAL_VIEWPORT } from '../lib/site.js'
-import { INK_WASH, stackFieldCss } from '../lib/watercolour.js'
+import { INK_WASH, bloom, reflectance, stackFieldCss } from '../lib/watercolour.js'
 
 /**
  * Splits a headline into masked lines and reveals each unit (word or character)
@@ -48,7 +48,10 @@ const jitter = () => ({ lift: 0 })
 // still spans exactly the group's own width, while the gradient's natural
 // end-clamping extends the first and last colours flat across the bleed —
 // where a sheared first descender or last ascender can reach past the
-// group's edges.
+// group's edges. The same inset is what lets the ramp SWAY (see EMPH_SWAY):
+// a background layer paints nothing outside its own image, so sliding a wash
+// that stopped exactly at the word's edge would open a transparent gutter
+// inside the last letter. Clamped ends have no edge to run out of.
 const buildFlowGradientCss = (colors, positions, washPx = 1, insetPx = 0) => {
   const pos = positions || colors.map((_, i) => i / (colors.length - 1))
   const total = washPx + 2 * insetPx
@@ -57,6 +60,142 @@ const buildFlowGradientCss = (colors, positions, washPx = 1, insetPx = 0) => {
     .join(', ')
   return `linear-gradient(to right, ${stops})`
 }
+
+/* ── The pigment inside the word, still moving ───────────────────────────────
+ *
+ * The ramp above is the art direction and it stays where it is: the Lemon Lime
+ * plateau holds the middle, rose stays pinned against the last letter (the
+ * wash below is thickest there precisely because it is). What moves is what
+ * moves in a real wash — pigment already laid down, sliding and settling in
+ * water that has not dried yet.
+ *
+ * So every pool is the SAME paint as the ramp beneath it, glazed over that
+ * local colour rather than over paper. Two things follow. It cannot mud:
+ * CLAUDE.md's anti-mud rules police NEIGHBOURING pigments meeting, and a wash
+ * stacking with itself only deepens along its own Figure 6 curve — the
+ * argument `fieldLobes` already makes for its satellites. And it cannot drift
+ * the art direction: at rest the word is the ramp, a shade deeper in four
+ * places, and the emphasis colours in Hero.jsx stay the single source of the
+ * hues.
+ *
+ * All wet-in-wet. §4.3.3's dried rim would draw a ring inside the letters —
+ * the "pieces of hot glue" EMPHASIS_WASH below learned about the hard way.
+ *
+ * The two Lemon Lime pools are a pair on purpose. Translation alone reads as a
+ * pattern sliding under the letters; what says "pigment" is a passage getting
+ * DENSER and then dispersing, and CSS cannot animate a layer's size without
+ * also rescaling every glyph's measured offset for it. Two pools of one paint
+ * drifting on opposite paths do it for free: where they cross the green
+ * deepens, where they part it opens. They beat against each other across the
+ * plateau, which is where the eye already is.
+ *
+ * The two layers that are not paint are the lifts — unpainted paper held open,
+ * the pale heart a bloom pushes outward. They stay cream radials and never
+ * enter the K/S mix (CLAUDE.md), written in explicit rgba rather than
+ * `transparent`, which is rgba(0,0,0,0) and leaks black wherever a renderer
+ * interpolates unpremultiplied.
+ *
+ * They also carry most of what you actually SEE moving, and that is a
+ * legibility decision as much as a visual one. This word is pastel ink on a
+ * dark wash, so every drop of extra pigment spends contrast and every lift
+ * gives some back. Sampled off the built page — solid stem pixels against the
+ * wash they stand on, over the whole cycle — the tightest point in the glyph
+ * band is 1.85:1 at the far LEFT edge, where the wash behind runs thinnest
+ * under the palest letters. Hence the shape of the list below: the lavender
+ * pool sits inboard at 26% and its whole travel is rightward, so the corner
+ * that is already tightest never has paint added to it, while the lifts are
+ * free to wander anywhere. The cycle now bottoms out at exactly that 1.85:1,
+ * and only at rest — every other phase measures better, up to 2.13:1.
+ *
+ * Geometry is in fractions of each layer's OWN box, so one list serves both
+ * tiers: the heavy tier sizes that box in measured pixels across the whole
+ * word, the lite tier sizes it as 100% of its single span.
+ */
+const lift = (size, at, peak) =>
+  `radial-gradient(${size} at ${at}, rgba(255,252,242,${peak}) 0%, ` +
+  `rgba(255,252,242,${(peak * 0.46).toFixed(3)}) 40%, ` +
+  `rgba(255,252,242,${(peak * 0.13).toFixed(3)}) 66%, rgba(255,252,242,0) 86%)`
+
+// `over` is the ramp colour the pool sits on — the nearest stop of Hero.jsx's
+// emphasis flow — so §5.2 composites the glaze against what is actually
+// underneath it rather than against paper it never touches.
+// Sizes are RADII, as `radial-gradient` reads them — a 16% pool spans a third
+// of the word, not a sixth. Getting that backwards puts every pool's rim on
+// top of its neighbours' centres, which is how the lavender first reached the
+// left edge it is placed to stay off.
+const EMPHASIS_POOLS = [
+  { css: lift('18% 64%', '30% 50%', 0.56) },
+  { css: lift('16% 60%', '70% 50%', 0.46) },
+  { pigment: 'blossom', x: 0.4, over: '#F2A6C1', size: '16% 62%', at: '86% 50%' },
+  { pigment: 'lemonlime', x: 0.36, over: '#D8DB7A', size: '17% 62%', at: '66% 50%' },
+  { pigment: 'lemonlime', x: 0.42, over: '#D8DB7A', size: '18% 64%', at: '42% 50%' },
+  { pigment: 'lavender', x: 0.36, over: '#D4B6E6', size: '15% 62%', at: '26% 50%' },
+]
+
+// Pools are laid taller than the letters so a vertical drift slides a
+// different chord of each ellipse through the glyph band — the wash swelling
+// and receding rather than a disc panning past.
+const EMPH_POOL_HEIGHT = '150%'
+
+// How far the ramp may slide, as a fraction of the word's width. Sets the
+// inset margin `buildFlowGradientCss` clamps its ends across, so it has to
+// stay AHEAD of the largest ramp offset the `emph-gloop` keyframes ask for:
+// 0.036 of the image width, which is itself about 1.4x the word, so ~0.05 of
+// the word against the 0.06 of margin here.
+const EMPH_SWAY = 0.06
+
+const EMPHASIS_POOL_CSS = EMPHASIS_POOLS.map(
+  (p) =>
+    p.css ??
+    bloom(p.pigment, {
+      x: p.x,
+      size: p.size,
+      at: p.at,
+      over: reflectance(p.over),
+      wetness: 'wet',
+      extent: 0.95,
+    }),
+).join(', ')
+
+/**
+ * The whole fill for an emphasis group: the drifting pools over the flow ramp,
+ * as one `background-image`.
+ *
+ * ORDER IS A CONTRACT. `background-position` takes one value per layer, and
+ * the `emph-gloop` keyframes in index.css spell out all seven in this order —
+ * pools first (topmost paints first, as CSS background layers always do) and
+ * the ramp last. Adding a pool here means adding its line there.
+ */
+const emphasisFillCss = (colors, positions, washPx, insetPx) =>
+  `${EMPHASIS_POOL_CSS}, ${buildFlowGradientCss(colors, positions, washPx, insetPx)}`
+
+// Sizes and rest positions for that stack, written against the custom
+// properties `applyEmphasisFlow` measures onto each glyph. Keeping the numbers
+// in the properties rather than in these strings is what lets the keyframes
+// move every glyph by one shared delta and keep the seams in register — and
+// lets the lite tier reuse the identical strings by resolving the same four
+// properties against its single span.
+//
+// TWO coordinate systems, and they are not interchangeable. The ramp lives in
+// `--eg-w`/`--eg-x`, the word plus its sway margin, because the margin is
+// exactly what its clamped ends need. The pools live in `--eg-pw`/`--eg-px`,
+// the word itself, because their positions are art direction: the lavender
+// pool authored at 26% has to sit a quarter of the way into the word on both
+// tiers, and reading that percentage off the wider box instead would slide
+// every pool toward an edge — by different amounts in each tier, since only
+// the measured tier has a margin at all.
+const EMPH_LAYER_SIZES = [
+  ...EMPHASIS_POOLS.map(() => `var(--eg-pw) ${EMPH_POOL_HEIGHT}`),
+  'var(--eg-w) 100%',
+].join(', ')
+
+// The ramp's y is pinned at 0: it is a `to right` gradient exactly as tall as
+// the box, so any vertical offset at all opens a transparent band across the
+// letters.
+const EMPH_LAYER_REST = [
+  ...EMPHASIS_POOLS.map(() => 'var(--eg-px) 50%'),
+  'var(--eg-x) 0',
+].join(', ')
 
 // Clips that gradient across an emphasis group's letters so it blends
 // continuously — including right through the tight negative-tracking overlap
@@ -98,15 +237,25 @@ const applyEmphasisFlow = (root, colors, positions) => {
       const glyphs = group.querySelectorAll('[data-emph-glyph]')
       if (glyphs.length === 0) return
       // The bleed in px at the group's rendered font size (EMPH_GLYPH_BLEED
-      // is uniform, so any side of any glyph reads the same).
+      // is uniform, so any side of any glyph reads the same), plus the sway
+      // margin the drifting ramp needs to slide inside.
       const bleedPx = parseFloat(getComputedStyle(glyphs[0]).paddingLeft) || 0
-      const gradientCss = buildFlowGradientCss(colors, positions, groupRect.width, bleedPx)
+      const insetPx = bleedPx + EMPH_SWAY * groupRect.width
+      const fillCss = emphasisFillCss(colors, positions, groupRect.width, insetPx)
+      const imageWidth = groupRect.width + 2 * insetPx
       glyphs.forEach((glyph) => {
         const glyphRect = glyph.getBoundingClientRect()
         const offset = glyphRect.left - groupRect.left
-        glyph.style.backgroundImage = gradientCss
-        glyph.style.backgroundSize = `${groupRect.width + 2 * bleedPx}px 100%`
-        glyph.style.backgroundPosition = `${-offset - bleedPx}px 0`
+        // Every layer reads its geometry from these two, so one shared delta
+        // in the keyframes moves the whole word's pigment without any glyph
+        // losing register with its neighbours.
+        glyph.style.setProperty('--eg-w', `${imageWidth}px`)
+        glyph.style.setProperty('--eg-x', `${-offset - insetPx}px`)
+        glyph.style.setProperty('--eg-pw', `${groupRect.width}px`)
+        glyph.style.setProperty('--eg-px', `${-offset}px`)
+        glyph.style.backgroundImage = fillCss
+        glyph.style.backgroundSize = EMPH_LAYER_SIZES
+        glyph.style.backgroundPosition = EMPH_LAYER_REST
         glyph.style.backgroundRepeat = 'no-repeat'
         // Camel-case `style.webkitBackgroundClip =` silently no-ops in this
         // engine (only the unprefixed property lands) and unprefixed
@@ -502,9 +651,21 @@ export default function SplitText({
                         el.style.setProperty('-webkit-text-fill-color', 'transparent')
                       }
                       const textStyle = {
-                        backgroundImage: buildFlowGradientCss(emphasisColors, emphasisColorStops),
-                        backgroundSize: '100% 100%',
+                        backgroundImage: emphasisFillCss(emphasisColors, emphasisColorStops),
+                        backgroundSize: EMPH_LAYER_SIZES,
+                        backgroundPosition: EMPH_LAYER_REST,
                         backgroundRepeat: 'no-repeat',
+                        // One span, so a layer's box IS the word and the
+                        // measured tier's strings resolve against these two
+                        // without a second set. Held still: the pools are the
+                        // same paint either way, but a repaint per frame under
+                        // a text clip is exactly the work this tier exists to
+                        // not do (and half of what reaches it is reduced
+                        // motion anyway).
+                        '--eg-w': '100%',
+                        '--eg-x': '0px',
+                        '--eg-pw': '100%',
+                        '--eg-px': '0px',
                         color: 'transparent',
                         textShadow: emphasisShadow || 'none',
                         // Vertical/horizontal bleed so ascenders and
@@ -604,7 +765,16 @@ export default function SplitText({
                               variants={item}
                               aria-hidden="true"
                               {...(emphasisColors ? { 'data-emph-glyph': true } : {})}
-                              className={groupItalic ? 'inline-block italic' : 'inline-block'}
+                              // `emph-gloop` (index.css) drifts the pool
+                              // layers. Only where there is a flow to drift,
+                              // and only on this branch — reaching it already
+                              // means heavy FX and motion allowed, since
+                              // either one failing routes the word to the
+                              // single-span tier above.
+                              className={
+                                (groupItalic ? 'inline-block italic' : 'inline-block') +
+                                (emphasisColors ? ' emph-gloop' : '')
+                              }
                               style={{
                                 ...glyphStyle(li, glyphIdx++),
                                 ...(fallbackColor ? { color: fallbackColor } : {}),
