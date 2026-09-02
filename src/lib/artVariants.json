@@ -1,29 +1,4 @@
 {
-  "art-couple-vows": {
-    "widths": [
-      480,
-      640,
-      960,
-      1440
-    ],
-    "width": 1500
-  },
-  "art-couple-sage": {
-    "widths": [
-      480,
-      640,
-      960
-    ],
-    "width": 1242
-  },
-  "art-couple-blush": {
-    "widths": [
-      480,
-      640,
-      960
-    ],
-    "width": 1242
-  },
   "art-couple-hanbok": {
     "widths": [
       480,

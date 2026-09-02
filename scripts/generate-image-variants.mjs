@@ -35,9 +35,6 @@ const assets = join(root, 'public', 'assets')
 
 // Keep in step with the `img` entries in src/content.js WORK.groups.
 const GALLERY = [
-  'art-couple-vows',
-  'art-couple-sage',
-  'art-couple-blush',
   'art-couple-hanbok',
   'art-toast-friends',
   'art-toast-video-poster',
