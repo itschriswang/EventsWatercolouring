@@ -56,12 +56,6 @@ export default function GlassPill({
       >
         <defs>
           <filter id={`gp-warp-${uid}`} x="-30%" y="-80%" width="160%" height="260%">
-            {/* A pill is ~22px tall, so its turbulence has to be an order of
-                magnitude finer than a panel's to fit any structure at all
-                inside the shape — and the displacement has to stay a fraction
-                of that height or the fill tears off its own rounded ends. 8 is
-                where the wobble reads as a bead of glass; past about 10 the
-                label starts to sit on a broken surface. */}
             <feTurbulence
               type="fractalNoise"
               baseFrequency="0.09 0.24"
@@ -72,7 +66,7 @@ export default function GlassPill({
               {animated && (
                 <animate
                   attributeName="baseFrequency"
-                  values="0.09 0.24;0.05 0.14;0.09 0.24"
+                  values="0.09 0.24;0.06 0.17;0.09 0.24"
                   dur="10s"
                   calcMode="spline"
                   keySplines="0.45 0 0.55 1;0.45 0 0.55 1"
@@ -83,7 +77,7 @@ export default function GlassPill({
             <feDisplacementMap
               in="SourceGraphic"
               in2="n"
-              scale="8"
+              scale="6"
               xChannelSelector="R"
               yChannelSelector="G"
             />

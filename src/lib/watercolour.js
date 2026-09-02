@@ -65,15 +65,6 @@ const hex = (h) => [
   parseInt(h.slice(5, 7), 16) / 255,
 ]
 
-/**
- * A hex colour as a reflectance triple — the form every `over` backing takes.
- *
- * Exported because a bloom is not always laid over paper: the hero emphasis
- * word's pools settle onto the flow gradient already filling the letters, and
- * §5.2 wants the glaze composited over what is actually underneath it.
- */
-export const reflectance = (h) => hex(h)
-
 /** `paper` (#F7F4EF) as a reflectance — the backing every glaze composites over. */
 export const PAPER_REFLECTANCE = hex('#F7F4EF')
 /** `paper-deep` (#F4ECEF) — the warmer ground under the packages/enquiry run. */
