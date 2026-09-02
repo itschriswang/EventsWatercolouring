@@ -85,15 +85,6 @@ The tell is cheap to check: watch attribute writes during a scroll
 (`MutationObserver` on `style`, subtree) — on a healthy page nothing should
 mutate at all while the finger moves.
 
-**To move turbulence, move its result — don't re-run the filter.** SMIL on
-`baseFrequency` (GlassCardRim's rim, GlassPill) regenerates the noise field and
-the whole filter graph every frame, which is affordable on one rim and not on a
-fleet: `GlassCardRim` is worn by the packages cards, five timeline steps and the
-testimonial at once. Its caustic layer therefore runs a *static* filter and
-animates a CSS `transform` on the filtered `<svg>` instead — one compositor
-matrix, filter painted once. Oversize the layer so the drift never walks its own
-edge into the clip.
-
 Every expensive effect is tiered, and new effects must follow the same ladder:
 
 1. **`useHeavyFx()`** (roomy fine-pointer devices, no Data Saver, ≥4GiB
@@ -430,21 +421,6 @@ granulation and dry-brush — so running the model's synthetic versions over the
 top doesn't add watercolour, it flattens the real thing into a slab. Simulate
 the effects when you're generating a wash; leave them alone when you've
 photographed one.
-
-**The paint inside that word is still moving.** `EMPHASIS_POOLS` lays four
-wet-in-wet pools and two cream lifts over the flow ramp, and the `emph-gloop`
-keyframes in `index.css` drift them: pigment settling and dispersing in water
-that hasn't dried. Three rules hold it together. Each pool is the SAME paint as
-the ramp beneath it, glazed over that local colour (`over:`), so it can only
-deepen along one pigment's own curve and the art direction is unchanged at
-rest. Every offset in the keyframes is `var(--eg-px) + <shared delta>` — the
-glyphs each carry their own slice of the wash in a custom property, and a flat
-position there shatters one wash into seven identical squares. And the layer
-ORDER is a contract between the two files: `background-position` takes one
-value per layer, so a pool added in the component needs its line in the
-keyframes. Pigment costs contrast and lifts give it back, which is why the
-lavender pool and the ramp's sway both travel one way only — the word's tightest
-point is its far left edge, and it measures 1.85:1 there whatever the phase.
 
 `PIGMENTS` is the paint box; `ARC` is the ordered subset the live wash
 interpolates along. Accents that sit off the arc — the client's swatch sheet
