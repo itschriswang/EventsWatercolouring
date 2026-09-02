@@ -839,6 +839,150 @@
     transform-origin: 50% 0;
     animation: scroll-tick 2s ease-in-out infinite;
   }
+
+  /* The pigment inside "painted", still moving (SplitText's EMPHASIS_POOLS).
+
+     ONE VALUE PER LAYER, IN THE COMPONENT'S ORDER. `background-position` takes
+     a list matched to `background-image`, so these seven lines are the two
+     lifts, the blossom pool, the two Lemon Lime pools, the lavender pool and —
+     last, as the bottom layer — the flow ramp itself. Add a pool there and it
+     needs a line here or every layer below it shifts onto the wrong offset.
+
+     The offsets are all `var(--eg-px) + <shared delta>`, never an absolute
+     position, and that is the whole trick. Each glyph carries its own slice of
+     the wash in `--eg-px` (and the ramp's in `--eg-x`, which includes the sway
+     margin); adding the same delta to every glyph slides the pigment across
+     the word without any letter losing register with its neighbours. Write a
+     flat position into these and the wash shatters into seven identical
+     squares, one per letter.
+
+     What each layer does is set by where it goes, not how fast: the pools stay
+     over their own stretch of the ramp, so a pool is always the same paint as
+     the colour under it and can only deepen along that pigment's own curve
+     (the anti-mud rules govern NEIGHBOURING pigments meeting, and none do
+     here). The two Lemon Lime pools run on opposite paths so their overlap
+     waxes and wanes — the plateau thickening and dispersing rather than a disc
+     panning past.
+
+     Two of these move in ONE direction only, and it is the same reason both
+     times. The tightest contrast in the word is its far left edge, where the
+     wash behind runs thinnest under the palest letters, so anything that
+     darkens that corner is the one move here that costs legibility. The
+     lavender pool therefore has no leftward leg, and the ramp's own sway runs
+     rightward only — a leftward sway pulls pure lavender onto the first letter
+     in place of the lighter seafoam blend that sits there at rest, which
+     measured as the whole of a 1.85:1 → 1.72:1 drop before it was pinned. Held
+     to the right, the same 3.6% travel now leaves that corner LIGHTER than
+     rest, and the last letter reads on blossom rather than the darker rose.
+     The travel is bounded by SplitText's EMPH_SWAY, which sizes the margin the
+     ramp slides in.
+
+     Vertical drift is in `em` so it scales with the display face's clamp()
+     sizing, and the ramp's y never moves at all — it is a `to right` gradient
+     exactly as tall as the glyph box, so a single pixel of vertical offset
+     opens a transparent band straight across the letters.
+
+     CSS rather than a framer loop for the reason `scroll-tick` gives above,
+     and it matters more here: this paints under a `background-clip: text` mask
+     on every glyph. As keyframes it is a paint-only invalidation on seven
+     small boxes, it never dirties the document's style, and Chromium stops
+     painting it the moment the hero leaves the viewport. Reduced motion is
+     covered by the global safety net below — and off the heavy tier the word
+     renders as one span with no `emph-gloop` class at all, so those devices
+     get the same pools held still. */
+  @keyframes emph-gloop {
+    0%,
+    100% {
+      background-position:
+        var(--eg-px) 50%,
+        var(--eg-px) 50%,
+        var(--eg-px) 50%,
+        var(--eg-px) 50%,
+        var(--eg-px) 50%,
+        var(--eg-px) 50%,
+        var(--eg-x) 0;
+    }
+    20% {
+      background-position:
+        calc(var(--eg-px) + var(--eg-pw) * 0.095) calc(50% - 0.13em),
+        calc(var(--eg-px) - var(--eg-pw) * 0.06) calc(50% + 0.14em),
+        calc(var(--eg-px) - var(--eg-pw) * 0.045) calc(50% + 0.12em),
+        calc(var(--eg-px) + var(--eg-pw) * 0.06) calc(50% + 0.1em),
+        calc(var(--eg-px) - var(--eg-pw) * 0.07) calc(50% - 0.11em),
+        calc(var(--eg-px) + var(--eg-pw) * 0.03) calc(50% + 0.13em),
+        calc(var(--eg-x) + var(--eg-w) * 0.012) 0;
+    }
+    40% {
+      background-position:
+        calc(var(--eg-px) + var(--eg-pw) * 0.04) calc(50% + 0.15em),
+        calc(var(--eg-px) - var(--eg-pw) * 0.09) calc(50% - 0.06em),
+        calc(var(--eg-px) - var(--eg-pw) * 0.07) calc(50% - 0.05em),
+        calc(var(--eg-px) + var(--eg-pw) * 0.075) calc(50% - 0.09em),
+        calc(var(--eg-px) - var(--eg-pw) * 0.03) calc(50% + 0.14em),
+        calc(var(--eg-px) + var(--eg-pw) * 0.07) calc(50% + 0.03em),
+        calc(var(--eg-x) + var(--eg-w) * 0.036) 0;
+    }
+    60% {
+      background-position:
+        calc(var(--eg-px) - var(--eg-pw) * 0.07) calc(50% + 0.09em),
+        calc(var(--eg-px) - var(--eg-pw) * 0.02) calc(50% - 0.15em),
+        calc(var(--eg-px) - var(--eg-pw) * 0.025) calc(50% - 0.14em),
+        calc(var(--eg-px) - var(--eg-pw) * 0.045) calc(50% - 0.15em),
+        calc(var(--eg-px) + var(--eg-pw) * 0.08) calc(50% + 0.09em),
+        calc(var(--eg-px) + var(--eg-pw) * 0.09) calc(50% - 0.1em),
+        calc(var(--eg-x) + var(--eg-w) * 0.024) 0;
+    }
+    80% {
+      background-position:
+        calc(var(--eg-px) - var(--eg-pw) * 0.1) calc(50% - 0.12em),
+        calc(var(--eg-px) + var(--eg-pw) * 0.075) calc(50% + 0.08em),
+        calc(var(--eg-px) + var(--eg-pw) * 0.055) calc(50% + 0.06em),
+        calc(var(--eg-px) - var(--eg-pw) * 0.07) calc(50% - 0.03em),
+        calc(var(--eg-px) + var(--eg-pw) * 0.045) calc(50% - 0.05em),
+        calc(var(--eg-px) + var(--eg-pw) * 0.045) calc(50% - 0.13em),
+        calc(var(--eg-x) + var(--eg-w) * 0.007) 0;
+    }
+  }
+
+  /* Slow enough to read as settling rather than sliding, and eased at every
+     stop so the pigment surges and stalls the way a wet edge does instead of
+     tracking at one speed. The five legs of the loop are all different lengths
+     per layer, so nothing in the word arrives anywhere on the beat. */
+  .emph-gloop {
+    animation: emph-gloop 28s cubic-bezier(0.42, 0.08, 0.58, 0.92) infinite;
+  }
+
+  /* The caustics behind a liquid-glass panel, sliding (GlassCardRim).
+
+     A TRANSFORM, not the filter. The obvious way to make turbulence move is to
+     animate `baseFrequency` the way the rim's own `<animate>` does, but that
+     regenerates the noise field and re-runs the whole filter graph every
+     frame, and these panels come in fleets — the packages, five timeline
+     steps, the testimonial. Translating the already-filtered layer costs the
+     compositor one matrix instead: the filter runs once at paint and the light
+     still wanders behind the glass. The svg is oversized by 18% on each side,
+     so nothing this small ever walks an edge into the clip.
+
+     Gated in the component (heavy FX, motion allowed) rather than here,
+     because a panel that opts out must not just freeze the drift — it needs
+     the layer never promoted in the first place. Reduced motion is caught by
+     the global safety net below as well. */
+  @keyframes glass-caustics {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    33% {
+      transform: translate3d(3.5%, -2.4%, 0);
+    }
+    66% {
+      transform: translate3d(-3%, 2.2%, 0);
+    }
+  }
+
+  .glass-caustics {
+    animation: glass-caustics 26s ease-in-out infinite;
+  }
 }
 
 /* The rotating gradient frame drives an animated custom property, so it
