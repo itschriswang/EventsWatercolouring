@@ -7,8 +7,24 @@ export const HERO = {
   linesMobile: ['Memories', 'painted as they', 'happen'],
   emphasis: 'painted',
   emphasisMobile: 'painted',
+  // The eyebrow row — the first words on the page, and the two facts a stranger
+  // is scanning for before they read anything else. Both were hard-coded in
+  // Hero.jsx (twice each, desktop and mobile) until they had to change.
+  //
+  // It read 'Live event watercolour keepsakes', which never said "wedding" —
+  // so the word most of this site's visitors arrive searching for lived only in
+  // index.html's meta description and the no-JS fallback, i.e. it was legible to
+  // crawlers and not to a couple. Same character count, so the mobile row still
+  // fits on one line beside its rule. "Keepsakes" is what the gallery section
+  // below is called, so the page does not lose the word.
+  eyebrow: 'Live wedding & event watercolour',
+  place: 'Melbourne · Sydney',
   lede: 'Your guests, painted live in watercolour while the night carries on. Each portrait is finished on the spot and goes home with the guest in it.',
-  note: 'Every enquiry answered personally, usually within a few days.',
+  // Price first, then the reply promise. The number was only in the Packages
+  // section, a long scroll down, and a couple comparing vendors decides between
+  // "from $1000" and "contact us for pricing" well before they get there. Two
+  // lines on a phone either way, so the price costs no height.
+  note: 'From $1000. Every enquiry answered personally, usually within a few days.',
 }
 
 // The one quote that does the selling — pulled up between the hero and the
@@ -91,8 +107,26 @@ export const WORK = {
   //
   // A testimonial slots into a group like any other tile — give it
   // `testimonial: true` with `quote`, `author` and `detail` instead of `img`.
-  // There is a ready-to-fill template commented out below; add real client
-  // words as they come in and the wall lays them out automatically.
+  // Templates are commented out among the items below; add real client words as
+  // they come in and the wall lays them out automatically.
+  //
+  // **A quote earns its tile by answering a worry, not by being kind.** Ten
+  // lines saying the night was lovely are ten compliments, and a couple
+  // comparing three painters discounts all of them, because every shortlist has
+  // a wall of them. What sells is a sentence that closes a question the visitor
+  // arrived with — did it interrupt the reception, did the guests actually care,
+  // is this a keepsake or clutter — said by someone with nothing to gain. Those
+  // read as proof rather than praise.
+  //
+  // So each slot below names the worry it is there to answer, and a line that
+  // does not answer one belongs on Instagram rather than here. The ask that
+  // produces these is in the business repo's `testimonial-request.md`: it asks
+  // a couple six specific questions instead of "would you mind writing a few
+  // words", because a blank page comes back as "thanks again, we loved it".
+  //
+  // Keep them SHORT. A quote card is a masonry tile beside the paintings, so it
+  // sets its own type at clamp(0.6rem, 1.4vw, 0.75rem) — one sentence fits, two
+  // crowds the card, three overruns it.
   groups: [
     {
       key: 'live',
@@ -108,10 +142,37 @@ export const WORK = {
           venue: '',
           alt: 'Video of a watercolour portrait being painted live by hand, brush loaded with warm ochre pigment',
         },
-        // Template — swap in a real client quote, then uncomment:
+        // Templates. The `quote` lines are the SHAPE to look for, written here
+        // as a target and not as anybody's words — swap in what a couple
+        // actually sent, verbatim, then uncomment. Never tidy a real quote into
+        // one of these; the slightly awkward phrasing is what makes a stranger
+        // believe a person wrote it.
+        //
+        // The wall wants two, three at the outside, spread through the row
+        // rather than banked together. Take them in this order: the first is the
+        // worry nothing on this site can answer without sounding defensive,
+        // because it is my own event I would be vouching for.
+        //
+        // Worry: will this hijack our reception, or hold up the speeches?
         // {
         //   testimonial: true,
-        //   quote: 'Short, real words from a couple about the night.',
+        //   quote: 'He fit into the night without us having to plan around him.',
+        //   author: 'First & First',
+        //   detail: 'Married at <venue>',
+        // },
+        //
+        // Worry: will guests actually care, or is it a gimmick?
+        // {
+        //   testimonial: true,
+        //   quote: 'Our guests are still talking about their portraits.',
+        //   author: 'First & First',
+        //   detail: 'Married at <venue>',
+        // },
+        //
+        // Worry: is this worth it next to a photo booth?
+        // {
+        //   testimonial: true,
+        //   quote: 'It turned out to be the thing people remember from the night.',
         //   author: 'First & First',
         //   detail: 'Married at <venue>',
         // },
@@ -305,6 +366,15 @@ export const FAQ = {
           a: 'As early as you can. I only take a limited number of weddings, so dates fill up. Send me yours and I will tell you what is open.',
         },
         {
+          // Sits before "how do we secure our date" on purpose: it is the
+          // question a couple has while their finger is over the button, and
+          // it is also where the detail that would swamp the homepage
+          // actually lives. Saying so is the point — a couple who knows the
+          // numbers are coming by email does not need them on the page.
+          q: 'What happens after we enquire?',
+          a: 'You get a note on screen straight away so you know it arrived, and then a reply from me within a few days. That reply has what I have open on your date, pricing worked out for your hours and your venue, the add-ons with real numbers against them, and what I need from the room. If you would rather talk it through, say so and we will find a time. Nothing is locked in until you are ready: a 50% retainer and a booking agreement is what makes the date yours.',
+        },
+        {
           q: 'How do we secure our date?',
           a: 'A 50% retainer holds your date, with the balance due two weeks before your big day. I only confirm once the retainer is in, and then the date is yours.',
         },
@@ -418,7 +488,12 @@ export const ENQUIRY = {
     // `title` is composed with the sender's first name in EnquireForm, e.g.
     // "Thank you, Sarah." — so it carries no trailing full stop here.
     title: 'Thank you',
-    body: 'Your message is with me. I will read it properly and write back soon.',
+    // Names what comes back, and roughly when. It said "write back soon",
+    // which is the same nothing as "contact us for pricing" — the moment a
+    // visitor is wondering whether their message went anywhere is the one
+    // place a vague promise costs the most. The timeframe is the same one the
+    // hero note and the FAQ make, so all three have to move together.
+    body: 'Your message is with me. I will read it properly and write back within a few days, with pricing for your date and the practical bits.',
     sign: 'Chris',
     // The confirmation arrives as a mailed postcard (see Postcard.jsx):
     // stamped with one of the keepsakes, postmarked with today's date.

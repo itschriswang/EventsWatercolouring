@@ -157,8 +157,8 @@ export default function Hero({ revealed }) {
         animate={state}
         className="relative z-20 hidden sm:flex items-center justify-between font-mono text-[0.66rem] uppercase tracking-[0.3em] text-ink-soft"
       >
-        <span>Live event watercolour keepsakes</span>
-        <span>Melbourne · Sydney</span>
+        <span>{HERO.eyebrow}</span>
+        <span>{HERO.place}</span>
       </motion.div>
 
       {/* Mobile eyebrow — context-first, above the artwork */}
@@ -173,7 +173,7 @@ export default function Hero({ revealed }) {
           className="block h-px w-5 shrink-0 bg-lime opacity-60"
         />
         <span className="font-mono text-[0.59rem] uppercase tracking-[0.3em] text-ink-soft">
-          Live event watercolour keepsakes
+          {HERO.eyebrow}
         </span>
       </motion.div>
 
@@ -342,7 +342,7 @@ export default function Hero({ revealed }) {
                   className="font-mono text-[0.48rem] uppercase tracking-[0.28em] text-ink-soft opacity-45"
                   style={{ writingMode: 'vertical-rl' }}
                 >
-                  Melbourne · Sydney
+                  {HERO.place}
                 </span>
               </motion.div>
 
