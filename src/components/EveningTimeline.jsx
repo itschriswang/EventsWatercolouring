@@ -128,7 +128,7 @@ export default function EveningTimeline() {
               <br />
               <em>{EVENING.title[1]}</em>
             </h2>
-            <p className="mt-3 max-w-md leading-relaxed text-paper/90">
+            <p className="mt-4 max-w-md text-[1.0625rem] leading-[1.65] text-paper/95 sm:text-[1.125rem]">
               {withUnderline(EVENING.lede, 'the two of you', { className: 'text-ochre-light' })}
             </p>
           </div>
@@ -228,9 +228,21 @@ export default function EveningTimeline() {
                     <h3 className="relative font-mono text-[clamp(1.15rem,1.9vw,1.5rem)] leading-tight tracking-[-0.01em] text-ink">
                       {beat.title}
                     </h3>
-                    <p className="relative mt-2 max-w-lg text-[0.95rem] leading-relaxed text-ink-soft">
+                    <p className="relative mt-2.5 max-w-lg text-[1.0625rem] leading-[1.65] text-ink-soft">
                       {beat.body}
                     </p>
+                    {/* The practical spec, when a beat has one — currently the
+                        table and the meal. Kept out of `body` on purpose: the
+                        beat's job is comprehension at a glance ("all I need is
+                        a table and chair") and this is the paragraph a venue
+                        coordinator comes back to actually action. Ruled off and
+                        set a step down so it reads as the footnote to the step
+                        rather than more of the sentence. */}
+                    {beat.note && (
+                      <p className="relative mt-3.5 max-w-lg border-t border-line/70 pt-3 text-[0.9375rem] leading-[1.6] text-ink/80">
+                        {beat.note}
+                      </p>
+                    )}
                   </motion.div>
                 </motion.li>
               )

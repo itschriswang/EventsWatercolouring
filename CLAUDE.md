@@ -130,6 +130,24 @@ A 1242px master costs ~9MB decoded however well it gzips.
 - Comments explain *why* an effect or value exists (often hard-won fixes —
   oscillating headers, mask clipping, gradient bleed). Read them before
   "simplifying" something that looks odd; keep the style when adding code.
+- **The handwritten face (`font-mono`, Mynerve) labels things; it is never what
+  you navigate or read with.** It is a cursive display face, and the site used
+  to set the primary nav, the mobile dock, every button label and most of the
+  card chrome in it at 0.5-0.66rem uppercase with 0.15-0.3em of tracking — a
+  hard-to-read face at a hard-to-read size with two more legibility costs piled
+  on. Anything a visitor has to read, press, or find their way with is now
+  `font-body` (Manrope) at 15px or more: nav links, CTAs, form labels and chips,
+  the jump nav, the planner's controls, the footer nav. Mynerve keeps the
+  eyebrow/label voice, figcaptions and standalone numerals, at 0.8125rem and up.
+  Body copy sits at 17px with 1.6 leading; 14px (`text-sm`) is not a body size
+  here.
+- **Guests, not artwork counts.** One painting holds one to four people, so a
+  count of paintings is a unit only the painter thinks in — and the site used to
+  quote three of them at once ("24 keepsakes", "8 an hour", "room for around 48
+  guests"), which reads as three figures contradicting each other. Every promise
+  leads with the number of GUESTS painted and explains itself with the painting
+  count one rung down. Keep new copy on that side of it, and avoid "portrait",
+  "illustration" and "piece" where "painting" says the same thing.
 - `terracotta`/`rust`/`ochre` token names are legacy slots pointing at the
   pastel palette — do not rename them site-wide, and never introduce actual
   terracotta/brick tones (see below).
@@ -409,9 +427,15 @@ paints — burgundy, olive, ultramarine — solved by `separate()` to land on `i
 ultramarine alone leave blue unabsorbed and land on a violet the palette rules
 out, so the third is what pulls the mix back to neutral.
 
-It paints the wash behind the hero's emphasis word (`EmphasisBrush` in
-`SplitText.jsx`), through `stackStops()` — which composites the whole stack with
-KM at every step of the profile. Don't lay the three constituents down as three
+`EmphasisBrush` in `SplitText.jsx` paints it through `stackStops()` — which
+composites the whole stack with KM at every step of the profile. It is
+available to any heading via SplitText's `emphasisStroke`, but nothing on the
+site currently asks for it: the hero's "painted" was the one caller, and that
+word is now drawn as an outline instead (`emphasisOutline` → `.emph-outline` +
+the `#hand-outline` filter), because in a hero that already carries a bloom
+field, the aurora orb, two tilted cards, sparkles and two scroll cues, the
+first line a stranger reads was the busiest thing on it. Keep the wash working
+— it is the reference implementation of the mix, and `check:wash` covers it. Don't lay the three constituents down as three
 overlapping CSS blooms instead: those alpha-blend, and burgundy over ultramarine
 averages to exactly the violet the mix exists to avoid.
 

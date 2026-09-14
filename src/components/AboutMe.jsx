@@ -34,7 +34,7 @@ export default function AboutMe() {
               emphasisItalic
               className="display-lg mt-5 text-ink"
             />
-            <div className="mt-8 flex flex-col gap-5 text-[clamp(1rem,1.1vw,1.15rem)] leading-relaxed text-ink-soft">
+            <div className="mt-8 flex flex-col gap-5 text-[clamp(1.0625rem,1.2vw,1.25rem)] leading-[1.65] text-ink-soft">
               {PAINTER.body.map((p, i) => (
                 <p key={i}>
                   {i === 1

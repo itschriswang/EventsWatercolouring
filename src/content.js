@@ -19,12 +19,17 @@ export const HERO = {
   // below is called, so the page does not lose the word.
   eyebrow: 'Live wedding & event watercolour',
   place: 'Melbourne · Sydney',
-  lede: 'Your guests, painted live in watercolour while the night carries on. Each portrait is finished on the spot and goes home with the guest in it.',
+  lede: 'Your guests, painted live in watercolour while the night carries on. Each painting is finished on the spot and goes home with the guests in it.',
   // Price first, then the reply promise. The number was only in the Packages
   // section, a long scroll down, and a couple comparing vendors decides between
   // "from $1000" and "contact us for pricing" well before they get there. Two
   // lines on a phone either way, so the price costs no height.
-  note: 'From $1000. Every enquiry answered personally, usually within a few days.',
+  // Split in two so the price can be set apart from the promise around it
+  // (Hero.jsx bolds the first half in full ink). One string could only be one
+  // weight, and at the footnote size it used to render at, the number a couple
+  // is actually scanning for was the same whisper as the sentence carrying it.
+  notePrice: 'From $1000.',
+  noteReply: 'Every enquiry answered personally, usually within a few days.',
 }
 
 // The one quote that does the selling — pulled up between the hero and the
@@ -47,7 +52,13 @@ export const EVENING = {
     {
       no: '01',
       title: 'I set up',
-      body: 'I get there about fifteen minutes early and set up before I start. You do not need to organise much beyond a table and chair for me.',
+      // Was "You do not need to organise much beyond a table and chair for
+      // me", which spent nine words getting to the two nouns that matter. The
+      // sizing that used to live only in the FAQ moves up here as a `note`:
+      // it is the one thing a venue coordinator has to action, and it was two
+      // pages away from the step that asks for it.
+      body: 'I arrive about fifteen minutes early and set up before I start. All I need is a table and chair.',
+      note: 'A standard 1.8m trestle table is ideal. The smallest I can work on is 120cm wide by 60cm deep, at normal seated height. For anything over about five hours, a meal for me is appreciated.',
     },
     {
       no: '02',
@@ -57,7 +68,10 @@ export const EVENING = {
     {
       no: '03',
       title: 'I start painting',
-      body: 'Each piece takes about five to ten minutes. Once the first few are done, word gets around and guests start coming over to watch the next one.',
+      // Who ends up in a painting was the single most-asked thing this section
+      // never answered: couples are the default everyone assumes, and a table
+      // of four friends walking up did not know they were allowed.
+      body: 'Each painting takes about five to ten minutes. Couples are what most people ask for, but I can put any group of up to four people in one painting, so friends and families work just as well.',
     },
     {
       no: '04',
@@ -66,11 +80,13 @@ export const EVENING = {
     },
     {
       no: '05',
-      title: 'About eight an hour',
-      // Every other beat's body opens on something its title has not said.
-      // This one opened with "I aim for around 8 pieces an hour", which is the
-      // title again, so the beat spent its first sentence standing still.
-      body: 'You will know the exact count when you book, and that is the number I plan the night around.',
+      title: 'Around 16 guests an hour',
+      // The old title was "About eight an hour", eight of a thing the beat
+      // never named, next to a package promising 24 and a planner counting to
+      // 48. Three numbers, one unit between them, and the reader left to work
+      // out that they agree. Counting in GUESTS states the number they are
+      // actually buying and makes the arithmetic visible in one line.
+      body: 'I finish about 8 paintings an hour with two guests in most of them, so three hours covers roughly 48 of your guests. You will know the number I am planning around before the day.',
     },
   ],
 }
@@ -82,8 +98,8 @@ export const WORK = {
   // gesture the visitor has not got is a small wrongness they notice. Chosen in
   // SelectedWork.jsx off `(pointer: coarse)` rather than a width breakpoint —
   // a narrow desktop window still has a mouse, and a large tablet still does not.
-  zoomHint: 'Click any piece to enlarge.',
-  zoomHintTouch: 'Tap any piece to enlarge.',
+  zoomHint: 'Click any painting to enlarge.',
+  zoomHintTouch: 'Tap any painting to enlarge.',
   title: ['Real watercolour, on', 'cotton paper.'],
   emphasis: 'cotton paper.',
   note: 'Painted by hand on 300gsm A5 cotton paper.',
@@ -210,7 +226,7 @@ export const PAINTER = {
   emphasis: 'about me.',
   body: [
     'I am Chris. I grew up in Sydney and I am based in Melbourne now, and I have been painting in watercolour for more than ten years.',
-    'Painting live at a wedding is the part I love most. I get a minute or two with each guest, and they get a small portrait made by hand to take home at the end of it.',
+    'Painting live at a wedding is the part I love most. I get a minute or two with each guest, and they get a small painting made by hand to take home at the end of it.',
     'I travel across Melbourne and Australia-wide for weddings, corporate events, brand activations, and private celebrations.',
   ],
   signature: 'Chris',
@@ -243,12 +259,16 @@ export const PACKAGES = {
     note: 'The base package, painted across your event.',
     priceSmall: 'From',
     price: '$1000',
-    facts: ['3 hours live', '24 keepsakes'],
+    // Guests first, on both pills. "24 keepsakes" made the reader do the
+    // conversion into the only number they actually shop on, and half of them
+    // read it as "24 guests" instead.
+    facts: ['3 hours of live painting', 'About 48 guests painted'],
     bullets: [
-      'Guest portraits painted live, on 300gsm A5 archival watercolour paper',
-      'Usually two guests to a keepsake, up to four if a group wants to share one',
-      'You and any VIPs painted first, the rest as they pass by',
-      'Every piece sleeved to take home on the night',
+      'Around 48 of your guests painted live across three hours',
+      'That is about 24 paintings, with two guests in most of them',
+      'Up to four people can go in one painting, so groups of friends and families fit',
+      'You and anyone you want painted first, then guests as they pass by',
+      'Painted on 300gsm A5 archival cotton paper and sleeved to take home that night',
       'Public liability insurance',
       'Travel within about an hour of Melbourne or Sydney metro',
     ],
@@ -256,63 +276,67 @@ export const PACKAGES = {
   addonsHead: { title: 'Add-ons', note: 'Priced on enquiry' },
   addons: [
     {
-      h: 'After-event service',
-      p: 'Add this and guests beyond the booked pieces are painted in the studio afterwards and posted to you to pass on, at a per-portrait rate we agree before the day.',
-      tag: 'Per portrait',
+      h: 'More guests, painted afterwards',
+      p: 'Guests I do not get to on the night are painted in the studio afterwards and posted to you to pass on, at a per-guest rate we agree before the day.',
+      tag: 'Per guest',
     },
     {
-      h: 'Family portrait, A3',
+      h: 'Family painting, A3',
       p: 'You and your immediate family, painted larger on A3 from photos you send after the day.',
     },
     {
       h: 'Bridal party, A3',
-      p: 'A group portrait of the bridal party on A3, the people closest to you on the day.',
+      p: 'The bridal party together on A3, the people closest to you on the day.',
     },
 
     {
       h: 'Extra live hours',
-      p: 'I stay longer across the event, so more of your guests get painted.',
+      p: 'I stay longer across the event. Each extra hour is roughly another 16 guests painted.',
     },
     {
       h: 'Studio commission',
-      p: 'A portrait from your photos, before or after the wedding, in a classic likeness or the stylised character style shown in the studio studies. Ready in about four weeks.',
+      p: 'A painting from your photos, before or after the wedding, in a classic likeness or the stylised character style shown in the studio studies. Ready in about four weeks.',
     },
     {
       h: 'Stationery licensing',
-      p: 'A digital file of your portrait, licensed for save-the-dates, invitations, and thank-you cards.',
+      p: 'A digital file of your painting, licensed for save-the-dates, invitations, and thank-you cards.',
     },
     {
       h: 'Travel further afield',
       p: 'Regional Victoria and destination weddings further out. Happy to talk it through.',
     },
     {
-      h: 'Wedding bouquet illustration',
+      h: 'Wedding bouquet, A3',
       p: 'Your bouquet painted from photos after the day, on A3 cotton paper. A2 on request.',
     },
   ],
   // Split into label + body so the bold lead-in is structured, not sliced off
   // the body string at render time (see Packages.jsx).
+  // The section's own ask. Packages sold the thing and then handed the visitor
+  // to the FAQ, with the nearest Enquire back up in the header.
+  cta: 'Enquire about your event',
+  ctaNote: 'Tell me your date, your venue and roughly how many guests you would like painted, and I will come back with a straightforward quote.',
   licenceLabel: 'A note on style.',
   licenceBody:
-    'What I paint is my interpretation, not a photo-exact likeness, and my style evolves over time, so no two pieces are the same. Booking means you are comfortable with that approach and my style. A 50% retainer holds your date, with the balance due two weeks before your big day.',
+    'What I paint is my interpretation, not a photo-exact likeness, and my style evolves over time, so no two paintings are the same. Booking means you are comfortable with that approach and my style. A 50% retainer holds your date, with the balance due two weeks before your big day.',
   planner: {
     // Declarative, like every other heading on the page. It was "What does a
     // booking cover?", but a heading that poses a question it then answers is
     // a hook, and the FAQ below is the one place questions belong.
     title: 'What a booking covers.',
-    lede: 'Pick your hours. I paint around 8 pieces an hour, usually two guests to a piece, up to four when a group shares one.',
+    lede: 'Pick your hours. I paint about 8 paintings an hour with two guests in most of them, so roughly 16 of your guests are painted every hour.',
     hoursLabel: 'Hours booked',
-    piecesUnit: 'keepsakes painted live',
-    coversUnit: 'Room for around',
-    // Just names what the number counts. The pairing rule behind it (two to a
-    // piece, four when a group shares) belongs to the lede two lines up, and
-    // the readout rendered barely 110px below it: stating the rule in both put
-    // the same clause on screen twice in one glance.
-    coversTail: 'guests on them',
-    // Both lines say what they said before, minus the copywriting moves: the
-    // "Want more covered?" self-question (the FAQ answer already phrases this
-    // as a plain "if", so the two now agree) and the "x, not a y" zinger.
-    more: 'If you want more covered, add live hours, or the after-event service adds studio-painted pieces at a per-portrait rate.',
+    // The headline figure is GUESTS now, not paintings. It was the other way
+    // round, which asked a couple comparing quotes to convert the one number
+    // they shop on out of a number only the painter counts in — and put the
+    // conversion ("room for around 48 guests on them") in the small print
+    // under it. The paintings line stays, one rung down, because it is what
+    // explains the guest figure rather than competing with it.
+    guestsUnit: 'guests painted live',
+    piecesLead: 'That is around',
+    piecesTail: 'paintings, most with two guests in them and up to four when a group of friends shares one.',
+    keepLine: 'Every guest I paint takes their own painting home on the night.',
+    more: 'Want more of your guests covered? Add live hours, or add the after-event service and I paint the rest in the studio afterwards and post them to you to pass on.',
     small: 'Rough numbers to plan around. Groups and pacing vary on the night.',
     // The planner's own next step — carries the chosen hours into the
     // enquiry form so nobody has to retype their own maths.
@@ -338,6 +362,22 @@ export const FAQ = {
   // Shown above the jump nav, so the row of categories reads as an offer to
   // skip ahead rather than as decoration.
   jumpLabel: 'Jump to',
+  // Every answer carries somewhere to go next. `links` names verbatim phrases
+  // inside `a` to turn into in-site anchors, painted with the site's own
+  // hand-drawn underline (see `withLinks` in Underline.jsx) so a link reads as
+  // the same offer the rest of the page makes rather than as blue text.
+  //
+  // KEEP EACH PHRASE SHORT — around twenty characters, never a whole clause.
+  // The underline is an absolutely-positioned SVG inside an `inline-block`
+  // span, which is what lets it span the phrase; an inline-block cannot break
+  // across lines, so a long phrase is one unbreakable word as far as the line
+  // breaker is concerned, and on a 320px card it overflows the tile rather
+  // than wrapping. Two to four words always fits.
+  //
+  // The rule this list is kept to: no answer is a dead end. It either points at
+  // the section that shows the thing it describes, or it offers the enquiry.
+  // A visitor who reads one answer and stops has nowhere to go, and the FAQ is
+  // the page most of this site's search traffic lands on first.
   categories: [
     {
       id: 'faq-painting',
@@ -345,15 +385,27 @@ export const FAQ = {
       items: [
         {
           q: 'Do you paint live, or from photographs?',
-          a: 'Both. The base package has me at your wedding painting live through the reception, and we add to it from there. If you would rather a studio commission from your own photos, before or after the day, I do those too, priced on enquiry.',
+          a: 'Both. The base package has me at your wedding painting live through the reception, and we add to it from there. If you would rather a studio commission from your own photos, before or after the day, I do those too, priced on enquiry. Send me a note and I will price it for you.',
+          links: [
+            { phrase: 'studio commission', href: '/#offerings' },
+            { phrase: 'Send me a note', href: '/#enquiry' },
+          ],
         },
         {
           q: 'Do you paint events other than weddings?',
           a: 'Yes. As well as weddings I do brand activations, corporate events, and private parties across Melbourne and Australia-wide. It bends to fit the room. If yours is something else again, ask.',
+          links: [
+            { phrase: 'corporate events', href: '/corporate/' },
+            { phrase: 'ask', href: '/#enquiry' },
+          ],
         },
         {
           q: 'How should we send photos for a commission?',
-          a: 'The clearer the photos, the better the portrait. Send a few well-lit, high-resolution shots where your faces are clear, and tell me which one feels most like you. I will take it from there.',
+          a: 'The clearer the photos, the better the painting. Send a few well-lit, high-resolution shots where your faces are clear, and tell me which one feels most like you. You can see the style a studio commission is painted in on the gallery wall, and I take it from there.',
+          links: [
+            { phrase: 'studio commission', href: '/#offerings' },
+            { phrase: 'gallery wall', href: '/#work' },
+          ],
         },
       ],
     },
@@ -363,7 +415,8 @@ export const FAQ = {
       items: [
         {
           q: 'How far ahead should we book?',
-          a: 'As early as you can. I only take a limited number of weddings, so dates fill up. Send me yours and I will tell you what is open.',
+          a: 'As early as you can. I only take a limited number of weddings, so dates fill up. Enquire now with your date and I will tell you what is open.',
+          links: [{ phrase: 'Enquire now', href: '/#enquiry' }],
         },
         {
           // Sits before "how do we secure our date" on purpose: it is the
@@ -373,18 +426,22 @@ export const FAQ = {
           // numbers are coming by email does not need them on the page.
           q: 'What happens after we enquire?',
           a: 'You get a note on screen straight away so you know it arrived, and then a reply from me within a few days. That reply has what I have open on your date, pricing worked out for your hours and your venue, the add-ons with real numbers against them, and what I need from the room. If you would rather talk it through, say so and we will find a time. Nothing is locked in until you are ready: a 50% retainer and a booking agreement is what makes the date yours.',
+          links: [{ phrase: 'after we enquire', href: '/#enquiry' }],
         },
         {
           q: 'How do we secure our date?',
-          a: 'A 50% retainer holds your date, with the balance due two weeks before your big day. I only confirm once the retainer is in, and then the date is yours.',
+          a: 'A 50% retainer holds your date, with the balance due two weeks before your big day. I only confirm once the retainer is in, and then the date is yours. Send me your date and I will come back with the paperwork.',
+          links: [{ phrase: 'Send me your date', href: '/#enquiry' }],
         },
         {
           q: 'What if we need to postpone or cancel?',
-          a: 'Weddings move, and I get that. If you need to cancel or postpone, just let me know as early as you can. I try to be fair and reasonable, and the details depend on timing and whether I am able to rebook the date. Full terms sit in your booking agreement.',
+          a: 'Weddings move, and I get that. If you need to cancel or postpone, just let me know as early as you can. I try to be fair and reasonable, and the details depend on timing and whether I am able to rebook the date. Full terms sit in your booking agreement, and I am happy to walk you through them before you commit.',
+          links: [{ phrase: 'walk you through them', href: '/#enquiry' }],
         },
         {
           q: 'Do you travel?',
           a: 'Travel is included for venues within about an hour of Melbourne or Sydney metro. Further out, including regional Victoria, regional NSW, and destination weddings, I am happy to discuss it and quote travel on enquiry. Just tell me your venue.',
+          links: [{ phrase: 'tell me your venue', href: '/#enquiry' }],
         },
       ],
     },
@@ -394,15 +451,20 @@ export const FAQ = {
       items: [
         {
           q: 'How long do you paint on the day?',
-          a: 'Three hours in the base package, up to about five if you add hours, usually across the reception with short breaks. I pace myself instead of painting flat out, so the last piece gets the same care as the first.',
+          a: 'Three hours in the base package, up to about five if you add hours, usually across the reception with short breaks. I pace myself instead of painting flat out, so the last painting gets the same care as the first. You can see how the evening runs, step by step, on the homepage.',
+          links: [{ phrase: 'how the evening runs', href: '/#night' }],
         },
         {
           q: 'How many guests can you paint?',
-          a: 'Around 8 pieces an hour, so a three-hour booking covers roughly 24 portraits. I usually paint two guests to a piece and can fit up to four, so how far that goes depends on how your guests pair up, not the size of your list. The number of pieces you book is the number I paint. If you want more covered, add live hours, or add the after-event service and I paint extra pieces in the studio and post them to you to pass on.',
+          a: 'About 8 paintings an hour, with two guests in most of them, so around 16 of your guests an hour. A three-hour booking covers roughly 48 guests. Groups of up to four can share one painting, so a table of friends counts as one sitting rather than two. If you want more of your guests covered, add live hours, or add the after-event service and I paint the rest in the studio and post them to you to pass on. There is a planner in the packages section that does the maths for your own hours.',
+          links: [
+            { phrase: 'packages section', href: '/#offerings' },
+          ],
         },
         {
           q: 'What do you need from us on the day?',
-          a: 'Not much. A table around 100 by 60cm at seated height, and a chair I can sit in facing out from it. Somewhere to stand up and stretch for a few minutes each hour helps too. I bring everything else. A drink or a bite is always welcome but never expected.',
+          a: 'Not much. A table and a chair, facing out into the room. A standard 1.8m trestle table is ideal, and the smallest I can work on is 120cm wide by 60cm deep at normal seated height. Somewhere to stand up and stretch for a few minutes each hour helps too, and if I am painting for more than about five hours a meal is appreciated. I bring everything else. It is all on the homepage under On the night too.',
+          links: [{ phrase: 'On the night', href: '/#night' }],
         },
       ],
     },
@@ -412,15 +474,21 @@ export const FAQ = {
       items: [
         {
           q: 'When do we receive the finished work?',
-          a: 'Guest portraits are done on the night and go home with your guests. Your couple portrait is painted that night too and left with you. Studio commissions from photos usually arrive within four weeks.',
+          a: 'Guests take their painting home with them on the night, sleeved and dry. Yours is painted that night too and left with you. Studio commissions from photos usually arrive within four weeks.',
+          links: [{ phrase: 'Studio commissions', href: '/#offerings' }],
         },
         {
           q: 'Do you frame the work?',
-          a: 'I do not frame the work. It comes to you on cotton paper, sleeved and ready for a frame.',
+          a: 'I do not frame the work. It comes to you on cotton paper, sleeved and ready for a frame. You can see the sizes and the paper on the gallery wall.',
+          links: [{ phrase: 'gallery wall', href: '/#work' }],
         },
         {
           q: 'What materials do you use?',
-          a: 'Professional watercolours on archival 300gsm A5 cotton paper. The pigments are lightfast, so the colour holds for decades if you look after it.',
+          a: 'Professional watercolours on archival 300gsm A5 cotton paper. The pigments are lightfast, so the colour holds for decades if you look after it. Have a look at the paintings, or enquire now and I will send more detail.',
+          links: [
+            { phrase: 'the paintings', href: '/#work' },
+            { phrase: 'enquire now', href: '/#enquiry' },
+          ],
         },
       ],
     },
@@ -433,12 +501,23 @@ export const ENQUIRY = {
   emphasis: 'your day.',
   intro:
     'Just a few details to start. It comes straight to my inbox and I answer every one myself.',
+  // Every live option says LIVE PAINTING and names the event. It read
+  // "Live on the day / Corporate event or brand activation / Private
+  // celebration / Studio commission", where only the first option mentioned
+  // live painting at all — so the other two looked like event types that came
+  // without it, and the one that did never said what event it was on the day
+  // of. Now the axis is what happens (live at your event, or in the studio
+  // from photos) and the event type rides along inside it.
+  //
+  // `deepLink` is the ?event= value the nav's Book an event menu passes to
+  // preselect this option (see EnquireForm's URL preselect). Options without
+  // one are simply not linkable from the nav.
   packageOptions: [
-    'Live on the day',
-    'Corporate event or brand activation',
-    'Private celebration',
-    'Studio commission',
-    'Not sure yet',
+    { label: 'Live painting at our wedding', deepLink: 'wedding' },
+    { label: 'Live painting at a corporate event or brand activation', deepLink: 'corporate' },
+    { label: 'Live painting at a private celebration', deepLink: 'private' },
+    { label: 'A studio commission from photos', deepLink: 'studio' },
+    { label: 'Not sure yet' },
   ],
   // The reply card asks its questions a step at a time (see EnquireForm.jsx)
   // — one tap-question per sheet, contact details last.
@@ -479,7 +558,10 @@ export const ENQUIRY = {
     label: 'From the planner',
     hoursTail: 'hours live',
     piecesLead: 'about',
-    piecesTail: 'keepsakes painted on the night',
+    // Reads back the figure the planner led with, which is now guests.
+    piecesTail: 'guests painted on the night',
+    // Fallback for a hand-off that only carried the painting count.
+    piecesTailPaintings: 'paintings on the night',
     sent: 'Sent with your enquiry.',
     clear: 'Clear',
     clearLabel: 'Clear the hours carried over from the planner',
@@ -521,7 +603,7 @@ export const CORPORATE = {
   eyebrow: 'Live event watercolour · corporate & brands',
   lines: ['Your guests, painted', 'while they mingle'],
   emphasis: 'painted',
-  lede: 'I paint your guests live in watercolour, right in the room. People stop to watch, and the finished pieces are handed over before anyone leaves.',
+  lede: 'I paint your guests live in watercolour, right in the room. People stop to watch, and every painting is handed over before anyone leaves.',
   note: 'Based in Melbourne, regularly in Sydney, travelling Australia-wide.',
   cta: 'Enquire about your event',
 
@@ -544,15 +626,15 @@ export const CORPORATE = {
     cards: [
       {
         h: 'It gathers a crowd',
-        p: 'Guests wander over to see what is happening, then stay to watch a piece finish. By the third or fourth one there is usually a small group around the table waiting for a turn.',
+        p: 'Guests wander over to see what is happening, then stay to watch a painting finish. By the third or fourth one there is usually a small group around the table waiting for a turn.',
       },
       {
         h: 'The keepsake stays',
-        p: 'A hand-painted portrait tends to end up on a desk or a fridge, still there months after the branded merch has gone into a drawer.',
+        p: 'A hand-painted keepsake tends to end up on a desk or a fridge, still there months after the branded merch has gone into a drawer.',
       },
       {
         h: 'I bring the rest',
-        p: 'All I need is a table and a chair. I turn up before doors and set up in about fifteen minutes. Public liability insurance included.',
+        p: 'All I need is a table and chair. A standard 1.8m trestle is ideal, and 120 by 60cm is the smallest I can work on. I turn up before doors and set up in about fifteen minutes. Public liability insurance included.',
       },
     ],
   },
@@ -590,7 +672,7 @@ export const CORPORATE = {
       {
         no: '03',
         h: 'Painted through the event',
-        p: 'Each piece takes five to ten minutes, around 8 an hour, usually two guests to a piece. Once the first few are done, word gets around the room.',
+        p: 'Each painting takes five to ten minutes, about 8 an hour with two guests in most of them, so roughly 16 of your guests an hour. Groups of up to four can share one. Once the first few are done, word gets around the room.',
       },
       {
         no: '04',
@@ -608,11 +690,13 @@ export const CORPORATE = {
       title: 'Live at your event',
       priceSmall: 'From',
       price: '$1000',
-      facts: ['3 hours live', '24 keepsakes'],
+      // Guests first, matching the homepage package (see PACKAGES.base).
+      facts: ['3 hours of live painting', 'About 48 guests painted'],
       bullets: [
-        'Guest portraits painted live on 300gsm A5 archival cotton paper',
-        'Usually two guests to a keepsake, up to four for a group',
-        'Every piece sleeved to take home on the night',
+        'Around 48 of your guests painted live across three hours',
+        'That is about 24 paintings, with two guests in most of them',
+        'Up to four people can go in one painting, so a group counts as one sitting',
+        'Painted on 300gsm A5 archival cotton paper and sleeved to take home that night',
         'Public liability insurance',
         'Travel within about an hour of Melbourne or Sydney metro',
       ],
@@ -622,11 +706,11 @@ export const CORPORATE = {
       items: [
         {
           h: 'Extra live hours',
-          p: 'Longer events or bigger guest lists. I stay across the event so more people get painted.',
+          p: 'Longer events or bigger guest lists. Each extra hour is roughly another 16 guests painted.',
         },
         {
-          h: 'After-event service',
-          p: 'Guests beyond the booked pieces painted in the studio afterwards and posted to you to pass on, at a per-portrait rate agreed before the day.',
+          h: 'More guests, painted afterwards',
+          p: 'Guests I do not get to on the night are painted in the studio afterwards and posted to you to pass on, at a per-guest rate agreed before the day.',
         },
         {
           h: 'Multi-day activations',
@@ -649,12 +733,17 @@ export const FOOTER = {
   cta: ['Let’s make something', 'to keep.'],
   emphasis: 'to keep.',
   name: 'chris wang',
+  // Mirrors the header: the flat "Corporate" link is replaced by the three
+  // event types the Book an event menu offers, so a visitor who scrolled all
+  // the way down can still self-select without going back up.
   nav: [
     { href: '/#night', label: 'On the night' },
     { href: '/#work', label: 'The work' },
     { href: '/#painter', label: 'The painter' },
     { href: '/#offerings', label: 'Packages' },
-    { href: '/corporate/', label: 'Corporate' },
+    { href: '/?event=wedding#enquiry', label: 'Book a wedding' },
+    { href: '/corporate/', label: 'Brands & corporate' },
+    { href: '/?event=private#enquiry', label: 'Private celebrations' },
     { href: '/faq/', label: 'FAQ' },
   ],
   instagram: 'https://www.instagram.com/chriswangstudio',
@@ -692,10 +781,27 @@ export const SECTIONS = [
   { id: 'enquiry', label: ENQUIRY.label, gradient: ['#F2A6C1', '#DB6E97'], pigment: 'blossom' },
 ]
 
+// A nav item with `items` renders as a menu rather than a link (see
+// SiteHeader's BookMenu). "Corporate" used to sit here as a flat link, which
+// asked a visitor to recognise their own event in a word aimed at one third of
+// them: a couple and someone booking a 40th both read past it. The menu names
+// all three event types instead, and each one lands on the booking form with
+// that type already chosen (`?event=` — see EnquireForm's URL preselect), so
+// self-selecting and starting the enquiry are the same click.
 export const NAV = [
   { href: '/#work', label: 'Gallery' },
   { href: '/#painter', label: 'About' },
   { href: '/#offerings', label: 'Packages' },
-  { href: '/corporate/', label: 'Corporate' },
+  {
+    label: 'Book an event',
+    // The menu's own destination for anyone who activates the top-level item
+    // (and the href it keeps for no-JS and middle-click).
+    href: '/#enquiry',
+    items: [
+      { href: '/?event=wedding#enquiry', label: 'Weddings' },
+      { href: '/corporate/', label: 'Brands & corporate events' },
+      { href: '/?event=private#enquiry', label: 'Private celebrations' },
+    ],
+  },
   { href: '/faq/', label: 'FAQ' },
 ]

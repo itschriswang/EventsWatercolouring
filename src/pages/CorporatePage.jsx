@@ -13,14 +13,13 @@ import SectionWash from '../components/SectionWash.jsx'
 import DeckleEdge from '../components/DeckleEdge.jsx'
 import Label, { Drop } from '../components/Label.jsx'
 import SplitText from '../components/SplitText.jsx'
-import MagneticButton from '../components/MagneticButton.jsx'
 import CornerBloom from '../components/CornerBloom.jsx'
 import Sparkles from '../components/Sparkles.jsx'
 import EnquireForm from '../components/EnquireForm.jsx'
 import Footer from '../components/Footer.jsx'
 import { SPRING, asset, CARD_BG as SHARED_CARD_BG, REVEAL_VIEWPORT } from '../lib/site.js'
 import { withUnderline } from '../components/Underline.jsx'
-import { CORPORATE } from '../content.js'
+import { CORPORATE, ENQUIRY } from '../content.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
 import KitStage from '../components/MyKit.jsx'
 
@@ -100,13 +99,21 @@ export default function CorporatePage() {
                 />
               </div>
               <motion.div {...rise(2)}>
-                <p className="mt-7 max-w-xl text-[clamp(1rem,1.15vw,1.2rem)] leading-relaxed text-ink-soft">
+                <p className="mt-7 max-w-xl text-[clamp(1.125rem,1.25vw,1.3125rem)] leading-[1.65] text-ink">
                   {withUnderline(CORPORATE.lede, 'live in watercolour', { className: 'text-rust' })}
                 </p>
+                {/* Matched to the homepage hero's CTA: same surface, same
+                    17px bold body label, same 56px pill, and no cursor-chasing
+                    magnetism on the thing a visitor is trying to aim at. */}
                 <div className="mt-8 flex flex-wrap items-center gap-5">
-                  <MagneticButton href="#enquiry">{CORPORATE.cta}</MagneticButton>
+                  <a
+                    href="#enquiry"
+                    className="btn-hero-flow inline-flex min-h-[56px] items-center justify-center rounded-full px-9 py-4 font-body text-[1.0625rem] font-bold tracking-[0.005em] text-ink active:scale-[0.98] motion-safe:transition-transform motion-safe:duration-200"
+                  >
+                    <span className="relative z-10">{CORPORATE.cta}</span>
+                  </a>
                 </div>
-                <p className="mt-4 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
+                <p className="mt-5 max-w-[38ch] text-[0.9375rem] leading-[1.6] text-ink-soft">
                   {CORPORATE.note}
                 </p>
               </motion.div>
@@ -134,7 +141,7 @@ export default function CorporatePage() {
                     onError={(e) => (e.currentTarget.style.display = 'none')}
                   />
                 </picture>
-                <figcaption className="bg-paper px-3 py-2 font-mono text-[0.54rem] uppercase tracking-[0.18em] text-ink-soft">
+                <figcaption className="bg-paper px-3 py-2 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-ink-soft">
                   Painted live · Cotton paper
                 </figcaption>
               </div>
@@ -195,7 +202,7 @@ export default function CorporatePage() {
                   <div className="relative z-10">
                     <Drop className="h-5 w-auto" gradient={['#F2E982', '#BCB438']} />
                     <h3 className="card-title mt-4">{c.h}</h3>
-                    <p className="mt-3 text-sm leading-relaxed text-ink-soft">{c.p}</p>
+                    <p className="mt-3 text-[1.0625rem] leading-[1.65] text-ink-soft">{c.p}</p>
                   </div>
                 </motion.article>
               ))}
@@ -260,7 +267,7 @@ export default function CorporatePage() {
                   <motion.div key={s.no} {...rise(i)} className="flex flex-col">
                     <span className="num-wide text-3xl text-rust">{s.no}</span>
                     <h3 className="mt-3 font-sentient text-xl tracking-[-0.01em] text-ink">{s.h}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-ink-soft">{s.p}</p>
+                    <p className="mt-2.5 text-[1.0625rem] leading-[1.65] text-ink-soft">{s.p}</p>
                   </motion.div>
                 ))}
               </div>
@@ -290,7 +297,7 @@ export default function CorporatePage() {
                         {CORPORATE.offer.base.title}
                       </h3>
                       <p className="shrink-0 text-right">
-                        <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
+                        <span className="font-body text-[0.9375rem] font-semibold tracking-[0.01em] text-ink-soft">
                           {CORPORATE.offer.base.priceSmall}{' '}
                         </span>
                         <span className="font-mono text-3xl leading-none text-ink">
@@ -302,13 +309,13 @@ export default function CorporatePage() {
                       {CORPORATE.offer.base.facts.map((f) => (
                         <span
                           key={f}
-                          className="border border-lime/40 px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.15em] text-sage-deep"
+                          className="border border-lime/40 px-3.5 py-1.5 font-body text-[0.875rem] font-semibold tracking-[0.01em] text-sage-deep"
                         >
                           {f}
                         </span>
                       ))}
                     </div>
-                    <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
+                    <ul className="mt-6 flex flex-col gap-3.5 border-t border-line/60 pt-6 text-[1rem] leading-[1.55] text-ink/90">
                       {CORPORATE.offer.base.bullets.map((b) => (
                         <li key={b} className="flex gap-3">
                           <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#F2E982', '#BCB438']} />
@@ -340,21 +347,21 @@ export default function CorporatePage() {
                             (i % 2 === 0 ? 'sm:border-r ' : '')
                           }
                         >
-                          <h4 className="font-sentient text-base tracking-[-0.01em] text-ink">{a.h}</h4>
-                          <p className="mt-2 flex-1 text-xs leading-relaxed text-ink-soft">{a.p}</p>
+                          <h4 className="font-sentient text-lg tracking-[-0.01em] text-ink">{a.h}</h4>
+                          <p className="mt-2 flex-1 text-[0.9375rem] leading-[1.6] text-ink-soft">{a.p}</p>
                         </div>
                       ))}
                     </div>
                   </div>
                 </motion.div>
               </div>
-              <motion.p {...rise()} className="mt-8 max-w-2xl text-sm leading-relaxed text-ink-soft">
+              <motion.p {...rise()} className="mt-8 max-w-2xl text-[1rem] leading-[1.65] text-ink-soft">
                 {CORPORATE.offer.note}
               </motion.p>
             </section>
 
             <EnquireForm
-              initialPackage="Corporate event or brand activation"
+              initialPackage={ENQUIRY.packageOptions[1].label}
               dateLabel="Event date"
               title={CORPORATE.enquiryTitle}
               mailSubject={CORPORATE.mailSubject}

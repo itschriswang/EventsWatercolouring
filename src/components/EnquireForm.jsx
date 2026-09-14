@@ -40,13 +40,36 @@ const mailtoFor = (data, subject = 'Wedding watercolour enquiry') => {
     data.venue && `Venue: ${data.venue}`,
     data.package && `Looking for: ${data.package}`,
     data.hours &&
-      `Hours: ${data.hours}${data.pieces ? ` (about ${data.pieces} keepsakes)` : ''}`,
+      `Hours: ${data.hours}${
+        data.guests
+          ? ` (about ${data.guests} guests painted, ${data.pieces} paintings)`
+          : data.pieces
+          ? ` (about ${data.pieces} paintings)`
+          : ''
+      }`,
     '',
     data.message || '',
   ]
     .filter(Boolean)
     .join('\n')
   return `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+}
+
+// The event-type options, as { label, deepLink } (see ENQUIRY.packageOptions).
+// `deepLink` is the `?event=` value the header's Book an event menu and the
+// footer's event links pass, so a visitor who has already said what kind of
+// event they are running does not get asked again on arrival.
+const PACKAGE_OPTIONS = ENQUIRY.packageOptions
+
+// Resolve `?event=` on the current URL to one of the options above. Returns ''
+// for a missing or unrecognised value, which simply leaves the question
+// unanswered — a stale or hand-typed link can never preselect something the
+// visitor did not choose.
+const packageFromUrl = () => {
+  if (typeof window === 'undefined') return ''
+  const key = new URLSearchParams(window.location.search).get('event')
+  if (!key) return ''
+  return PACKAGE_OPTIONS.find((o) => o.deepLink === key)?.label || ''
 }
 
 // Local-timezone YYYY-MM-DD for the date picker's `min` — the event is always
@@ -79,10 +102,13 @@ const stepVariants = (reduce) => ({
 // min-h + inline-flex centre: py-2 alone left the chip ~36px tall, under the
 // 44px touch-target minimum — and these chips ARE the enquiry flow on a phone.
 const chipClass = (on) =>
-  'inline-flex min-h-[44px] items-center rounded-full border px-4 py-2 text-left text-sm transition-colors duration-300 ' +
+  // 16px, not 14px, and full ink when unselected: these chips carry the
+  // longest labels on the card ("Live painting at a corporate event or brand
+  // activation") and are the first thing the card asks anyone to read.
+  'inline-flex min-h-[46px] items-center rounded-full border px-4 py-2.5 text-left text-[1rem] leading-snug transition-colors duration-300 ' +
   (on
-    ? 'border-terracotta bg-terracotta text-paper'
-    : 'border-ink/25 text-ink-soft hover:border-terracotta/60 hover:text-ink')
+    ? 'border-terracotta bg-terracotta font-semibold text-paper'
+    : 'border-ink/30 text-ink hover:border-terracotta/60 hover:bg-ink/[0.03]')
 
 /**
  * Enquiry form, staged as a hand-placed reply card.
@@ -150,13 +176,18 @@ export default function EnquireForm({
     email: '',
     contactMethod: '',
     venue: '',
-    package: initialPackage,
+    // The page's own default (e.g. /corporate/), unless the link that got
+    // here named an event type.
+    package: packageFromUrl() || initialPackage,
     date: '',
     dateUnknown: false,
     message: '',
     // Carried in from the planner, never typed — see the listener below.
     hours: '',
     pieces: '',
+    // The planner now leads with guests, so the guest figure rides along with
+    // the painting count rather than the reply having to re-derive it.
+    guests: '',
   })
   const set = (key) => (e) => {
     const v = e.target.value
@@ -242,13 +273,14 @@ export default function EnquireForm({
   // and can't be refreshed without eating what they might have written since.
   useEffect(() => {
     const onPlanner = (e) => {
-      const { hours, pieces } = e.detail || {}
+      const { hours, pieces, guests } = e.detail || {}
       if (!hours) return
       setF((p) => ({
         ...p,
         hours,
         pieces: pieces || '',
-        package: p.package || 'Live on the day',
+        guests: guests || '',
+        package: p.package || PACKAGE_OPTIONS[0].label,
       }))
     }
     window.addEventListener('ew:planner-enquire', onPlanner)
@@ -320,6 +352,7 @@ export default function EnquireForm({
       if (f.hours) {
         fd.append('hours', String(f.hours))
         if (f.pieces) fd.append('pieces', String(f.pieces))
+        if (f.guests) fd.append('guests', String(f.guests))
       }
       // Abort after 15s: a stalled connection (venue wifi) otherwise never
       // rejects, leaving the seal spinning forever with the retry/mailto
@@ -391,7 +424,7 @@ export default function EnquireForm({
                 already doing. This names the choice instead — the card, or
                 Chris's inbox from wherever you normally write — which is the
                 only thing a visitor is actually deciding here. */}
-            <span className="font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
+            <span className="font-mono text-[0.875rem] uppercase tracking-[0.12em] text-ink-soft">
               Rather write it yourself?
             </span>
             <CopyEmail className="mt-2.5" />
@@ -499,7 +532,7 @@ export default function EnquireForm({
                       </span>
                     ))}
                   </div>
-                  <span className="font-mono text-xs tracking-wide text-ink-soft">
+                  <span className="font-body text-[0.875rem] font-semibold tracking-[0.01em] text-ink-soft">
                     {sent ? 'Sealed' : `Step ${step + 1} of ${STEP_COUNT}`}
                   </span>
                 </div>
@@ -528,26 +561,33 @@ export default function EnquireForm({
                     // own rather than tucking under the progress row.
                     <div className="mt-5 rounded-2xl border border-terracotta/25 bg-terracotta/[0.055] px-4 py-3">
                       <div className="flex items-baseline justify-between gap-3">
-                        <span className="font-mono text-[0.6rem] uppercase tracking-[0.16em] text-terracotta">
+                        <span className="font-body text-[0.875rem] font-semibold tracking-[0.01em] text-terracotta">
                           {FP.label}
                         </span>
                         <button
                           type="button"
                           aria-label={FP.clearLabel}
-                          onClick={() => setF((p) => ({ ...p, hours: '', pieces: '' }))}
-                          className="shrink-0 rounded font-mono text-[0.6rem] uppercase tracking-[0.16em] text-ink-soft underline decoration-terracotta/60 underline-offset-4 outline-none transition-colors hover:text-ink focus-visible:text-terracotta"
+                          onClick={() =>
+                            setF((p) => ({ ...p, hours: '', pieces: '', guests: '' }))
+                          }
+                          className="shrink-0 rounded font-body text-[0.875rem] font-semibold text-ink-soft underline decoration-terracotta/60 underline-offset-4 outline-none transition-colors hover:text-ink focus-visible:text-terracotta"
                         >
                           {FP.clear}
                         </button>
                       </div>
-                      <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">
+                      {/* Reads back the figure the planner LED with, which is
+                          guests. Falls back to the painting count for a link
+                          from an older session that only carried that. */}
+                      <p className="mt-2 text-[1rem] leading-[1.6] text-ink-soft">
                         <b className="num-wide font-normal text-ink">{f.hours}</b>{' '}
                         {FP.hoursTail}
-                        {f.pieces ? (
+                        {f.guests || f.pieces ? (
                           <>
                             , {FP.piecesLead}{' '}
-                            <b className="num-wide font-normal text-ink">{f.pieces}</b>{' '}
-                            {FP.piecesTail}
+                            <b className="num-wide font-normal text-ink">
+                              {f.guests || f.pieces}
+                            </b>{' '}
+                            {f.guests ? FP.piecesTail : FP.piecesTailPaintings}
                           </>
                         ) : null}
                         . {FP.sent}
@@ -606,7 +646,7 @@ export default function EnquireForm({
                             <button
                               type="button"
                               onClick={() => goto(step - 1)}
-                              className="mb-5 inline-flex items-center gap-2 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink"
+                              className="mb-5 inline-flex min-h-[40px] items-center gap-2 font-body text-[0.9375rem] font-semibold tracking-[0.005em] text-ink-soft transition-colors hover:text-ink"
                             >
                               <span aria-hidden="true">←</span>
                               {S.back}
@@ -634,21 +674,21 @@ export default function EnquireForm({
                               >
                                 <legend className="sr-only">{S.what.q}</legend>
                                 <div ref={choiceRef} className="flex flex-wrap gap-2">
-                                  {ENQUIRY.packageOptions.map((o) => (
+                                  {PACKAGE_OPTIONS.map((o) => (
                                     <label
-                                      key={o}
+                                      key={o.label}
                                       className={
-                                        chipClass(f.package === o) +
+                                        chipClass(f.package === o.label) +
                                         ' cursor-pointer has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-terracotta has-[:focus-visible]:ring-offset-2'
                                       }
                                     >
                                       <input
                                         type="radio"
                                         name="package-choice"
-                                        value={o}
-                                        checked={f.package === o}
+                                        value={o.label}
+                                        checked={f.package === o.label}
                                         onChange={() => {
-                                          setF((p) => ({ ...p, package: o }))
+                                          setF((p) => ({ ...p, package: o.label }))
                                           // Answering IS the fix, so the
                                           // complaint goes the moment it lands.
                                           setError('')
@@ -656,7 +696,7 @@ export default function EnquireForm({
                                         }}
                                         className="sr-only"
                                       />
-                                      {o}
+                                      {o.label}
                                     </label>
                                   ))}
                                 </div>
@@ -672,7 +712,7 @@ export default function EnquireForm({
                                 <div ref={choiceRef} className="flex flex-col">
                                   <label
                                     htmlFor="f-date"
-                                    className="mb-2 flex items-center gap-1.5 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink"
+                                    className="mb-2 flex items-center gap-1.5 font-body font-bold text-[0.8125rem] uppercase tracking-[0.1em] text-ink"
                                   >
                                     <CalendarDateIcon width={15} height={15} className="text-terracotta" />
                                     {dateLabel}
@@ -763,7 +803,7 @@ export default function EnquireForm({
                                   onChange={set('phone')}
                                 />
                                 <div className="flex flex-col">
-                                  <span className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink">
+                                  <span className="mb-2 font-body font-bold text-[0.8125rem] uppercase tracking-[0.1em] text-ink">
                                     Preferred contact method
                                   </span>
                                   <div
@@ -792,7 +832,7 @@ export default function EnquireForm({
                                 <div className="flex flex-col sm:col-span-2">
                                   <label
                                     htmlFor="f-message"
-                                    className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink"
+                                    className="mb-2 font-body font-bold text-[0.8125rem] uppercase tracking-[0.1em] text-ink"
                                   >
                                     Message <span className="font-normal text-ink-soft">(optional)</span>
                                   </label>
@@ -811,12 +851,12 @@ export default function EnquireForm({
                               <div className="mt-8 flex flex-col gap-4">
                                 <SealButton sending={sending} />
                                 {error && (
-                                  <p id="enquire-error" role="alert" className="max-w-md font-mono text-xs leading-relaxed text-rust">
+                                  <p id="enquire-error" role="alert" className="max-w-md text-[0.9375rem] leading-[1.6] text-rust">
                                     {error}
                                   </p>
                                 )}
                                 {notice && !error && (
-                                  <p role="status" className="max-w-md font-mono text-xs leading-relaxed text-ink-soft">
+                                  <p role="status" className="max-w-md text-[0.9375rem] leading-[1.6] text-ink-soft">
                                     {notice}
                                   </p>
                                 )}
@@ -827,7 +867,7 @@ export default function EnquireForm({
                                       mailSubject,
                                     )}
                                     onClick={() => track('Enquiry Mailto')}
-                                    className="w-fit rounded font-mono text-xs text-ink underline decoration-terracotta/60 underline-offset-4 outline-none transition-colors hover:text-terracotta focus-visible:text-terracotta"
+                                    className="w-fit rounded text-[0.9375rem] font-semibold text-ink underline decoration-terracotta/60 underline-offset-4 outline-none transition-colors hover:text-terracotta focus-visible:text-terracotta"
                                   >
                                     Open a pre-filled email with your answers
                                   </a>
@@ -854,7 +894,7 @@ function StepHeading({ q, hint }) {
   return (
     <>
       <h3 className="card-title">{q}</h3>
-      <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-soft">{hint}</p>
+      <p className="mt-2.5 max-w-md text-[1rem] leading-[1.6] text-ink-soft">{hint}</p>
     </>
   )
 }
@@ -877,7 +917,7 @@ function NextButton({ onClick, label }) {
     <button
       type="button"
       onClick={onClick}
-      className="group flex w-full items-center justify-center gap-2.5 rounded-full bg-terracotta px-5 py-3.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-paper transition-colors duration-300 hover:bg-rust"
+      className="group flex min-h-[54px] w-full items-center justify-center gap-2.5 rounded-full bg-terracotta px-6 py-4 font-body text-[1.0625rem] font-bold tracking-[0.005em] text-paper transition-colors duration-300 hover:bg-rust"
     >
       {label}
       <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1 group-focus-visible:translate-x-1">
@@ -907,7 +947,7 @@ function StepFooter({ error, onNext, label }) {
         <p
           id="enquire-error"
           role="alert"
-          className="font-mono text-xs leading-relaxed text-rust"
+          className="text-[0.9375rem] leading-[1.6] text-rust"
         >
           {error}
         </p>
@@ -1022,7 +1062,7 @@ function Field({ name, label, type = 'text', required, invalid = false, ...rest 
     <div className="flex flex-col">
       <label
         htmlFor={`f-${name}`}
-        className="mb-2 font-body font-bold text-[0.7rem] uppercase tracking-[0.12em] text-ink"
+        className="mb-2 font-body font-bold text-[0.8125rem] uppercase tracking-[0.1em] text-ink"
       >
         {label}
         {required && <span className="text-rust"> *</span>}

@@ -33,12 +33,22 @@ const GUESTS_PER_PIECE = 2
 const HOURS = [3, 4, 5]
 
 /**
- * "What a booking covers." — a small planner that shows what the booked
- * hours buy. Pick the hours and the arithmetic (8 pieces an hour, usually two
- * guests a piece) shows how many keepsakes get painted live. Coverage beyond
- * that is the after-event add-on or extra hours — the planner points there
- * rather than promising it. The numbers are the same ones the copy already
- * commits to; this just lets people put their own event into them.
+ * "What a booking covers." — a small planner that shows what the booked hours
+ * buy, in GUESTS.
+ *
+ * It used to lead with the painting count and put the guest figure in a line
+ * of small print beneath it ("Room for around 48 guests on them"). That is the
+ * wrong way round twice over: guests is the number a couple is actually
+ * shopping on, and a painting is a unit only the painter counts in — one
+ * holding anywhere from one to four people, which is exactly why "24 pieces"
+ * and "48 guests" and "8 an hour" read as three figures that contradict each
+ * other. Leading with guests states the promise, and the painting count sits
+ * one rung down where it explains that promise instead of competing with it.
+ *
+ * The arithmetic is unchanged and is the same the rest of the site commits to:
+ * 8 paintings an hour, two guests in most of them. Coverage beyond the booked
+ * hours is the after-event add-on or extra hours — the planner points there
+ * rather than promising it.
  */
 export default function NightPlanner() {
   const reduce = useReducedMotion()
@@ -73,8 +83,15 @@ export default function NightPlanner() {
         {/* Controls */}
         <div>
           <h3 className="card-title">{p.title}</h3>
-          <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-soft">
-            {withUnderline(p.lede, '8 pieces an hour', { className: 'text-terracotta' })}
+          <p className="mt-3 max-w-md text-[1.0625rem] leading-[1.65] text-ink-soft">
+            {/* Keep the underlined phrase SHORT. `Underline` wraps its phrase
+                in an inline-block so the SVG can span it, and an inline-block
+                is a block box: at phone width a clause-length phrase breaks
+                onto its own lines and strands the punctuation after it on a
+                line of its own. Three or four words. */}
+            {withUnderline(p.lede, 'roughly 16 of your guests', {
+              className: 'text-terracotta',
+            })}
           </p>
 
           {/* Three mutually exclusive answers, so: real radios under the pill
@@ -90,7 +107,7 @@ export default function NightPlanner() {
                 leading; a <legend> is a block box and takes only its own 15px,
                 which pulled the label 9px down onto the pills. Spelling the old
                 strut back keeps the conversion invisible in the layout. */}
-            <legend className="font-mono text-[0.62rem] uppercase leading-6 tracking-[0.2em] text-ink-soft">
+            <legend className="font-body text-[0.9375rem] font-semibold leading-6 tracking-[0.01em] text-ink">
               {p.hoursLabel}
             </legend>
             <div className="mt-3 flex gap-2.5">
@@ -108,7 +125,7 @@ export default function NightPlanner() {
                     className="sr-only"
                   />
                   {hours === h ? (
-                    <span className="btn-aurora inline-flex min-h-[44px] items-center rounded-full px-4 py-1.5 font-mono text-sm">
+                    <span className="btn-aurora inline-flex min-h-[48px] min-w-[48px] items-center justify-center rounded-full px-5 py-1.5 font-body text-[1.0625rem] font-bold">
                       <span className="btn-aurora-label">{h}</span>
                     </span>
                   ) : (
@@ -130,7 +147,7 @@ export default function NightPlanner() {
                       />
                       <GlassPill
                         opaque
-                        className="relative inline-flex min-h-[44px] items-center justify-center px-4 py-1.5 font-mono text-sm text-ink-soft transition-colors duration-300 hover:text-ink"
+                        className="relative inline-flex min-h-[48px] min-w-[48px] items-center justify-center px-5 py-1.5 font-body text-[1.0625rem] font-bold text-ink-soft transition-colors duration-300 hover:text-ink"
                       >
                         {h}
                       </GlassPill>
@@ -151,30 +168,35 @@ export default function NightPlanner() {
               together, the way they read on screen. Visually hidden, because the
               sighted cue is the figures themselves. */}
           <p className="sr-only" role="status">
-            {`${hours} hours: ${pieces} ${p.piecesUnit}. ${p.coversUnit} ${covers} ${p.coversTail}.`}
+            {`${hours} hours: ${covers} ${p.guestsUnit}. ${p.piecesLead} ${pieces} ${p.piecesTail} ${p.keepLine}`}
           </p>
           <p className="flex items-baseline gap-3">
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.span
-                key={pieces}
+                key={covers}
                 initial={reduce ? false : { opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduce ? { opacity: 0 } : { opacity: 0, y: -10 }}
                 transition={SPRING}
-                className="num-wide text-[clamp(2.5rem,4vw,3.5rem)] leading-none text-rust"
+                className="num-wide text-[clamp(2.75rem,4.4vw,3.75rem)] leading-none text-rust"
               >
-                {pieces}
+                {covers}
               </motion.span>
             </AnimatePresence>
-            <span className="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-ink-soft">
-              {p.piecesUnit}
+            <span className="font-body text-[1.0625rem] font-semibold leading-snug text-ink">
+              {p.guestsUnit}
             </span>
           </p>
           {/* The count as objects: one tiny sleeved card per keepsake, so
               "24 pieces" is something you can see stack up as the hours
               change, not just a number changing. Decorative — the figures
               above carry the accessible version. */}
-          <div aria-hidden="true" className="mt-5 flex max-w-md flex-wrap gap-1.5">
+          {/* One sleeved card per painting, so the count is something you can
+              watch stack up rather than a number that changes. It counts
+              PAINTINGS, not guests, which is the honest thing for it to count:
+              a painting is the object that exists, and drawing 48 of them would
+              show a stack that is never handed over. */}
+          <div aria-hidden="true" className="mt-6 flex max-w-md flex-wrap gap-1.5">
             {Array.from({ length: pieces }, (_, i) => {
               const [a, b] = THUMB_TINTS[i % THUMB_TINTS.length]
               return (
@@ -195,13 +217,12 @@ export default function NightPlanner() {
               )
             })}
           </div>
-          <p className="mt-4 text-sm leading-relaxed text-ink/85">
-            {p.coversUnit} <b className="num-wide text-ink">{covers}</b> {p.coversTail}.
+          <p className="mt-5 text-[1.0625rem] leading-[1.65] text-ink/90">
+            {p.piecesLead} <b className="num-wide text-ink">{pieces}</b> {p.piecesTail}
           </p>
-          <p className="mt-3 text-sm leading-relaxed text-ink/85">{p.more}</p>
-          <p className="mt-5 font-mono text-[0.55rem] uppercase tracking-[0.18em] text-ink-soft">
-            {p.small}
-          </p>
+          <p className="mt-2 text-[1.0625rem] leading-[1.65] text-ink/90">{p.keepLine}</p>
+          <p className="mt-4 text-[1.0625rem] leading-[1.65] text-ink/90">{p.more}</p>
+          <p className="mt-5 text-[0.875rem] leading-[1.55] text-ink-soft">{p.small}</p>
 
           {/* Carry the chosen hours straight into the enquiry form — the
               visitor has already done their maths; don't make them retype it.
@@ -211,11 +232,15 @@ export default function NightPlanner() {
           <a
             href={ENQUIRE_HREF}
             onClick={() =>
+              // `guests` rides along with the pieces so the reply card can read
+              // back the same figure the planner led with.
               window.dispatchEvent(
-                new CustomEvent('ew:planner-enquire', { detail: { hours, pieces } }),
+                new CustomEvent('ew:planner-enquire', {
+                  detail: { hours, pieces, guests: covers },
+                }),
               )
             }
-            className="group btn-hero-flow mt-6 inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-ink"
+            className="group btn-hero-flow mt-7 inline-flex min-h-[52px] w-fit items-center gap-2.5 rounded-full px-7 py-3 font-body text-[1rem] font-bold tracking-[0.005em] text-ink"
           >
             <span className="relative z-10">{p.cta}</span>
             <span aria-hidden="true" className="relative z-10 transition-transform duration-300 group-hover:translate-x-1 group-focus-visible:translate-x-1">

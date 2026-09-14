@@ -1,7 +1,6 @@
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 import SplitText from './SplitText.jsx'
-import MagneticButton from './MagneticButton.jsx'
 import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset, artSrcset, ENQUIRE_HREF } from '../lib/site.js'
 import { HERO } from '../content.js'
@@ -155,10 +154,19 @@ export default function Hero({ revealed }) {
         variants={fade}
         initial="hidden"
         animate={state}
-        className="relative z-20 hidden sm:flex items-center justify-between font-mono text-[0.66rem] uppercase tracking-[0.3em] text-ink-soft"
+        // The first words on the page, and the two facts a stranger is
+        // scanning for — set at 0.66rem of a handwritten face with 0.3em of
+        // tracking, in the soft slate, they were the least readable text in
+        // the viewport. Body face, 15px, semibold, full ink: still clearly
+        // secondary to a ~90px headline, but now read rather than skimmed
+        // past. The accent rule gives the row a start mark to land on.
+        className="relative z-20 hidden sm:flex items-center justify-between font-body text-[0.9375rem] font-semibold tracking-[0.04em] text-ink"
       >
-        <span>{HERO.eyebrow}</span>
-        <span>{HERO.place}</span>
+        <span className="flex items-center gap-3">
+          <span aria-hidden="true" className="block h-px w-7 shrink-0 bg-terracotta opacity-70" />
+          {HERO.eyebrow}
+        </span>
+        <span className="text-ink/75">{HERO.place}</span>
       </motion.div>
 
       {/* Mobile eyebrow — context-first, above the artwork */}
@@ -170,9 +178,9 @@ export default function Hero({ revealed }) {
       >
         <span
           aria-hidden="true"
-          className="block h-px w-5 shrink-0 bg-lime opacity-60"
+          className="block h-px w-5 shrink-0 bg-terracotta opacity-70"
         />
-        <span className="font-mono text-[0.59rem] uppercase tracking-[0.3em] text-ink-soft">
+        <span className="font-body text-[0.875rem] font-semibold tracking-[0.03em] text-ink">
           {HERO.eyebrow}
         </span>
       </motion.div>
@@ -195,28 +203,26 @@ export default function Hero({ revealed }) {
                 playOnMount
                 lines={isMobile ? HERO.linesMobile : HERO.lines}
                 emphasis={isMobile ? HERO.emphasisMobile : HERO.emphasis}
-                // The accent word carries the action-surface's continuous
-                // flow — a real clipped gradient, not per-letter swatches —
-                // in the true palette voices: Seafoam, Lavender, Lemon Lime
-                // (repeated to hold a flat plateau), Blossom, Rose, exactly as
-                // the button and orb. Blue/purple/pink/red are pinned tight
-                // against the word's edges as near-instant peaks rather than
-                // held plateaus, the Lemon Lime plateau holds a small pocket
-                // dead centre, and the purple→green / green→pink blends fill
-                // most of the remaining width — the transition itself is the
-                // dominant voice, not a seam squeezed out of the way. No
-                // chromatic-aberration fringe or backlit glow: the word now
-                // sits on the dark wine brush stroke below, and the pastel
-                // gradient reads cleanly against it — the earlier orange/cyan
-                // fringe read as a glitch on the light ground and is gone.
-                emphasisColors={['#BFDCD1', '#D4B6E6', '#D8DB7A', '#D8DB7A', '#F2A6C1', '#E88FA4']}
-                emphasisColorStops={[0, 0.04, 0.48, 0.52, 0.96, 1]}
-                // A watercolour wash behind the word, painted from the model
-                // rather than stamped from a scan: the mixed dark of INK_WASH,
-                // laid as overlapping wet-in-wet blooms with a ragged displaced
-                // edge and uneven pooling. See EmphasisBrush.
-                emphasisStroke
-                emphasisStrokeOpacity={1}
+                // The accent word is DRAWN, not filled: an ink outline with a
+                // hand-wobbled contour (see `.emph-outline` in index.css and
+                // #hand-outline in GradientDefs.jsx).
+                //
+                // It used to be the busiest object in the hero — the aurora
+                // flow gradient clipped through the letters, over a watercolour
+                // wash of the mixed INK_WASH dark laid behind them as three
+                // wet-in-wet blooms. Both were good pieces of work and both
+                // were in the wrong place: this is the first line a stranger
+                // reads, in a hero that already carries a bloom field, the
+                // aurora orb, two tilted cards, sparkles and two scroll cues.
+                // The splash is gone and the word keeps its emphasis by being
+                // the one outlined thing on the page, which costs the reader
+                // nothing to parse.
+                //
+                // Neither treatment is deleted from the codebase — SplitText
+                // still takes `emphasisColors` / `emphasisStroke`, and
+                // EmphasisBrush and the KM mix behind it are intact for any
+                // heading that wants them. This heading just stops asking.
+                emphasisOutline
                 className="display-xl text-ink [line-height:0.80] [font-size:clamp(2.75rem,13vw,4.5rem)] lg:[font-size:clamp(2.25rem,5.6vw,5.6rem)] [text-shadow:none]"
               />
             )}
@@ -229,15 +235,43 @@ export default function Hero({ revealed }) {
             className="mt-6 block sm:mt-[clamp(1.5rem,3vw,2.5rem)]"
           >
             <div className="relative">
-              <p className="max-w-[33ch] text-[0.93rem] leading-relaxed text-ink-soft sm:max-w-md sm:text-[clamp(1rem,1.1vw,1.18rem)]">
+              <p className="max-w-[34ch] text-[1.0625rem] leading-[1.65] text-ink sm:max-w-lg sm:text-[clamp(1.125rem,1.25vw,1.3125rem)]">
                 {withUnderline(HERO.lede, 'watercolour', { className: 'text-rust' })}
               </p>
             </div>
-            <div className="mt-7 flex flex-wrap items-center gap-5 sm:mt-8">
-              <MagneticButton href={ENQUIRE_HREF} flow>Enquire about your day</MagneticButton>
+            {/* The page's primary conversion point, and the one place on it
+                where nothing should be moving.
+
+                It was a MagneticButton: the pill chases the cursor, the label
+                skews on hover and the arrow slides out. Three motions on the
+                thing a hesitant visitor is trying to aim at — and the label
+                itself was 0.75rem of the handwritten mono, uppercase at 0.18em
+                tracking, so the least legible type in the hero was on the
+                button the page most wants pressed. It stands out by contrast
+                and size now instead: the same watercolour-bubble surface, a
+                body-face label at 17px bold in sentence case, in a 56px pill.
+                The only movement left is the press-down, which is feedback,
+                not decoration.
+
+                /corporate/'s hero CTA was the only other magnetic button and
+                is now the same static pill, so MagneticButton and the
+                useMagnetic hook behind it are gone rather than left as a
+                component nothing renders. */}
+            <div className="mt-8 flex flex-wrap items-center gap-5">
+              <a
+                href={ENQUIRE_HREF}
+                className="btn-hero-flow inline-flex min-h-[56px] items-center justify-center rounded-full px-9 py-4 font-body text-[1.0625rem] font-bold tracking-[0.005em] text-ink active:scale-[0.98] motion-safe:transition-transform motion-safe:duration-200"
+              >
+                <span className="relative z-10">Enquire about your day</span>
+              </a>
             </div>
-            <p className="mt-4 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
-              {HERO.note}
+            {/* The price and the reply promise: the two lines that answer "can
+                we afford this" and "will anyone write back", previously set as
+                a 0.6rem uppercase mono footnote. Body face at 15px, with the
+                price in full ink and bold so the number carries at a glance
+                while the sentence around it stays secondary. */}
+            <p className="mt-5 max-w-[38ch] text-[0.9375rem] leading-[1.6] text-ink-soft">
+              <b className="font-bold text-ink">{HERO.notePrice}</b> {HERO.noteReply}
             </p>
           </motion.div>
         </div>
@@ -283,7 +317,7 @@ export default function Hero({ revealed }) {
                         onError={(e) => (e.currentTarget.style.display = 'none')}
                       />
                     </picture>
-                    <figcaption className="bg-paper px-3 py-2 font-mono text-[0.54rem] uppercase tracking-[0.18em] text-ink-soft">
+                    <figcaption className="bg-paper px-3 py-2 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-ink-soft">
                       No. 001 · Cotton paper
                     </figcaption>
                   </div>
@@ -323,7 +357,7 @@ export default function Hero({ revealed }) {
                         onError={(e) => (e.currentTarget.style.display = 'none')}
                       />
                     </picture>
-                    <figcaption className="bg-paper px-3 py-2 font-mono text-[0.54rem] uppercase tracking-[0.18em] text-ink-soft">
+                    <figcaption className="bg-paper px-3 py-2 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-ink-soft">
                       No. 002 · Bouquet
                     </figcaption>
                   </div>
@@ -339,7 +373,7 @@ export default function Hero({ revealed }) {
                 className="sm:hidden absolute right-0 top-1/2 -translate-y-1/2 translate-x-[80%]"
               >
                 <span
-                  className="font-mono text-[0.48rem] uppercase tracking-[0.28em] text-ink-soft opacity-45"
+                  className="font-mono text-[0.625rem] uppercase tracking-[0.22em] text-ink-soft opacity-60"
                   style={{ writingMode: 'vertical-rl' }}
                 >
                   {HERO.place}
@@ -356,7 +390,7 @@ export default function Hero({ revealed }) {
         variants={fade}
         initial="hidden"
         animate={state}
-        className="mt-[clamp(2rem,5vw,4rem)] flex items-center gap-3 font-mono text-[0.62rem] uppercase tracking-[0.3em] text-ink-soft"
+        className="mt-[clamp(2rem,5vw,4rem)] flex items-center gap-3 font-mono text-[0.8125rem] uppercase tracking-[0.22em] text-ink-soft"
       >
         {/* Plain span, CSS pulse: an infinite framer loop on this hairline was
             re-layerizing the whole page every frame (see `.scroll-tick` in
@@ -375,7 +409,7 @@ export default function Hero({ revealed }) {
       >
         <span className="scroll-tick block w-px bg-lime" style={{ height: 28 }} />
         <span
-          className="font-mono text-[0.45rem] uppercase tracking-[0.28em] text-ink-soft opacity-60"
+          className="font-mono text-[0.625rem] uppercase tracking-[0.22em] text-ink-soft opacity-70"
           style={{ writingMode: 'vertical-rl' }}
         >
           Scroll
