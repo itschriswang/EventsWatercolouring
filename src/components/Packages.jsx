@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label, { Drop } from './Label.jsx'
 import SplitText from './SplitText.jsx'
-import { SPRING, CARD_BG, REVEAL_VIEWPORT } from '../lib/site.js'
+import { SPRING, CARD_BG, REVEAL_VIEWPORT, ENQUIRE_HREF } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
 import Sparkles from './Sparkles.jsx'
@@ -79,7 +79,7 @@ export default function Packages() {
       />
       <motion.p
         {...reveal(1)}
-        className="mt-8 max-w-2xl text-[clamp(1rem,1.1vw,1.15rem)] leading-relaxed text-ink-soft"
+        className="mt-8 max-w-2xl text-[clamp(1.0625rem,1.2vw,1.25rem)] leading-[1.65] text-ink-soft"
       >
         {withUnderline(PACKAGES.intro, 'the same base package', { className: 'text-rust' })}
       </motion.p>
@@ -99,10 +99,10 @@ export default function Packages() {
             {PACKAGES.base.title}
           </h3>
           <p className="mt-3 flex items-baseline gap-2">
-            <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
+            <span className="font-body text-[0.9375rem] font-semibold tracking-[0.01em] text-ink-soft">
               {PACKAGES.base.priceSmall}
             </span>
-            <span className="font-mono text-[1.4rem] leading-none text-ink">
+            <span className="font-mono text-[1.75rem] leading-none text-ink">
               {PACKAGES.base.price}
             </span>
           </p>
@@ -115,15 +115,15 @@ export default function Packages() {
           <CornerBloom from={['blush', 0.341]} to={['blush', 0.276]} />
           <GlassCardRim />
           <div className="relative z-10">
-            <p className="text-sm text-ink-soft">{PACKAGES.base.note}</p>
+            <p className="text-[1rem] leading-[1.6] text-ink-soft">{PACKAGES.base.note}</p>
             <div className="mt-5 flex flex-wrap gap-2">
               {PACKAGES.base.facts.map((f) => (
-                <GlassPill key={f} className="px-3 py-1 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-sage-deep">
+                <GlassPill key={f} className="px-3.5 py-1.5 font-body text-[0.875rem] font-semibold tracking-[0.01em] text-sage-deep">
                   {f}
                 </GlassPill>
               ))}
             </div>
-            <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
+            <ul className="mt-6 flex flex-col gap-3.5 border-t border-line/60 pt-6 text-[1rem] leading-[1.55] text-ink/90">
               {PACKAGES.base.bullets.map((b) => (
                 <li key={b} className="flex gap-3">
                   <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#D8DB7A', '#9BA03E']} />
@@ -144,7 +144,7 @@ export default function Packages() {
             <h3 className="card-title">
               {PACKAGES.addonsHead.title}
             </h3>
-            <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
+            <span className="font-body text-[0.9375rem] font-semibold tracking-[0.01em] text-ink-soft">
               {PACKAGES.addonsHead.note}
             </span>
           </div>
@@ -160,7 +160,7 @@ export default function Packages() {
                       heading inside the button) keeps one accessible name on
                       the control and still lets heading navigation reach every
                       row while it is collapsed. */}
-                  <h4 className="font-sentient text-base tracking-[-0.01em] text-ink">
+                  <h4 className="font-sentient text-lg tracking-[-0.01em] text-ink">
                     <button
                       type="button"
                       onClick={() => toggleAddon(i)}
@@ -191,19 +191,19 @@ export default function Packages() {
                         transition={ACCORDION}
                         className="overflow-hidden"
                       >
-                        <p className={a.tag ? 'pb-3 text-xs leading-relaxed text-ink-soft' : 'pb-4 text-xs leading-relaxed text-ink-soft'}>
+                        <p className={a.tag ? 'pb-3 text-[0.9375rem] leading-[1.6] text-ink-soft' : 'pb-4 text-[0.9375rem] leading-[1.6] text-ink-soft'}>
                           {a.p}
                         </p>
                         {a.tag && (
-                          <p className="pb-4 text-xs text-rust">
+                          <p className="pb-4 text-[0.9375rem] text-rust">
                             {a.small && (
-                              <span className="mr-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
+                              <span className="mr-1 font-mono text-[0.8125rem] uppercase tracking-[0.1em] text-ink-soft">
                                 {a.small}
                               </span>
                             )}
                             <span className="font-mono">{a.tag}</span>
                             {a.extra && (
-                              <span className="ml-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
+                              <span className="ml-1 font-mono text-[0.8125rem] uppercase tracking-[0.1em] text-ink-soft">
                                 {a.extra}
                               </span>
                             )}
@@ -239,7 +239,7 @@ export default function Packages() {
               {PACKAGES.base.title}
             </h3>
             <p className="shrink-0 text-right">
-              <span className="font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-soft">
+              <span className="font-body text-[0.9375rem] font-semibold tracking-[0.01em] text-ink-soft">
                 {PACKAGES.base.priceSmall}{' '}
               </span>
               <span className="font-mono text-3xl leading-none text-ink">
@@ -247,15 +247,15 @@ export default function Packages() {
               </span>
             </p>
           </div>
-          <p className="mt-2 text-sm text-ink-soft">{PACKAGES.base.note}</p>
+          <p className="mt-2 text-[1rem] leading-[1.6] text-ink-soft">{PACKAGES.base.note}</p>
           <div className="mt-5 flex flex-wrap gap-2">
             {PACKAGES.base.facts.map((f) => (
-              <GlassPill key={f} className="px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.15em] text-sage-deep">
+              <GlassPill key={f} className="px-3.5 py-1.5 font-body text-[0.875rem] font-semibold tracking-[0.01em] text-sage-deep">
                 {f}
               </GlassPill>
             ))}
           </div>
-          <ul className="mt-6 flex flex-col gap-3 border-t border-line/60 pt-6 text-sm text-ink/85">
+          <ul className="mt-6 flex flex-col gap-3.5 border-t border-line/60 pt-6 text-[1rem] leading-[1.55] text-ink/90">
             {PACKAGES.base.bullets.map((b) => (
               <li key={b} className="flex gap-3">
                 <Drop className="mt-0.5 h-4 w-auto shrink-0" gradient={['#D8DB7A', '#9BA03E']} />
@@ -285,7 +285,7 @@ export default function Packages() {
           contentClassName="flex h-full flex-col"
         >
             <div className="flex items-baseline justify-end border-b border-line/50 px-8 pb-5">
-              <span className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
+              <span className="font-body text-[0.9375rem] font-semibold tracking-[0.01em] text-ink-soft">
                 {PACKAGES.addonsHead.note}
               </span>
             </div>
@@ -299,18 +299,18 @@ export default function Packages() {
                     (i % 2 === 0 ? 'border-r ' : '')
                   }
                 >
-                  <h4 className="font-sentient text-base tracking-[-0.01em] text-ink [overflow-wrap:anywhere]">{a.h}</h4>
-                    <p className="mt-2 flex-1 text-xs leading-relaxed text-ink-soft">{a.p}</p>
+                  <h4 className="font-sentient text-lg tracking-[-0.01em] text-ink [overflow-wrap:anywhere]">{a.h}</h4>
+                    <p className="mt-2 flex-1 text-[0.9375rem] leading-[1.6] text-ink-soft">{a.p}</p>
                     {a.tag && (
-                      <p className="mt-4 text-xs text-rust">
+                      <p className="mt-4 text-[0.9375rem] text-rust">
                         {a.small && (
-                          <span className="mr-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
+                          <span className="mr-1 font-mono text-[0.8125rem] uppercase tracking-[0.1em] text-ink-soft">
                             {a.small}
                           </span>
                         )}
                         <span className="font-mono">{a.tag}</span>
                         {a.extra && (
-                          <span className="ml-1 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-ink-soft">
+                          <span className="ml-1 font-mono text-[0.8125rem] uppercase tracking-[0.1em] text-ink-soft">
                             {a.extra}
                           </span>
                         )}
@@ -323,6 +323,28 @@ export default function Packages() {
         </div>
 
         <NightPlanner />
+
+        {/* The packages section's own ask.
+            It did not have one. A visitor read the price, the inclusions, the
+            eight add-ons and the planner, and then the next thing offered to
+            them was the FAQ — the section that does the selling had no way to
+            act on it, and the nearest Enquire was back up in the header. Sized
+            with the hero button and the header pill so the three read as one
+            control at three scales. */}
+        <motion.div
+          {...reveal()}
+          className="mt-[clamp(2.5rem,6vw,4rem)] flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6"
+        >
+          <a
+            href={ENQUIRE_HREF}
+            className="btn-hero-flow inline-flex min-h-[56px] items-center justify-center rounded-full px-9 py-4 font-body text-[1.0625rem] font-bold tracking-[0.005em] text-ink active:scale-[0.98] motion-safe:transition-transform motion-safe:duration-200"
+          >
+            <span className="relative z-10">{PACKAGES.cta}</span>
+          </a>
+          <p className="max-w-[34ch] text-[0.9375rem] leading-[1.55] text-ink-soft">
+            {PACKAGES.ctaNote}
+          </p>
+        </motion.div>
 
         {/* FAQ pointer — a banner-scale card rather than a small pill, so it
             reads as the obvious next stop after the packages instead of a
@@ -355,7 +377,7 @@ export default function Packages() {
                   className: 'text-hero-flow',
                 })}
               </span>
-              <span className="mt-1 block text-sm text-ink-soft">
+              <span className="mt-1.5 block text-[1rem] leading-[1.55] text-ink-soft">
                 Booking, travel, timing and materials, all answered plainly.
               </span>
             </span>
@@ -368,7 +390,7 @@ export default function Packages() {
           </span>
         </FolderCell>
 
-        <motion.p {...reveal()} className="mt-10 max-w-2xl text-sm leading-relaxed text-ink-soft">
+        <motion.p {...reveal()} className="mt-10 max-w-2xl text-[1rem] leading-[1.65] text-ink-soft">
           <b className="text-ink">{PACKAGES.licenceLabel}</b>{' '}
           {PACKAGES.licenceBody}
         </motion.p>

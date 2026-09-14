@@ -242,6 +242,14 @@
     color: theme('colors.ink');
     font-family: theme('fontFamily.body');
     font-weight: 400;
+    /* The page had no line-height of its own, so every paragraph without an
+       explicit utility fell to `normal` — which Manrope reports as ~1.36. At
+       the measures this site sets (up to 64ch on the FAQ, ~50ch in the cards)
+       that is a wall of type, and it was the single most-repeated note in the
+       readability review. 1.6 is the reading default the copy is set at
+       elsewhere, so this makes the untagged paragraphs agree with the tagged
+       ones rather than introducing a new value. */
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     /* Matches the root's `overflow-x: clip` (see `html` above) so the clip
@@ -391,6 +399,52 @@
     text-shadow: none;
   }
 
+  /* ── Outlined emphasis ────────────────────────────────────────────────────
+     The hero's accent word ("painted"), drawn rather than filled.
+
+     It used to sit on a watercolour wash — the mixed INK_WASH dark laid as
+     three wet-in-wet blooms behind the letters, with the letters themselves
+     carrying the aurora flow gradient. Technically the nicest thing on the
+     page and, in a hero that also holds a bloom field, an aurora orb, two
+     tilted cards, sparkles and two scroll cues, one competing element too
+     many: the headline is what a first-time visitor reads first, and it was
+     the busiest thing they had to read through. Stroke, no fill, is the
+     quietest way to keep the word an accent.
+
+     `paint-order: stroke fill` is set even though the fill is transparent, so
+     that a later change of mind about the fill doesn't silently put it under
+     the stroke. `text-shadow: none` kills the display face's inherited warm
+     backlight, which halos an unfilled letter into mush.
+
+     The stroke width is in em so it tracks the hero's clamp() sizing: 0.05em
+     is ~2.2px at the mobile floor and ~3.6px at the desktop ceiling, which
+     holds the same visual weight at both ends. `-webkit-text-stroke` is the
+     only cross-engine spelling of this (the standard `text-stroke` shorthand
+     is still not shipped anywhere), and it is supported in every engine this
+     site targets.
+
+     The organic half is the filter — see #hand-outline in GradientDefs.jsx for
+     why a displacement map is what turns a mechanically uniform stroke into
+     linework with varying weight. `.emph-outline--flat` is the lite tier's
+     plain stroke: SplitText picks it on touch/reduced-motion devices, where a
+     filter over animating glyphs is not worth the raster. */
+  .emph-outline {
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 0.05em rgb(var(--rgb-ink));
+    paint-order: stroke fill;
+    text-shadow: none;
+    filter: url(#hand-outline);
+  }
+
+  .emph-outline--flat {
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 0.05em rgb(var(--rgb-ink));
+    paint-order: stroke fill;
+    text-shadow: none;
+  }
+
   /* The reference wordmark's cute connector ("make *it* happen"): one small
      joining word flipped to negative space — paper fill, ink stroke — shrunk
      and tucked between its big neighbours so the title reads as one drawn
@@ -417,9 +471,16 @@
 
   .eyebrow {
     font-family: theme('fontFamily.mono');
-    font-size: 0.66rem;
+    /* 0.66rem is 10.5px, and this face is a handwriting face set in uppercase
+       with a fifth of an em of tracking on top — three things that each cost
+       legibility, stacked. The voice is worth keeping (it labels a card, it is
+       not something you read a sentence of), so the fix is size and a calmer
+       track rather than a different face: 13px reads at arm's length on a
+       phone, and 0.14em still opens the letters without pulling the word
+       apart. */
+    font-size: 0.8125rem;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.14em;
     /* Darker than ink-soft (5.2:1) on purpose: this text is tiny and often
        sits over the watercolour bloom washes, so it needs headroom above
        the 4.5:1 AA minimum rather than just clearing it. ~7.45:1 on paper. */
@@ -446,9 +507,11 @@
      it name something *inside* a section? Tier 2. */
   .section-eyebrow {
     font-family: theme('fontFamily.mono');
-    font-size: 0.88rem;
+    /* Moves with `.eyebrow` below it so the two tiers keep the ~1.3x ratio
+       that makes a section marker read as one rung up from a card tab. */
+    font-size: 1.0625rem;
     text-transform: uppercase;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.2em;
     /* Full ink, not the eyebrow's slate: at this size the contrast headroom
        is no longer the constraint, and the extra weight is what separates a
        chapter marker from the card labels beneath it. */

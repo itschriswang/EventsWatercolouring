@@ -42,7 +42,7 @@ function DockButton({ item, isActive }) {
       aria-current={isActive ? 'true' : undefined}
       className={[
         'relative flex flex-col items-center justify-center gap-[3px] rounded-full select-none',
-        'px-3 py-2.5 transition-colors duration-300',
+        'min-h-[52px] px-3 py-2 transition-colors duration-300',
         'outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-transparent',
         highlight
           ? 'btn-hero-flow text-ink px-3.5'
@@ -77,7 +77,10 @@ function DockButton({ item, isActive }) {
           the soft glass rim (see `.btn-hero-flow`). */}
       <span className="relative z-10 flex flex-col items-center gap-[3px]">
         <Icon />
-        <span className="font-mono text-[0.56rem] uppercase tracking-[0.12em] leading-none whitespace-nowrap">
+        {/* Body face at 11px, not the handwritten mono at 0.56rem (≈9px) with
+            uppercase tracking on top — this is the only navigation a phone
+            gets, and it was the smallest type on the site. */}
+        <span className="font-body text-[0.6875rem] font-semibold tracking-[0.005em] leading-none whitespace-nowrap">
           {label}
         </span>
       </span>

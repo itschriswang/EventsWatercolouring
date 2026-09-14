@@ -119,7 +119,7 @@ export default function PullQuote() {
             {PULLQUOTE.author}
             <SmileyThumbsUpIcon width={16} height={16} className="text-ochre" />
           </span>
-          <span className="font-mono text-[0.55rem] uppercase tracking-[0.2em] text-ink-soft">
+          <span className="font-mono text-[0.8125rem] uppercase tracking-[0.16em] text-ink-soft">
             {PULLQUOTE.detail}
           </span>
         </motion.figcaption>

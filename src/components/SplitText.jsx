@@ -285,6 +285,12 @@ export default function SplitText({
   // is set.
   emphasisStroke = null,
   emphasisStrokeOpacity = 1,
+  // Draw the emphasis word as an outline instead of filling it — a stroked,
+  // hand-wobbled contour (see `.emph-outline` in index.css and #hand-outline
+  // in GradientDefs.jsx). Mutually exclusive with `emphasisColors` /
+  // `emphasisStroke`, which fill the word and lay a wash behind it; an outline
+  // is the quiet alternative to both.
+  emphasisOutline = false,
   underline = null,
   knockout = null,
   unit = 'char',
@@ -369,6 +375,17 @@ export default function SplitText({
   // display sizes SplitText is used at.
   const getGradientStyle = (wordIndex) =>
     emphasisMap.has(wordIndex) ? { color: 'var(--c-terracotta)' } : {}
+
+  // The outline costume, applied to the emphasis GROUP (so one filter covers
+  // the whole word and the wobble runs continuously across it rather than
+  // restarting per letter — restarting is what makes a displaced outline read
+  // as a stack of separately-shaky letters instead of one drawn word). The
+  // lite tier keeps the stroke and drops the filter.
+  const outlineClass = emphasisOutline
+    ? lite
+      ? ' emph-outline--flat'
+      : ' emph-outline'
+    : ''
 
   // Group consecutive emphasized words on same line
   const groupEmphasisWords = (words, li) => {
@@ -470,7 +487,12 @@ export default function SplitText({
                           // the page behind the whole heading.
                           ...(emphasisStroke ? { position: 'relative', zIndex: 0 } : {}),
                         }
-                      : getGradientStyle(wordIndexInHeading)
+                      : emphasisOutline
+                        // The outline class owns the colour (it paints a stroke
+                        // and no fill); the solid-pigment style below would win
+                        // as an inline rule and put the fill back.
+                        ? {}
+                        : getGradientStyle(wordIndexInHeading)
                     wordIndexInHeading += group.words.length
                     // Lite path (touch / reduced-motion): paint the whole
                     // emphasis word as ONE clipped-gradient span instead of the
@@ -586,7 +608,9 @@ export default function SplitText({
                       <span
                         key={`g${li}-${gi}`}
                         {...(emphasisColors ? { 'data-emph-group': true } : {})}
-                        className={glyphItalic ? 'inline-block italic' : 'inline-block'}
+                        className={
+                          (glyphItalic ? 'inline-block italic' : 'inline-block') + outlineClass
+                        }
                         style={spanStyle}
                       >
                         {emphasisStroke && emphasisColors ? (

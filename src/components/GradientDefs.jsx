@@ -47,6 +47,59 @@ export default function GradientDefs() {
         </linearGradient>
 
         {/*
+          #hand-outline — the wobble that makes the hero's outlined emphasis
+          word read as drawn rather than as a font with its fill switched off.
+
+          The outline itself is a plain `-webkit-text-stroke` (see
+          `.emph-outline` in index.css), which is perfectly, mechanically
+          uniform — a constant width all the way round every glyph, which is
+          the one thing hand linework never is. Displacing the stroked
+          rendering through low-frequency fractal noise fixes both halves of
+          that at once: the contour meanders, and because a displacement map
+          stretches the image where its gradient runs with the edge and
+          compresses it where it runs against, the apparent line weight
+          thickens and thins along the way — which is exactly what a brush or a
+          pen does as it changes direction and pressure.
+
+          The frequency is the lever, not the scale. Much above this and the
+          noise cycles inside a single stroke, which frays it into a scribble
+          instead of bending it; much below and the whole word simply leans.
+          Two octaves keep a small amount of finer wobble riding on the long
+          bend so the line is not a smooth sine.
+
+          x/y/width/height are generous because the display face's ascenders
+          and descenders already overflow the tight 0.80 line-height box, and
+          the displacement then pushes them further; a tight region would clip
+          the top of a "d" and the tail of a "p".
+
+          Heavy-tier only: `.emph-outline` applies the filter, and SplitText
+          drops it on the lite path, where the plain stroke stands in.
+        */}
+        <filter
+          id="hand-outline"
+          x="-15%"
+          y="-25%"
+          width="130%"
+          height="150%"
+          colorInterpolationFilters="sRGB"
+        >
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.009 0.013"
+            numOctaves="2"
+            seed="17"
+            result="wobble"
+          />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="wobble"
+            scale="7"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
+        </filter>
+
+        {/*
           #dither-sketch — the printed-dither texture for the painted kit
           sketches in the bio (MyKit's SVG stand-ins), so they read as pigment
           stippled onto paper rather than flat vector fills, matching the

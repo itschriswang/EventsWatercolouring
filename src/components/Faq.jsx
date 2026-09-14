@@ -3,6 +3,7 @@ import { SPRING, REVEAL_VIEWPORT } from '../lib/site.js'
 import { FAQ } from '../content.js'
 import FolderCell from './FolderCell.jsx'
 import { Drop } from './Label.jsx'
+import { withLinks } from './Underline.jsx'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
 
 /**
@@ -102,13 +103,20 @@ function FaqCard({ item, i, number, reduce }) {
             content level; the drawer headings now occupy that rung.) Weight +
             a lifted size floor make each question a clear scan anchor in a
             long list. Utility classes only, three-font voice unchanged. */}
-        <h3 className="font-body font-semibold text-[clamp(1.05rem,1.4vw,1.25rem)] tracking-[-0.01em] leading-snug text-ink">
+        <h3 className="font-body font-semibold text-[clamp(1.15rem,1.5vw,1.375rem)] tracking-[-0.01em] leading-snug text-ink">
           {item.q}
         </h3>
         {/* Full ink-soft (5.49:1), not /85 (4.0:1, under AA); measure capped
-            so the answer holds a comfortable 65-75ch even on the wide tile. */}
-        <p className="mt-2 max-w-[64ch] leading-relaxed text-ink-soft">
-          {item.a}
+            so the answer holds a comfortable 65-75ch even on the wide tile.
+
+            `withLinks` paints the phrases each answer names (see FAQ.categories
+            in content.js) as in-site links wearing the site's hand-drawn
+            underline. The rule the copy is kept to is that no answer is a dead
+            end: this is the page most search traffic lands on first, and an
+            answer that closes a question without offering anywhere to go next
+            is where a visit ends. */}
+        <p className="mt-3 max-w-[64ch] text-[1.0625rem] leading-[1.7] text-ink-soft">
+          {withLinks(item.a, item.links)}
         </p>
       </FolderCell>
     </motion.li>
@@ -136,7 +144,11 @@ function JumpNav({ reduce }) {
           <li key={c.id}>
             <a
               href={`#${c.id}`}
-              className="inline-flex rounded-full border border-line bg-paper/60 px-3.5 py-1.5 font-mono text-[0.62rem] uppercase tracking-[0.16em] text-ink-soft outline-none transition-colors duration-300 hover:border-terracotta hover:text-terracotta focus-visible:border-terracotta focus-visible:text-terracotta"
+              // Body font, not the handwritten mono: these are five
+              // navigation targets, and at 0.62rem of a cursive face with
+              // 0.16em tracking they were the least legible controls on the
+              // page. Also a real tap target now (44px min).
+              className="inline-flex min-h-[44px] items-center rounded-full border border-line bg-paper/60 px-4 py-2 font-body text-[0.9375rem] font-semibold tracking-[0.01em] text-ink outline-none transition-colors duration-300 hover:border-terracotta hover:text-terracotta focus-visible:border-terracotta focus-visible:text-terracotta"
             >
               {c.label}
             </a>

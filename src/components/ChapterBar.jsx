@@ -196,7 +196,7 @@ export default function ChapterBar() {
                 className="flex min-w-0 items-center gap-2"
               >
                 <Drop className="h-3.5 w-auto shrink-0" gradient={current.gradient} />
-                <span className="truncate font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink">
+                <span className="truncate font-mono text-[0.8125rem] uppercase tracking-[0.14em] text-ink">
                   {current.label}
                 </span>
               </motion.span>

@@ -1,5 +1,5 @@
-import { motion, useReducedMotion } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { useState, useEffect, useRef, useId } from 'react'
 import { SPRING, ENQUIRE_HREF } from '../lib/site.js'
 import { NAV } from '../content.js'
 import { Drop } from './Label.jsx'
@@ -21,9 +21,13 @@ function NavLink({ href, label, isActive }) {
       // animated underline: 'page' for the pathname-matched page links
       // (/faq/, /corporate/), 'true' for the in-view section links.
       aria-current={isActive ? (href.includes('#') ? 'true' : 'page') : undefined}
-      className="relative py-0.5"
+      className="relative inline-flex min-h-[40px] items-center py-1"
       style={{
-        color: isActive ? 'rgb(var(--rgb-ink))' : 'rgb(var(--rgb-ink-soft))',
+        // Full ink at rest, not the soft slate. The nav's job is to be found;
+        // at 15px on a washed paper ground `ink-soft` reads as disabled, and
+        // the active state has the accent underline to distinguish it without
+        // needing every other link held back to do it.
+        color: isActive ? 'rgb(var(--rgb-ink))' : 'rgb(var(--rgb-ink) / 0.78)',
         transition: 'color 0.3s cubic-bezier(0.25,1,0.5,1)',
       }}
       onMouseEnter={() => setLit(true)}
@@ -42,7 +46,7 @@ function NavLink({ href, label, isActive }) {
         aria-hidden="true"
         style={{
           position: 'absolute',
-          bottom: 0,
+          bottom: '0.15rem',
           left: 0,
           height: isActive ? '2px' : '1px',
           backgroundColor: 'var(--c-terracotta)',
@@ -53,6 +57,167 @@ function NavLink({ href, label, isActive }) {
         }}
       />
     </a>
+  )
+}
+
+/**
+ * "Book an event" — the nav item that replaced the flat "Corporate" link.
+ *
+ * The old link asked a visitor to recognise their own event in a word written
+ * for one third of them: a couple and someone booking a 40th both read straight
+ * past "Corporate", and neither the wedding journey nor a private party had a
+ * nav entry of its own at all. This names all three, and each one lands on the
+ * enquiry with that event type already chosen (`?event=` — see EnquireForm),
+ * so self-selecting and starting the enquiry are one click rather than two
+ * pages apart.
+ *
+ * Behaviour is the standard disclosure pattern rather than a hover-only menu:
+ * a real <button> with aria-expanded owning a labelled list, opened by click,
+ * Enter/Space or ArrowDown, closed by Escape (which returns focus to the
+ * button), by a click outside, or by focus leaving the group. Pointer hover
+ * opens it too as a convenience on a fine pointer, but nothing depends on
+ * hover — a touch device gets the same menu from a tap, which a hover-only
+ * menu never gives it.
+ */
+function BookMenu({ item, isActive }) {
+  const reduce = useReducedMotion()
+  const [open, setOpen] = useState(false)
+  const wrapRef = useRef(null)
+  const btnRef = useRef(null)
+  // Whether the menu currently on screen was opened by the pointer arriving
+  // rather than by a press. Without this the two openers cancel each other: a
+  // visitor hovers (open), then presses the thing they hovered, and the press
+  // toggles it straight back shut — the menu appears to do nothing at all,
+  // which is exactly what it did on the first pass. A press on a
+  // hover-opened menu therefore latches it open instead, and the press after
+  // that closes it.
+  const hoverOpened = useRef(false)
+  const menuId = `book-menu-${useId().replace(/:/g, '')}`
+
+  useEffect(() => {
+    if (!open) return undefined
+    const onDown = (e) => {
+      if (!wrapRef.current?.contains(e.target)) setOpen(false)
+    }
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return
+      setOpen(false)
+      btnRef.current?.focus()
+    }
+    document.addEventListener('pointerdown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  return (
+    <div
+      ref={wrapRef}
+      className="relative"
+      onMouseEnter={() => {
+        hoverOpened.current = true
+        setOpen(true)
+      }}
+      onMouseLeave={() => {
+        hoverOpened.current = false
+        setOpen(false)
+      }}
+      // Focus leaving the whole group closes it, so tabbing off the last item
+      // doesn't leave a menu hanging open over the page.
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false)
+      }}
+    >
+      <button
+        ref={btnRef}
+        type="button"
+        aria-expanded={open}
+        aria-controls={menuId}
+        aria-haspopup="true"
+        onClick={() => {
+          if (open && hoverOpened.current) {
+            hoverOpened.current = false
+            return
+          }
+          setOpen((v) => !v)
+        }}
+        onKeyDown={(e) => {
+          if (e.key !== 'ArrowDown') return
+          e.preventDefault()
+          setOpen(true)
+        }}
+        className="relative inline-flex min-h-[40px] items-center gap-1.5 py-1"
+        style={{
+          color: isActive || open ? 'rgb(var(--rgb-ink))' : 'rgb(var(--rgb-ink) / 0.78)',
+          transition: 'color 0.3s cubic-bezier(0.25,1,0.5,1)',
+        }}
+      >
+        {item.label}
+        <span
+          aria-hidden="true"
+          className="text-[0.7em] leading-none"
+          style={{
+            display: 'inline-block',
+            transform: `translateY(1px) rotate(${open ? 180 : 0}deg)`,
+            transition: 'transform 0.3s cubic-bezier(0.25,1,0.5,1)',
+          }}
+        >
+          ▾
+        </span>
+        <span
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            bottom: '0.15rem',
+            left: 0,
+            right: '1.1em',
+            height: isActive ? '2px' : '1px',
+            backgroundColor: 'var(--c-terracotta)',
+            opacity: isActive ? 1 : 0.55,
+            transform: `scaleX(${isActive || open ? 1 : 0})`,
+            transformOrigin: 'left',
+            transition:
+              'transform 0.4s cubic-bezier(0.25,1,0.5,1), height 0.3s cubic-bezier(0.25,1,0.5,1), opacity 0.3s cubic-bezier(0.25,1,0.5,1)',
+          }}
+        />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.ul
+            id={menuId}
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
+            transition={{ duration: 0.22, ease: EASE }}
+            // Sits flush under the header's own bottom edge, so the pointer
+            // never crosses a gap on its way down (which would close it).
+            className="absolute left-1/2 top-full z-50 w-[17rem] -translate-x-1/2 overflow-hidden rounded-2xl p-1.5"
+            style={{
+              background: 'rgb(var(--rgb-paper) / 0.98)',
+              border: '1px solid rgb(var(--rgb-line) / 0.8)',
+              // Approved burgundy lift, never a neutral grey drop.
+              boxShadow:
+                '0 18px 40px -16px rgba(126,40,72,0.30), 0 4px 12px -6px rgba(126,40,72,0.18)',
+            }}
+          >
+            {item.items.map((sub) => (
+              <li key={sub.href}>
+                <a
+                  href={sub.href}
+                  onClick={() => setOpen(false)}
+                  className="block rounded-xl px-4 py-3 text-ink/85 transition-colors duration-200 hover:bg-ink/[0.06] hover:text-ink focus-visible:bg-ink/[0.06] focus-visible:text-ink"
+                >
+                  {sub.label}
+                </a>
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </div>
   )
 }
 
@@ -122,7 +287,10 @@ export default function SiteHeader({ revealed, className = '', enquireHref = ENQ
   // rather than scroll position, since there's nothing to observe for them.
   const pathname = typeof window !== 'undefined' ? window.location.pathname : '/'
   const isNavActive = (href) =>
-    active === href || (!href.includes('#') && pathname === href)
+    !!href && (active === href || (!href.includes('#') && pathname === href))
+  // A menu lights when the page you are on is one of its destinations.
+  const isGroupActive = (item) =>
+    (item.items || []).some((sub) => !sub.href.includes('#') && pathname === sub.href)
 
   return (
     <motion.header
@@ -226,21 +394,36 @@ export default function SiteHeader({ revealed, className = '', enquireHref = ENQ
         </div>
 
         {/* Section nav */}
+        {/* Section nav. Set in the BODY face at 15px, not the handwritten
+            mono at 0.66rem uppercase with 0.2em tracking — that costume put
+            the page's primary navigation at roughly 10px of a cursive face,
+            which is smaller and less legible than any body copy beneath it,
+            and it was the first thing the readability review named. The mono
+            eyebrow voice stays everywhere it labels something; it stops being
+            what you navigate with. */}
         <nav
           aria-label="Primary"
-          className="flex shrink-0 items-center gap-6 font-mono text-[0.66rem] uppercase tracking-[0.2em]"
+          className="flex shrink-0 items-center gap-7 font-body text-[0.9375rem] font-semibold tracking-[0.005em] lg:gap-8"
         >
-          {NAV.map((n) => (
-            <NavLink key={n.href} href={n.href} label={n.label} isActive={isNavActive(n.href)} />
-          ))}
+          {NAV.map((n) =>
+            n.items ? (
+              <BookMenu key={n.label} item={n} isActive={isGroupActive(n)} />
+            ) : (
+              <NavLink key={n.href} href={n.href} label={n.label} isActive={isNavActive(n.href)} />
+            ),
+          )}
         </nav>
 
         {/* Enquire CTA — the hero title's emphasis wash filling the pill with
-            an ink label and a soft glass rim (a watercolour bubble). */}
+            an ink label and a soft glass rim (a watercolour bubble). Sized as
+            the conversion point it is: 15px bold body copy in a 44px pill,
+            where it used to be a 0.64rem cursive label in a 32px one — smaller
+            than the nav links beside it, and the single thing on the bar the
+            page most wants pressed. */}
         <motion.a
           href={enquireHref}
-          className="rounded-full btn-hero-flow text-ink px-5 py-2 font-mono text-[0.64rem] uppercase tracking-[0.18em]"
-          whileHover={reduce ? undefined : { scale: 1.05, y: -1 }}
+          className="btn-hero-flow inline-flex min-h-[44px] items-center rounded-full px-7 py-2.5 font-body text-[0.9375rem] font-bold tracking-[0.005em] text-ink"
+          whileHover={reduce ? undefined : { scale: 1.04, y: -1 }}
           whileTap={reduce ? undefined : { scale: 0.96 }}
           transition={{ duration: 0.28, ease: EASE }}
         >

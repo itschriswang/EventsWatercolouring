@@ -114,6 +114,60 @@ export default function Underline({ children, seed, className = '' }) {
 }
 
 /**
+ * Turns named phrases inside a body of copy into in-site links, each painted
+ * with the same hand-drawn underline the page uses for its key phrases — so a
+ * link inside an answer reads as one of this site's own marks rather than as
+ * browser-blue text.
+ *
+ * `links` is `[{ phrase, href }]`, matched verbatim and case-sensitively. Each
+ * phrase is linked once, at its first occurrence, and the matches are laid down
+ * in the order they appear in the text rather than the order they are listed —
+ * so the same array works however the copy is later reordered. A phrase that
+ * isn't found is skipped silently, and one that overlaps a match already taken
+ * is skipped too, which is what keeps a short phrase listed after a longer one
+ * containing it from cutting that link in half.
+ *
+ * Returns an array of nodes (strings and elements) usable as JSX children;
+ * with no usable links it returns the plain string, so a caller can hand it
+ * straight to `{...}` either way.
+ */
+export function withLinks(text, links = [], className = '') {
+  if (!links.length) return text
+  const found = []
+  links.forEach(({ phrase, href }) => {
+    if (!phrase || !href) return
+    const at = text.indexOf(phrase)
+    if (at === -1) return
+    found.push({ at, end: at + phrase.length, phrase, href })
+  })
+  found.sort((a, b) => a.at - b.at)
+
+  const nodes = []
+  let cursor = 0
+  found.forEach((m, i) => {
+    // Overlaps the previous match — see the docblock.
+    if (m.at < cursor) return
+    if (m.at > cursor) nodes.push(text.slice(cursor, m.at))
+    nodes.push(
+      <a
+        key={`l${i}`}
+        href={m.href}
+        className={
+          'text-rust underline-offset-2 transition-colors duration-300 hover:text-ink focus-visible:text-ink ' +
+          className
+        }
+      >
+        <Underline seed={m.phrase}>{m.phrase}</Underline>
+      </a>,
+    )
+    cursor = m.end
+  })
+  if (cursor === 0) return text
+  if (cursor < text.length) nodes.push(text.slice(cursor))
+  return nodes
+}
+
+/**
  * Wraps the first verbatim occurrence of `phrase` inside `text` with
  * <Underline>, returning an array of nodes usable as JSX children. Falls
  * back to the plain string if the phrase isn't found (e.g. copy edited

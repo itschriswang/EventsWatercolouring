@@ -179,11 +179,11 @@ export default function SelectedWork() {
             />
           </div>
           <div className="max-w-xs sm:text-right">
-            <p className="font-mono text-xs uppercase tracking-[0.15em] text-ink-soft">
+            <p className="font-mono text-[0.875rem] uppercase tracking-[0.12em] text-ink-soft">
               {WORK.note}
             </p>
             {zoomHint && (
-              <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-rust">
+              <p className="mt-2 font-mono text-[0.875rem] uppercase tracking-[0.12em] text-rust">
                 {zoomHint}
               </p>
             )}
@@ -204,7 +204,7 @@ export default function SelectedWork() {
               <span aria-hidden="true" className="h-px flex-1 self-center bg-line/80" />
             </div>
             {group.note && (
-              <p className="mt-2 max-w-md text-xs leading-relaxed text-ink-soft">{group.note}</p>
+              <p className="mt-2 max-w-md text-[1rem] leading-[1.6] text-ink-soft">{group.note}</p>
             )}
 
             {isDesktop ? (
@@ -493,7 +493,7 @@ function Testimonial({ item, masonry = false }) {
         <span
           className={
             'mt-0.5 block font-mono uppercase tracking-[0.15em] text-ink-soft ' +
-            (masonry ? 'text-[0.45rem]' : 'text-[0.55rem]')
+            (masonry ? 'text-[0.625rem]' : 'text-[0.75rem]')
           }
         >
           {item.detail}
@@ -653,10 +653,10 @@ function RevealTile({ reveal, className = '' }) {
         </div>
 
         {/* Corner labels */}
-        <span className="pointer-events-none absolute bottom-2 left-2 rounded-full bg-ink/55 px-2.5 py-1 font-mono text-[0.5rem] uppercase tracking-[0.15em] text-paper">
+        <span className="pointer-events-none absolute bottom-2 left-2 rounded-full bg-ink/55 px-2.5 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-paper">
           {reveal.after.label}
         </span>
-        <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-ink/55 px-2.5 py-1 font-mono text-[0.5rem] uppercase tracking-[0.15em] text-paper">
+        <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-ink/55 px-2.5 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-paper">
           {reveal.before.label}
         </span>
 
@@ -666,7 +666,7 @@ function RevealTile({ reveal, className = '' }) {
             <motion.span
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="pointer-events-none absolute left-1/2 top-3 -translate-x-1/2 rounded-full bg-ink/55 px-3 py-1 font-mono text-[0.52rem] uppercase tracking-[0.18em] text-paper"
+              className="pointer-events-none absolute left-1/2 top-3 -translate-x-1/2 rounded-full bg-ink/55 px-3 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-paper"
             >
               {reveal.hint}
             </motion.span>
@@ -848,7 +848,7 @@ function Lightbox({ items, index, onClose, onNavigate, onSelect }) {
               className="pointer-events-auto text-center"
             >
               <span className="block font-sentient tracking-[-0.03em] text-lg text-paper">{item.ttl}</span>
-              <span className="mt-0.5 block font-mono text-[0.6rem] uppercase tracking-[0.18em] text-paper/85">
+              <span className="mt-0.5 block font-mono text-[0.8125rem] uppercase tracking-[0.14em] text-paper/90">
                 {item.meta}
                 {item.venue && (
                   <span className="text-paper">
