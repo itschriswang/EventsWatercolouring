@@ -58,7 +58,7 @@ export const EVENING = {
       // it is the one thing a venue coordinator has to action, and it was two
       // pages away from the step that asks for it.
       body: 'I arrive about fifteen minutes early and set up before I start. All I need is a table and chair.',
-      note: 'A standard 1.8m trestle table is ideal. The smallest I can work on is 120cm wide by 60cm deep, at normal seated height. For anything over about five hours, a meal for me is appreciated.',
+      note: 'A standard 1.8m trestle table is ideal. For anything over about five hours, a meal for me is appreciated.',
     },
     {
       no: '02',
@@ -463,7 +463,7 @@ export const FAQ = {
         },
         {
           q: 'What do you need from us on the day?',
-          a: 'Not much. A table and a chair, facing out into the room. A standard 1.8m trestle table is ideal, and the smallest I can work on is 120cm wide by 60cm deep at normal seated height. Somewhere to stand up and stretch for a few minutes each hour helps too, and if I am painting for more than about five hours a meal is appreciated. I bring everything else. It is all on the homepage under On the night too.',
+          a: 'Not much. A table and a chair, facing out into the room. A standard 1.8m trestle table is ideal. Somewhere to stand up and stretch for a few minutes each hour helps too, and if I am painting for more than about five hours a meal is appreciated. I bring everything else. It is all on the homepage under On the night too.',
           links: [{ phrase: 'On the night', href: '/#night' }],
         },
       ],
@@ -634,7 +634,7 @@ export const CORPORATE = {
       },
       {
         h: 'I bring the rest',
-        p: 'All I need is a table and chair. A standard 1.8m trestle is ideal, and 120 by 60cm is the smallest I can work on. I turn up before doors and set up in about fifteen minutes. Public liability insurance included.',
+        p: 'All I need is a table and chair. A standard 1.8m trestle is ideal. I turn up before doors and set up in about fifteen minutes. Public liability insurance included.',
       },
     ],
   },
