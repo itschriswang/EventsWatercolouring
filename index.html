@@ -128,23 +128,14 @@
     </script>
     <script defer data-domain="chriswangstudio.com" src="https://plausible.io/js/script.js"></script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Loaded as a non-blocking preload: a render-blocking stylesheet here
-         would delay React's hydration script, stretching how long the
-         pre-JS fallback below stays on screen. -->
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Mynerve&family=Manrope:wght@400;500;600;700&family=Darumadrop+One&display=swap"
-      onload="this.onload=null;this.rel='stylesheet'"
-    />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Mynerve&family=Manrope:wght@400;500;600;700&family=Darumadrop+One&display=swap"
-      />
-    </noscript>
+    <!-- The fonts are self-hosted (see the @font-face block at the top of
+         src/index.css). The first screen sets its headline in Darumadrop and its
+         copy in Manrope, so those two start downloading with the document
+         instead of waiting for the stylesheet to be parsed. `crossorigin` is
+         required on a font preload even from the same origin, or the browser
+         fetches the file twice. -->
+    <link rel="preload" href="/fonts/darumadrop-one-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/manrope-latin-var.woff2" as="font" type="font/woff2" crossorigin />
 
     <!-- The #root fallback below is kept in the HTML for crawlers and no-JS
          visitors, but hiding it at first paint stops it flashing as raw serif

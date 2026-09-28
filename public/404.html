@@ -27,25 +27,30 @@
       site: a sheet that was started and never finished. The wash is there, the
       subject never arrived.
     -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Same non-blocking preload swap the three real pages use — this was
-         the one page still loading the fonts render-blocking. System-font
-         fallbacks paint immediately; the webfonts swap in when they land. -->
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Mynerve&family=Manrope:wght@400;500;600;700&family=Darumadrop+One&display=swap"
-      onload="this.onload=null;this.rel='stylesheet'"
-    />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Mynerve&family=Manrope:wght@400;500;600;700&family=Darumadrop+One&display=swap"
-      />
-    </noscript>
+    <!-- Fonts are self-hosted, like the three real pages: the @font-face
+         rules are at the top of the <style> below. -->
+    <link rel="preload" href="/fonts/darumadrop-one-latin.woff2" as="font" type="font/woff2" crossorigin />
 
     <style>
+      @font-face {
+        font-family: 'Darumadrop One';
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/darumadrop-one-latin.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Manrope';
+        font-weight: 200 800;
+        font-display: swap;
+        src: url('/fonts/manrope-latin-var.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Mynerve';
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/mynerve-latin.woff2') format('woff2');
+      }
+
       :root {
         --paper: #f7f4ef;
         --ink: #352e30;

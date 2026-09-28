@@ -2,6 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/* The three faces, served from this site rather than Google Fonts.
+   From Google they were a second origin the whole look depended on: a slow or
+   blocked fonts.googleapis.com (some office networks, some ad blockers) left
+   the headline in a system serif carrying tracking tuned for Darumadrop, and
+   the letters ran into each other. Same files Google serves, Latin subset only,
+   which is every character the copy uses; the arrows and the ▾ fall back to a
+   system face exactly as they did before. Licences sit beside them in
+   public/fonts/. `swap` matches the `display=swap` the Google URL asked for.
+   The HTML entries preload the two faces the hero paints first. */
+@font-face {
+  font-family: 'Darumadrop One';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/darumadrop-one-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  /* One variable file covers every weight the site sets. */
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/manrope-latin-var.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Mynerve';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/mynerve-latin.woff2') format('woff2');
+}
+
 @property --gf-angle {
   syntax: '<angle>';
   initial-value: 0deg;
