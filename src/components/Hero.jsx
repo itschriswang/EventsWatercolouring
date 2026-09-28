@@ -38,7 +38,7 @@ export const HERO_ORB = [
 
 // What the two hero cards actually measure, so the browser can pick a variant
 // instead of always taking the full master. Read off the built page rather than
-// derived from the classes, which fight across four breakpoints: the character
+// derived from the classes, which fight across four breakpoints: the couple
 // card renders 201/213/306/223/303/396 CSS px at viewport widths of
 // 390/412/768/1024/1440/1920, and the bouquet 162/172/312/215/299/396. Neither
 // ever exceeds ~400px, on any screen — which is the whole reason the full
@@ -47,7 +47,7 @@ export const HERO_ORB = [
 // These are duplicated in index.html's `imagesizes` preloads, and have to stay
 // identical to them: a preload that resolves to a different candidate than the
 // element fetches BOTH. See scripts/generate-image-variants.mjs.
-const CHARACTER_SIZES = '(max-width: 767px) 52vw, (max-width: 1023px) 40vw, 21vw'
+const COUPLE_SIZES = '(max-width: 767px) 52vw, (max-width: 1023px) 40vw, 21vw'
 const BOUQUET_SIZES = '(max-width: 1023px) 42vw, 21vw'
 
 export default function Hero({ revealed }) {
@@ -58,7 +58,7 @@ export default function Hero({ revealed }) {
   const ref = useRef(null)
 
   // The hero card entrance — a rise-and-settle from below, staggered so the
-  // bouquet lands a beat after the character study. Stays put (just hidden)
+  // bouquet lands a beat after the couple. Stays put (just hidden)
   // until the preloader hands over, then rises into place.
   const cardEntrance = (rot, delay) => ({
     initial: { opacity: 0, y: reduce ? 0 : 52, rotate: reduce ? 0 : rot },
@@ -67,7 +67,7 @@ export default function Hero({ revealed }) {
       : { opacity: 0 },
     transition: { ...SPRING_SOFT, delay },
   })
-  const charEntrance = cardEntrance(-6, 0.8)
+  const coupleEntrance = cardEntrance(-6, 0.8)
   const bouquetEntrance = cardEntrance(3, 0.95)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -185,10 +185,15 @@ export default function Hero({ revealed }) {
         </span>
       </motion.div>
 
-      <div className="relative mt-5 sm:mt-[clamp(2rem,5vw,4rem)] flex flex-col gap-y-[clamp(2.5rem,9vw,4rem)] lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-8 lg:gap-y-0">
+      <div className="relative mt-3 sm:mt-[clamp(2rem,5vw,4rem)] flex flex-col gap-y-[clamp(2.5rem,9vw,4rem)] lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-8 lg:gap-y-0">
 
         {/* Headline + lede + actions */}
-        <div className="relative z-10 order-2 mt-[min(2.5rem,4dvh)] sm:mt-0 lg:order-none lg:col-span-7 lg:col-start-1">
+        {/* No extra top margin on a phone. The flex gap already clears the
+            card's 6% drop, and every pixel spent above the headline pushes the
+            price line further down: at 390x844 it sat at 786-834px, under the
+            dock (762-828px), so the one number on the first screen was the one
+            thing on it nobody could read. */}
+        <div className="relative z-10 order-2 lg:order-none lg:col-span-7 lg:col-start-1">
           {/* Delayed past the headline entrance so the twinkle lands as a
               finishing flick, not part of the type reveal. */}
           <Sparkles
@@ -232,7 +237,7 @@ export default function Hero({ revealed }) {
             variants={fade}
             initial="hidden"
             animate={state}
-            className="mt-6 block sm:mt-[clamp(1.5rem,3vw,2.5rem)]"
+            className="mt-5 block sm:mt-[clamp(1.5rem,3vw,2.5rem)]"
           >
             <div className="relative">
               <p className="max-w-[34ch] text-[1.0625rem] leading-[1.65] text-ink sm:max-w-lg sm:text-[clamp(1.125rem,1.25vw,1.3125rem)]">
@@ -257,7 +262,7 @@ export default function Hero({ revealed }) {
                 is now the same static pill, so MagneticButton and the
                 useMagnetic hook behind it are gone rather than left as a
                 component nothing renders. */}
-            <div className="mt-8 flex flex-wrap items-center gap-5">
+            <div className="mt-6 flex flex-wrap items-center gap-5 sm:mt-8">
               <a
                 href={ENQUIRE_HREF}
                 className="btn-hero-flow inline-flex min-h-[56px] items-center justify-center rounded-full px-9 py-4 font-body text-[1.0625rem] font-bold tracking-[0.005em] text-ink active:scale-[0.98] motion-safe:transition-transform motion-safe:duration-200"
@@ -270,7 +275,7 @@ export default function Hero({ revealed }) {
                 a 0.6rem uppercase mono footnote. Body face at 15px, with the
                 price in full ink and bold so the number carries at a glance
                 while the sentence around it stays secondary. */}
-            <p className="mt-5 max-w-[38ch] text-[0.9375rem] leading-[1.6] text-ink-soft">
+            <p className="mt-3 max-w-[38ch] text-[0.9375rem] leading-[1.6] text-ink-soft sm:mt-5">
               <b className="font-bold text-ink">{HERO.notePrice}</b> {HERO.noteReply}
             </p>
           </motion.div>
@@ -284,12 +289,19 @@ export default function Hero({ revealed }) {
           <div className="flex flex-col sm:block gap-6 sm:gap-0">
             <div className="mx-auto flex w-full max-w-[26rem] items-end px-2 sm:mr-0 sm:grow sm:mx-auto sm:w-[92%] sm:max-w-none sm:px-0 lg:mx-0 lg:w-full lg:justify-end">
 
-              {/* Character — primary card, grounded anchor (left, tilts left) */}
+              {/* The couple — primary card, grounded anchor (left, tilts left).
+                  A wedding painting leads because this is a wedding service: it
+                  used to be a studio character study, painted between events
+                  rather than at one, while the section just below promises
+                  "the first thing I paint is the two of you". The caption says
+                  so in the fewest letters that fit one line on a phone card,
+                  which also keeps the price line above the dock (see the copy
+                  column). */}
               <div className="relative z-0 w-[54%] shrink-0 translate-x-[2%] translate-y-[6%] sm:translate-x-0 sm:w-[46%] lg:w-[52%] sm:translate-y-0 sm:-ml-[8%] lg:-ml-[10%] lg:-translate-x-[6%] lg:-translate-y-[8%]">
                 <motion.figure
-                  initial={charEntrance.initial}
-                  animate={charEntrance.animate}
-                  transition={charEntrance.transition}
+                  initial={coupleEntrance.initial}
+                  animate={coupleEntrance.animate}
+                  transition={coupleEntrance.transition}
                   whileHover={reduce ? {} : { rotate: -2, scale: 1.03 }}
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(126,40,72,0.30),0_6px_16px_-6px_rgba(126,40,72,0.12)]"
                 >
@@ -300,25 +312,25 @@ export default function Hero({ revealed }) {
                   <div className="relative z-10">
                     <picture>
                       <source
-                        srcSet={artSrcset('art-character-boy')}
-                        sizes={CHARACTER_SIZES}
+                        srcSet={artSrcset('art-couple-hanbok')}
+                        sizes={COUPLE_SIZES}
                         type="image/webp"
                       />
                       <img
-                        src={asset('assets/art-character-boy.jpg')}
-                        alt="A small watercolour character study at the palette."
+                        src={asset('assets/art-couple-hanbok.jpg')}
+                        alt="Watercolour of a couple in traditional Korean hanbok, painted live at their wedding."
                         style={wick ? { filter: 'url(#hero-wick-1)' } : undefined}
                         className="aspect-[4/5] w-full object-cover max-h-[40dvh] [@media(max-height:500px)]:max-h-[22dvh] sm:max-h-none sm:h-[clamp(160px,18vh,260px)] sm:aspect-auto lg:h-[38vh]"
                         loading="eager"
                         fetchpriority="high"
                         decoding="async"
                         width="1242"
-                        height="1800"
+                        height="1978"
                         onError={(e) => (e.currentTarget.style.display = 'none')}
                       />
                     </picture>
                     <figcaption className="bg-paper px-3 py-2 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-ink-soft">
-                      No. 001 · Cotton paper
+                      No. 001 · Wedding
                     </figcaption>
                   </div>
                 </motion.figure>

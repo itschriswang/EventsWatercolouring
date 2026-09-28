@@ -43,7 +43,7 @@ const GALLERY = [
   'art-character-boy2',
 ]
 
-// The hero pair and the footer photograph. `art-character-boy` is already in
+// The hero pair and the footer photograph. `art-couple-hanbok` is already in
 // GALLERY above (it is both the hero card and a wall tile), so it is not
 // repeated here.
 const HERO = ['art-bouquet', 'fireflies-night']

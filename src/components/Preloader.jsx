@@ -8,7 +8,7 @@ import { asset } from '../lib/site.js'
 // <link rel="preload"> in index.html, so gating on them (rather than the whole
 // page's `load`) lifts the curtain the moment the hero can paint, not after
 // every below-fold asset has arrived. Keep in step with index.html's preloads.
-const HERO_ART = [asset('assets/art-character-boy.webp'), asset('assets/art-bouquet.webp')]
+const HERO_ART = [asset('assets/art-couple-hanbok.webp'), asset('assets/art-bouquet.webp')]
 
 // Session flag so the intro plays once per visit, not once per page load —
 // coming back from /faq/ (or any internal navigation) skips straight to the

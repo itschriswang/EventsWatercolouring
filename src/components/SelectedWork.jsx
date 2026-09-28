@@ -27,67 +27,30 @@ const GROUPS = WORK.groups.map((group) => ({ ...group, items: [...group.items] }
 }
 const ALL_ITEMS = GROUPS.flatMap((g) => g.items)
 
-// ── The two-column wall, below the desktop grid ───────────────────────────
-// This used to be a CSS multi-column box (`columns-2`), and building the two
-// columns by hand instead is the fix for the top right painting that kept
-// going blank after a scroll. What the screenshot of it shows is the useful
-// part: the tile keeps its box to the pixel, and nothing inside it is drawn.
-// Not the artwork, not the card ground, not the 1px border. So this was never
-// the image failing to load or a blend layer dropping the painting, which is
-// what the last five passes were all treating. Both of those leave the card
-// sitting there empty, and the card is not there either.
+// ── The phone and tablet wall ─────────────────────────────────────────────
+// A plain CSS grid, and never a CSS multi-column box. The wall was `columns-2`
+// once, and the first tile of column two kept painting blank after a scroll:
+// it is the one element whose position in a fragmented flow and its painted
+// position disagree, and every tile carries self-painting layers (the
+// clip-path media wrapper, CornerBloom's multiply overlay, framer's entrance)
+// that the engine then has to map across columns itself. A grid has no
+// fragmentation to get wrong.
 //
-// What singles that tile out is structural: it is the FIRST tile of column
-// two, so it is the one element whose position in the multi-column flow
-// (615px down, in column one) and its painted position (the top of column
-// two) disagree. Every tile carries self-painting layers — the clip-path
-// media wrapper, CornerBloom's multiply overlay, framer's opacity and
-// transform through the entrance — and a fragmented flow is the one layout
-// mode where an engine has to map each of those onto a column itself.
-// Column one never shows it, because there the two positions are the same.
-//
-// That is engine behaviour we cannot reproduce on this machine (Blink gets it
-// right, which is exactly why five passes in Chromium never saw it), so the
-// answer is not to tune around it but to stop asking for it. Two plain flex
-// columns have no fragmentation to get wrong. This was the only fragmented
-// flow on the site.
-//
-// The split has to land where column balancing landed or the wall reshuffles,
-// so it uses the same rule: pick the break that makes the taller column as
-// short as it can be, and fill the first column before starting the second.
-
-// A tile's height as a multiple of the column width, from the aspect Tile
-// gives it in `masonry` mode: landscape is 4/3, everything else 3/4.
-const tileHeight = (item) => (item.landscape ? 3 / 4 : 4 / 3)
-
-// The `gap-3` between stacked tiles, as a fraction of a column about 175px
-// wide. It only ever weighs one split against another, and the same split
-// wins from 320px up, so it does not need to track the real viewport.
-const GAP_RATIO = 12 / 175
-
-/**
- * Deal a group's tiles into two columns the way CSS column balancing would:
- * tiles stay in order, and the break goes wherever it leaves the taller
- * column shortest.
- */
-function masonryColumns(items) {
-  const stack = (column) =>
-    column.reduce((h, item) => h + tileHeight(item), 0) +
-    Math.max(0, column.length - 1) * GAP_RATIO
-  let best = null
-  for (let k = 1; k < items.length; k++) {
-    const columns = [items.slice(0, k), items.slice(k)]
-    const tallest = Math.max(stack(columns[0]), stack(columns[1]))
-    // `<=`, not `<`: a tie goes to the later break, because balancing fills
-    // the first column before it opens the second. That is what keeps the
-    // studio row as two tiles then one, rather than one then two.
-    if (!best || tallest <= best.tallest) best = { tallest, columns }
-  }
-  return best ? best.columns : [items, []]
+// It replaced two hand-dealt flex columns, which fixed that bug but always
+// left a hole: three wedding tiles dealt into two columns came out as two
+// stacked on the left and one on the right with nothing under it, and the
+// landscape print was squeezed into a half-width slot at 168x125. In a grid
+// the landscape piece spans the full row and `grid-flow-dense` pulls the next
+// portrait up beside the one before it, so a pair always closes. A group whose
+// portraits come in threes (the studio row) sits three across instead of two
+// and one.
+function phoneColumns(items) {
+  const portraits = items.filter((item) => !item.landscape).length
+  return portraits % 2 === 1 && portraits % 3 === 0 ? 3 : 2
 }
 
 for (const group of GROUPS) {
-  group.columns = masonryColumns(group.items)
+  group.phoneCols = phoneColumns(group.items)
 }
 
 // The openable paintings (testimonials are not enlargeable). The lightbox
@@ -107,20 +70,30 @@ const PAINTINGS = ALL_ITEMS.filter((g) => !g.testimonial)
  * row. Tapping a painting opens it in the lightbox; testimonials (when
  * added in content.js) slot into the rows as quote cards.
  */
-// Measured off the built page, not read off the classes — the old values were
-// wrong in both directions and each direction cost something different.
+// Measured off the built page, not read off the classes. A `sizes` value is
+// the one number that decides which file a phone downloads and holds decoded,
+// and it is wrong in both directions by default.
 //
-// A tile renders 168/177/338/140/197/210 CSS px at viewport widths of
-// 390/412/768/1024/1440/1920. The previous `(min-width: 768px) 25vw, 46vw`
-// therefore UNDER-declared at 768 (25vw = 192px for a tile that is really
-// 338px, so the browser fetched a variant too small and the wall rendered
-// soft), and OVER-declared everywhere else — 46vw on a phone asks for 190px
-// where the tile is 177, which is just enough to push the picker off the 480
-// variant and onto the 640 for all nine tiles.
-const TILE_SIZES = '(max-width: 767px) 43vw, (max-width: 1023px) 44vw, 14vw'
+// The desktop grid gives a portrait 3 of 12 columns and a landscape 6, so a row
+// of four (or two plus one wide) fills the width instead of stopping two thirds
+// of the way across. That renders a portrait at 21.5vw from 1024px until the
+// 88rem container caps it at ~333px, and a landscape at 44vw up to ~692px.
+// Below 1024 the wall is the phone grid above: 43vw a tile two across on a
+// phone (44vw at 768, where the gap is a smaller share), 28vw three across,
+// and 90vw for a landscape print spanning the row. The landscape tile used to
+// share the portrait `sizes`, so it fetched a file for half its real width.
+const DESKTOP_PORTRAIT = '(min-width: 1564px) 333px, 21.5vw'
+const tileSizes = (item, phoneCols) => {
+  if (item.landscape) return '(max-width: 1023px) 90vw, (min-width: 1564px) 692px, 44vw'
+  const phone =
+    phoneCols === 3
+      ? '(max-width: 1023px) 28vw'
+      : '(max-width: 767px) 43vw, (max-width: 1023px) 44vw'
+  return `${phone}, ${DESKTOP_PORTRAIT}`
+}
 
-// The reveal box: near full-bleed on a phone, a fixed column on a desktop.
-const REVEAL_SIZES = '(max-width: 767px) 90vw, (max-width: 1023px) 50vw, 256px'
+// The reveal box: near full-bleed on a phone, a portrait slot on a desktop.
+const REVEAL_SIZES = `(max-width: 767px) 90vw, (max-width: 1023px) 50vw, ${DESKTOP_PORTRAIT}`
 
 export default function SelectedWork() {
   const paintings = PAINTINGS
@@ -208,7 +181,7 @@ export default function SelectedWork() {
             )}
 
             {isDesktop ? (
-              <div className="mt-6 grid grid-cols-12 items-end gap-x-[1.4vw] gap-y-6">
+              <div className="mt-6 grid grid-flow-row-dense grid-cols-12 items-end gap-x-[1.4vw] gap-y-6">
                 {group.items.map((item) => (
                   <Tile
                     key={item._idx}
@@ -223,33 +196,42 @@ export default function SelectedWork() {
                     // empty second row. Portrait footage in a portrait slot
                     // needs no special placement, and this way the wall
                     // closes up at whatever count content.js holds.
-                    className={item.landscape ? 'col-span-4' : 'col-span-2'}
+                    //
+                    // Three and six of twelve, not two and four: at two and
+                    // four both rows stopped at column eight, so a 1440px
+                    // screen showed the work at 197px a tile beside a blank
+                    // third of the page.
+                    className={item.landscape ? 'col-span-6' : 'col-span-3'}
+                    sizes={tileSizes(item, group.phoneCols)}
                   />
                 ))}
                 {group.key === 'studio' && WORK.reveal && (
-                  <RevealTile reveal={WORK.reveal} className="col-span-2" />
+                  <RevealTile reveal={WORK.reveal} className="col-span-3" />
                 )}
               </div>
             ) : (
               <>
-                {/* Two real columns, not a CSS multi-column box — see
-                    masonryColumns above for why. `pb-3` is the trailing gap
-                    column balancing used to count in the wall's height, kept
-                    so whatever follows the wall stays where it has always
-                    sat. */}
-                <div className="mt-5 flex items-start gap-3 pb-3">
-                  {group.columns.map((column, ci) => (
-                    <div key={ci} className="flex min-w-0 flex-1 flex-col gap-3">
-                      {column.map((item, ri) => (
-                        <Tile
-                          key={item._idx}
-                          item={item}
-                          row={ri}
-                          onOpen={item.testimonial ? undefined : () => openItem(item)}
-                          masonry
-                        />
-                      ))}
-                    </div>
+                {/* A real grid, not a CSS multi-column box — see phoneColumns
+                    above for why, and for the dense flow that closes each
+                    row. `pb-3` is the trailing gap column balancing used to
+                    count in the wall's height, kept so whatever follows the
+                    wall stays where it has always sat. */}
+                <div
+                  className={
+                    'mt-5 grid grid-flow-row-dense gap-3 pb-3 ' +
+                    (group.phoneCols === 3 ? 'grid-cols-3' : 'grid-cols-2')
+                  }
+                >
+                  {group.items.map((item, i) => (
+                    <Tile
+                      key={item._idx}
+                      item={item}
+                      row={Math.floor(i / group.phoneCols)}
+                      onOpen={item.testimonial ? undefined : () => openItem(item)}
+                      className={item.landscape ? (group.phoneCols === 3 ? 'col-span-3' : 'col-span-2') : ''}
+                      sizes={tileSizes(item, group.phoneCols)}
+                      masonry
+                    />
                   ))}
                 </div>
                 {group.key === 'studio' && WORK.reveal && (
@@ -274,11 +256,9 @@ export default function SelectedWork() {
 
 // How long a tile waits before its entrance starts. On the desktop grid it
 // counts in fours, because that is what a row holds there and the sweep runs
-// along the row. The two-column wall counts down its own column instead:
-// `_idx` runs through the flat list, so on a wall built of columns it lands
-// out of order — 0, 50, 0 down column one, which reveals the bottom tile
-// before the middle one. A column's own row index is the number that makes
-// the cascade read top to bottom, which is what a visitor scrolling it sees.
+// along the row. The phone grid counts rows instead: a row of two or three
+// lands together and the next follows, which is what a visitor scrolling a
+// narrow wall sees.
 const revealDelay = (item, masonry, row, reduce) =>
   reduce ? 0 : ((masonry ? row : item._idx) % 4) * 0.05
 
@@ -288,7 +268,7 @@ const revealDelay = (item, masonry, row, reduce) =>
  * shape holding a quote. Landscape pieces take the wide slot in their row
  * (3:2); everything else is an upright 3:4.
  */
-function Tile({ item, className = '', masonry = false, row = 0, onOpen }) {
+function Tile({ item, className = '', masonry = false, row = 0, sizes, onOpen }) {
   const reduce = useReducedMotion()
   const zoomed = usePinchZoomed()
   // Autoplaying video is the "heavy" tier of this tile: roomy fine-pointer
@@ -401,14 +381,14 @@ function Tile({ item, className = '', masonry = false, row = 0, onOpen }) {
               <picture>
                 {/* Variant srcset (see scripts/generate-image-variants.mjs):
                     a tile renders ~320 CSS px wide, and the flat original was
-                    shipping its full ~1242px source to every visitor. sizes
-                    mirrors the wall's layout tiers: ~a quarter of the row on
-                    the desktop grid, ~half in the two-column mobile masonry.
+                    shipping its full ~1242px source to every visitor. `sizes`
+                    comes from tileSizes() above, per tile, because a landscape
+                    print is twice the width of a portrait beside it.
                     The <img> fallback keeps the single original — engines old
                     enough to lack WebP predate srcset shopping anyway. */}
                 <source
                   srcSet={artSrcset(item.img)}
-                  sizes={TILE_SIZES}
+                  sizes={sizes}
                   type="image/webp"
                 />
                 <motion.img
@@ -652,21 +632,25 @@ function RevealTile({ reveal, className = '' }) {
           </svg>
         </div>
 
-        {/* Corner labels */}
-        <span className="pointer-events-none absolute bottom-2 left-2 rounded-full bg-ink/55 px-2.5 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-paper">
+        {/* Corner labels — the handwritten label voice at its 0.8125rem
+            floor (they were 0.6875rem, and at the old 197px tile the two ran
+            into each other). The tile is a full portrait slot now, so the
+            pair has room at that size with the tracking eased a touch. */}
+        <span className="pointer-events-none absolute bottom-2 left-2 rounded-full bg-ink/55 px-2.5 py-1 font-mono text-[0.8125rem] uppercase tracking-[0.08em] text-paper">
           {reveal.after.label}
         </span>
-        <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-ink/55 px-2.5 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-paper">
+        <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-ink/55 px-2.5 py-1 font-mono text-[0.8125rem] uppercase tracking-[0.08em] text-paper">
           {reveal.before.label}
         </span>
 
-        {/* Hint — fades once the visitor has had a go */}
+        {/* Hint — fades once the visitor has had a go. It tells you how to
+            use the tile, so it is set to be read: body face, 15px. */}
         <AnimatePresence>
           {!touched && (
             <motion.span
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="pointer-events-none absolute left-1/2 top-3 -translate-x-1/2 rounded-full bg-ink/55 px-3 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-paper"
+              className="pointer-events-none absolute left-1/2 top-3 -translate-x-1/2 whitespace-nowrap rounded-full bg-ink/55 px-3 py-1 font-body text-[0.9375rem] font-semibold text-paper"
             >
               {reveal.hint}
             </motion.span>
