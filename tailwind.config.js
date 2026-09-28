@@ -18,7 +18,13 @@ export default {
         paper: '#F7F4EF',
         'paper-deep': '#F4ECEF',
         ink: '#352E30',
-        'ink-soft': '#6B6065',
+        // Secondary text: most of the body copy on the site. It was #6B6065,
+        // which cleared AA on paper (5.5:1) but only just on the tinted grounds
+        // it mostly sits on, 4.6:1 inside the timeline's cards and 5.0:1 over
+        // the Packages wash, and read washed out at 17px. Same hue, a step
+        // darker: 6.9:1 on paper, 5.8:1 on those cards, still well clear of
+        // `ink` (12:1) so the two rungs stay distinct.
+        'ink-soft': '#5B5256',
         line: '#E1D6E0',
         // Primary accent pigments. The dominant UI accent is Lemon Lime
         // (#D8DB7A), one of the client's reference swatches, deepened just

@@ -111,7 +111,12 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
           // offset is tuned for), so the stroke still needs to sit further
           // below the baseline or it crosses straight through the "p"
           // descender — push it down via --underline-offset.
-          style={{ '--underline-offset': '-0.26em' }}
+          //
+          // --emph-color: the emphasis word's default deepened Lemon Lime is a
+          // paper colour and measured 2.77:1 here. `ochre-light` is the same
+          // chartreuse at the light end, the one EveningTimeline already uses
+          // for its dark-ground accent.
+          style={{ '--underline-offset': '-0.26em', '--emph-color': '#EFEFA0' }}
         >
           <SplitText
             as="p"
@@ -122,7 +127,9 @@ export default function Footer({ enquireHref = ENQUIRE_HREF }) {
             emphasisItalic
             className="display-lg max-w-[18ch] [text-shadow:none]"
           />
-          <span className="mt-5 inline-flex items-center gap-2.5 font-mono text-[0.875rem] uppercase tracking-[0.16em] text-paper/80 transition-colors duration-300 group-hover:text-paper group-focus-visible:text-paper">
+          {/* Body face, not the handwritten one: this line is the instruction
+              on the footer's only action, so it is read, not glanced at. */}
+          <span className="mt-5 inline-flex items-center gap-2.5 font-body text-[0.9375rem] font-semibold text-paper/85 transition-colors duration-300 group-hover:text-paper group-focus-visible:text-paper">
             Start an enquiry
             <span
               aria-hidden="true"

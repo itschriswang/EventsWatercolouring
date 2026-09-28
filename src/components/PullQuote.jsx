@@ -126,12 +126,15 @@ export default function PullQuote() {
 
         {/* The quote's one next step — a quiet text link, not a banner, so
             the regret in Clare & William's words gets an answer without the
-            moment turning into an ad break. */}
+            moment turning into an ad break. Quiet by weight and colour, not by
+            size: it was 0.66rem of the handwritten face, uppercase at 0.2em
+            tracking, which made the one thing here you can press the hardest
+            thing here to read. Body face at 15px, like every other link. */}
         {PULLQUOTE.cta && (
           <motion.a
             {...rise(0.3)}
             href={ENQUIRE_HREF}
-            className="group mt-7 inline-flex items-center gap-2 rounded font-mono text-[0.66rem] uppercase tracking-[0.2em] text-rust transition-colors duration-300 hover:text-terracotta focus-visible:text-terracotta"
+            className="group mt-7 inline-flex min-h-[44px] items-center gap-2 rounded font-body text-[0.9375rem] font-semibold text-rust transition-colors duration-300 hover:text-terracotta focus-visible:text-terracotta"
           >
             {PULLQUOTE.cta}
             <span

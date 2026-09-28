@@ -161,8 +161,12 @@ export default function CopyEmail({ tone = 'light', className = '' }) {
           // sitting inside the chip, and a solid fill would put this level
           // with Continue, the sheet's actual primary action. Accent border,
           // accent text, a wash behind: unmistakably a button, still second.
+          //
+          // Labelled in the body face at 15px. It was 0.62rem (~10px) of the
+          // handwritten face in uppercase, the smallest type on the site, on
+          // a control people press.
           className={
-            'group inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 font-mono text-[0.62rem] uppercase tracking-[0.16em] outline-none transition-colors duration-300 ' +
+            'group inline-flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 font-body text-[0.9375rem] font-semibold outline-none transition-colors duration-300 ' +
             (dark
               ? 'border-paper/30 text-paper/85 hover:border-blush hover:bg-blush/15 hover:text-blush focus-visible:border-blush focus-visible:bg-blush/15 focus-visible:text-blush'
               : 'border-ink/25 text-ink hover:border-terracotta hover:bg-terracotta/10 hover:text-terracotta focus-visible:border-terracotta focus-visible:bg-terracotta/10 focus-visible:text-terracotta')

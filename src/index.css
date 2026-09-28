@@ -30,7 +30,7 @@
     --c-ink: #352E30;
     --rgb-paper: 247 244 239;
     --rgb-ink: 53 46 48;
-    --rgb-ink-soft: 107 96 101;
+    --rgb-ink-soft: 91 82 86; /* #5B5256, see tailwind.config.js */
     --rgb-line: 225 214 224;
 
     /* ACCENT — sourced verbatim from the client's reference swatch sheet:
@@ -481,7 +481,7 @@
     font-size: 0.8125rem;
     text-transform: uppercase;
     letter-spacing: 0.14em;
-    /* Darker than ink-soft (5.2:1) on purpose: this text is tiny and often
+    /* Darker than ink-soft (6.9:1) on purpose: this text is tiny and often
        sits over the watercolour bloom washes, so it needs headroom above
        the 4.5:1 AA minimum rather than just clearing it. ~7.45:1 on paper. */
     color: #4A4E63;

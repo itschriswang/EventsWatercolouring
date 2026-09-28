@@ -119,7 +119,10 @@ export default function CorporatePage() {
               </motion.div>
             </div>
 
-            {/* One study card — proof of the hand, not a gallery. */}
+            {/* One study card — proof of the hand, not a gallery. Captioned as
+                what it is: the homepage wall files this painting under studio
+                studies, so calling it "painted live" here put the two pages in
+                contradiction for anyone who read both. */}
             <motion.figure
               initial={{ opacity: 0, y: reduce ? 0 : 45, rotate: reduce ? 0 : 3 }}
               animate={{ opacity: 1, y: 0, rotate: reduce ? 0 : 3 }}
@@ -133,7 +136,7 @@ export default function CorporatePage() {
                   <source srcSet={asset('assets/art-character-girl.webp')} type="image/webp" />
                   <img
                     src={asset('assets/art-character-girl.jpg')}
-                    alt="A small hand-painted watercolour portrait study on cotton paper, the kind of keepsake each guest takes home."
+                    alt="A small hand-painted watercolour character study on cotton paper, a figure in a wide-brimmed hat."
                     loading="eager"
                     fetchpriority="high"
                     decoding="async"
@@ -142,7 +145,7 @@ export default function CorporatePage() {
                   />
                 </picture>
                 <figcaption className="bg-paper px-3 py-2 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-ink-soft">
-                  Painted live · Cotton paper
+                  Studio study · Cotton paper
                 </figcaption>
               </div>
             </motion.figure>
