@@ -263,9 +263,11 @@ export const PACKAGES = {
     // conversion into the only number they actually shop on, and half of them
     // read it as "24 guests" instead.
     facts: ['3 hours of live painting', 'About 48 guests painted'],
+    // The list opens on what the pills above it don't say. It used to lead
+    // with "Around 48 of your guests painted live across three hours", which
+    // is the two pills again as a sentence, one line below them.
     bullets: [
-      'Around 48 of your guests painted live across three hours',
-      'That is about 24 paintings, with two guests in most of them',
+      'About 24 paintings, with two guests in most of them',
       'Up to four people can go in one painting, so groups of friends and families fit',
       'You and anyone you want painted first, then guests as they pass by',
       'Painted on 300gsm A5 archival cotton paper and sleeved to take home that night',
@@ -310,15 +312,24 @@ export const PACKAGES = {
       p: 'Your bouquet painted from photos after the day, on A3 cotton paper. A2 on request.',
     },
   ],
+  // How a booking actually happens, as steps a couple can scan. The retainer
+  // and the balance date used to be the last sentence of a paragraph headed
+  // "A note on style", which is the one place nobody looks for payment terms.
+  // Step one is what the section's second Enquire button used to say under
+  // it; the button went because the planner's own sits directly above.
+  booking: {
+    title: 'How booking works',
+    steps: [
+      'Send me your date, your venue and roughly how many guests you would like painted, using the form below.',
+      'I reply within a few days with what I have open on your date and a straightforward quote for your hours.',
+      'A 50% retainer and a booking agreement hold your date. The balance is due two weeks before the day.',
+    ],
+  },
   // Split into label + body so the bold lead-in is structured, not sliced off
   // the body string at render time (see Packages.jsx).
-  // The section's own ask. Packages sold the thing and then handed the visitor
-  // to the FAQ, with the nearest Enquire back up in the header.
-  cta: 'Enquire about your event',
-  ctaNote: 'Tell me your date, your venue and roughly how many guests you would like painted, and I will come back with a straightforward quote.',
   licenceLabel: 'A note on style.',
   licenceBody:
-    'What I paint is my interpretation, not a photo-exact likeness, and my style evolves over time, so no two paintings are the same. Booking means you are comfortable with that approach and my style. A 50% retainer holds your date, with the balance due two weeks before your big day.',
+    'What I paint is my interpretation, not a photo-exact likeness, and my style evolves over time, so no two paintings are the same. Booking means you are comfortable with that approach and my style.',
   planner: {
     // Declarative, like every other heading on the page. It was "What does a
     // booking cover?", but a heading that poses a question it then answers is
@@ -693,8 +704,7 @@ export const CORPORATE = {
       // Guests first, matching the homepage package (see PACKAGES.base).
       facts: ['3 hours of live painting', 'About 48 guests painted'],
       bullets: [
-        'Around 48 of your guests painted live across three hours',
-        'That is about 24 paintings, with two guests in most of them',
+        'About 24 paintings, with two guests in most of them',
         'Up to four people can go in one painting, so a group counts as one sitting',
         'Painted on 300gsm A5 archival cotton paper and sleeved to take home that night',
         'Public liability insurance',

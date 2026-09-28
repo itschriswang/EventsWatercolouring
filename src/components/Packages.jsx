@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Label, { Drop } from './Label.jsx'
 import SplitText from './SplitText.jsx'
-import { SPRING, CARD_BG, REVEAL_VIEWPORT, ENQUIRE_HREF } from '../lib/site.js'
+import { SPRING, CARD_BG, REVEAL_VIEWPORT } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
 import Sparkles from './Sparkles.jsx'
@@ -324,25 +324,36 @@ export default function Packages() {
 
         <NightPlanner />
 
-        {/* The packages section's own ask.
-            It did not have one. A visitor read the price, the inclusions, the
-            eight add-ons and the planner, and then the next thing offered to
-            them was the FAQ — the section that does the selling had no way to
-            act on it, and the nearest Enquire was back up in the header. Sized
-            with the hero button and the header pill so the three read as one
-            control at three scales. */}
+        {/* How booking works, then the note on style, side by side on a
+            desktop. This is where the section's own Enquire button used to
+            sit, directly under the planner's "Enquire with these hours": two
+            buttons to the same form a few centimetres apart, with the form
+            itself the next thing down the page. The planner's button is the
+            ask now, and the space went to the terms, which were the last
+            sentence of the style note. */}
         <motion.div
           {...reveal()}
-          className="mt-[clamp(2.5rem,6vw,4rem)] flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6"
+          className="mt-[clamp(2.5rem,6vw,4rem)] grid gap-10 lg:grid-cols-12 lg:gap-12"
         >
-          <a
-            href={ENQUIRE_HREF}
-            className="btn-hero-flow inline-flex min-h-[56px] items-center justify-center rounded-full px-9 py-4 font-body text-[1.0625rem] font-bold tracking-[0.005em] text-ink active:scale-[0.98] motion-safe:transition-transform motion-safe:duration-200"
-          >
-            <span className="relative z-10">{PACKAGES.cta}</span>
-          </a>
-          <p className="max-w-[34ch] text-[0.9375rem] leading-[1.55] text-ink-soft">
-            {PACKAGES.ctaNote}
+          <div className="lg:col-span-7">
+            <h3 className="subhead">{PACKAGES.booking.title}</h3>
+            <ol role="list" className="mt-5 space-y-4">
+              {PACKAGES.booking.steps.map((step, i) => (
+                <li key={i} className="flex gap-4">
+                  <span
+                    aria-hidden="true"
+                    className="w-6 shrink-0 font-mono text-[1.0625rem] leading-[1.65] text-rust"
+                  >
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <p className="max-w-[52ch] text-[1.0625rem] leading-[1.65] text-ink">{step}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <p className="max-w-2xl text-[1rem] leading-[1.65] text-ink-soft lg:col-span-5 lg:self-center">
+            <b className="text-ink">{PACKAGES.licenceLabel}</b>{' '}
+            {PACKAGES.licenceBody}
           </p>
         </motion.div>
 
@@ -389,11 +400,6 @@ export default function Packages() {
             →
           </span>
         </FolderCell>
-
-        <motion.p {...reveal()} className="mt-10 max-w-2xl text-[1rem] leading-[1.65] text-ink-soft">
-          <b className="text-ink">{PACKAGES.licenceLabel}</b>{' '}
-          {PACKAGES.licenceBody}
-        </motion.p>
       </section>
     )
   }

@@ -373,8 +373,14 @@ export default function SplitText({
   // gradient-text fill — the italic cut already carries the emphasis, and solid
   // colour avoids the gradient-text look while keeping AA contrast at the
   // display sizes SplitText is used at.
+  //
+  // That contrast only holds on paper. The deepened Lemon Lime is tuned to sit
+  // dark on ivory, so on a dark ground it sinks into it: the footer's "to keep."
+  // measured 2.77:1 against the dusk photograph, under even the 3:1 floor for
+  // large type. A dark-ground caller sets `--emph-color` to the light end of the
+  // same pigment instead of the heading forking its own emphasis path.
   const getGradientStyle = (wordIndex) =>
-    emphasisMap.has(wordIndex) ? { color: 'var(--c-terracotta)' } : {}
+    emphasisMap.has(wordIndex) ? { color: 'var(--emph-color, var(--c-terracotta))' } : {}
 
   // The outline costume, applied to the emphasis GROUP (so one filter covers
   // the whole word and the wobble runs continuously across it rather than
