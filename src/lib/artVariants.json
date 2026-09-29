@@ -23,6 +23,22 @@
     ],
     "width": 720
   },
+  "art-portrait-fringe-held": {
+    "widths": [
+      480,
+      640,
+      960
+    ],
+    "width": 1242
+  },
+  "art-couple-reveal-poster": {
+    "widths": [
+      480,
+      640,
+      960
+    ],
+    "width": 1080
+  },
   "art-character-girl": {
     "widths": [
       480,
@@ -46,6 +62,15 @@
       960
     ],
     "width": 1242
+  },
+  "art-character-nap": {
+    "widths": [
+      480,
+      640,
+      960,
+      1440
+    ],
+    "width": 1600
   },
   "art-bouquet": {
     "widths": [

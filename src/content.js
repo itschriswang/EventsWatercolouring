@@ -195,6 +195,22 @@ export const WORK = {
       ],
     },
     {
+      key: 'likeness',
+      label: 'Studio portraits, from photos',
+      note: 'The classic likeness a studio commission is painted in, from photos you send me.',
+      items: [
+        { img: 'art-portrait-fringe-held', ttl: 'Through the fringe', meta: 'Studio portrait', alt: 'Realistic watercolour portrait of a young man looking up through a dark fringe, silver rings in his ear and lip, held up in front of a pink and green painted wall' },
+        {
+          img: 'art-couple-reveal-poster',
+          video: 'art-couple-reveal-video',
+          landscape: true,
+          ttl: 'Peeling the tape',
+          meta: 'Studio portrait · video',
+          alt: 'Video of masking tape being peeled from the edge of a finished watercolour of a couple in sunglasses, him in a dark puffer jacket and her in a yellow one, under a pale blue sky',
+        },
+      ],
+    },
+    {
       key: 'studio',
       label: 'Studio studies, between events',
       note: 'This stylised character style is also available as a studio commission, painted from your own photos.',
@@ -202,6 +218,7 @@ export const WORK = {
         { img: 'art-character-girl', ttl: 'Little character, in green', meta: 'Studio study', alt: 'Small watercolour character portrait of a figure in a wide-brimmed hat, painted in olive green and ochre' },
         { img: 'art-character-boy',  ttl: 'At the palette',             meta: 'Studio study', alt: "Small watercolour character portrait with the artist’s palette alongside, in warm rust and ochre" },
         { img: 'art-character-boy2', ttl: 'Warm ochre',                 meta: 'Studio study', alt: 'Small watercolour character portrait of a seated figure in warm ochre tones, holding a jar' },
+        { img: 'art-character-nap',  ttl: 'Asleep on the homework',     meta: 'Studio study', landscape: true, alt: 'Small watercolour character of a child in striped pyjamas asleep face down on a sheet of handwritten paper, a stubby yellow pencil still in hand' },
       ],
     },
   ],

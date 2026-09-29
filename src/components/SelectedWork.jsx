@@ -49,8 +49,37 @@ function phoneColumns(items) {
   return portraits % 2 === 1 && portraits % 3 === 0 ? 3 : 2
 }
 
+// A room with one portrait has nothing to pair it with, so two across would
+// leave it beside an empty half row. It takes the row instead, capped at the
+// same max-w-sm as the reveal strip so a tablet doesn't blow it up to 921px
+// tall.
+const lonePortrait = (items) => items.filter((item) => !item.landscape).length === 1
+
+// ── The desktop wall ──────────────────────────────────────────────────────
+// Rows of four portrait slots, a landscape print taking two, so each room's
+// row closes flush at the right edge. A room whose slots come in threes but
+// not fours would leave a half-empty last row that way (the studio room, three
+// studies, a landscape and the reveal strip, is six slots: four and a stranded
+// two), so it sits three across instead. In both grids a 3:4 portrait and a
+// 3:2 landscape come out within a few px of the same height, so each row still
+// reads as one level line.
+function desktopColumns(group) {
+  const slots =
+    group.items.reduce((n, item) => n + (item.landscape ? 2 : 1), 0) +
+    (group.key === 'studio' && WORK.reveal ? 1 : 0)
+  return slots % 4 !== 0 && slots % 3 === 0 ? 3 : 4
+}
+
+// Spelled out whole, not built from the count, so Tailwind sees the classes.
+const DESKTOP_SPAN = {
+  4: { portrait: 'col-span-3', landscape: 'col-span-6' },
+  3: { portrait: 'col-span-4', landscape: 'col-span-8' },
+}
+
 for (const group of GROUPS) {
   group.phoneCols = phoneColumns(group.items)
+  group.lonePortrait = lonePortrait(group.items)
+  group.desktopCols = desktopColumns(group)
 }
 
 // The openable paintings (testimonials are not enlargeable). The lightbox
@@ -63,9 +92,9 @@ const PAINTINGS = ALL_ITEMS.filter((g) => !g.testimonial)
 
 /**
  * Selected work — a curated wall driven by `WORK.groups` (see content.js).
- * The wall reads as two rooms of one show: the pieces painted live at real
- * weddings, then the studio studies, each row under its own small label so
- * the two styles never blur into one pile. The reveal strip (drag between
+ * The wall reads as rooms of one show: the pieces painted live at real
+ * weddings, the true-to-life studio portraits, then the character studies,
+ * each under its own small label so the styles never blur into one pile. The reveal strip (drag between
  * the easel shot and the finished keepsake) hangs at the end of the studio
  * row. Tapping a painting opens it in the lightbox; testimonials (when
  * added in content.js) slot into the rows as quote cards.
@@ -82,18 +111,27 @@ const PAINTINGS = ALL_ITEMS.filter((g) => !g.testimonial)
 // phone (44vw at 768, where the gap is a smaller share), 28vw three across,
 // and 90vw for a landscape print spanning the row. The landscape tile used to
 // share the portrait `sizes`, so it fetched a file for half its real width.
-const DESKTOP_PORTRAIT = '(min-width: 1564px) 333px, 21.5vw'
-const tileSizes = (item, phoneCols) => {
-  if (item.landscape) return '(max-width: 1023px) 90vw, (min-width: 1564px) 692px, 44vw'
-  const phone =
-    phoneCols === 3
+//
+// A room set three across (see desktopColumns) gives a portrait 4 of 12 and a
+// landscape 8, measured at 29vw capped at ~453px and 59.5vw capped at ~931px.
+const DESKTOP = {
+  4: { portrait: '(min-width: 1564px) 333px, 21.5vw', landscape: '(min-width: 1564px) 692px, 44vw' },
+  3: { portrait: '(min-width: 1564px) 453px, 29vw', landscape: '(min-width: 1564px) 931px, 59.5vw' },
+}
+const tileSizes = (item, group) => {
+  const desktop = DESKTOP[group.desktopCols]
+  if (item.landscape) return `(max-width: 1023px) 90vw, ${desktop.landscape}`
+  const phone = group.lonePortrait
+    ? '(max-width: 767px) 90vw, (max-width: 1023px) 384px'
+    : group.phoneCols === 3
       ? '(max-width: 1023px) 28vw'
       : '(max-width: 767px) 43vw, (max-width: 1023px) 44vw'
-  return `${phone}, ${DESKTOP_PORTRAIT}`
+  return `${phone}, ${desktop.portrait}`
 }
 
 // The reveal box: near full-bleed on a phone, a portrait slot on a desktop.
-const REVEAL_SIZES = `(max-width: 767px) 90vw, (max-width: 1023px) 50vw, ${DESKTOP_PORTRAIT}`
+const revealSizes = (group) =>
+  `(max-width: 767px) 90vw, (max-width: 1023px) 50vw, ${DESKTOP[group.desktopCols].portrait}`
 
 export default function SelectedWork() {
   const paintings = PAINTINGS
@@ -201,12 +239,16 @@ export default function SelectedWork() {
                     // four both rows stopped at column eight, so a 1440px
                     // screen showed the work at 197px a tile beside a blank
                     // third of the page.
-                    className={item.landscape ? 'col-span-6' : 'col-span-3'}
-                    sizes={tileSizes(item, group.phoneCols)}
+                    className={DESKTOP_SPAN[group.desktopCols][item.landscape ? 'landscape' : 'portrait']}
+                    sizes={tileSizes(item, group)}
                   />
                 ))}
                 {group.key === 'studio' && WORK.reveal && (
-                  <RevealTile reveal={WORK.reveal} className="col-span-3" />
+                  <RevealTile
+                    reveal={WORK.reveal}
+                    className={DESKTOP_SPAN[group.desktopCols].portrait}
+                    sizes={revealSizes(group)}
+                  />
                 )}
               </div>
             ) : (
@@ -228,14 +270,18 @@ export default function SelectedWork() {
                       item={item}
                       row={Math.floor(i / group.phoneCols)}
                       onOpen={item.testimonial ? undefined : () => openItem(item)}
-                      className={item.landscape ? (group.phoneCols === 3 ? 'col-span-3' : 'col-span-2') : ''}
-                      sizes={tileSizes(item, group.phoneCols)}
+                      className={
+                        item.landscape
+                          ? group.phoneCols === 3 ? 'col-span-3' : 'col-span-2'
+                          : group.lonePortrait ? 'col-span-2 mx-auto w-full max-w-sm' : ''
+                      }
+                      sizes={tileSizes(item, group)}
                       masonry
                     />
                   ))}
                 </div>
                 {group.key === 'studio' && WORK.reveal && (
-                  <RevealTile reveal={WORK.reveal} className="mx-auto mt-5 max-w-sm" />
+                  <RevealTile reveal={WORK.reveal} className="mx-auto mt-5 max-w-sm" sizes={revealSizes(group)} />
                 )}
               </>
             )}
@@ -489,7 +535,7 @@ function Testimonial({ item, masonry = false }) {
  * wipe between the piece mid-making and the clean scan. Pure pointer events
  * and a clip-path — no dependencies, cheap on mobile.
  */
-function RevealTile({ reveal, className = '' }) {
+function RevealTile({ reveal, className = '', sizes }) {
   const reduce = useReducedMotion()
   const zoomed = usePinchZoomed()
   const ref = useRef(null)
@@ -566,7 +612,7 @@ function RevealTile({ reveal, className = '' }) {
               master to a phone showing it 369 CSS px wide. */}
           <source
             srcSet={artSrcset(reveal.before.img)}
-            sizes={REVEAL_SIZES}
+            sizes={sizes}
             type="image/webp"
           />
           <img
