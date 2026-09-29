@@ -38,9 +38,13 @@ const GALLERY = [
   'art-couple-hanbok',
   'art-toast-friends',
   'art-toast-video-poster',
+  'art-portrait-fringe-held',
+  'art-couple-reveal-poster',
+  'art-portrait-fringe',
   'art-character-girl',
   'art-character-boy',
   'art-character-boy2',
+  'art-character-nap',
 ]
 
 // The hero pair and the footer photograph. `art-couple-hanbok` is already in
