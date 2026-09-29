@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-mot
 import Label from './Label.jsx'
 import SplitText from './SplitText.jsx'
 import useFocusTrap from '../hooks/useFocusTrap.js'
-import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
+import useMediaQuery, { useHeavyFx, prefersSaveData } from '../hooks/useMediaQuery.js'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
 import { SPRING, SPRING_SOFT, asset, artSrcset, REVEAL_VIEWPORT } from '../lib/site.js'
 import { hideOnError } from '../lib/imageRetry.js'
@@ -317,11 +317,15 @@ const revealDelay = (item, masonry, row, reduce) =>
 function Tile({ item, className = '', masonry = false, row = 0, sizes, onOpen }) {
   const reduce = useReducedMotion()
   const zoomed = usePinchZoomed()
-  // Autoplaying video is the "heavy" tier of this tile: roomy fine-pointer
-  // desktops get the live loop, touch/low-end devices (and reduced-motion)
-  // get the same still poster frame every other tile already ships.
   const heavy = useHeavyFx()
-  const playVideo = item.video && heavy && !reduce
+  // The video loops play everywhere, phones included. They used to sit behind
+  // `heavy` with the WebGL washes, but a short muted clip is not that kind of
+  // cost: the phone's hardware decoder plays it for next to nothing, and on a
+  // phone the wall is where most visitors actually see the work being made.
+  // Reduced motion and Data Saver still get the poster frame, and so does a
+  // phone that refuses to autoplay (iOS Low Power Mode) — see `blocked` below.
+  const [blocked, setBlocked] = useState(false)
+  const playVideo = item.video && !reduce && !blocked && !prefersSaveData()
 
   // Latch the reveal once, in React state, rather than steering it live off
   // `whileInView`. Opening/closing the lightbox restores focus to the tapped
@@ -335,6 +339,33 @@ function Tile({ item, className = '', masonry = false, row = 0, sizes, onOpen })
   // `|| reduce`: reduced-motion users get the resting (shown) state without
   // depending on the scroll-triggered reveal firing.
   const shown = inView || zoomed || reduce
+
+  // Play only while the tile is on screen. `shown` is a one-way latch, so on
+  // its own a loop kept decoding the whole way down the page after it had
+  // scrolled out of sight — a cost worth paying on no device, and a battery
+  // one on a phone. play() is called by hand, with `muted` set as a property
+  // first, rather than trusted to the autoPlay attribute: React never writes
+  // `muted` into the markup, and iOS reads the attribute when it decides
+  // whether an autoplay is allowed. A rejected play() is the browser saying
+  // no (Low Power Mode, a strict autoplay setting); falling back to the poster
+  // then beats leaving the platform's play glyph over a paused first frame.
+  const videoRef = useRef(null)
+  const onScreen = useInView(ref, { amount: 0.2 })
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    if (!onScreen) {
+      video.pause()
+      return
+    }
+    video.muted = true
+    const attempt = video.play()
+    if (attempt) attempt.catch((err) => {
+      // AbortError is a pause() racing this play() on a fast scroll-past, not
+      // a refusal.
+      if (err?.name === 'NotAllowedError') setBlocked(true)
+    })
+  }, [onScreen, playVideo, shown])
 
   const aspect = masonry
     ? item.landscape ? 'aspect-[4/3]' : 'aspect-[3/4]'
@@ -405,13 +436,13 @@ function Tile({ item, className = '', masonry = false, row = 0, sizes, onOpen })
               cuts an element's own box-shadow; overflow never did). 1rem =
               rounded-2xl. */}
           <div className="relative h-full w-full [clip-path:inset(0_round_1rem)]">
-            {/* `&& shown`: autoPlay overrides preload="metadata", so mounting
-                the <video> at page load fetched ~315 KB several viewports
+            {/* `&& shown`: a playing <video> ignores preload="metadata", so
+                mounting it at page load fetched ~315 KB several viewports
                 before the tile could be seen, competing with the hero LCP.
                 The poster <picture> stands in until the reveal latch fires. */}
             {playVideo && shown ? (
               <video
-                autoPlay
+                ref={videoRef}
                 muted
                 loop
                 playsInline

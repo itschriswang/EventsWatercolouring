@@ -43,6 +43,17 @@ function prefersLightweight() {
 }
 
 /**
+ * True only when the visitor has explicitly asked to save data. Narrower than
+ * prefersLightweight(): a low memory ceiling is a reason to skip a WebGL wash,
+ * but not a short muted video loop, which the phone's hardware decoder plays
+ * for next to nothing. Data Saver is a request about bytes, and that is what a
+ * video costs.
+ */
+export function prefersSaveData() {
+  return typeof navigator !== 'undefined' && !!navigator.connection?.saveData
+}
+
+/**
  * True on roomy, fine-pointer devices — the gate for heavy scroll-linked
  * effects (parallax, the live WebGL washes, the GPU grain's scroll settle).
  * Touch phones and tablets fall back to lighter, static rendering, and so now
