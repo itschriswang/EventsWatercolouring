@@ -49,6 +49,12 @@ function phoneColumns(items) {
   return portraits % 2 === 1 && portraits % 3 === 0 ? 3 : 2
 }
 
+// A room with one portrait has nothing to pair it with, so two across would
+// leave it beside an empty half row. It takes the row instead, capped at the
+// same max-w-sm as the reveal strip so a tablet doesn't blow it up to 921px
+// tall.
+const lonePortrait = (items) => items.filter((item) => !item.landscape).length === 1
+
 // ── The desktop wall ──────────────────────────────────────────────────────
 // Rows of four portrait slots, a landscape print taking two, so each room's
 // row closes flush at the right edge. A room whose slots come in threes but
@@ -72,6 +78,7 @@ const DESKTOP_SPAN = {
 
 for (const group of GROUPS) {
   group.phoneCols = phoneColumns(group.items)
+  group.lonePortrait = lonePortrait(group.items)
   group.desktopCols = desktopColumns(group)
 }
 
@@ -114,8 +121,9 @@ const DESKTOP = {
 const tileSizes = (item, group) => {
   const desktop = DESKTOP[group.desktopCols]
   if (item.landscape) return `(max-width: 1023px) 90vw, ${desktop.landscape}`
-  const phone =
-    group.phoneCols === 3
+  const phone = group.lonePortrait
+    ? '(max-width: 767px) 90vw, (max-width: 1023px) 384px'
+    : group.phoneCols === 3
       ? '(max-width: 1023px) 28vw'
       : '(max-width: 767px) 43vw, (max-width: 1023px) 44vw'
   return `${phone}, ${desktop.portrait}`
@@ -262,7 +270,11 @@ export default function SelectedWork() {
                       item={item}
                       row={Math.floor(i / group.phoneCols)}
                       onOpen={item.testimonial ? undefined : () => openItem(item)}
-                      className={item.landscape ? (group.phoneCols === 3 ? 'col-span-3' : 'col-span-2') : ''}
+                      className={
+                        item.landscape
+                          ? group.phoneCols === 3 ? 'col-span-3' : 'col-span-2'
+                          : group.lonePortrait ? 'col-span-2 mx-auto w-full max-w-sm' : ''
+                      }
                       sizes={tileSizes(item, group)}
                       masonry
                     />

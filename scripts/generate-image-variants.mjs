@@ -40,7 +40,6 @@ const GALLERY = [
   'art-toast-video-poster',
   'art-portrait-fringe-held',
   'art-couple-reveal-poster',
-  'art-portrait-fringe',
   'art-character-girl',
   'art-character-boy',
   'art-character-boy2',

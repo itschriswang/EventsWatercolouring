@@ -200,7 +200,6 @@ export const WORK = {
       note: 'The classic likeness a studio commission is painted in, from photos you send me.',
       items: [
         { img: 'art-portrait-fringe-held', ttl: 'Through the fringe', meta: 'Studio portrait', alt: 'Realistic watercolour portrait of a young man looking up through a dark fringe, silver rings in his ear and lip, held up in front of a pink and green painted wall' },
-        { img: 'art-portrait-fringe',      ttl: 'Through the fringe, up close', meta: 'Studio portrait', alt: 'The same watercolour portrait resting on a green cushion, close enough to see the brushwork in the hair and the warm tones of the skin' },
         {
           img: 'art-couple-reveal-poster',
           video: 'art-couple-reveal-video',
