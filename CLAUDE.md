@@ -10,7 +10,7 @@ deployed as a static multi-page build to GitHub Pages.
 npm run dev       # Vite dev server
 npm run build     # production build to dist/ (all three pages)
 npm run preview   # serve the production build locally
-npm run check:wash # every bloom field, against the paint it is made of (~10s)
+npm run check:wash # every bloom field, against the paint it is made of (~30s)
 ```
 
 There are no tests or linters — verify changes with `npm run build` plus a
@@ -18,8 +18,12 @@ visual pass (Playwright is available as a devDependency for screenshots).
 
 `check:wash` is the one automated check, and it covers the one thing here that
 fails silently: it renders every field through both CPU tiers and fails if they
-disagree or if a pixel escapes the gamut §5.2 allows. Run it after touching a
-wash, a pigment or a renderer. See the Watercolour Model section for why.
+disagree or if a pixel escapes the gamut §5.2 allows, then measures every
+BloomField on the built pages and fails if yellow-green and rose would deposit
+on the same pixel (anti-mud rule 1). Run it after touching a wash, a pigment, a
+renderer or a section's layout. `-- --verbose` prints each shape it tried. It
+finds a pre-installed Chromium on its own when Playwright's pinned build is
+missing; `CHROMIUM_PATH` overrides. See the Watercolour Model section for why.
 
 ## Architecture
 
@@ -205,6 +209,16 @@ warms belong there.
 4. `BloomCanvas.jsx`'s shader ramp is ordered along the arc so every
    interpolation segment blends neighbours; keep it that way.
 
+Rule 1's green/rose half is no longer policed by eye: `check:wash` fails on
+it. It had drifted twice without anyone seeing — the ambient wash's blossom sat
+under the yellow-green on any section shorter than ~1.6x its width, and the
+warm wash's yellow-green sat inside the rose's reach on desktop — because a
+vw-sized wash's neighbours move as its section changes shape. That is also why
+the check measures each field at the size it really renders rather than at one
+assumed aspect. A wash held in a small box wants percentage sizes for the same
+reason (`WASH_FOLDER` in `WatercolourBloom.jsx`): in a 560px folder every
+vw-sized bloom reaches every other.
+
 Documented exceptions (deliberate, per their in-code comments — do not
 "fix" them, and do not use them as precedent for new work): the hero's
 aurora orb (`Hero.jsx`) dissolves yellow-green through to blush inside one
@@ -262,12 +276,20 @@ break into paper tooth, while the yellow-green glow keeps Phthalo's 0.12 and
 stays smooth and luminous. That is how real paint behaves and it protects the
 chartreuse voice; don't flatten the spread.
 
-**Four effects the model gives us, and what would break them:**
+**Five effects the model gives us, and what would break them:**
 
 1. *Edge darkening* (§4.3.3) — pigment dragged to the rim as a wash dries.
    The paper credits this for watercolour's luminosity, and it is the single
    thing that stops a wash reading as an airbrush. Both tiers have it: the
-   shader via `edgeDeposit()`, the static CSS via each bloom's rim stop.
+   static CSS via each bloom's rim stop, and the shader once per *wet patch*
+   rather than per bloom — it pools each dry bloom's wetness (`wetFront()`)
+   and lays the rim where the combined water runs out, so two washes laid into
+   each other share one dried edge instead of crossing rims inside the overlap.
+   Don't take the nearest bloom's distance instead: in an overlap that stays
+   in the rim band along the line between the two centres, and draws a
+   ruler-straight seam through the wash. The rim is heavier on the downhill
+   side (`BEAD`): the sheet is tilted — it is why the contour warp shears — and
+   a wash on a tilted sheet drains into a bead along its lower edge.
 2. *Granulation* (§4.5) — deposition favours the sheet's hollows, at a rate
    set by the pigment's γ. It samples `paperHollows()`, deliberately coarser
    than the fibre-scale `paperHeight()` the grain overlay resolves: pigment
@@ -284,11 +306,26 @@ chartreuse voice; don't flatten the spread.
 4. *Flow striations* (§4.3, condition 4) — the paper's slope deflects the
    water. Resolve the slope onto the flow direction (`flowStreak()`); adding
    the raw gradient only jitters the wash isotropically and reads as noise.
+5. *Backruns* (§4.6) — water creeping back into a wash that is drying but
+   still damp pushes pigment ahead of it, leaving a paler pool with "severely
+   darkened", branching edges: the cauliflower blooms the medium is known for.
+   The canvas gives some dry washes one (`backrun()`, ~40%, only where the wash
+   is big enough on screen to frill). Its front gain is *solved* so the pigment
+   pushed out is the pigment deposited; retune one, re-solve the other. Keep
+   the frill modest — it scales the distance, and pushed too far it opens pale
+   specks outside the front that read as holes rather than water.
 
 **One sheet.** `paperHeight()` is sampled in CSS pixels by every layer that
 uses it, so the tooth holds a fixed physical size and the wash granulates into
 the same hollows the grain overlay darkens. Sample it in device pixels and the
-texture gets finer on retina, which is sensor noise, not paper.
+texture gets finer on retina, which is sensor noise, not paper. And sample it
+in *page* pixels (`pageSheet()`), because the paper is under the paint, not on
+the glass: both canvases are fixed to the viewport, and while they sampled it
+in viewport pixels every scroll slid the wash across a paper that stayed put —
+its granulation stayed behind and its warped outline re-formed as it moved.
+GrainCanvas follows the page wherever the live wash runs and stays put on the
+light tier (no per-scroll work on a phone). The shared `hash()` wraps to a
+1024-cell lattice so page-height coordinates keep their precision.
 
 ### Where blooms live
 
@@ -301,6 +338,15 @@ Every bloom field is declared once, as data, through `BloomField`:
 That one spec drives two renderings. `fieldCss()` writes CSS for it, and
 `BloomCanvas` — one fixed full-viewport WebGL layer — paints the same blooms
 optically where the device can afford it, handing over via `data-live-blooms`.
+
+The canvas has 24 bloom slots and culls blooms that cannot reach the viewport
+before handing them out. It once filled them in field order, and two tall
+fields on screen together (16 blooms each, most thousands of pixels away)
+overflowed and silently dropped the tail of the second — and since that field's
+CSS is faded out under the canvas, those washes vanished. It also *dries*: the
+wash breathes for its first seconds, eases to a stop, and from then on draws
+only when the page scrolls, resizes or gains a field (`onBloomFieldsChange`),
+never on a loop.
 Both read `fieldLobes()`, which is where a field's blooms actually become the
 lobes anything downstream draws; add a consumer there rather than re-deriving
 the geometry beside it.

@@ -35,7 +35,11 @@ export const WASH_STATIC = [
   { pigment: 'butter', x: 0.184, sizeVw: 24, at: [0.72, 0.92], extent: 0.74 },
   { pigment: 'periwinkle', x: 0.17, sizeVw: 29, at: [0.08, 0.88], extent: 0.72 },
   { pigment: 'lilac', x: 0.181, sizeVw: 24, at: [0.2, 0.74], extent: 0.74 },
-  { pigment: 'blossom', x: 0.111, sizeVw: 24, at: [0.36, 0.52], extent: 0.74 },
+  // Sat at [0.36, 0.52], directly under the yellow-green, and on any section
+  // shorter than about 1.6x its width the two met — the beige CLAUDE.md's first
+  // anti-mud rule exists for. Down here it joins the rose cluster it belongs to
+  // instead; check:wash's adjacency stage holds it there.
+  { pigment: 'blossom', x: 0.111, sizeVw: 24, at: [0.52, 0.68], extent: 0.74 },
   { pigment: 'rose', x: 0.18, sizeVw: 22, at: [0.45, 0.96], extent: 0.74 },
   { pigment: 'aurora_rose', x: 0.071, sizeVw: 20, at: [0.56, 0.88], extent: 0.74 },
 ]
@@ -53,14 +57,37 @@ export const WASH_WARM = [
   { pigment: 'butter', x: 0.184, sizeVw: 22, at: [0.7, 0.94], extent: 0.74 },
   { pigment: 'lilac', x: 0.197, sizeVw: 26, at: [0.06, 0.86], extent: 0.72 },
   { pigment: 'periwinkle', x: 0.141, sizeVw: 20, at: [0.22, 0.96], extent: 0.74 },
-  { pigment: 'yellowgreen', x: 0.182, sizeVw: 24, at: [0.6, 0.06], extent: 0.72 },
+  // Was [0.6, 0.06], 30vw from the rose and inside its reach on every desktop
+  // section; tucked in beside the butter it neighbours on the arc instead.
+  { pigment: 'yellowgreen', x: 0.182, sizeVw: 24, at: [0.52, 0.02], extent: 0.72 },
   { pigment: 'aurora_rose', x: 0.071, sizeVw: 20, at: [0.44, 0.62], extent: 0.74 },
 ]
+
+// For a wash held in a small box rather than behind a section — the dusk
+// timeline's folder, at most 560px square. WASH_STATIC is sized in vw, so in a
+// box that small every one of its blooms reaches every other: the soft warm
+// glow it made there had the green glow sitting inside the roses. Sized in
+// percentages instead, so it holds at any box size — the same broad butter and
+// apricot glow where the folder's mask opens (bottom-left), the yellow-green
+// reaching it through the butter it neighbours, the rose through the apricot.
+// Wet-in-wet, as the hero orb is: it is a glow lifting off a dark ground, and a
+// dried rim there reads as a ring drawn round each wash rather than an edge.
+// The broad lift is the luminous core the old field had; kept large, since a
+// small cream core on this ground reads as a grey disc instead.
+export const WASH_FOLDER = [
+  { lift: 0.28, size: [0.5, 0.5], at: [0.32, 0.56], extent: 0.72 },
+  { pigment: 'butter', x: 0.241, size: [0.62, 0.62], at: [0.3, 0.52], extent: 0.72, wetness: 'wet' },
+  { pigment: 'apricot', x: 0.266, size: [0.56, 0.56], at: [0.12, 0.82], extent: 0.72, wetness: 'wet' },
+  { pigment: 'yellowgreen', x: 0.2, size: [0.42, 0.42], at: [0.56, 0.3], extent: 0.72, wetness: 'wet' },
+  { pigment: 'rose', x: 0.18, size: [0.4, 0.4], at: [0.36, 1.04], extent: 0.74, wetness: 'wet' },
+]
+
+const RECIPES = { default: WASH_STATIC, warm: WASH_WARM, folder: WASH_FOLDER }
 
 export default function WatercolourBloom({ className = '', variant = 'default', canvas = true, fadeTop = 0 }) {
   return (
     <BloomField
-      blooms={variant === 'warm' ? WASH_WARM : WASH_STATIC}
+      blooms={RECIPES[variant] || WASH_STATIC}
       canvas={canvas}
       fadeTop={fadeTop}
       className={`pointer-events-none absolute inset-0 ${className}`}

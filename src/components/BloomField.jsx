@@ -53,6 +53,17 @@ export function bloomFields() {
   return fields
 }
 
+// The canvas only draws when something it paints has changed (it no longer
+// runs a loop once the wash has dried), so a field arriving or leaving has to
+// say so — otherwise a section mounted after the wash settled would sit
+// unpainted until the next scroll.
+const listeners = new Set()
+export function onBloomFieldsChange(cb) {
+  listeners.add(cb)
+  return () => listeners.delete(cb)
+}
+const announce = () => listeners.forEach((cb) => cb())
+
 export default function BloomField({
   blooms,
   over = PAPER_REFLECTANCE,
@@ -79,7 +90,11 @@ export default function BloomField({
     if (!canvas) return
     const entry = { el: ref.current, blooms, over, fadeTop }
     fields.add(entry)
-    return () => fields.delete(entry)
+    announce()
+    return () => {
+      fields.delete(entry)
+      announce()
+    }
   }, [blooms, over, canvas, fadeTop])
 
   const backgroundImage = useMemo(() => fieldCss(blooms, over), [blooms, over])

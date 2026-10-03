@@ -30,6 +30,19 @@
  * is wrong rather than that two pictures differ — it reports the packages lift
  * as "darker than any paint that reaches it", which is the whole diagnosis.
  *
+ * 3. ADJACENCY. CLAUDE.md's first anti-mud rule: yellow-green never touches
+ *    rose or blush directly. Mixed in one layer the two land on a beige
+ *    neither paint is (0.07 of each composites to rgb(243,234,224)), and KM is
+ *    no protection — it is exactly what KM predicts. The rule was policed by
+ *    eye, and two fields had drifted across it. This one needs no rendering:
+ *    from the spec alone it finds every pixel where a green and a rose would
+ *    both deposit visibly, in either tier's footprint, with lifts (the rule's
+ *    "cream gap") counted. Fields are tested at the size they actually render
+ *    — each BloomField is measured on the built pages at phone, tablet and
+ *    desktop widths — because a vw-sized wash's neighbours move as its section
+ *    changes shape; fields drawn by a direct fieldCss() call are swept across
+ *    shapes instead. The hero orb is the documented exception and is skipped.
+ *
  * WHAT IS COVERED. The two tiers that resolve a field on the CPU and can be
  * read back as pixels. Both ALPHA-composite their lobes rather than summing
  * thickness the way §5.2 prescribes — the documented limit of CSS, and the
@@ -42,6 +55,9 @@
 
 import { createServer } from 'vite'
 import { chromium } from 'playwright'
+import { readdirSync } from 'node:fs'
+import { join } from 'node:path'
+import { adjacency, ADJACENT_LEVEL } from './wash-adjacency.mjs'
 
 // A phone-shaped field: the aspect the ambient washes run at down a long
 // section, which is where the raster tier lives and where the blobs were.
@@ -74,16 +90,22 @@ const TOLERANCE = 8
  */
 const DIRECTIONS = 512
 
+// `npm run check:wash -- --verbose` prints every shape the adjacency pass tried.
+const VERBOSE = process.argv.includes('--verbose')
+
 async function main() {
   const server = await createServer({ server: { port: 5199, strictPort: true }, logLevel: 'error' })
   await server.listen()
 
-  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined })
+  const browser = await launch()
   const page = await browser.newPage({ viewport: { width: WIDTH, height: 900 } })
   page.on('pageerror', (e) => console.error('page error:', e.message))
   await page.goto('http://localhost:5199', { waitUntil: 'domcontentloaded' })
 
-  const results = await page.evaluate(check, { WIDTH, HEIGHT, STRIDE, DIRECTIONS })
+  const { results, specs } = await page.evaluate(check, { WIDTH, HEIGHT, STRIDE, DIRECTIONS })
+  await page.close()
+
+  const shapes = await measureShapes(browser, specs)
 
   await browser.close()
   await server.close()
@@ -115,12 +137,129 @@ async function main() {
     }
   }
 
+  console.log('\nfield            green+rose   (worst shape)')
+  for (const [name, { blooms, over }] of Object.entries(specs)) {
+    if (ADJACENCY_EXEMPT[name]) {
+      console.log(`- ${name.padEnd(14)} skipped: ${ADJACENCY_EXEMPT[name]}`)
+      continue
+    }
+    const measured = shapes.get(name)
+    const tried = measured?.length ? measured : SWEEP
+    let worst = { level: 0 }
+    for (const shape of tried) {
+      const hit = adjacency(blooms, over, shape)
+      if (VERBOSE) console.log(`    ${shape.w}x${shape.h} @${shape.vw}: ${hit.level.toFixed(1)} ${hit.green || ''} ${hit.rose || ''} ${hit.at || ''}`)
+      if (hit.level > worst.level) worst = { ...hit, shape }
+    }
+    const bad = worst.level >= ADJACENT_LEVEL
+    if (bad) failed++
+    const where = measured?.length ? `${tried.length} measured` : 'swept'
+    console.log(
+      `${bad ? '✗' : '✓'} ${name.padEnd(14)} ${worst.level.toFixed(1).padStart(5)}/255   ` +
+        (worst.shape ? `${worst.shape.w}x${worst.shape.h} @${worst.shape.vw}vw (${where})` : `(${where})`),
+    )
+    if (bad) {
+      console.log(
+        `    ${worst.green} and ${worst.rose} both deposit at (${worst.at}) in the ${worst.tier} footprint — ` +
+          'bridge them with butter or a lift, or move them apart',
+      )
+    }
+  }
+
   if (failed) {
     console.log(`\n${failed} field(s) failed. See the header of scripts/check-wash.mjs.`)
     process.exitCode = 1
   } else {
-    console.log(`\nAll ${results.length} fields agree across tiers and stay inside their palettes.`)
+    console.log(
+      `\nAll ${results.length} fields agree across tiers, stay inside their palettes, and keep green off rose.`,
+    )
   }
+}
+
+/**
+ * Playwright pins a browser build, and an environment that pre-installs a
+ * different one fails to launch with "Executable doesn't exist". CHROMIUM_PATH
+ * wins; failing that, any Chromium under PLAYWRIGHT_BROWSERS_PATH will do — the
+ * check only needs canvas and gradients, nothing version-specific.
+ */
+async function launch() {
+  if (process.env.CHROMIUM_PATH) return chromium.launch({ executablePath: process.env.CHROMIUM_PATH })
+  try {
+    return await chromium.launch()
+  } catch (e) {
+    const root = process.env.PLAYWRIGHT_BROWSERS_PATH
+    const found = root
+      ? readdirSync(root)
+          .filter((d) => /^chromium-\d+$/.test(d))
+          .sort()
+          .reverse()
+          .map((d) => join(root, d, 'chrome-linux', 'chrome'))
+      : []
+    for (const executablePath of found) {
+      try {
+        return await chromium.launch({ executablePath })
+      } catch {
+        // try the next one
+      }
+    }
+    throw e
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. Adjacency
+ * ------------------------------------------------------------------ */
+
+const ADJACENCY_EXEMPT = {
+  'hero orb': "documented exception (CLAUDE.md): one composed orb, art-directed green through blush",
+}
+
+// Field shapes for washes no BloomField renders, so nothing on the page can be
+// measured: section-like aspect ratios from wide-and-short to a long phone run.
+const SWEEP = [0.5, 0.75, 1, 1.5, 2, 3, 4.5, 6].map((r) => ({ w: 1000, h: 1000 * r, vw: 1000 }))
+
+const PAGES = ['/', '/corporate/', '/faq/']
+const VIEWPORTS = [
+  [393, 852],
+  [768, 1024],
+  [1440, 900],
+]
+
+/**
+ * The size each BloomField actually renders at, read off the live pages.
+ *
+ * A field doesn't know its own name, so it is matched to FIELDS by its spec:
+ * the props React holds for the BloomField above each `[data-bloom-field]`.
+ */
+async function measureShapes(browser, specs) {
+  const byJson = new Map(Object.entries(specs).map(([name, s]) => [JSON.stringify(s.blooms), name]))
+  const shapes = new Map()
+  for (const [width, height] of VIEWPORTS) {
+    const page = await browser.newPage({ viewport: { width, height } })
+    for (const path of PAGES) {
+      await page.goto(`http://localhost:5199${path}`, { waitUntil: 'load' })
+      await page.waitForTimeout(800)
+      const found = await page.evaluate(() =>
+        [...document.querySelectorAll('[data-bloom-field]')].map((el) => {
+          const key = Object.keys(el).find((k) => k.startsWith('__reactFiber$'))
+          let f = key && el[key]
+          while (f && !f.memoizedProps?.blooms) f = f.return
+          const r = el.getBoundingClientRect()
+          return f ? { spec: JSON.stringify(f.memoizedProps.blooms), w: r.width, h: r.height } : null
+        }),
+      )
+      for (const m of found) {
+        const name = m && byJson.get(m.spec)
+        if (!name || m.w < 1 || m.h < 1) continue
+        const list = shapes.get(name) || []
+        const shape = { w: Math.round(m.w), h: Math.round(m.h), vw: width }
+        if (!list.some((s) => s.w === shape.w && s.h === shape.h && s.vw === shape.vw)) list.push(shape)
+        shapes.set(name, list)
+      }
+    }
+    await page.close()
+  }
+  return shapes
 }
 
 /**
@@ -152,6 +291,7 @@ async function check({ WIDTH, HEIGHT, STRIDE, DIRECTIONS }) {
     ['hero orb', hero.HERO_ORB, wc.PAPER_REFLECTANCE],
     ['ambient', bloom.WASH_STATIC, wc.PAPER_REFLECTANCE],
     ['ambient warm', bloom.WASH_WARM, wc.PAPER_REFLECTANCE],
+    ['ambient folder', bloom.WASH_FOLDER, wc.PAPER_REFLECTANCE],
     ['packages', packages.PACKAGES_FIELD, wc.PAPER_DEEP],
     ['pull quote', quote.QUOTE_FIELD, wc.PAPER_REFLECTANCE],
     ['postcard', postcard.POSTCARD_WASH, wc.PAPER_REFLECTANCE],
@@ -355,6 +495,10 @@ async function check({ WIDTH, HEIGHT, STRIDE, DIRECTIONS }) {
     results.push({ field: name, agree, gamut })
   }
 
+  // The specs themselves, for the adjacency pass in Node, with the ground each
+  // composites onto.
+  const specs = Object.fromEntries(FIELDS.filter(([, b]) => b).map(([name, b, over]) => [name, { blooms: b, over }]))
+
   /** Which way a colour escaped, in words a person can act on. */
   function describe(u) {
     // The separating direction points away from the set, so one that is mostly
@@ -368,7 +512,7 @@ async function check({ WIDTH, HEIGHT, STRIDE, DIRECTIONS }) {
     return `${u[i] > 0 ? 'more' : 'less'} ${axis[i]} than any paint that reaches it`
   }
 
-  return results
+  return { results, specs }
 }
 
 await main()

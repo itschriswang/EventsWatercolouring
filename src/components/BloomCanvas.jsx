@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useReducedMotion } from 'framer-motion'
 import { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { webglSupported, getContext, createQuadProgram, resizeCanvas } from '../lib/webgl.js'
-import { bloomFields } from './BloomField.jsx'
+import { bloomFields, onBloomFieldsChange } from './BloomField.jsx'
 import {
   GLSL_PRECISION,
   GLSL_NOISE,
@@ -16,9 +16,9 @@ import {
 /**
  * BloomCanvas — every bloom field on the page, painted as actual paint.
  *
- * One fixed, full-viewport WebGL canvas that reads the registered BloomFields
- * each frame, masks each to its element's rect, and renders its blooms with the
- * Curtis et al. model (see lib/watercolour.js).
+ * One fixed, full-viewport WebGL canvas that reads the registered BloomFields,
+ * masks each to its element's rect, and renders its blooms with the Curtis et
+ * al. model (see lib/watercolour.js).
  *
  * The thing CSS cannot do, and the reason this exists: where blooms overlap,
  * the browser alpha-blends them, which averages colour and slides toward grey —
@@ -30,18 +30,25 @@ import {
  *
  * On top of that the wash granulates into the sheet's hollows at a rate set by
  * each pigment's γ (§4.5), and its flow is deflected by the paper's slope into
- * striations (§4.3). The blooms carry their own edge darkening in their
- * thickness profiles (§4.3.3).
+ * striations (§4.3). The dried rim (§4.3.3) runs around the edge of each wet
+ * patch rather than each bloom, heavier on the downhill side, and some washes
+ * carry a backrun (§4.6).
  *
- * Cost control: half-resolution buffer, DPR capped at 1, ~30fps throttle,
- * paused when the tab is hidden or the page hasn't been revealed. It only
- * mounts on capable, motion-friendly devices (`useHeavyFx`); everywhere else —
- * touch, reduced-motion, no WebGL — BloomField's CSS rendering stays up. The
- * canvas signals the handover with `data-live-blooms` on the root, which fades
- * the CSS layers out (index.css), and clearing it on teardown fades them back.
+ * Cost control: half-resolution buffer, DPR capped at 1, and no loop once the
+ * wash has dried — it moves for its first few seconds, then only redraws when
+ * the page scrolls, resizes or gains a field. It only mounts on capable,
+ * motion-friendly devices (`useHeavyFx`); everywhere else — touch,
+ * reduced-motion, no WebGL — BloomField's CSS rendering stays up. The canvas
+ * signals the handover with `data-live-blooms` on the root, which fades the CSS
+ * layers out (index.css), and clearing it on teardown fades them back.
  */
 
 const MAX_FIELDS = 4
+// A slot budget, not a page budget: blooms that cannot reach the viewport are
+// culled before slots are handed out (see readFields). Without that, two tall
+// fields on screen at once — 16 blooms each, most of them thousands of pixels
+// away — overflowed 24 and the tail of the second field was dropped, and since
+// its CSS twin is faded out under the canvas those washes simply vanished.
 const MAX_BLOOMS = 24
 
 // Coverage headroom for the colour/alpha split, matching lib/watercolour.js.
@@ -76,16 +83,50 @@ const GRAN_AMOUNT = '1.1' //  granulation at full wetness; γ scales it per pigm
 // number. Re-measure it if that noise changes; centring on the wrong value
 // slides every wash sideways instead of deforming it.
 const CONTOUR_WAVE = 900 //     CSS px, the coarsest lobe
-const CONTOUR_MAX = '200.0' //  CSS px, the furthest the front strays
+const CONTOUR_MAX = 200 //      CSS px, the furthest the front strays
 const CONTOUR_GAIN = '700.0' // CSS px per unit fbm, so ~70px typical
 const FBM_MEAN = '0.2179'
 const CONTOUR_FREQ = (1 / CONTOUR_WAVE).toFixed(6)
+
+// The dried rim, laid once around each wet patch (GLSL_WASH's wetFront). BEAD
+// is how much of the rim's pigment runs downhill: the sheet is tilted, which is why the contour warp shears (see below), and on a
+// tilted sheet a wash drains into a bead along its lower edge and dries darker
+// there. At 0.55 the low edge carries ~1.5x the even rim and the top ~0.5x; a
+// cosine around the edge averages to zero, so the wash's load is unchanged.
+const BEAD = '0.55'
+
+// §4.6 backruns. Only some washes get one — a backrun is an accident of uneven
+// drying, and one on every bloom would read as a pattern — and only washes big
+// enough on screen to hold a frilled edge rather than a smudge.
+//
+// The source sits off-centre (OFFSET, a fraction of the bloom's reach), where
+// a wash dries last and water pooled; RADIUS is how far the creep got; DEPLETE
+// how much pigment it pushed out of its interior, all of which lands on its
+// front (backrun() solves that). FRILL roughens the front on a ~46px sheet
+// noise so it scallops like cauliflower rather than drawing a ring. Keep it
+// modest: the roughening scales the distance, so pushed much past this it
+// starts opening pale specks outside the front, which read as holes in the
+// wash rather than water that crept.
+const BACKRUN_SHARE = 0.4
+const BACKRUN_MIN_PX = 140
+const BACKRUN_OFFSET = '0.28'
+const BACKRUN_RADIUS = '0.42'
+const BACKRUN_DEPLETE = '0.30'
+const BACKRUN_FRILL = '1.3'
+
+// "Let it dry." The wash breathes while it is wet and then stops, which is
+// what paint does and what lets the canvas stop drawing. Its clock runs at the
+// old pace at first and eases to a halt, DRY_S * (1 - e^(-t/DRY_S)), so there
+// is no moment the motion visibly cuts out; after DRY_SETTLE of those the
+// remaining drift is under 2% and the clock is frozen.
+const DRY_S = 6
+const DRY_SETTLE = 4
 
 const FRAG = `
 ${GLSL_PRECISION}
   uniform vec2 u_res;
   uniform float u_time;
-  uniform float u_scroll;
+  uniform float u_scroll;      // page scrollY in CSS px — the sheet is on the page
   uniform float u_alpha;
   uniform float u_px;          // device px per CSS px, so paper tooth holds its size
   uniform int u_bloomCount;
@@ -101,17 +142,17 @@ ${GLSL_PRECISION}
   uniform vec4 u_bloomGeom[${MAX_BLOOMS}];   // at.xy, size.xy (fractions of field)
   uniform vec4 u_bloomArgs[${MAX_BLOOMS}];   // peak thickness, extent, wetness, field index
   uniform vec4 u_bloomK[${MAX_BLOOMS}];      // K.rgb, granulation exponent
-  uniform vec4 u_bloomS[${MAX_BLOOMS}];      // S.rgb
+  uniform vec4 u_bloomS[${MAX_BLOOMS}];      // S.rgb, backrun seed (0 = none)
 
 ${GLSL_NOISE}
 ${GLSL_PAPER}
 ${GLSL_KM}
 ${GLSL_WASH}
 
-  // Thickness across a bloom at radial distance d (1 = the gradient's radius),
-  // matching BLOOM_PROFILES in lib/watercolour.js so the canvas and the CSS
-  // fallback describe the same paint. Wet-on-dry carries the dried rim; wet-in-
-  // wet feathers out with none (§2.2).
+  // Thickness across a bloom at profile position p, matching BLOOM_PROFILES in
+  // lib/watercolour.js so the canvas and the CSS fallback describe the same
+  // paint. Wet-on-dry carries the dried rim; wet-in-wet feathers out with none
+  // (§2.2).
   float profileDry(float p){
     if (p >= 0.80) return 0.0;
     if (p < 0.30) return mix(0.4544, 0.3225, p / 0.30);
@@ -119,6 +160,17 @@ ${GLSL_WASH}
     if (p < 0.66) return mix(0.2492, 0.6303, (p - 0.52) / 0.14);  // the dried rim
     if (p < 0.74) return mix(0.6303, 0.1466, (p - 0.66) / 0.08);
     return mix(0.1466, 0.0, (p - 0.74) / 0.06);
+  }
+  // The same wash with the rim taken out: its interior knots, then a straight
+  // run from the last of them to where the paint ends. The canvas paints this
+  // per bloom and adds the rim once per wet patch — profileDry minus bodyDry,
+  // laid on the patch's own front — so an isolated bloom comes out exactly as
+  // profileDry, and an overlap loses only the rims that would sit inside it.
+  float bodyDry(float p){
+    if (p >= 0.80) return 0.0;
+    if (p < 0.30) return mix(0.4544, 0.3225, p / 0.30);
+    if (p < 0.52) return mix(0.3225, 0.2492, (p - 0.30) / 0.22);
+    return mix(0.2492, 0.0, (p - 0.52) / 0.28);
   }
   float profileWet(float p){
     if (p >= 1.0) return 0.0;
@@ -138,17 +190,19 @@ ${GLSL_WASH}
     vec2 uv = gl_FragCoord.xy / u_res;
     vec2 sv = vec2(uv.x, 1.0 - uv.y);          // 0 at top, to match DOM rects
 
-    // The sheet (§4.1), in CSS pixels so the tooth holds a fixed size.
-    vec2 sheet = gl_FragCoord.xy / u_px;
+    // The sheet (§4.1), in page CSS pixels so the tooth holds a fixed size and
+    // travels with the page rather than staying on the glass.
+    vec2 sheet = pageSheet(gl_FragCoord.xy, u_res, u_px, u_scroll);
     float mottle = paperMottle(sheet);
     float fibre = paperFieldAt(sheet, mottle, 0.35);
     float hollow = paperFieldAt(sheet, mottle, 0.78);
 
-    // Wet-on-wet: the pigment bleeds and breathes at its edges rather than
-    // sitting still, and the paper's slope streaks that flow (§4.3, cond. 4).
+    // Wet-on-wet: the pigment bleeds and breathes at its edges while the wash
+    // is wet, and the paper's slope streaks that flow (§4.3, cond. 4). On the
+    // sheet, not the screen, so it holds still under the paint as you scroll;
+    // 375px per unit is the scale it had at a 900px viewport.
     float t = u_time * 0.03;
-    float drift = u_scroll / u_res.y * 0.15;
-    vec2 fp = vec2(sv.x * (u_res.x / u_res.y), sv.y) * 2.4 + vec2(0.0, drift);
+    vec2 fp = sheet / 375.0;
     vec2 warp = vec2(fbm(fp + t), fbm(fp.yx + 5.2 - t));
     vec2 bleed = (0.85 * warp - 0.42
                + flowStreak(paperSlope(sheet, mottle), warp - 0.5) * ${FLOW_SLOPE}) * 0.06;
@@ -185,7 +239,11 @@ ${GLSL_WASH}
     // ending it here is a build error that reads as a syntax error 40 lines up.)
     vec2 cp = sheet * ${CONTOUR_FREQ};
     vec2 contour = clamp((vec2(fbm(cp), fbm(cp.yx + 19.3)) - ${FBM_MEAN}) * ${CONTOUR_GAIN},
-                         -${CONTOUR_MAX}, ${CONTOUR_MAX}) * u_px / u_res;
+                         -${CONTOUR_MAX.toFixed(1)}, ${CONTOUR_MAX.toFixed(1)}) * u_px / u_res;
+
+    // The backrun front's roughness, one sample of the sheet shared by every
+    // backrun: they never overlap, so they cannot be seen to share it.
+    float frill = (fbm(sheet / 46.0 + 41.7) - ${FBM_MEAN}) * ${BACKRUN_FRILL};
 
     // §5.2 — one layer, several pigments. Accumulate K and S weighted by each
     // pigment's thickness and sum the thicknesses; the division below is the
@@ -197,6 +255,18 @@ ${GLSL_WASH}
     float gran = 0.0;
     vec3 backdrop = vec3(1.0);
     float painted = 0.0;
+
+    // The water standing on the sheet (wetFront) and the paint that dries at
+    // its edge. Each dry bloom contributes by how wet it leaves this pixel, so
+    // the rim takes the pigment of the wash whose water reaches it and blends
+    // smoothly where two washes' water meets.
+    float water = 0.0;
+    vec3 rK = vec3(0.0);
+    vec3 rS = vec3(0.0);
+    float rG = 0.0;
+    float rX = 0.0;
+    float rW = 0.0;
+    float rDown = 0.0;
 
     // Nested so both array indices are loop counters: GLSL ES 1.00 only allows
     // uniform arrays to be indexed by a constant expression, which a value
@@ -214,6 +284,7 @@ ${GLSL_WASH}
       vec4 over = u_fieldOver[fi];
       // The vertical fade a masked field would have had in CSS.
       float fade = u_fieldFade[fi] > 0.0 ? smoothstep(0.0, u_fieldFade[fi], f.y) : 1.0;
+      float ff = over.a * fade;
 
       for (int i = 0; i < ${MAX_BLOOMS}; i++){
         if (i >= u_bloomCount) break;
@@ -222,23 +293,72 @@ ${GLSL_WASH}
 
         vec4 geom = u_bloomGeom[i];
         vec2 rel = (f + bleed + cf - geom.xy) / max(geom.zw, vec2(1e-4));
-        float d = length(rel);
-        float p = bloomProfile(d / max(args.y, 1e-3), args.z) * over.a * fade;
-        if (p <= 0.0) continue;
+        float ext = max(args.y, 1e-3);
+        float d = length(rel) / ext;               // 0 at the centre, 1 where paint ends
+        if (d >= 1.0) continue;
         // Negative thickness is a LIFT, not paint: the near-white cores that
         // hold the overlap zones open are unpainted paper showing through, and
         // §4.5's desorption is the model's name for pigment coming back off the
         // sheet. Tracked apart so it never pollutes the K/S mix.
-        if (args.x < 0.0) { lift += -args.x * p; painted = 1.0; continue; }
-        float x = args.x * p;
+        if (args.x < 0.0) {
+          float pl = bloomProfile(d, args.z) * ff;
+          if (pl > 0.0) { lift += -args.x * pl; painted = 1.0; }
+          continue;
+        }
 
-        Kacc += u_bloomK[i].rgb * x;
-        Sacc += u_bloomS[i].rgb * x;
-        gran += u_bloomK[i].w * x;
-        X += x;
-        painted = 1.0;
+        vec3 K = u_bloomK[i].rgb;
+        vec3 S = u_bloomS[i].rgb;
+        float g = u_bloomK[i].w;
+        float wet = args.z;
+        float body = mix(bodyDry(d * 0.80), profileWet(d), wet) * ff;
+
+        // §4.6: the creep pushes pigment out of its interior onto its front.
+        float seed = u_bloomS[i].w;
+        if (seed > 0.0 && body > 0.0) {
+          float a = seed * 6.2832;
+          vec2 src = vec2(cos(a), sin(a)) * ${BACKRUN_OFFSET} * ext;
+          float q = length(rel - src) / (${BACKRUN_RADIUS} * ext) * (1.0 + frill);
+          body *= backrun(q, ${BACKRUN_DEPLETE});
+        }
+
+        if (body > 0.0) {
+          float x = args.x * body;
+          Kacc += K * x;
+          Sacc += S * x;
+          gran += g * x;
+          X += x;
+          painted = 1.0;
+        }
+
+        if (wet < 0.5) {
+          float w = 1.0 - d;
+          water += w;
+          float xw = args.x * ff * w;
+          rK += K * xw;
+          rS += S * xw;
+          rG += g * xw;
+          rX += xw;
+          rW += w;
+          // Which side of its wash this edge is on; positive is downhill.
+          rDown += w * rel.y / max(length(rel), 1e-4);
+        }
       }
       if (painted > 0.5) backdrop = over.rgb;
+    }
+
+    // The dried rim, once, on the wet patch's own front (§4.3.3), carrying
+    // more of its pigment on the downhill side. For a lone bloom front is just
+    // its own d, and body plus rim is exactly profileDry.
+    if (rX > 0.0 && rW > 0.0) {
+      float front = wetFront(water);
+      float bump = profileDry(front * 0.80) - bodyDry(front * 0.80);
+      float rim = (rX / rW) * bump * (1.0 + ${BEAD} * (rDown / rW));
+      if (rim > 0.0) {
+        Kacc += rK / rX * rim;
+        Sacc += rS / rX * rim;
+        gran += rG / rX * rim;
+        X += rim;
+      }
     }
 
     // Weight the mix by the pigment actually laid down, then let the lift take
@@ -274,6 +394,12 @@ ${GLSL_WASH}
   }
 `
 
+/** A stable 0..1 per bloom, from where it sits and what it is. */
+function bloomHash(b, salt) {
+  const s = Math.sin((b.at[0] + 1.7) * 91.345 + (b.at[1] + 2.3) * 47.853 + salt * 13.17 + (b.x || 0) * 7.1) * 43758.5453
+  return s - Math.floor(s)
+}
+
 export default function BloomCanvas({ revealed }) {
   const reduce = useReducedMotion()
   const heavyFx = useHeavyFx()
@@ -291,7 +417,7 @@ export default function BloomCanvas({ revealed }) {
     // The uniform arrays are the one hard limit here; bail to the CSS fields
     // rather than shipping a shader the driver will refuse to link.
     const vectors = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS)
-    if (vectors < MAX_FIELDS * 2 + MAX_BLOOMS * 4 + 8) return
+    if (vectors < MAX_FIELDS * 3 + MAX_BLOOMS * 4 + 8) return
 
     const prog = createQuadProgram(gl, FRAG)
     if (!prog) return
@@ -302,13 +428,17 @@ export default function BloomCanvas({ revealed }) {
     root.dataset.liveBlooms = ''
 
     const start = performance.now()
+    const DRY_MS = DRY_S * DRY_SETTLE * 1000
+    const FRAME_MS = 1000 / 30
     let raf = 0
     let lastDraw = 0
-    let running = true
-    const FRAME_MS = 1000 / 30
+    let urgent = false
+    let running = !document.hidden
+    let warned = false
 
-    // Reused scratch buffers — these are rewritten every frame, and allocating
-    // ~30 typed arrays a second would hand the GC work for no reason.
+    // Reused scratch buffers — these are rewritten every draw, and allocating
+    // ~30 typed arrays a second while scrolling would hand the GC work for no
+    // reason.
     const fieldRect = new Float32Array(MAX_FIELDS * 4)
     const fieldOver = new Float32Array(MAX_FIELDS * 4)
     const fieldFade = new Float32Array(MAX_FIELDS)
@@ -318,7 +448,7 @@ export default function BloomCanvas({ revealed }) {
     const bloomS = new Float32Array(MAX_BLOOMS * 4)
 
     // K/S never change for a pigment, so resolve them once instead of inverting
-    // the KM equations for every bloom on every frame.
+    // the KM equations for every bloom on every draw.
     const BLANK = { K: [0, 0, 0], S: [0, 0, 0], gran: 0 }
     const paints = new Map()
     const paint = (name) => {
@@ -331,6 +461,7 @@ export default function BloomCanvas({ revealed }) {
       const vh = window.innerHeight || 1
       let nf = 0
       let nb = 0
+      let wanted = 0
       for (const field of bloomFields()) {
         if (nf >= MAX_FIELDS || !field.el?.isConnected) continue
         const r = field.el.getBoundingClientRect()
@@ -343,42 +474,67 @@ export default function BloomCanvas({ revealed }) {
         fieldOver.set([field.over[0], field.over[1], field.over[2], reveal], nf * 4)
         fieldFade[nf] = field.fadeTop || 0
 
+        // How far a bloom's paint can land from where it was specified: the
+        // contour warp in CSS px, plus the bleed, which is in field fractions.
+        const padX = CONTOUR_MAX + 0.03 * r.width
+        const padY = CONTOUR_MAX + 0.03 * r.height
+
         for (const b of field.blooms) {
-          if (nb >= MAX_BLOOMS) break
           // vw-sized circles are resolved against the viewport here, then
           // expressed in the field's own fractions for the shader.
           const rx = b.sizeVw ? (vwAxis(b.sizeVw, 0) * vw) / 100 / r.width : b.size[0]
           const ry = b.sizeVw ? (vwAxis(b.sizeVw, 1) * vw) / 100 / r.height : b.size[1]
+          const ext = b.extent ?? 0.72
+
+          // Cull what cannot reach the viewport. Most of a tall field's blooms
+          // are thousands of pixels away at any moment, and every one of them
+          // used to take a slot.
+          const cx = r.left + b.at[0] * r.width
+          const cy = r.top + b.at[1] * r.height
+          const reachX = rx * r.width * ext * 1.15 + padX
+          const reachY = ry * r.height * ext * 1.15 + padY
+          if (cx + reachX < 0 || cx - reachX > vw || cy + reachY < 0 || cy - reachY > vh) continue
+
+          wanted++
+          if (nb >= MAX_BLOOMS) continue
           bloomGeom.set([b.at[0], b.at[1], rx, ry], nb * 4)
           // Lifts ride the same array with a negative thickness — they occupy a
           // bloom slot but carry no paint, so K/S stay zero.
           const { K, S, gran } = b.lift ? BLANK : paint(b.pigment)
-          bloomArgs.set(
-            [b.lift ? -b.lift : b.x, b.extent ?? 0.72, b.wetness === 'wet' ? 1 : 0, nf],
-            nb * 4,
-          )
+          const wet = b.wetness === 'wet'
+          bloomArgs.set([b.lift ? -b.lift : b.x, ext, wet ? 1 : 0, nf], nb * 4)
+
+          // A backrun needs a wet-on-dry wash big enough to frill.
+          const onScreen = Math.min(rx * r.width, ry * r.height) * ext
+          const backrun =
+            !b.lift && !wet && onScreen >= BACKRUN_MIN_PX && bloomHash(b, 1) < BACKRUN_SHARE
+              ? 0.02 + 0.98 * bloomHash(b, 2)
+              : 0
           bloomK.set([K[0], K[1], K[2], gran], nb * 4)
-          bloomS.set([S[0], S[1], S[2], 0], nb * 4)
+          bloomS.set([S[0], S[1], S[2], backrun], nb * 4)
           nb++
         }
         nf++
       }
+      if (import.meta.env.DEV && wanted > MAX_BLOOMS && !warned) {
+        warned = true
+        console.warn(`[BloomCanvas] ${wanted} blooms reach the viewport; ${wanted - MAX_BLOOMS} dropped.`)
+      }
       return { blooms: nb, fields: nf }
     }
 
-    const frame = (now) => {
-      if (!running) return
-      raf = requestAnimationFrame(frame)
-      if (now - lastDraw < FRAME_MS) return
-      lastDraw = now
-
+    const draw = (now) => {
       resizeCanvas(gl, canvas, 0.5, 1)
       const { blooms, fields } = readFields()
+
+      // The drying clock: the old pace at first, easing to a stop.
+      const wetFor = Math.min(now - start, DRY_MS) / 1000
+      const clock = DRY_S * (1 - Math.exp(-wetFor / DRY_S))
 
       gl.useProgram(prog.program)
       gl.uniform2f(prog.uniforms('u_res'), canvas.width, canvas.height)
       gl.uniform1f(prog.uniforms('u_px'), canvas.width / Math.max(1, canvas.clientWidth))
-      gl.uniform1f(prog.uniforms('u_time'), (now - start) / 1000)
+      gl.uniform1f(prog.uniforms('u_time'), clock)
       gl.uniform1f(prog.uniforms('u_scroll'), window.scrollY || 0)
       // Ease the whole layer in so it doesn't pop on first paint.
       gl.uniform1f(prog.uniforms('u_alpha'), Math.min(1, (now - start) / 900))
@@ -397,23 +553,66 @@ export default function BloomCanvas({ revealed }) {
       prog.draw()
     }
 
+    // While wet, the wash animates at ~30fps. Once dry nothing moves on its
+    // own, so the canvas only draws when the page does: a scroll, a resize, a
+    // field arriving. Those draws are not throttled — the canvas is fixed and
+    // the page is not, so a scroll frame skipped is a frame the paint visibly
+    // slides against the section it belongs to.
+    const frame = (now) => {
+      raf = 0
+      if (!running) return
+      const wet = now - start < DRY_MS
+      if (urgent || now - lastDraw >= FRAME_MS) {
+        urgent = false
+        lastDraw = now
+        draw(now)
+      }
+      if (wet) raf = requestAnimationFrame(frame)
+    }
+    const request = () => {
+      urgent = true
+      if (!raf && running) raf = requestAnimationFrame(frame)
+    }
+
+    // Layout can move a field without a scroll (fonts, lazy images, a section
+    // opening), so watch the document and every field's own box as well.
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(request) : null
+    const observe = () => {
+      if (!ro) return
+      ro.disconnect()
+      ro.observe(root)
+      for (const field of bloomFields()) if (field.el) ro.observe(field.el)
+    }
+    observe()
+    const offFields = onBloomFieldsChange(() => {
+      observe()
+      request()
+    })
+
     const onVisibility = () => {
       if (document.hidden) {
         running = false
         cancelAnimationFrame(raf)
+        raf = 0
       } else if (!running) {
         running = true
         lastDraw = 0
-        raf = requestAnimationFrame(frame)
+        request()
       }
     }
     document.addEventListener('visibilitychange', onVisibility)
-    raf = requestAnimationFrame(frame)
+    window.addEventListener('scroll', request, { passive: true })
+    window.addEventListener('resize', request)
+    request()
 
     return () => {
       running = false
       cancelAnimationFrame(raf)
+      ro?.disconnect()
+      offFields()
       document.removeEventListener('visibilitychange', onVisibility)
+      window.removeEventListener('scroll', request)
+      window.removeEventListener('resize', request)
       delete root.dataset.liveBlooms
       gl.getExtension('WEBGL_lose_context')?.loseContext()
     }
