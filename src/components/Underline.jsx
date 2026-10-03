@@ -2,6 +2,7 @@ import { useId, useMemo, useRef, useState } from 'react'
 import { motion, useReducedMotion, useInView } from 'framer-motion'
 import usePinchZoomed from '../hooks/usePinchZoom.js'
 import { REVEAL_VIEWPORT } from '../lib/site.js'
+import { brushOutline } from '../lib/brushStroke.js'
 
 // Six hand-drawn squiggle paths (viewBox 0 0 310 40), adapted from the
 // underline.js reference brush strokes so the site's key phrases get a
@@ -14,6 +15,13 @@ const PATHS = [
   'M4.99805 20.9998C65.6267 17.4649 126.268 13.845 187.208 12.8887C226.483 12.2723 265.751 13.2796 304.998 13.9998',
   'M5 29.8857C52.3147 26.9322 99.4329 21.6611 146.503 17.1765C151.753 16.6763 157.115 15.9505 162.415 15.6551C163.28 15.6069 165.074 15.4123 164.383 16.4275C161.704 20.3627 157.134 23.7551 153.95 27.4983C153.209 28.3702 148.194 33.4751 150.669 34.6605C153.638 36.0819 163.621 32.6063 165.039 32.2029C178.55 28.3608 191.49 23.5968 204.869 19.5404C231.903 11.3436 259.347 5.83254 288.793 5.12258C294.094 4.99476 299.722 4.82265 305 5.45025',
 ]
+
+// Each squiggle painted as a brushstroke — landing with weight, swelling, and
+// lifting off to a point (lib/brushStroke.js) — instead of stroked at one
+// width like a marker. Built the first time a phrase picks that squiggle and
+// kept for the page's life: a few milliseconds each, once.
+const OUTLINES = []
+const outlineFor = (i) => (OUTLINES[i] ??= brushOutline(PATHS[i], { seed: i + 1 }))
 
 // Small deterministic string hash (djb2-ish), used only to pick a squiggle —
 // no need for cryptographic quality here.
@@ -61,9 +69,12 @@ export default function Underline({ children, seed, className = '' }) {
   const [hovered, setHovered] = useState(false)
 
   const text = seed ?? (typeof children === 'string' ? children : '')
-  const d = useMemo(() => PATHS[(hash(text) + MINUTE_SEED) % PATHS.length], [text])
+  const pick = useMemo(() => (hash(text) + MINUTE_SEED) % PATHS.length, [text])
+  const outline = useMemo(() => outlineFor(pick), [pick])
   const [flowFrom, flowTo] = useMemo(() => pickFlowPair(text), [text])
-  const gradId = `underline-flow-${useId()}`
+  const uid = useId()
+  const gradId = `underline-flow-${uid}`
+  const maskId = `underline-draw-${uid}`
 
   const drawn = reduce || ((inView || zoomed) && !hovered)
 
@@ -92,21 +103,32 @@ export default function Underline({ children, seed, className = '' }) {
             <stop offset="0%" stopColor={flowFrom} />
             <stop offset="100%" stopColor={flowTo} />
           </linearGradient>
+          {/* The brushstroke is a filled shape, which has no pathLength to
+              draw on with — so the centreline still animates, as a mask wide
+              enough to cover the stroke at its fullest, and the paint shows
+              wherever the mask has reached. Same timing, same hover-erase. */}
+          <mask id={maskId} maskUnits="userSpaceOnUse" x="-20" y="-20" width="350" height="80">
+            <motion.path
+              d={PATHS[pick]}
+              fill="none"
+              stroke="#fff"
+              strokeWidth="18"
+              strokeLinecap="round"
+              initial={false}
+              animate={{ pathLength: drawn ? 1 : 0 }}
+              transition={{ duration: 0.45, ease: [0.65, 0, 0.35, 1] }}
+            />
+          </mask>
         </defs>
-        <motion.path
-          d={d}
-          fill="none"
+        <path
+          d={outline}
           // Defaults to a two-colour slice of the hero flow's own palette
-          // (picked per-phrase above), but a caller can paint a flat stroke
-          // instead via `--underline-stroke` — used in the footer, where the
-          // word itself is paper-white and needs a plain stroke to stay
-          // legible against the dusk ground.
-          stroke={`var(--underline-stroke, url(#${gradId}))`}
-          strokeWidth="10"
-          strokeLinecap="round"
-          initial={false}
-          animate={{ pathLength: drawn ? 1 : 0 }}
-          transition={{ duration: 0.45, ease: [0.65, 0, 0.35, 1] }}
+          // (picked per-phrase above), but a caller can paint it flat instead
+          // via `--underline-stroke` — used in the footer, where the word
+          // itself is paper-white and needs a plain stroke to stay legible
+          // against the dusk ground.
+          fill={`var(--underline-stroke, url(#${gradId}))`}
+          mask={`url(#${maskId})`}
         />
       </svg>
     </span>

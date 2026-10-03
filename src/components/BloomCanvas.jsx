@@ -11,6 +11,9 @@ import {
   GLSL_WASH,
   pigment,
   vwAxis,
+  LOST_REACH as LOST_REACH_NUM,
+  bloomHash,
+  bloomSeed,
 } from '../lib/watercolour.js'
 
 /**
@@ -78,22 +81,77 @@ const GRAN_AMOUNT = '1.1' //  granulation at full wetness; γ scales it per pigm
 // by Frobenius norm, which overstates the operator norm by up to √2, so it
 // stays injective; treat it as at the limit and re-measure if you raise it.
 //
-// FBM_MEAN is measured from fbm() in lib/watercolour.js — it is not centred on
-// 0.5 — so the gain below is a real displacement rather than an arbitrary
-// number. Re-measure it if that noise changes; centring on the wrong value
-// slides every wash sideways instead of deforming it.
+// FBM_MEAN is measured from fbm() in lib/watercolour.js — three octaves of
+// 0.5, 0.25, 0.125 over a value noise that averages 0.5, so it sits at 0.4379,
+// not 0.5 — and the gain below is then a real displacement rather than an
+// arbitrary number. Measure it over thousands of noise cells, on the GPU: it
+// once read 0.2179, taken from a single viewport, which at this wavelength
+// holds fewer than two cells. That was harmless while the sheet was sampled in
+// viewport pixels (every scroll position saw the same two cells) and became a
+// real fault once it moved to page pixels: averaged over the page, the warp
+// slid every wash ~150px down and to the right of its spec and pinned about a
+// third of the page against CONTOUR_MAX, flattening the very outline it
+// exists to loosen. Centring on the wrong value slides washes instead of
+// deforming them; the pooling and backrun frill below centre on it too.
 const CONTOUR_WAVE = 900 //     CSS px, the coarsest lobe
 const CONTOUR_MAX = 200 //      CSS px, the furthest the front strays
-const CONTOUR_GAIN = '700.0' // CSS px per unit fbm, so ~70px typical
-const FBM_MEAN = '0.2179'
+const CONTOUR_GAIN = '700.0' // CSS px per unit fbm; fbm's sd is 0.123, so ~85px typical
+const FBM_MEAN = '0.4379'
 const CONTOUR_FREQ = (1 / CONTOUR_WAVE).toFixed(6)
 
 // The dried rim, laid once around each wet patch (GLSL_WASH's wetFront). BEAD
-// is how much of the rim's pigment runs downhill: the sheet is tilted, which is why the contour warp shears (see below), and on a
-// tilted sheet a wash drains into a bead along its lower edge and dries darker
-// there. At 0.55 the low edge carries ~1.5x the even rim and the top ~0.5x; a
-// cosine around the edge averages to zero, so the wash's load is unchanged.
+// is how much of the rim's pigment runs downhill: the sheet is tilted, which is
+// why the contour warp shears (see below), and on a tilted sheet a wash drains
+// into a bead along its lower edge and dries darker there. At 0.55 the low edge
+// carries ~1.5x the even rim and the top ~0.5x; a cosine around the edge
+// averages to zero, so the wash's load is unchanged.
 const BEAD = '0.55'
+
+// Lost and found edges. A painter's wash is never one kind of edge all the way
+// round: part of it dries hard where the paper was dry, part feathers off where
+// it met damp paper and bled. p5.brush gets this by giving each vertex of its
+// wash polygon its own bleed strength and holding a quarter of the outline
+// back; here each dry bloom gets an edge character e around its own perimeter,
+// 0 found (crisp) to 1 lost (bled), from one broad lobe plus a second harmonic
+// at a per-bloom phase — so a wash has a soft side and a hard side rather than
+// alternating speckle. Both terms are cosines, which average to zero around the
+// edge, so e averages 0.5 and the wash's load is unchanged.
+//
+// It is deliberately NOT tied to the slope. On a tilted sheet the water pools
+// into the bead along the lower edge, which dries as the hardest edge a wash
+// has; a lost edge comes from damp paper beside the wash, which the slope says
+// nothing about.
+//
+// On a lost side the paint reaches up to LOST_REACH further (set in
+// lib/watercolour.js, where check-wash's adjacency stage reads it too) and is
+// spread correspondingly thinner (1/reach², so the pigment per angle is
+// conserved), and the rim is scaled by 1 + LOST_RIM·(1 - 2e): heavier where it
+// is found, nearly gone where it is lost, and the same total.
+//
+// Conserved is not the same as equally visible. Thinner paint loses more to
+// the dry-brush fringe, so the lost side reads lighter than its pigment says:
+// at 0.25 the page measured 8% lighter overall, at 0.15 it is 6%, against the
+// same page with these three effects off. Keep it modest.
+const LOST_REACH = LOST_REACH_NUM.toFixed(3)
+const LOST_RIM = '0.8'
+
+// Tide lines. A wash dries from its edge inward, and each pause in the
+// retreating front leaves a faint line of pigment inside the main rim — the
+// stacked faint edges p5.brush's twenty translucent layers produce. Two of
+// them, at fractions of the way in from the front, meandering on the sheet so
+// they follow no circle. Each is a narrow ridge minus a broad shallow trough
+// of the same area: the line gathers pigment from either side of itself
+// rather than adding any, so the wash's load is unchanged.
+const TIDE_AT = ['0.52', '0.36']
+const TIDE_GAIN = ['0.16', '0.10']
+
+// Pooling. Paint never lies at one thickness inside a wash: it gathers in the
+// sheet's cockle and thins over its rises at a scale far coarser than the
+// granulation. p5.brush cuts soft holes into its fills for this; here it is a
+// slow mean-zero modulation of thickness, about ±15%, sampled on the sheet so
+// it stays put under the paint.
+const POOL_SCALE = '170.0' // CSS px
+const POOL_GAIN = '1.5'
 
 // §4.6 backruns. Only some washes get one — a backrun is an accident of uneven
 // drying, and one on every bloom would read as a pattern — and only washes big
@@ -103,16 +161,19 @@ const BEAD = '0.55'
 // a wash dries last and water pooled; RADIUS is how far the creep got; DEPLETE
 // how much pigment it pushed out of its interior, all of which lands on its
 // front (backrun() solves that). FRILL roughens the front on a ~46px sheet
-// noise so it scallops like cauliflower rather than drawing a ring. Keep it
+// noise so it scallops like cauliflower rather than drawing a ring. (RADIUS and
+// FRILL were tuned while FBM_MEAN was off and the frill carried a +0.28 bias;
+// they are rescaled by that 1.28 so the backruns keep the size they were
+// tuned to.) Keep it
 // modest: the roughening scales the distance, so pushed much past this it
 // starts opening pale specks outside the front, which read as holes in the
 // wash rather than water that crept.
 const BACKRUN_SHARE = 0.4
 const BACKRUN_MIN_PX = 140
 const BACKRUN_OFFSET = '0.28'
-const BACKRUN_RADIUS = '0.42'
+const BACKRUN_RADIUS = '0.33'
 const BACKRUN_DEPLETE = '0.30'
-const BACKRUN_FRILL = '1.3'
+const BACKRUN_FRILL = '1.0'
 
 // "Let it dry." The wash breathes while it is wet and then stops, which is
 // what paint does and what lets the canvas stop drawing. Its clock runs at the
@@ -142,7 +203,7 @@ ${GLSL_PRECISION}
   uniform vec4 u_bloomGeom[${MAX_BLOOMS}];   // at.xy, size.xy (fractions of field)
   uniform vec4 u_bloomArgs[${MAX_BLOOMS}];   // peak thickness, extent, wetness, field index
   uniform vec4 u_bloomK[${MAX_BLOOMS}];      // K.rgb, granulation exponent
-  uniform vec4 u_bloomS[${MAX_BLOOMS}];      // S.rgb, backrun seed (0 = none)
+  uniform vec4 u_bloomS[${MAX_BLOOMS}];      // S.rgb, seed (> 0 also has a backrun)
 
 ${GLSL_NOISE}
 ${GLSL_PAPER}
@@ -242,8 +303,10 @@ ${GLSL_WASH}
                          -${CONTOUR_MAX.toFixed(1)}, ${CONTOUR_MAX.toFixed(1)}) * u_px / u_res;
 
     // The backrun front's roughness, one sample of the sheet shared by every
-    // backrun: they never overlap, so they cannot be seen to share it.
-    float frill = (fbm(sheet / 46.0 + 41.7) - ${FBM_MEAN}) * ${BACKRUN_FRILL};
+    // backrun: they never overlap, so they cannot be seen to share it. The tide
+    // lines meander on the same sample.
+    float wander = fbm(sheet / 46.0 + 41.7) - ${FBM_MEAN};
+    float frill = wander * ${BACKRUN_FRILL};
 
     // §5.2 — one layer, several pigments. Accumulate K and S weighted by each
     // pigment's thickness and sum the thicknesses; the division below is the
@@ -267,6 +330,7 @@ ${GLSL_WASH}
     float rX = 0.0;
     float rW = 0.0;
     float rDown = 0.0;
+    float rLost = 0.0;
 
     // Nested so both array indices are loop counters: GLSL ES 1.00 only allows
     // uniform arrays to be indexed by a constant expression, which a value
@@ -294,7 +358,27 @@ ${GLSL_WASH}
         vec4 geom = u_bloomGeom[i];
         vec2 rel = (f + bleed + cf - geom.xy) / max(geom.zw, vec2(1e-4));
         float ext = max(args.y, 1e-3);
-        float d = length(rel) / ext;               // 0 at the centre, 1 where paint ends
+        float rl = length(rel);
+        float d = rl / ext;                        // 0 at the centre, 1 where paint ends
+        if (d >= 1.0 + ${LOST_REACH}) continue;
+
+        // Lost and found: this pixel's side of its wash (lostEdge() in
+        // lib/watercolour.js is the same formula, for check-wash). Lifts and
+        // wet-in-wet washes have no contact line to lose, so they stay even.
+        float seedW = u_bloomS[i].w;
+        float sd = abs(seedW);
+        float lost = 0.5;
+        float reach = 1.0;
+        if (args.x >= 0.0 && args.z < 0.5) {
+          vec2 dir = rel / max(rl, 1e-4);
+          float a1 = sd * 23.3;
+          float a2 = sd * 41.9;
+          lost = clamp(0.5 + 0.35 * dot(dir, vec2(cos(a1), sin(a1)))
+                     + 0.15 * ((dir.x * dir.x - dir.y * dir.y) * cos(a2) + 2.0 * dir.x * dir.y * sin(a2)),
+                       0.0, 1.0);
+          reach = 1.0 + ${LOST_REACH} * lost;
+          d /= reach;
+        }
         if (d >= 1.0) continue;
         // Negative thickness is a LIFT, not paint: the near-white cores that
         // hold the overlap zones open are unpainted paper showing through, and
@@ -310,12 +394,15 @@ ${GLSL_WASH}
         vec3 S = u_bloomS[i].rgb;
         float g = u_bloomK[i].w;
         float wet = args.z;
-        float body = mix(bodyDry(d * 0.80), profileWet(d), wet) * ff;
+        // Spread thinner where it reached further, so a lost side carries the
+        // same pigment as a found one.
+        float thin = 1.0 / (reach * reach);
+        float body = mix(bodyDry(d * 0.80), profileWet(d), wet) * ff * thin;
 
         // §4.6: the creep pushes pigment out of its interior onto its front.
-        float seed = u_bloomS[i].w;
-        if (seed > 0.0 && body > 0.0) {
-          float a = seed * 6.2832;
+        // A positive seed marks a bloom that has one.
+        if (seedW > 0.0 && body > 0.0) {
+          float a = sd * 6.2832;
           vec2 src = vec2(cos(a), sin(a)) * ${BACKRUN_OFFSET} * ext;
           float q = length(rel - src) / (${BACKRUN_RADIUS} * ext) * (1.0 + frill);
           body *= backrun(q, ${BACKRUN_DEPLETE});
@@ -333,26 +420,38 @@ ${GLSL_WASH}
         if (wet < 0.5) {
           float w = 1.0 - d;
           water += w;
-          float xw = args.x * ff * w;
+          float xw = args.x * ff * thin * w;
           rK += K * xw;
           rS += S * xw;
           rG += g * xw;
           rX += xw;
           rW += w;
           // Which side of its wash this edge is on; positive is downhill.
-          rDown += w * rel.y / max(length(rel), 1e-4);
+          rDown += w * rel.y / max(rl, 1e-4);
+          rLost += w * lost;
         }
       }
       if (painted > 0.5) backdrop = over.rgb;
     }
 
     // The dried rim, once, on the wet patch's own front (§4.3.3), carrying
-    // more of its pigment on the downhill side. For a lone bloom front is just
-    // its own d, and body plus rim is exactly profileDry.
+    // more of its pigment on the downhill side and on its found edges. For a
+    // lone bloom front is just its own d, and body plus rim is profileDry.
+    //
+    // The tide lines ride the same front, inside the rim, in the rim's paint;
+    // they fade where the edge is lost, since a bled edge left no front to
+    // pause.
     if (rX > 0.0 && rW > 0.0) {
       float front = wetFront(water);
+      float lostHere = rLost / rW;
       float bump = profileDry(front * 0.80) - bodyDry(front * 0.80);
-      float rim = (rX / rW) * bump * (1.0 + ${BEAD} * (rDown / rW));
+      float rim = (rX / rW) * bump
+                * (1.0 + ${BEAD} * (rDown / rW))
+                * (1.0 + ${LOST_RIM} * (1.0 - 2.0 * lostHere));
+      float c1 = ${TIDE_AT[0]} + 0.4 * wander;
+      float c2 = ${TIDE_AT[1]} + 0.4 * wander;
+      rim += (rX / rW) * (1.0 - 0.6 * lostHere)
+           * (${TIDE_GAIN[0]} * tideLine(front, c1) + ${TIDE_GAIN[1]} * tideLine(front, c2));
       if (rim > 0.0) {
         Kacc += rK / rX * rim;
         Sacc += rS / rX * rim;
@@ -366,6 +465,8 @@ ${GLSL_WASH}
     // which paints they are.
     float laid = X;
     X *= clamp(1.0 - lift, 0.0, 1.0);
+    // Pooling: thicker in the sheet's slow hollows, thinner over its rises.
+    X *= max(0.0, 1.0 + ${POOL_GAIN} * (fbm(sheet / ${POOL_SCALE} + 7.7) - ${FBM_MEAN}));
     if (painted < 0.5 || X <= 0.0 || laid <= 0.0) { gl_FragColor = vec4(0.0); return; }
 
     vec3 K = Kacc / laid;
@@ -394,11 +495,6 @@ ${GLSL_WASH}
   }
 `
 
-/** A stable 0..1 per bloom, from where it sits and what it is. */
-function bloomHash(b, salt) {
-  const s = Math.sin((b.at[0] + 1.7) * 91.345 + (b.at[1] + 2.3) * 47.853 + salt * 13.17 + (b.x || 0) * 7.1) * 43758.5453
-  return s - Math.floor(s)
-}
 
 export default function BloomCanvas({ revealed }) {
   const reduce = useReducedMotion()
@@ -491,8 +587,9 @@ export default function BloomCanvas({ revealed }) {
           // used to take a slot.
           const cx = r.left + b.at[0] * r.width
           const cy = r.top + b.at[1] * r.height
-          const reachX = rx * r.width * ext * 1.15 + padX
-          const reachY = ry * r.height * ext * 1.15 + padY
+          // A lost edge reaches LOST_REACH past the bloom's own extent.
+          const reachX = rx * r.width * ext * (1 + LOST_REACH_NUM) + padX
+          const reachY = ry * r.height * ext * (1 + LOST_REACH_NUM) + padY
           if (cx + reachX < 0 || cx - reachX > vw || cy + reachY < 0 || cy - reachY > vh) continue
 
           wanted++
@@ -504,14 +601,15 @@ export default function BloomCanvas({ revealed }) {
           const wet = b.wetness === 'wet'
           bloomArgs.set([b.lift ? -b.lift : b.x, ext, wet ? 1 : 0, nf], nb * 4)
 
-          // A backrun needs a wet-on-dry wash big enough to frill.
+          // One seed per bloom sets its backrun's direction and its lost and
+          // found edges; its sign says whether it has a backrun at all, which
+          // needs a wet-on-dry wash big enough to frill.
           const onScreen = Math.min(rx * r.width, ry * r.height) * ext
-          const backrun =
+          const hasBackrun =
             !b.lift && !wet && onScreen >= BACKRUN_MIN_PX && bloomHash(b, 1) < BACKRUN_SHARE
-              ? 0.02 + 0.98 * bloomHash(b, 2)
-              : 0
+          const seed = b.lift ? 0 : bloomSeed(b) * (hasBackrun ? 1 : -1)
           bloomK.set([K[0], K[1], K[2], gran], nb * 4)
-          bloomS.set([S[0], S[1], S[2], backrun], nb * 4)
+          bloomS.set([S[0], S[1], S[2], seed], nb * 4)
           nb++
         }
         nf++

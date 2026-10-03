@@ -38,8 +38,10 @@ export const WASH_STATIC = [
   // Sat at [0.36, 0.52], directly under the yellow-green, and on any section
   // shorter than about 1.6x its width the two met — the beige CLAUDE.md's first
   // anti-mud rule exists for. Down here it joins the rose cluster it belongs to
-  // instead; check:wash's adjacency stage holds it there.
-  { pigment: 'blossom', x: 0.111, sizeVw: 24, at: [0.52, 0.68], extent: 0.74 },
+  // instead; check:wash's adjacency stage holds it there. (0.72 rather than
+  // 0.68 since the canvas grew lost edges: the yellow-green's soft side faces
+  // it and reaches a little further.)
+  { pigment: 'blossom', x: 0.111, sizeVw: 24, at: [0.52, 0.72], extent: 0.74 },
   { pigment: 'rose', x: 0.18, sizeVw: 22, at: [0.45, 0.96], extent: 0.74 },
   { pigment: 'aurora_rose', x: 0.071, sizeVw: 20, at: [0.56, 0.88], extent: 0.74 },
 ]
