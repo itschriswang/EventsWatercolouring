@@ -13,7 +13,8 @@ import GrainOverlay from './GrainOverlay.jsx'
  * same grain as a single procedural-noise fragment pass: cheap enough to also
  * carry the texture onto touch devices, where it was previously dropped
  * entirely. The grain is static — painted once and on resize — so there's no
- * per-frame work; on desktop it settles subtly as you scroll.
+ * per-frame work. On desktop it is redrawn as you scroll so the sheet travels
+ * with the page, because that is where BloomCanvas's paint is.
  *
  * The height field is `paperHeight()` from `lib/watercolour.js`, the same one
  * BloomCanvas granulates its wash into (Curtis et al. §4.1/§4.5). That's the
@@ -27,18 +28,19 @@ import GrainOverlay from './GrainOverlay.jsx'
 const FRAG = `
 ${GLSL_PRECISION}
   uniform vec2 u_res;
-  uniform float u_seed;
-  uniform float u_px;   // device pixels per CSS pixel
+  uniform float u_scroll; // page scrollY in CSS px; 0 where the grain stays on the glass
+  uniform float u_px;     // device pixels per CSS pixel
 
 ${GLSL_NOISE}
 ${GLSL_PAPER}
 
   void main(){
-    // In CSS pixels: paper tooth is a physical size, so it should look the
-    // same on a retina screen and merely be rasterised more finely — and it
-    // has to match the scale BloomCanvas samples the sheet at, which renders
-    // into a half-resolution buffer.
-    vec2 p = gl_FragCoord.xy / u_px + u_seed;
+    // In page CSS pixels: paper tooth is a physical size, so it should look
+    // the same on a retina screen and merely be rasterised more finely — and
+    // it has to be the very point BloomCanvas samples, which renders into a
+    // half-resolution buffer, so the wash granulates into the hollows drawn
+    // here. pageSheet() is the one definition both use.
+    vec2 p = pageSheet(gl_FragCoord.xy, u_res, u_px, u_scroll);
     // A gentle darkening grain: values sit high, dipping toward mid-grey where
     // the paper's hollows are.
     float g = mix(0.62, 1.0, paperHeight(p));
@@ -82,17 +84,25 @@ export default function GrainCanvas() {
     const prog = createQuadProgram(gl, FRAG)
     if (!prog) return
 
-    let seed = 0
     // DPR capped at 1 off the heavy tier: retina grain on a phone means
     // rasterising ~4x the pixels for a texture that reads identically at
     // this opacity, and the buffer lives for the whole session.
     const maxDpr = heavyFx ? 2 : 1
+    // Where the live wash runs, the grain follows the page: the wash granulates
+    // into this sheet at page coordinates, so a grain left on the glass would
+    // have the paint's hollows sliding past the paper's. It used to re-seed on
+    // every scroll frame instead, which both shimmered and broke that link —
+    // BloomCanvas never saw the seed, so after the first scroll the wash was
+    // pooling in hollows this layer no longer drew. Off the heavy tier there is
+    // no live wash to agree with, and the grain stays put for free (no
+    // per-scroll work on a phone).
+    const follow = heavyFx && !reduce
     const render = () => {
       resizeCanvas(gl, canvas, 1, maxDpr)
       gl.useProgram(prog.program)
       gl.uniform2f(prog.uniforms('u_res'), canvas.width, canvas.height)
       gl.uniform1f(prog.uniforms('u_px'), canvas.width / Math.max(1, canvas.clientWidth))
-      gl.uniform1f(prog.uniforms('u_seed'), seed)
+      gl.uniform1f(prog.uniforms('u_scroll'), follow ? window.scrollY || 0 : 0)
       prog.draw()
     }
     render()
@@ -100,25 +110,19 @@ export default function GrainCanvas() {
     const onResize = () => render()
     window.addEventListener('resize', onResize)
 
-    // Desktop-only: let the grain "settle" as the page scrolls — re-seed on a
-    // throttled rAF while scrolling, then leave it be. Skipped under
-    // reduced-motion and on touch devices, where the grain stays perfectly
-    // static (no per-frame or per-scroll work).
     let scrollRaf = 0
-    const animate = heavyFx && !reduce
     const onScroll = () => {
       if (scrollRaf) return
       scrollRaf = requestAnimationFrame(() => {
         scrollRaf = 0
-        seed = (seed + 17.0) % 512.0
         render()
       })
     }
-    if (animate) window.addEventListener('scroll', onScroll, { passive: true })
+    if (follow) window.addEventListener('scroll', onScroll, { passive: true })
 
     return () => {
       window.removeEventListener('resize', onResize)
-      if (animate) window.removeEventListener('scroll', onScroll)
+      if (follow) window.removeEventListener('scroll', onScroll)
       cancelAnimationFrame(scrollRaf)
       gl.getExtension('WEBGL_lose_context')?.loseContext()
     }
@@ -132,7 +136,7 @@ export default function GrainCanvas() {
       aria-hidden="true"
       // No blend mode: the shader emits the multiply's own result as straight
       // alpha instead (see FRAG), so this layer never reads the page beneath
-      // it. zoom-mute still applies — the noise is screen-space, and magnified
+      // it. zoom-mute still applies — the noise is drawn per CSS pixel, and magnified
       // grain is wrong whatever it is composited with (see index.css).
       className="zoom-mute pointer-events-none fixed inset-0 z-[60] h-full w-full opacity-[0.075]"
     />

@@ -330,6 +330,26 @@ const BLOOM_PROFILES = {
   ],
 }
 
+/**
+ * A profile's relative thickness at `d`, 0 at the bloom's centre and 1 where
+ * its paint ends (the gradient's `extent`). Linear between knots, as both the
+ * CSS stops and the shader walk them. For scripts that need to know where the
+ * paint is without rendering it — check-wash's adjacency test.
+ */
+export function profileThickness(wetness, d) {
+  const profile = BLOOM_PROFILES[wetness] || BLOOM_PROFILES.dry
+  const span = profile[profile.length - 1][0]
+  const p = d * span
+  for (let i = 1; i < profile.length; i++) {
+    const [p1, t1] = profile[i]
+    if (p <= p1) {
+      const [p0, t0] = profile[i - 1]
+      return t0 + ((t1 - t0) * (p - p0)) / (p1 - p0)
+    }
+  }
+  return 0
+}
+
 // Coverage headroom for the colour/alpha split, as in BloomCanvas: alpha tracks
 // how much the glaze darkens the paper, and the colour is back-solved so the
 // pair reproduces the KM result once the compositor has blended it. Anything
@@ -646,6 +666,7 @@ export function fieldLobes(blooms, over = PAPER_REFLECTANCE) {
       return [
         {
           ...geom(1, [0, 0]),
+          lift: b.lift,
           stops: [
             [`rgba(255,252,242,${b.lift.toFixed(3)})`, null],
             ['transparent', Number(((b.extent ?? 0.72) * 100).toFixed(0))],
@@ -670,6 +691,7 @@ export function fieldLobes(blooms, over = PAPER_REFLECTANCE) {
       ]),
     ].map(([k, mx, off, wetness]) => ({
       ...geom(k, off),
+      pigment: b.pigment,
       stops: bloomStopList(b.pigment, b.x * mx, {
         over,
         wetness,
@@ -703,7 +725,16 @@ export const GLSL_PRECISION = `
 
 /** Value noise + fBm. Shared so every layer's texture derives from one basis. */
 export const GLSL_NOISE = `
+  // Wrapped to a 1024-cell lattice first. The sheet is sampled in PAGE pixels
+  // now (see GLSL_PAPER), so p reaches the page's full height, and at 15,000px
+  // p * 456.21 is ~7e6, where a float's spacing is 0.5: fract() would hand back
+  // two values and the paper would turn to stripes halfway down the homepage.
+  // 1024 keeps the inputs in the range the hash was always fed (one screen's
+  // worth), and wrapping the LATTICE keeps vnoise seamless across the wrap,
+  // since a cell and its neighbour wrap together. The fibre repeats every
+  // 1024px and the cockle every ~5,700px, neither of which the eye can find.
   float hash(vec2 p){
+    p = mod(p, 1024.0);
     p = fract(p * vec2(123.34, 456.21));
     p += dot(p, p + 45.32);
     return fract(p.x * p.y);
@@ -731,11 +762,28 @@ export const GLSL_NOISE = `
  * is what keeps the tooth the same physical size across the two canvases even
  * though they rasterise at different resolutions.
  *
+ * And it is in PAGE pixels — `pageSheet()` below — because the paper is under
+ * the paint, not on the glass. Both canvases are fixed to the viewport, and
+ * they used to sample the sheet in viewport pixels, so scrolling slid every
+ * wash across a paper that stayed put: the granulation stayed behind while the
+ * paint moved, and the wash's outline (a warp sampled on the same sheet)
+ * quietly re-formed on every scroll. Measured with the wash's own animation
+ * frozen, a 40px scroll left the paint misaligned with itself well above the
+ * noise floor. Add the scroll and the sheet travels with the page like paper.
+ *
  * The fine term is a per-pixel hash (cotton fibre) and the mottle a smooth
  * octave (the cockle of a pressed sheet) — the mix the grain layer has always
  * used, now named for what it is.
  */
 export const GLSL_PAPER = `
+  // A fragment's position on the page, in CSS pixels, y down like the DOM.
+  // res is the buffer size, px its device pixels per CSS pixel, scroll the
+  // page's scrollY. Every layer that samples the sheet goes through this, so
+  // they all address the same paper.
+  vec2 pageSheet(vec2 frag, vec2 res, float px, float scroll){
+    return vec2(frag.x, res.y - frag.y) / px + vec2(0.0, scroll);
+  }
+
   float paperMottle(vec2 p){ return vnoise(p * 0.18); }
 
   // Two readings of one sheet, differing only in how much of the fibre-scale
@@ -820,16 +868,50 @@ export const GLSL_KM = `
  * form over the wet-area mask instead of an accumulation over time.
  */
 export const GLSL_WASH = `
-  // §4.3.3. FlowOutward() removes water in proportion to (1 - M')M, where M is
-  // the wet-area mask and M' a Gaussian blur of it; the resulting outward flow
-  // carries pigment to the rim as the wash dries. Our mask comes from an
-  // analytic density field, so the blur is just a wider smoothstep over the
-  // same field — no kernel needed — and the product peaks in a band hugging
-  // the inside of the wet edge, which is the deposit we want.
-  float edgeDeposit(float density, float lo, float hi, float blur){
-    float M  = smoothstep(lo, hi, density);
-    float Mb = smoothstep(lo - blur, hi + blur, density);
-    return (1.0 - Mb) * M;
+  // §4.3.3 says where the dried rim goes: FlowOutward() removes water in
+  // proportion to (1 - M')M, M being the wet-area mask, so the deposit hugs the
+  // inside of wherever the water stopped. That is the edge of the whole wet
+  // patch, not of each brushload in it. Two dry washes laid into each other are
+  // one wet area with one rim; drawing a rim per bloom instead leaves two dried
+  // edges crossing inside the overlap and cuts a lens in it, which is what the
+  // canvas used to do (this file once had an edgeDeposit() for the mask form
+  // that nothing called).
+  //
+  // So the canvas pools the water. Each dry bloom wets the sheet by 1 - d (d
+  // its profile coordinate, 0 at the centre and 1 where its paint ends), the
+  // wetness of overlapping washes adds, and the patch's front coordinate is
+  // 1 minus the total. A lone bloom gets its own d back exactly; inside an
+  // overlap the sum puts the pixel well within the patch, so the rim only forms
+  // where the combined water actually runs out, and the notch where two fronts
+  // meet fills a little, as surface tension does.
+  //
+  // The tempting alternative is the nearest bloom's d — a minimum. It was
+  // tried and is wrong in a way worth knowing: in an overlap the minimum is
+  // still inside the rim band all along the line equidistant from the two
+  // centres, so it drew a rim down that line, and the rim's pigment switched
+  // from one wash to the other across it — a ruler-straight seam through the
+  // middle of a wash.
+  float wetFront(float wetness){ return max(1.0 - wetness, 0.0); }
+
+  // §4.6 backruns. Water spreading back into a wash that is drying but still
+  // damp travels through the paper's pores, pushing pigment ahead of it, and
+  // §2.2 describes the result: "complex, branching shapes with severely
+  // darkened edges". Real ones are the cauliflower blooms the medium is known
+  // for. The simulation diffuses water cell by cell until it falls below a
+  // threshold and extends the wet-area mask to that front, so edge darkening
+  // then lands along it; in closed form that is a paler interior and a dark,
+  // ragged deposit where the creep stopped.
+  //
+  // q is the distance from the backrun's source over its radius, already
+  // roughened by the caller so the front branches. Returns a thickness
+  // multiplier. The front's gain is SOLVED so the pigment pushed out of the
+  // interior is the pigment deposited on the front: integrating (m - 1)q dq
+  // over the profile gives 2.5655 x the depletion. Retune one, re-solve the
+  // other, or the backrun starts adding paint.
+  float backrun(float q, float deplete){
+    float inner = 1.0 - smoothstep(0.78, 0.92, q);
+    float front = smoothstep(0.80, 0.93, q) * (1.0 - smoothstep(0.95, 1.08, q));
+    return 1.0 - deplete * inner + deplete * 2.5655 * front;
   }
 
   // §4.5. TransferPigment() adsorbs pigment at a rate scaled by (1 - h^gamma),
