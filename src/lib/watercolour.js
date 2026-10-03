@@ -701,6 +701,41 @@ export function fieldLobes(blooms, over = PAPER_REFLECTANCE) {
   })
 }
 
+/**
+ * How much further a dry bloom's paint reaches on its lost (bled) side, as a
+ * fraction of its extent — see LOST_REACH's notes in BloomCanvas. Here so the
+ * adjacency check in check-wash can see the canvas reach as far as it does.
+ */
+export const LOST_REACH = 0.15
+
+/** A stable 0..1 per bloom, from where it sits and what it is. */
+export function bloomHash(b, salt) {
+  const s = Math.sin((b.at[0] + 1.7) * 91.345 + (b.at[1] + 2.3) * 47.853 + salt * 13.17 + (b.x || 0) * 7.1) * 43758.5453
+  return s - Math.floor(s)
+}
+
+/** The canvas seed for a bloom's lost/found edges and backrun direction. */
+export const bloomSeed = (b) => 0.02 + 0.98 * bloomHash(b, 2)
+
+/**
+ * How lost (bled) a dry bloom's edge is in direction (dx, dy) from its centre,
+ * 0 found to 1 lost. The canvas computes this per pixel in GLSL; this is the
+ * same formula for scripts that need to know where its paint reaches without
+ * rendering it. Keep the two in step.
+ */
+export function lostEdge(seed, dx, dy) {
+  const n = Math.hypot(dx, dy) || 1
+  const x = dx / n
+  const y = dy / n
+  const a1 = seed * 23.3
+  const a2 = seed * 41.9
+  const e =
+    0.5 +
+    0.35 * (x * Math.cos(a1) + y * Math.sin(a1)) +
+    0.15 * ((x * x - y * y) * Math.cos(a2) + 2 * x * y * Math.sin(a2))
+  return Math.min(1, Math.max(0, e))
+}
+
 /* ------------------------------------------------------------------ *
  * GLSL chunks
  * ------------------------------------------------------------------ */
@@ -908,6 +943,15 @@ export const GLSL_WASH = `
   // interior is the pigment deposited on the front: integrating (m - 1)q dq
   // over the profile gives 2.5655 x the depletion. Retune one, re-solve the
   // other, or the backrun starts adding paint.
+  // A tide line at front coordinate c: a narrow ridge minus a broad, shallow
+  // trough of the same area (each 1 - smoothstep bump integrates to its
+  // width), so the line gathers pigment from beside itself instead of adding
+  // any. Used by the canvas for the faint drying fronts inside the main rim.
+  float tideLine(float front, float c){
+    float x = abs(front - c);
+    return (1.0 - smoothstep(0.0, 0.022, x)) - (0.022 / 0.07) * (1.0 - smoothstep(0.0, 0.07, x));
+  }
+
   float backrun(float q, float deplete){
     float inner = 1.0 - smoothstep(0.78, 0.92, q);
     float front = smoothstep(0.80, 0.93, q) * (1.0 - smoothstep(0.95, 1.08, q));

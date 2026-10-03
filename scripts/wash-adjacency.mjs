@@ -5,7 +5,7 @@
  * be tried against it without rendering anything.
  */
 
-import { glaze, fieldLobes, profileThickness, vwAxis } from '../src/lib/watercolour.js'
+import { glaze, fieldLobes, profileThickness, vwAxis, LOST_REACH, bloomSeed, lostEdge } from '../src/lib/watercolour.js'
 
 // Which pigments the rule keeps apart: the protected glow on one side, the
 // pinks on the other.
@@ -23,7 +23,8 @@ export const ADJACENT_LEVEL = 3
  * The worst pixel where a green and a rose both deposit visibly.
  *
  * Checked in each tier's own footprint, since they reach different places:
- * the canvas paints each bloom's ellipse with its profile (its domain warp
+ * the canvas paints each bloom's ellipse with its profile, reaching further on
+ * its lost side (its domain warp
  * moves every bloom at a pixel together, so it cannot carry two separated
  * washes into each other), while CSS lays each down as three lobes whose
  * satellites reach further out. Lifts count against both, as the gap the rule
@@ -85,8 +86,14 @@ export function adjacency(blooms, over, { w, h, vw }) {
       let lift = 0
       for (const c of canvas) {
         const d = Math.hypot((x - c.cx) / c.rx, (y - c.cy) / c.ry)
-        if (d >= 1) continue
-        const t = profileThickness(c.b.wetness ?? 'dry', d)
+        // A dry wash's lost side reaches up to LOST_REACH further, thinner —
+        // the same per-bloom edge the canvas draws (lostEdge), so the check
+        // sees each wash's soft side exactly where it falls.
+        const dry = !c.b.lift && (c.b.wetness ?? 'dry') === 'dry'
+        if (d >= (dry ? 1 + LOST_REACH : 1)) continue
+        const reach = dry ? 1 + LOST_REACH * lostEdge(bloomSeed(c.b), (x - c.cx) / c.rx, (y - c.cy) / c.ry) : 1
+        if (d >= reach) continue
+        const t = profileThickness(c.b.wetness ?? 'dry', d / reach) / reach ** 2
         if (c.b.lift) {
           lift += c.b.lift * t
           continue
