@@ -276,7 +276,7 @@ break into paper tooth, while the yellow-green glow keeps Phthalo's 0.12 and
 stays smooth and luminous. That is how real paint behaves and it protects the
 chartreuse voice; don't flatten the spread.
 
-**Five effects the model gives us, and what would break them:**
+**The effects the model gives us, and what would break them:**
 
 1. *Edge darkening* (§4.3.3) — pigment dragged to the rim as a wash dries.
    The paper credits this for watercolour's luminosity, and it is the single
@@ -314,6 +314,35 @@ chartreuse voice; don't flatten the spread.
    pushed out is the pigment deposited; retune one, re-solve the other. Keep
    the frill modest — it scales the distance, and pushed too far it opens pale
    specks outside the front that read as holes rather than water.
+6. *Lost and found edges* — no real wash is one kind of edge all the way
+   round. Each dry bloom on the canvas gets a soft (lost) side and a crisp
+   (found) side from a per-bloom phase (`lostEdge()` in `watercolour.js`
+   mirrors the shader): the lost side reaches `LOST_REACH` further, thinner,
+   and the rim moves to the found side, conserving both. It is deliberately not
+   tied to the slope — the bead along a wash's lower edge is its hardest edge,
+   not a bled one. Taken from p5.brush's fill, which gives each polygon vertex
+   its own bleed strength.
+7. *Tide lines* — two faint drying fronts inside the rim (`tideLine()`), each
+   a narrow ridge minus a shallow trough of the same area, so they gather
+   pigment rather than add it. p5.brush gets these from twenty stacked
+   translucent layers.
+8. *Pooling* — a slow (~170px), mean-zero thickness modulation, about ±15%,
+   so the inside of a wash is not one flat value; the coarse tonal pooling a
+   lone wash was noted as missing (see 2).
+
+Conserving pigment is not the same as conserving how heavy a wash looks:
+thinner paint loses more to the dry-brush fringe. With 6-8 on, the page
+measures about 6% lighter than with them off — inside "stay light", but
+measure (frozen `u_time`, the same scroll positions, against the same branch
+with the effects zeroed) before raising any of them.
+
+**Centre noise on its measured mean.** `FBM_MEAN` (0.4379) is subtracted
+wherever the shader wants a displacement or modulation that averages to
+nothing — the contour warp, the backrun frill, the tide-line wander, the
+pooling. It once read 0.2179, taken from one viewport, which at the warp's
+900px wavelength holds fewer than two noise cells; once the sheet moved to page
+pixels the warp averaged over the whole page and slid every canvas wash ~150px
+from its spec. Measure a mean over thousands of cells, on the GPU.
 
 **One sheet.** `paperHeight()` is sampled in CSS pixels by every layer that
 uses it, so the tooth holds a fixed physical size and the wash granulates into
@@ -491,6 +520,16 @@ granulation and dry-brush — so running the model's synthetic versions over the
 top doesn't add watercolour, it flattens the real thing into a slab. Simulate
 the effects when you're generating a wash; leave them alone when you've
 photographed one.
+
+### Strokes are painted too
+
+`Underline` used to stroke its six squiggles at one SVG width, which is a
+marker, not a brush. Each is now filled as a brushstroke outline
+(`brushOutline()` in `lib/brushStroke.js`): p5.brush's pressure bell — a long
+landing, a plateau, a quick lift to a point — with the two edges wandering a
+little independently. The fill has no `pathLength` to draw on with, so the
+centreline still animates as a mask over it; same timing, same hover-erase.
+The outlines are built once per squiggle, the first time a phrase picks it.
 
 `PIGMENTS` is the paint box; `ARC` is the ordered subset the live wash
 interpolates along. Accents that sit off the arc — the client's swatch sheet
