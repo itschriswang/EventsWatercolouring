@@ -33,7 +33,7 @@ const GUESTS_PER_PIECE = 2
 const HOURS = [3, 4, 5]
 
 /**
- * "What a booking covers." — a small planner that shows what the booked hours
+ * "What a booking covers" — a small planner that shows what the booked hours
  * buy, in GUESTS.
  *
  * It used to lead with the painting count and put the guest figure in a line

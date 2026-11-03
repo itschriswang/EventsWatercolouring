@@ -267,8 +267,8 @@ export const KIT = {
 
 export const PACKAGES = {
   label: 'Packages',
-  title: ['One base package,', 'built around your day.'],
-  emphasis: 'built around your day.',
+  title: ['One base package,', 'built around your day'],
+  emphasis: 'built around your day',
   intro:
     'Weddings, corporate events and private celebrations all start from the same base package. What changes is the hours you book and what you add to it.',
   base: {
@@ -351,7 +351,7 @@ export const PACKAGES = {
     // Declarative, like every other heading on the page. It was "What does a
     // booking cover?", but a heading that poses a question it then answers is
     // a hook, and the FAQ below is the one place questions belong.
-    title: 'What a booking covers.',
+    title: 'What a booking covers',
     lede: 'Pick your hours. I paint about 8 paintings an hour with two guests in most of them, so roughly 16 of your guests are painted every hour.',
     hoursLabel: 'Hours booked',
     // The headline figure is GUESTS now, not paintings. It was the other way

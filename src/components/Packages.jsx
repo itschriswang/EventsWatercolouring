@@ -5,7 +5,6 @@ import SplitText from './SplitText.jsx'
 import { SPRING, CARD_BG, REVEAL_VIEWPORT } from '../lib/site.js'
 import { PACKAGES } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
-import Sparkles from './Sparkles.jsx'
 import GlassPill from './GlassPill.jsx'
 import GlassCardRim from './GlassCardRim.jsx'
 import FolderCell from './FolderCell.jsx'
@@ -67,14 +66,12 @@ export default function Packages() {
           centre where they meet so it glows rather than averaging to grey
           (Pastel Bloom anti-mud rules). */}
       <BloomField blooms={PACKAGES_FIELD} over={PAPER_DEEP} className="pointer-events-none absolute inset-0 -z-10" />
-      <Sparkles className="absolute right-[5vw] top-[clamp(3rem,6vw,5.5rem)] hidden h-12 w-12 md:block" />
       <Label gradient={['#D8DB7A', '#9BA03E']}>{PACKAGES.label}</Label>
       <SplitText
         as="h2"
         unit="char"
         lines={PACKAGES.title}
         emphasis={PACKAGES.emphasis}
-        emphasisItalic
         className="display-lg mt-5 text-ink"
       />
       <motion.p
@@ -90,7 +87,7 @@ export default function Packages() {
           {/* An h3, matching the desktop card's heading for the same package.
               It was a <p> set to look like one, which meant the site's one
               product had no heading at all on a phone: swiping by headings
-              went straight from "One base package, built around your day."
+              went straight from "One base package, built around your day"
               to "Add-ons" without ever naming the thing being sold. It only
               LOOKS unheaded here because the mobile layout floats the title
               and price above the sheet as a pull-quote rather than printing
