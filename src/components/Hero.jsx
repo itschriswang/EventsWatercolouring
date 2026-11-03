@@ -5,7 +5,6 @@ import useMediaQuery, { useHeavyFx } from '../hooks/useMediaQuery.js'
 import { SPRING, SPRING_SOFT, asset, artSrcset, ENQUIRE_HREF } from '../lib/site.js'
 import { HERO } from '../content.js'
 import CornerBloom from './CornerBloom.jsx'
-import Sparkles from './Sparkles.jsx'
 import { withUnderline } from './Underline.jsx'
 import BloomFilter from './WetBloom.jsx'
 import BloomField from './BloomField.jsx'
@@ -194,12 +193,6 @@ export default function Hero({ revealed }) {
             dock (762-828px), so the one number on the first screen was the one
             thing on it nobody could read. */}
         <div className="relative z-10 order-2 lg:order-none lg:col-span-7 lg:col-start-1">
-          {/* Delayed past the headline entrance so the twinkle lands as a
-              finishing flick, not part of the type reveal. */}
-          <Sparkles
-            delay={1.1}
-            className="absolute -top-6 right-[6%] hidden h-12 w-12 sm:block"
-          />
           <motion.div style={parallax ? { y: copyY } : {}}>
             {revealed && (
               <SplitText
@@ -302,7 +295,6 @@ export default function Hero({ revealed }) {
                   initial={coupleEntrance.initial}
                   animate={coupleEntrance.animate}
                   transition={coupleEntrance.transition}
-                  whileHover={reduce ? {} : { rotate: -2, scale: 1.03 }}
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(126,40,72,0.30),0_6px_16px_-6px_rgba(126,40,72,0.12)]"
                 >
                   <CornerBloom from={['blossom', 0.067]} to={['blush', 0.382]} overlay />
@@ -329,7 +321,9 @@ export default function Hero({ revealed }) {
                         onError={(e) => (e.currentTarget.style.display = 'none')}
                       />
                     </picture>
-                    <figcaption className="bg-paper px-3 py-2 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-ink-soft">
+                    {/* 13px, sentence case: the Mynerve floor. These were 11px
+                        uppercase at 0.14em, the smallest text in the hero. */}
+                    <figcaption className="bg-paper px-3 py-2 font-mono text-[0.8125rem] tracking-[0.02em] text-ink-soft">
                       No. 001 · Wedding
                     </figcaption>
                   </div>
@@ -342,7 +336,6 @@ export default function Hero({ revealed }) {
                   initial={bouquetEntrance.initial}
                   animate={bouquetEntrance.animate}
                   transition={bouquetEntrance.transition}
-                  whileHover={reduce ? {} : { rotate: 0, scale: 1.03 }}
                   className="relative overflow-hidden rounded-[1.25rem] border border-line bg-paper-deep shadow-[0_28px_52px_-18px_rgba(126,40,72,0.30),0_6px_16px_-6px_rgba(126,40,72,0.12)]"
                 >
                   <CornerBloom from={['apricot', 0.142]} to={['blossom', 0.062]} overlay />
@@ -369,7 +362,7 @@ export default function Hero({ revealed }) {
                         onError={(e) => (e.currentTarget.style.display = 'none')}
                       />
                     </picture>
-                    <figcaption className="bg-paper px-3 py-2 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-ink-soft">
+                    <figcaption className="bg-paper px-3 py-2 font-mono text-[0.8125rem] tracking-[0.02em] text-ink-soft">
                       No. 002 · Bouquet
                     </figcaption>
                   </div>
@@ -385,7 +378,7 @@ export default function Hero({ revealed }) {
                 className="sm:hidden absolute right-0 top-1/2 -translate-y-1/2 translate-x-[80%]"
               >
                 <span
-                  className="font-mono text-[0.625rem] uppercase tracking-[0.22em] text-ink-soft opacity-60"
+                  className="font-mono text-[0.8125rem] tracking-[0.04em] text-ink-soft"
                   style={{ writingMode: 'vertical-rl' }}
                 >
                   {HERO.place}
@@ -397,12 +390,15 @@ export default function Hero({ revealed }) {
         </motion.div>
       </div>
 
-      {/* Scroll cue */}
+      {/* Scroll cue — sm and up only. It used to render on phones too, under
+          the mobile dock and beside the vertical cue on the right edge, so a
+          phone carried two of them. Sentence case: uppercase at 0.22em is the
+          tracked-label voice that this handwritten face reads worst in. */}
       <motion.div
         variants={fade}
         initial="hidden"
         animate={state}
-        className="mt-[clamp(2rem,5vw,4rem)] flex items-center gap-3 font-mono text-[0.8125rem] uppercase tracking-[0.22em] text-ink-soft"
+        className="mt-[clamp(2rem,5vw,4rem)] hidden items-center gap-3 font-mono text-[0.8125rem] tracking-[0.04em] text-ink-soft sm:flex"
       >
         {/* Plain span, CSS pulse: an infinite framer loop on this hairline was
             re-layerizing the whole page every frame (see `.scroll-tick` in
@@ -421,7 +417,7 @@ export default function Hero({ revealed }) {
       >
         <span className="scroll-tick block w-px bg-lime" style={{ height: 28 }} />
         <span
-          className="font-mono text-[0.625rem] uppercase tracking-[0.22em] text-ink-soft opacity-70"
+          className="font-mono text-[0.8125rem] tracking-[0.04em] text-ink-soft"
           style={{ writingMode: 'vertical-rl' }}
         >
           Scroll
